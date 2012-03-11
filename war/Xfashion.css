@@ -1,0 +1,70 @@
+/** Add css rules here for your application. */
+
+
+/** Example rules used by the template application (remove for your app) */
+h1#logo {
+  font-size: 2em;
+  font-weight: bold;
+  color: #f81;
+  margin: 0px 0px 0px;
+  text-align: left;
+}
+
+.filterLabel {
+	font-size: 20px;
+	font-weight: bold;
+	color: silver;
+	padding-top: 2px;
+	margin-left: 1px;
+	margin-right: 1px;
+}
+
+.filterHeader {
+	padding: 1px;
+	border: 1px solid silver;
+	background-color: black;
+	width: 100%;
+}
+
+.categoryList {
+	border: 1px solid silver;
+	margin-left: 1px;
+	margin-right: 1px;
+	width: 200px;
+}
+
+.styleList {
+	border: 1px solid silver;
+	margin-left: 1px;
+	margin-right: 1px;
+	width: 150px;
+}
+
+.articleTypeList {
+	border: 1px solid silver;
+	margin-left: 1px;
+	margin-right: 1px;
+	width: 300px;
+}
+
+/** Most GWT widgets already have a style name defined */
+.gwt-DialogBox {
+  width: 400px;
+}
+
+.dialogVPanel {
+  margin: 5px;
+}
+
+.serverResponseLabelError {
+  color: red;
+}
+
+#itemType {
+	color: ff0000;
+}
+
+/** Set ids using widget.getElement().setId("idOfElement") */
+#closeButton {
+  margin: 15px 6px 6px;
+}
