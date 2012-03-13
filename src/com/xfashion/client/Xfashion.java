@@ -22,6 +22,8 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.MultiSelectionModel;
+import com.google.gwt.view.client.NoSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 
@@ -104,6 +106,9 @@ public class Xfashion implements EntryPoint {
 
 		mainPanel.add(createCategoryPanel(articleTypeDatabase));
 		mainPanel.add(createStylePanel(articleTypeDatabase));
+		mainPanel.add(createBrandPanel(articleTypeDatabase));
+		mainPanel.add(createSizePanel(articleTypeDatabase));
+		mainPanel.add(createColorPanel(articleTypeDatabase));
 		mainPanel.add(createArticleTypeList(articleTypeDatabase));
 
 		RootPanel.get("mainPanelContainer").add(mainPanel);
@@ -125,23 +130,21 @@ public class Xfashion implements EntryPoint {
 		CategoryCell categoryCell = new CategoryCell();
 		final CellList<String> categoryList = new CellList<String>(categoryCell, GWT.<CategoryListResources> create(CategoryListResources.class));
 		categoryList.setPageSize(30);
-		categoryList.setKeyboardPagingPolicy(KeyboardPagingPolicy.INCREASE_RANGE);
-		categoryList.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
+//		categoryList.setKeyboardPagingPolicy(KeyboardPagingPolicy.INCREASE_RANGE);
+//		categoryList.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
 
-		final SingleSelectionModel<String> selectionModel = new SingleSelectionModel<String>();
+		final MultiSelectionModel<String> selectionModel = new MultiSelectionModel<String>();
 		categoryList.setSelectionModel(selectionModel);
 		selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 			public void onSelectionChange(SelectionChangeEvent event) {
-				articleTypeDatabase.setCategoryFilter(selectionModel.getSelectedObject());
+				articleTypeDatabase.setCategoryFilters(selectionModel.getSelectedSet());
 			}
 		});
 		clearButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				articleTypeDatabase.setCategoryFilter(null);
-				if (selectionModel.getSelectedObject() != null) {
-					selectionModel.setSelected(selectionModel.getSelectedObject(), false);
-				}
+				selectionModel.clear();
+//				articleTypeDatabase.setCategoryFilters(selectionModel.getSelectedSet());
 			}
 		});
 		articleTypeDatabase.addCategoryDisplay(categoryList);
@@ -167,23 +170,20 @@ public class Xfashion implements EntryPoint {
 		StyleCell styleCell = new StyleCell();
 		CellList<String> styleList = new CellList<String>(styleCell, GWT.<StyleListResources> create(StyleListResources.class));
 		styleList.setPageSize(30);
-		styleList.setKeyboardPagingPolicy(KeyboardPagingPolicy.INCREASE_RANGE);
-		styleList.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
+//		styleList.setKeyboardPagingPolicy(KeyboardPagingPolicy.INCREASE_RANGE);
+//		styleList.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
 
-		final SingleSelectionModel<String> selectionModel = new SingleSelectionModel<String>();
+		final MultiSelectionModel<String> selectionModel = new MultiSelectionModel<String>();
 		styleList.setSelectionModel(selectionModel);
 		selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 			public void onSelectionChange(SelectionChangeEvent event) {
-				articleTypeDatabase.setStyleFilter(selectionModel.getSelectedObject());
+				articleTypeDatabase.setStyleFilter(selectionModel.getSelectedSet());
 			}
 		});
 		clearButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				articleTypeDatabase.setStyleFilter(null);
-				if (selectionModel.getSelectedObject() != null) {
-					selectionModel.setSelected(selectionModel.getSelectedObject(), false);
-				}
+				selectionModel.clear();
 			}
 		});
 
@@ -194,8 +194,126 @@ public class Xfashion implements EntryPoint {
 		return panel;
 	}
 
-	Label popupLabel;
-	DecoratedPopupPanel popup;
+	private Panel createBrandPanel(final ArticleTypeDatabase articleTypeDatabase) {
+		VerticalPanel panel = new VerticalPanel();
+
+		HorizontalPanel headerPanel = new HorizontalPanel();
+		headerPanel.addStyleName("filterHeader");
+		Button clearButton = new Button("clr");
+		headerPanel.add(clearButton);
+		Label label = new Label("Marke");
+		label.addStyleName("filterLabel");
+		headerPanel.add(label);
+		panel.add(headerPanel);
+
+		StyleCell styleCell = new StyleCell();
+		CellList<String> styleList = new CellList<String>(styleCell, GWT.<StyleListResources> create(StyleListResources.class));
+		styleList.setPageSize(30);
+//		styleList.setKeyboardPagingPolicy(KeyboardPagingPolicy.INCREASE_RANGE);
+//		styleList.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
+
+		final MultiSelectionModel<String> selectionModel = new MultiSelectionModel<String>();
+		styleList.setSelectionModel(selectionModel);
+		selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+			public void onSelectionChange(SelectionChangeEvent event) {
+				articleTypeDatabase.setBrandFilter(selectionModel.getSelectedSet());
+			}
+		});
+		clearButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				selectionModel.clear();
+			}
+		});
+
+		articleTypeDatabase.addBrandDisplay(styleList);
+		styleList.addStyleName("styleList");
+		panel.add(styleList);
+
+		return panel;
+	}
+
+	private Panel createColorPanel(final ArticleTypeDatabase articleTypeDatabase) {
+		VerticalPanel panel = new VerticalPanel();
+
+		HorizontalPanel headerPanel = new HorizontalPanel();
+		headerPanel.addStyleName("filterHeader");
+		Button clearButton = new Button("clr");
+		headerPanel.add(clearButton);
+		Label label = new Label("Farbe");
+		label.addStyleName("filterLabel");
+		headerPanel.add(label);
+		panel.add(headerPanel);
+
+		StyleCell styleCell = new StyleCell();
+		CellList<String> styleList = new CellList<String>(styleCell, GWT.<StyleListResources> create(StyleListResources.class));
+		styleList.setPageSize(30);
+//		styleList.setKeyboardPagingPolicy(KeyboardPagingPolicy.INCREASE_RANGE);
+//		styleList.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
+
+		final MultiSelectionModel<String> selectionModel = new MultiSelectionModel<String>();
+		styleList.setSelectionModel(selectionModel);
+		selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+			public void onSelectionChange(SelectionChangeEvent event) {
+				articleTypeDatabase.setColorFilter(selectionModel.getSelectedSet());
+			}
+		});
+		clearButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				selectionModel.clear();
+			}
+		});
+
+		articleTypeDatabase.addColorDisplay(styleList);
+		styleList.addStyleName("styleList");
+		panel.add(styleList);
+
+		return panel;
+	}
+
+	private Panel createSizePanel(final ArticleTypeDatabase articleTypeDatabase) {
+		VerticalPanel panel = new VerticalPanel();
+
+		HorizontalPanel headerPanel = new HorizontalPanel();
+		headerPanel.addStyleName("filterHeader");
+		Button clearButton = new Button("clr");
+		headerPanel.add(clearButton);
+		Label label = new Label("Größe");
+		label.addStyleName("filterLabel");
+		headerPanel.add(label);
+		panel.add(headerPanel);
+
+		StyleCell styleCell = new StyleCell();
+		CellList<String> styleList = new CellList<String>(styleCell, GWT.<StyleListResources> create(StyleListResources.class));
+		styleList.setPageSize(30);
+//		styleList.setKeyboardPagingPolicy(KeyboardPagingPolicy.INCREASE_RANGE);
+//		styleList.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
+
+		final MultiSelectionModel<String> selectionModel = new MultiSelectionModel<String>();
+		styleList.setSelectionModel(selectionModel);
+		selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+			public void onSelectionChange(SelectionChangeEvent event) {
+				articleTypeDatabase.setSizeFilter(selectionModel.getSelectedSet());
+			}
+		});
+		clearButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				selectionModel.clear();
+			}
+		});
+
+		articleTypeDatabase.addSizeDisplay(styleList);
+		styleList.addStyleName("styleList");
+		panel.add(styleList);
+
+		return panel;
+	}
+
+	ArticleTypeDetailPopup articleTypeDetailPopup;
+	NoSelectionModel<ArticleType> articleTypeSelectionModel;
+	CellList<ArticleType> articleTypeList;
 
 	private Panel createArticleTypeList(ArticleTypeDatabase articleTypeDatabase) {
 		VerticalPanel panel = new VerticalPanel();
@@ -209,16 +327,15 @@ public class Xfashion implements EntryPoint {
 		panel.add(headerPanel);
 
 		ArticleTypeCell articleTypeCell = new ArticleTypeCell();
-		CellList<ArticleType> articleTypeList = new CellList<ArticleType>(articleTypeCell, GWT.<StyleListResources> create(StyleListResources.class));
-		articleTypeList.setPageSize(30);
-		articleTypeList.setKeyboardPagingPolicy(KeyboardPagingPolicy.INCREASE_RANGE);
-		articleTypeList.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
-		final SingleSelectionModel<Object> selectionModel = new SingleSelectionModel<Object>();
-		articleTypeList.setSelectionModel(selectionModel);
-		selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+		articleTypeList = new CellList<ArticleType>(articleTypeCell, GWT.<StyleListResources> create(StyleListResources.class));
+		articleTypeList.setPageSize(1000);
+		// articleTypeList.setKeyboardPagingPolicy(KeyboardPagingPolicy.INCREASE_RANGE);
+		// articleTypeList.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
+		articleTypeSelectionModel = new NoSelectionModel<ArticleType>();
+		articleTypeList.setSelectionModel(articleTypeSelectionModel);
+		articleTypeSelectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 			public void onSelectionChange(SelectionChangeEvent event) {
-				popupLabel.setText(selectionModel.getSelectedObject().toString());
-				popup.show();
+				articleTypeDetailPopup.showPopup(articleTypeSelectionModel.getLastSelectedObject());
 			}
 		});
 
@@ -231,13 +348,11 @@ public class Xfashion implements EntryPoint {
 		panel.add(articlePanel);
 		// panel.addStyleName("scrollable");
 		panel.addStyleName("articleTypeList");
-
-		popupLabel = new Label();
-		popup = new DecoratedPopupPanel(true);
-		popup.add(popupLabel);
+		articleTypeDetailPopup = new ArticleTypeDetailPopup();
 
 		return panel;
 	}
+	
 }
 // Button b1 = new Button("button 1");
 // mainPanel.add(b1);

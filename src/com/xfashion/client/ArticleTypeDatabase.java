@@ -1,6 +1,7 @@
 package com.xfashion.client;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 import com.google.gwt.user.client.Random;
 import com.google.gwt.view.client.HasData;
@@ -47,14 +48,18 @@ public class ArticleTypeDatabase {
 	private ArrayList<ArticleType> filteredArticleTypes;
 
 	private ListDataProvider<String> categoryProvider;
-
 	private ListDataProvider<String> styleProvider;
+	private ListDataProvider<String> brandProvider;
+	private ListDataProvider<String> colorProvider;
+	private ListDataProvider<String> sizeProvider;
 
 	private ListDataProvider<ArticleType> articleTypeProvider;
 
-	private String categoryFilter = null;
-
-	private String styleFilter = null;
+	private Set<String> categoryFilter = null;
+	private Set<String> styleFilter = null;
+	private Set<String> brandFilter = null;
+	private Set<String> colorFilter = null;
+	private Set<String> sizeFilter = null;
 
 	public ArticleTypeDatabase() {
 		init();
@@ -64,6 +69,9 @@ public class ArticleTypeDatabase {
 		createArticleTypes();
 		createCategoryProvider();
 		createStyleProvider();
+		createBrandProvider();
+		createColorProvider();
+		createSizeProvider();
 		createArticleTypeProvider();
 	}
 
@@ -77,10 +85,34 @@ public class ArticleTypeDatabase {
 
 	private void createStyleProvider() {
 		ArrayList<String> styles = new ArrayList<String>();
-		for (String category : STYLES) {
-			styles.add(category);
+		for (String style : STYLES) {
+			styles.add(style);
 		}
 		styleProvider = new ListDataProvider<String>(styles);
+	}
+
+	private void createBrandProvider() {
+		ArrayList<String> brands = new ArrayList<String>();
+		for (String brand : BRANDS) {
+			brands.add(brand);
+		}
+		brandProvider = new ListDataProvider<String>(brands);
+	}
+
+	private void createColorProvider() {
+		ArrayList<String> colors = new ArrayList<String>();
+		for (String brand : COLORS) {
+			colors.add(brand);
+		}
+		colorProvider = new ListDataProvider<String>(colors);
+	}
+
+	private void createSizeProvider() {
+		ArrayList<String> sizes = new ArrayList<String>();
+		for (String size : SIZES) {
+			sizes.add(size);
+		}
+		sizeProvider = new ListDataProvider<String>(sizes);
 	}
 
 	private void createArticleTypeProvider() {
@@ -106,19 +138,49 @@ public class ArticleTypeDatabase {
 		ArrayList<ArticleType> result = new ArrayList<ArticleType>(articleTypes);
 		ArrayList<ArticleType> temp = new ArrayList<ArticleType>();
 
-		if (categoryFilter != null) {
+		if (categoryFilter != null && categoryFilter.size() > 0) {
 			for (ArticleType at : result) {
-				if (at.getCategory().equals(categoryFilter)) {
+				if (categoryFilter.contains(at.getCategory())) {
 					temp.add(at);
 				}
 			}
 			result.retainAll(temp);
 		}
 
-		if (styleFilter != null) {
+		if (styleFilter != null && categoryFilter.size() > 0) {
 			temp.clear();
 			for (ArticleType at : result) {
-				if (at.getStyle().equals(styleFilter)) {
+				if (styleFilter.contains(at.getStyle())) {
+					temp.add(at);
+				}
+			}
+			result.retainAll(temp);
+		}
+
+		if (brandFilter != null && brandFilter.size() > 0) {
+			temp.clear();
+			for (ArticleType at : result) {
+				if (brandFilter.contains(at.getBrand())) {
+					temp.add(at);
+				}
+			}
+			result.retainAll(temp);
+		}
+
+		if (colorFilter != null && colorFilter.size() > 0) {
+			temp.clear();
+			for (ArticleType at : result) {
+				if (colorFilter.contains(at.getColor())) {
+					temp.add(at);
+				}
+			}
+			result.retainAll(temp);
+		}
+
+		if (sizeFilter != null && sizeFilter.size() > 0) {
+			temp.clear();
+			for (ArticleType at : result) {
+				if (sizeFilter.contains(at.getSize())) {
 					temp.add(at);
 				}
 			}
@@ -129,13 +191,28 @@ public class ArticleTypeDatabase {
 		articleTypeProvider.setList(filteredArticleTypes);
 	}
 
-	public void setCategoryFilter(String category) {
-		categoryFilter = category;
+	public void setCategoryFilters(Set<String> categories) {
+		categoryFilter = categories;
 		applyFilters();
 	}
 
-	public void setStyleFilter(String style) {
+	public void setStyleFilter(Set<String> style) {
 		styleFilter = style;
+		applyFilters();
+	}
+
+	public void setBrandFilter(Set<String> brand) {
+		brandFilter = brand;
+		applyFilters();
+	}
+
+	public void setColorFilter(Set<String> color) {
+		colorFilter = color;
+		applyFilters();
+	}
+
+	public void setSizeFilter(Set<String> size) {
+		sizeFilter = size;
 		applyFilters();
 	}
 
@@ -145,6 +222,18 @@ public class ArticleTypeDatabase {
 
 	public void addStyleDisplay(HasData<String> display) {
 		styleProvider.addDataDisplay(display);
+	}
+
+	public void addBrandDisplay(HasData<String> display) {
+		brandProvider.addDataDisplay(display);
+	}
+
+	public void addColorDisplay(HasData<String> display) {
+		colorProvider.addDataDisplay(display);
+	}
+
+	public void addSizeDisplay(HasData<String> display) {
+		sizeProvider.addDataDisplay(display);
 	}
 
 	public void addArticleTypeDisplay(HasData<ArticleType> display) {
