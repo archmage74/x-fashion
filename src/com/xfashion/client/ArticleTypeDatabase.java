@@ -55,7 +55,7 @@ public class ArticleTypeDatabase {
 
 	private ListDataProvider<ArticleType> articleTypeProvider;
 
-	private Set<String> categoryFilter = null;
+	private String categoryFilter = null;
 	private Set<String> styleFilter = null;
 	private Set<String> brandFilter = null;
 	private Set<String> colorFilter = null;
@@ -138,16 +138,16 @@ public class ArticleTypeDatabase {
 		ArrayList<ArticleType> result = new ArrayList<ArticleType>(articleTypes);
 		ArrayList<ArticleType> temp = new ArrayList<ArticleType>();
 
-		if (categoryFilter != null && categoryFilter.size() > 0) {
+		if (categoryFilter != null) {
 			for (ArticleType at : result) {
-				if (categoryFilter.contains(at.getCategory())) {
+				if (categoryFilter.equals(at.getCategory())) {
 					temp.add(at);
 				}
 			}
 			result.retainAll(temp);
 		}
 
-		if (styleFilter != null && categoryFilter.size() > 0) {
+		if (styleFilter != null && styleFilter.size() > 0) {
 			temp.clear();
 			for (ArticleType at : result) {
 				if (styleFilter.contains(at.getStyle())) {
@@ -191,8 +191,8 @@ public class ArticleTypeDatabase {
 		articleTypeProvider.setList(filteredArticleTypes);
 	}
 
-	public void setCategoryFilters(Set<String> categories) {
-		categoryFilter = categories;
+	public void setCategoryFilter(String category) {
+		categoryFilter = category;
 		applyFilters();
 	}
 

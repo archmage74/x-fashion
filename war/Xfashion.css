@@ -13,7 +13,7 @@ h1#logo {
 .filterLabel {
 	font-size: 20px;
 	font-weight: bold;
-	color: silver;
+	color: white;
 	padding-top: 2px;
 	margin-left: 1px;
 	margin-right: 1px;
@@ -24,6 +24,7 @@ h1#logo {
 	border: 1px solid silver;
 	background-color: black;
 	width: 100%;
+	margin-bottom: 5px;
 }
 
 .categoryList {
@@ -38,6 +39,13 @@ h1#logo {
 	margin-left: 1px;
 	margin-right: 1px;
 	width: 150px;
+}
+
+.sizeList {
+	border: 1px solid silver;
+	margin-left: 1px;
+	margin-right: 1px;
+	width: 50px;
 }
 
 .articleTypeList {
@@ -62,6 +70,149 @@ h1#logo {
 
 #itemType {
 	color: ff0000;
+}
+
+#categoryUnselected {
+	padding: 7px;
+}
+
+.categoryFemaleTrousers {
+	color: white;
+	background: #2B3781;
+}
+#categoryFemaleTrousersSelected {
+	color: #fff;
+	background-color: #6F77AA;
+	border: 2px solid #2B3781;
+	padding: 5px;
+}
+.categoryMaleTrousers {
+	color: white;
+	background: #2B3781;
+}
+#categoryMaleTrousersSelected {
+	color: #fff;
+	background-color: #6F77AA;
+	border: 2px solid #2B3781;
+	padding: 5px;
+}
+.categoryFemaleTop {
+	color: white;
+	background: #f66;
+}
+#categoryFemaleTopSelected {
+	color: #fff;
+	background-color: #f66;
+	border: 2px solid #2B3781;
+}
+.categoryMaleTop {
+	color: white;
+	background: #77f;
+}
+#categoryMaleTopSelected {
+	color: #fff;
+	background-color: #77f;
+	border: 2px solid #2B3781;
+}
+.categorySkirt {
+	color: white;
+	background: #fa6;
+}
+#categorySkirtSelected {
+	color: #fff;
+	background-color: #fa6;
+	border: 2px solid #2B3781;
+}
+.categoryStockings {
+	color: white;
+	background: #7e7;
+}
+#categoryStockingsSelected {
+	color: #fff;
+	background-color: #7e7;
+	border: 2px solid #2B3781;
+}
+.categoryBelt {
+	color: white;
+	background: #ca8;
+}
+#categoryBeltSelected {
+	color: #fff;
+	background-color: #ca8;
+	border: 2px solid #2B3781;
+}
+.categoryBathing {
+	color: white;
+	background: #cc7;
+}
+#categoryBathingSelected {
+	color: #fff;
+	background-color: #dd8;
+	border: 2px solid #2B3781;
+}
+.categoryAccessories {
+	color: white;
+	background: #666;
+}
+#categoryAccessoriesSelected {
+	color: #fff;
+	background-color: #666;
+	border: 2px solid #2B3781;
+}
+.articleCell {
+	border-collapse: collapse;
+	margin: 3px;
+}
+.articleIconTd {
+	width: 51px;
+	height: 51px;
+	vertical-align: middle;
+	text-align: center;
+	padding-top: 1px;
+}
+.articleIconImage {
+	width: 45px;
+	height: 45px;
+	border: 1px solid silver;
+	padding: 1px;
+	margin: 0px;
+}
+.articleUpLe {
+	text-align: center; 
+	width: 100px;
+	height: 25px;
+	border-bottom: 1px solid silver;
+}
+.articleUpCe {
+	text-align: center; 
+	width: 100px;
+	height: 25px;
+	border-bottom: 1px solid silver;
+	border-left: 1px solid silver;
+	border-right: 1px solid silver; 
+}
+.articleUpRi {
+	text-align: center;
+	width: 100px;
+	height: 25px;
+	border-bottom: 1px solid silver; 
+}
+.articleBoLe {
+	text-align: center;
+	width: 100px;
+	height: 25px;
+}
+.articleBoCe {
+	text-align: center;
+	width: 100px;
+	height: 25px;
+	border-left: 1px solid silver;
+	border-right: 1px solid silver; 
+}
+.articleBoRi {
+	text-align: center;
+	width: 100px;
+	height: 25px;
 }
 
 /** Set ids using widget.getElement().setId("idOfElement") */

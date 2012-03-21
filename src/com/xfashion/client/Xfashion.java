@@ -46,13 +46,48 @@ public class Xfashion implements EntryPoint {
 	// private final GreetingServiceAsync greetingService =
 	// GWT.create(GreetingService.class);
 
+	private Panel mainPanel;
+	private String mainPanelStyle;
+	
+	HorizontalPanel categoryHeaderPanel;
+	HorizontalPanel styleHeaderPanel;
+	HorizontalPanel brandHeaderPanel;
+	HorizontalPanel sizeHeaderPanel;
+	HorizontalPanel colorHeaderPanel;
+	HorizontalPanel articleHeaderPanel;
+	
+	private static String selectedCategory = "";
+	
 	static class CategoryCell extends AbstractCell<String> {
 		@Override
 		public void render(Context context, String category, SafeHtmlBuilder sb) {
 			if (category == null) {
 				return;
 			}
-			sb.appendHtmlConstant("<div style=\"height:32px; margin-left:3px; margin-right:3px; font-size:20px;\">");
+			System.out.println("sel: " + selectedCategory);
+			String categoryId = "categoryUnselected";
+			if (category.equals("Herrenhose") && category.equals(selectedCategory)) {
+				categoryId = "categoryMaleTrousersSelected";
+			} else if (category.equals("Damenhose") && category.equals(selectedCategory)) {
+				categoryId = "categoryFemaleTrousersSelected";
+			} else if (category.equals("Herrenoberteil") && category.equals(selectedCategory)) {
+				categoryId = "categoryMaleTopSelected";
+			} else if (category.equals("Damenoberteil") && category.equals(selectedCategory)) {
+				categoryId = "categoryFemaleTopSelected";
+			} else if (category.equals("Kleider") && category.equals(selectedCategory)) {
+				categoryId = "categorySkirtSelected";
+			} else if (category.equals("Strumpfwaren") && category.equals(selectedCategory)) {
+				categoryId = "categoryStockingsSelected";
+			} else if (category.equals("Gürtel") && category.equals(selectedCategory)) {
+				categoryId = "categoryBeltSelected";
+			} else if (category.equals("Bademode") && category.equals(selectedCategory)) {
+				categoryId = "categoryBathingSelected";
+			} else if (category.equals("Accessoirs") && category.equals(selectedCategory)) {
+				categoryId = "categoryAccessoriesSelected";
+			}
+
+			sb.appendHtmlConstant("<div id=\"" + categoryId + "\">");
+//			sb.appendHtmlConstant("<div class=\"" + categoryClass + "\"style=\"color: " + color + " height:32px; margin-left:3px; margin-right:3px; font-size:20px; \">");
 			sb.appendHtmlConstant(category);
 			sb.appendHtmlConstant("</div>");
 		}
@@ -76,22 +111,22 @@ public class Xfashion implements EntryPoint {
 			if (articleType == null) {
 				return;
 			}
-			sb.appendHtmlConstant("<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\">");
+			sb.appendHtmlConstant("<table class=\"articleCell\">");
 			sb.appendHtmlConstant("<tr>");
-			sb.appendHtmlConstant("<td width=\"30px\" align=\"center\" rowspan=\"3\">IMG</td>");
-			sb.appendHtmlConstant("<td width=\"100px\" align=\"center\" style=\"border-bottom:1px solid silver;\">");
-			sb.appendEscaped(articleType.getName());
-			sb.appendHtmlConstant("</td><td width=\"100px\" align=\"center\" style=\"border-bottom:1px solid silver; border-left:1px solid silver; border-right:1px solid silver\">");
-			sb.appendEscaped(articleType.getBrand());
-			sb.appendHtmlConstant("</td><td width=\"100px\" align=\"center\" style=\"border-bottom:1px solid silver;\">");
+			sb.appendHtmlConstant("<td class=\"articleIconTd\" rowspan=\"2\"><img class=\"articleIconImage\" src=\"trouserIcon.png\" /></td>");
+			sb.appendHtmlConstant("<td class=\"articleUpLe\">");
 			sb.appendEscaped(articleType.getCategory());
-			sb.appendHtmlConstant("</td></tr>");
-			sb.appendHtmlConstant("<tr><td align=\"center\">");
-			sb.appendEscaped(articleType.getStyle());
-			sb.appendHtmlConstant("</td><td align=\"center\" style=\"border-left:1px solid silver; border-right:1px solid silver\">");
-			sb.appendEscaped(articleType.getSize());
-			sb.appendHtmlConstant("</td><td align=\"center\">");
+			sb.appendHtmlConstant("</td><td class=\"articleUpCe\">");
+			sb.appendEscaped(articleType.getName());
+			sb.appendHtmlConstant("</td><td class=\"articleUpRi\">");
 			sb.appendEscaped(articleType.getColor());
+			sb.appendHtmlConstant("</td></tr><tr>");
+			sb.appendHtmlConstant("<td class=\"articleBoLe\">");
+			sb.appendEscaped(articleType.getStyle());
+			sb.appendHtmlConstant("</td><td class=\"articleBoCe\">");
+			sb.appendEscaped(articleType.getBrand());
+			sb.appendHtmlConstant("</td><td class=\"articleBoRi\">");
+			sb.appendEscaped(articleType.getSize());
 			sb.appendHtmlConstant("</td></tr></table>");
 		}
 	}
@@ -100,7 +135,7 @@ public class Xfashion implements EntryPoint {
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
-		final Panel mainPanel = new HorizontalPanel();
+		mainPanel = new HorizontalPanel();
 
 		ArticleTypeDatabase articleTypeDatabase = new ArticleTypeDatabase();
 
@@ -115,17 +150,35 @@ public class Xfashion implements EntryPoint {
 
 	}
 
+	private void setHeaderStyle(String style) {
+		if (mainPanelStyle != null) {
+			categoryHeaderPanel.removeStyleName(mainPanelStyle);
+			styleHeaderPanel.removeStyleName(mainPanelStyle);
+			brandHeaderPanel.removeStyleName(mainPanelStyle);
+			sizeHeaderPanel.removeStyleName(mainPanelStyle);
+			colorHeaderPanel.removeStyleName(mainPanelStyle);
+			articleHeaderPanel.removeStyleName(mainPanelStyle);
+		}
+		mainPanelStyle = style;
+		if (mainPanelStyle != null) {
+			categoryHeaderPanel.addStyleName(style);
+			styleHeaderPanel.addStyleName(style);
+			brandHeaderPanel.addStyleName(style);
+			sizeHeaderPanel.addStyleName(style);
+			colorHeaderPanel.addStyleName(style);
+			articleHeaderPanel.addStyleName(style);
+		}
+	}
+	
 	private Panel createCategoryPanel(final ArticleTypeDatabase articleTypeDatabase) {
 		VerticalPanel panel = new VerticalPanel();
 
-		HorizontalPanel headerPanel = new HorizontalPanel();
-		headerPanel.addStyleName("filterHeader");
-		Button clearButton = new Button("clr");
-		headerPanel.add(clearButton);
-		Label label = new Label("Kategorie");
-		label.addStyleName("filterLabel");
-		headerPanel.add(label);
-		panel.add(headerPanel);
+		categoryHeaderPanel = new HorizontalPanel();
+		categoryHeaderPanel.addStyleName("filterHeader");
+		Label categoryLabel = new Label("Kategorie");
+		categoryLabel.addStyleName("filterLabel");
+		categoryHeaderPanel.add(categoryLabel);
+		panel.add(categoryHeaderPanel);
 
 		CategoryCell categoryCell = new CategoryCell();
 		final CellList<String> categoryList = new CellList<String>(categoryCell, GWT.<CategoryListResources> create(CategoryListResources.class));
@@ -133,18 +186,33 @@ public class Xfashion implements EntryPoint {
 //		categoryList.setKeyboardPagingPolicy(KeyboardPagingPolicy.INCREASE_RANGE);
 //		categoryList.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
 
-		final MultiSelectionModel<String> selectionModel = new MultiSelectionModel<String>();
+		final SingleSelectionModel<String> selectionModel = new SingleSelectionModel<String>();
 		categoryList.setSelectionModel(selectionModel);
 		selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 			public void onSelectionChange(SelectionChangeEvent event) {
-				articleTypeDatabase.setCategoryFilters(selectionModel.getSelectedSet());
-			}
-		});
-		clearButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				selectionModel.clear();
-//				articleTypeDatabase.setCategoryFilters(selectionModel.getSelectedSet());
+				selectedCategory = selectionModel.getSelectedObject();
+				if (selectionModel.getSelectedObject() != null) {
+					if (selectionModel.getSelectedObject().equals("Damenhose")) {
+						setHeaderStyle("categoryFemaleTrousers");
+					} else if (selectionModel.getSelectedObject().equals("Herrenhose")) {
+						setHeaderStyle("categoryMaleTrousers");
+					} else if (selectionModel.getSelectedObject().equals("Damenoberteil")) {
+						setHeaderStyle("categoryFemaleTop");
+					} else if (selectionModel.getSelectedObject().equals("Herrenoberteil")) {
+						setHeaderStyle("categoryMaleTop");
+					} else if (selectionModel.getSelectedObject().equals("Kleider")) {
+						setHeaderStyle("categorySkirt");
+					} else if (selectionModel.getSelectedObject().equals("Strumpfwaren")) {
+						setHeaderStyle("categoryStockings");
+					} else if (selectionModel.getSelectedObject().equals("Gürtel")) {
+						setHeaderStyle("categoryBelt");
+					} else if (selectionModel.getSelectedObject().equals("Bademode")) {
+						setHeaderStyle("categoryBathing");
+					} else if (selectionModel.getSelectedObject().equals("Accessoirs")) {
+						setHeaderStyle("categoryAccessories");
+					}
+				}
+				articleTypeDatabase.setCategoryFilter(selectionModel.getSelectedObject());
 			}
 		});
 		articleTypeDatabase.addCategoryDisplay(categoryList);
@@ -158,14 +226,14 @@ public class Xfashion implements EntryPoint {
 	private Panel createStylePanel(final ArticleTypeDatabase articleTypeDatabase) {
 		VerticalPanel panel = new VerticalPanel();
 
-		HorizontalPanel headerPanel = new HorizontalPanel();
-		headerPanel.addStyleName("filterHeader");
+		styleHeaderPanel = new HorizontalPanel();
+		styleHeaderPanel.addStyleName("filterHeader");
 		Button clearButton = new Button("clr");
-		headerPanel.add(clearButton);
+		styleHeaderPanel.add(clearButton);
 		Label label = new Label("Style");
 		label.addStyleName("filterLabel");
-		headerPanel.add(label);
-		panel.add(headerPanel);
+		styleHeaderPanel.add(label);
+		panel.add(styleHeaderPanel);
 
 		StyleCell styleCell = new StyleCell();
 		CellList<String> styleList = new CellList<String>(styleCell, GWT.<StyleListResources> create(StyleListResources.class));
@@ -197,14 +265,14 @@ public class Xfashion implements EntryPoint {
 	private Panel createBrandPanel(final ArticleTypeDatabase articleTypeDatabase) {
 		VerticalPanel panel = new VerticalPanel();
 
-		HorizontalPanel headerPanel = new HorizontalPanel();
-		headerPanel.addStyleName("filterHeader");
+		brandHeaderPanel = new HorizontalPanel();
+		brandHeaderPanel.addStyleName("filterHeader");
 		Button clearButton = new Button("clr");
-		headerPanel.add(clearButton);
+		brandHeaderPanel.add(clearButton);
 		Label label = new Label("Marke");
 		label.addStyleName("filterLabel");
-		headerPanel.add(label);
-		panel.add(headerPanel);
+		brandHeaderPanel.add(label);
+		panel.add(brandHeaderPanel);
 
 		StyleCell styleCell = new StyleCell();
 		CellList<String> styleList = new CellList<String>(styleCell, GWT.<StyleListResources> create(StyleListResources.class));
@@ -236,14 +304,14 @@ public class Xfashion implements EntryPoint {
 	private Panel createColorPanel(final ArticleTypeDatabase articleTypeDatabase) {
 		VerticalPanel panel = new VerticalPanel();
 
-		HorizontalPanel headerPanel = new HorizontalPanel();
-		headerPanel.addStyleName("filterHeader");
+		colorHeaderPanel = new HorizontalPanel();
+		colorHeaderPanel.addStyleName("filterHeader");
 		Button clearButton = new Button("clr");
-		headerPanel.add(clearButton);
+		colorHeaderPanel.add(clearButton);
 		Label label = new Label("Farbe");
 		label.addStyleName("filterLabel");
-		headerPanel.add(label);
-		panel.add(headerPanel);
+		colorHeaderPanel.add(label);
+		panel.add(colorHeaderPanel);
 
 		StyleCell styleCell = new StyleCell();
 		CellList<String> styleList = new CellList<String>(styleCell, GWT.<StyleListResources> create(StyleListResources.class));
@@ -275,20 +343,21 @@ public class Xfashion implements EntryPoint {
 	private Panel createSizePanel(final ArticleTypeDatabase articleTypeDatabase) {
 		VerticalPanel panel = new VerticalPanel();
 
-		HorizontalPanel headerPanel = new HorizontalPanel();
-		headerPanel.addStyleName("filterHeader");
-		Button clearButton = new Button("clr");
-		headerPanel.add(clearButton);
+		sizeHeaderPanel = new HorizontalPanel();
+		sizeHeaderPanel.addStyleName("filterHeader");
+		// Button clearButton = new Button("clr");
+		// sizeHeaderPanel.add(clearButton);
 		Label label = new Label("Größe");
 		label.addStyleName("filterLabel");
-		headerPanel.add(label);
-		panel.add(headerPanel);
+		sizeHeaderPanel.add(label);
+		panel.add(sizeHeaderPanel);
 
+		HorizontalPanel cellListPanel = new HorizontalPanel();
+		panel.add(cellListPanel);
+		
 		StyleCell styleCell = new StyleCell();
 		CellList<String> styleList = new CellList<String>(styleCell, GWT.<StyleListResources> create(StyleListResources.class));
 		styleList.setPageSize(30);
-//		styleList.setKeyboardPagingPolicy(KeyboardPagingPolicy.INCREASE_RANGE);
-//		styleList.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
 
 		final MultiSelectionModel<String> selectionModel = new MultiSelectionModel<String>();
 		styleList.setSelectionModel(selectionModel);
@@ -297,16 +366,37 @@ public class Xfashion implements EntryPoint {
 				articleTypeDatabase.setSizeFilter(selectionModel.getSelectedSet());
 			}
 		});
-		clearButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				selectionModel.clear();
+		cellListPanel.add(styleList);
+		articleTypeDatabase.addSizeDisplay(styleList);
+		styleList.addStyleName("sizeList");
+
+		
+		styleList = new CellList<String>(styleCell, GWT.<StyleListResources> create(StyleListResources.class));
+		styleList.setPageSize(30);
+		final MultiSelectionModel<String> selectionModel2 = new MultiSelectionModel<String>();
+		styleList.setSelectionModel(selectionModel2);
+		selectionModel2.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+			public void onSelectionChange(SelectionChangeEvent event) {
+				articleTypeDatabase.setSizeFilter(selectionModel2.getSelectedSet());
 			}
 		});
-
+		cellListPanel.add(styleList);
 		articleTypeDatabase.addSizeDisplay(styleList);
-		styleList.addStyleName("styleList");
-		panel.add(styleList);
+		styleList.addStyleName("sizeList");
+
+		
+		styleList = new CellList<String>(styleCell, GWT.<StyleListResources> create(StyleListResources.class));
+		styleList.setPageSize(30);
+		final MultiSelectionModel<String> selectionModel3 = new MultiSelectionModel<String>();
+		styleList.setSelectionModel(selectionModel3);
+		selectionModel3.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+			public void onSelectionChange(SelectionChangeEvent event) {
+				articleTypeDatabase.setSizeFilter(selectionModel3.getSelectedSet());
+			}
+		});
+		articleTypeDatabase.addSizeDisplay(styleList);
+		styleList.addStyleName("sizeList");
+		cellListPanel.add(styleList);
 
 		return panel;
 	}
@@ -318,13 +408,13 @@ public class Xfashion implements EntryPoint {
 	private Panel createArticleTypeList(ArticleTypeDatabase articleTypeDatabase) {
 		VerticalPanel panel = new VerticalPanel();
 
-		HorizontalPanel headerPanel = new HorizontalPanel();
-		headerPanel.addStyleName("filterHeader");
-		panel.add(headerPanel);
+		articleHeaderPanel = new HorizontalPanel();
+		articleHeaderPanel.addStyleName("filterHeader");
+		panel.add(articleHeaderPanel);
 		Label label = new Label("Artikel");
 		label.addStyleName("filterLabel");
-		headerPanel.add(label);
-		panel.add(headerPanel);
+		articleHeaderPanel.add(label);
+		panel.add(articleHeaderPanel);
 
 		ArticleTypeCell articleTypeCell = new ArticleTypeCell();
 		articleTypeList = new CellList<ArticleType>(articleTypeCell, GWT.<StyleListResources> create(StyleListResources.class));

@@ -4,22 +4,19 @@
 
 .cellListEvenItem {
 	cursor: pointer;
-	zoom: 1;
 }
 
 .cellListOddItem {
 	cursor: pointer;
-	zoom: 1;
+	background-color: #f4f4f4;
 }
 
 .cellListKeyboardSelectedItem {
-	background: #fda;
+	background: #fea;
 }
 
 /* @sprite */
 .cellListSelectedItem { /*  gwt-image: none; */
-	background-color: #f81;
-	color: #06e;
-	height: auto;
+	background-color: #ccc;
 	overflow: visible;
 }
