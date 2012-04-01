@@ -1,7 +1,5 @@
 package com.xfashion.client;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.resources.client.CssResource.ImportedWithPrefix;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.cellview.client.CellList.Style;
 
