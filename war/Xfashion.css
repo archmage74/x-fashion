@@ -9,16 +9,60 @@ h1#logo {
   margin: 0px 0px 0px;
   text-align: left;
 }
-
 .filterLabel {
 	font-size: 20px;
 	font-weight: bold;
-	color: white;
-	padding-top: 2px;
-	margin-left: 1px;
-	margin-right: 1px;
+	color: #fff;
+	padding-top: 3px;
+	margin-left: 2px;
+	margin-right: 2px;
 }
 
+.filterLabelUnselected {
+	font-size: 12px;
+	font-weight: bold;
+	color: #000;
+	height: 18px;
+	padding-top: 2px;
+	margin-top: 1px;
+	margin-right: 4px;
+}
+.filterLabelSelected {
+	font-size: 12px;
+	font-weight: bold;
+	color: #fff;
+	background-color: #6F77AA;
+	border-top: 2px solid #2B3781;
+	border-right: 2px solid #2B3781;
+	border-bottom: 2px solid #2B3781;
+	height: 16px;
+	padding-top: 0px;
+	margin-top: 1px;
+	margin-right: 2px;
+}
+.filterLabelDisabled {
+	font-size: 12px;
+	font-weight: bold;
+	color: #bfbfbf;
+	height: 18px;
+	padding-top: 2px;
+	margin-top: 1px;
+	margin-right: 4px;
+}
+.filterIconEnabled {
+	float: left;
+	padding: 0px;
+	margin-top: 0px;
+	margin-right: 4px;
+	border: 0px;
+}
+.filterIconDisabled {
+	float: left;
+	padding: 0px;
+	margin-top: 0px;
+	margin-right: 4px;
+	border: 0px;
+}
 .filterHeader {
 	padding: 1px;
 	border: 1px solid silver;
@@ -45,7 +89,7 @@ h1#logo {
 	border: 1px solid silver;
 	margin-left: 1px;
 	margin-right: 1px;
-	width: 50px;
+	width: 150px;
 }
 
 .articleTypeList {
@@ -73,91 +117,136 @@ h1#logo {
 }
 
 #categoryUnselected {
+	font-size: 20px;
+	font-weight: bold;
 	padding: 7px;
 }
 
 .categoryFemaleTrousers {
+	font-size: 20px;
+	font-weight: bold;
 	color: white;
-	background: #2B3781;
+	background: #466944;
 }
 #categoryFemaleTrousersSelected {
+	font-size: 20px;
+	font-weight: bold;
 	color: #fff;
-	background-color: #6F77AA;
-	border: 2px solid #2B3781;
+	background-color: #76A573;
+	border: 2px solid #466944;
 	padding: 5px;
 }
 .categoryMaleTrousers {
+	font-size: 20px;
+	font-weight: bold;
 	color: white;
 	background: #2B3781;
 }
 #categoryMaleTrousersSelected {
+	font-size: 20px;
+	font-weight: bold;
 	color: #fff;
 	background-color: #6F77AA;
 	border: 2px solid #2B3781;
 	padding: 5px;
 }
 .categoryFemaleTop {
+	font-size: 20px;
+	font-weight: bold;
 	color: white;
-	background: #f66;
+	background: #74A886;
 }
 #categoryFemaleTopSelected {
+	font-size: 20px;
+	font-weight: bold;
 	color: #fff;
-	background-color: #f66;
-	border: 2px solid #2B3781;
+	background-color: #9EC1AA;
+	border: 2px solid #74A886;
+	padding: 5px;
 }
 .categoryMaleTop {
+	font-size: 20px;
+	font-weight: bold;
 	color: white;
-	background: #77f;
+	background: #919BCA;
 }
 #categoryMaleTopSelected {
+	font-size: 20px;
+	font-weight: bold;
 	color: #fff;
-	background-color: #77f;
-	border: 2px solid #2B3781;
+	background-color: #B2B7D9;
+	border: 2px solid #919BCA;
+	padding: 5px;
 }
 .categorySkirt {
+	font-size: 20px;
+	font-weight: bold;
 	color: white;
-	background: #fa6;
+	background: #B98DBC;
 }
 #categorySkirtSelected {
+	font-size: 20px;
+	font-weight: bold;
 	color: #fff;
-	background-color: #fa6;
-	border: 2px solid #2B3781;
+	background-color: #CEAFD0;
+	border: 2px solid #B98DBC;
+	padding: 5px;
 }
 .categoryStockings {
+	font-size: 20px;
+	font-weight: bold;
 	color: white;
-	background: #7e7;
+	background: #A78C7E;
 }
 #categoryStockingsSelected {
+	font-size: 20px;
+	font-weight: bold;
 	color: #fff;
-	background-color: #7e7;
-	border: 2px solid #2B3781;
+	background-color: #C1AEA5;
+	border: 2px solid #A78C7E;
+	padding: 5px;
 }
 .categoryBelt {
+	font-size: 20px;
+	font-weight: bold;
 	color: white;
-	background: #ca8;
+	background: #71433A;
 }
 #categoryBeltSelected {
+	font-size: 20px;
+	font-weight: bold;
 	color: #fff;
-	background-color: #ca8;
-	border: 2px solid #2B3781;
+	background-color: #9F7F79;
+	border: 2px solid #71433A;
+	padding: 5px;
 }
 .categoryBathing {
+	font-size: 20px;
+	font-weight: bold;
 	color: white;
-	background: #cc7;
+	background: #578C9B;
 }
 #categoryBathingSelected {
+	font-size: 20px;
+	font-weight: bold;
 	color: #fff;
-	background-color: #dd8;
-	border: 2px solid #2B3781;
+	background-color: #8AADB8;
+	border: 2px solid #578C9B;
+	padding: 5px;
 }
 .categoryAccessories {
+	font-size: 20px;
+	font-weight: bold;
 	color: white;
-	background: #666;
+	background: #7C3044;
 }
 #categoryAccessoriesSelected {
+	font-size: 20px;
+	font-weight: bold;
 	color: #fff;
-	background-color: #666;
-	border: 2px solid #2B3781;
+	background-color: #A26E7B;
+	border: 2px solid #7C3044;
+	padding: 5px;
 }
 .articleCell {
 	border-collapse: collapse;

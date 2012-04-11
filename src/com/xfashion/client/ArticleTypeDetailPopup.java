@@ -5,8 +5,11 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.xfashion.shared.ArticleTypeDTO;
 
 public class ArticleTypeDetailPopup {
+
+	PanelMediator panelMediator;
 	
 	DecoratedPopupPanel popup;
 	
@@ -18,8 +21,33 @@ public class ArticleTypeDetailPopup {
 	Label size;
 	Label color;
 	
-	public ArticleTypeDetailPopup() {
-		popup = new DecoratedPopupPanel(true);
+	public ArticleTypeDetailPopup(PanelMediator panelMediator) {
+		this.panelMediator = panelMediator;
+		panelMediator.setArticleTypeDetailPopup(this);
+	}
+	
+	public void showPopup(ArticleTypeDTO articleType) {
+		if (articleType == null) {
+			return;
+		}
+		if (popup == null) {
+			popup = createPopup();
+		}
+		image.setUrl("Jeans2.jpg");
+		image.setWidth(500 + "px");
+		image.setHeight(602 + "px");
+		
+		name.setText(articleType.getName());
+		brand.setText(articleType.getBrand());
+		category.setText(articleType.getCategory());
+		style.setText(articleType.getStyle());
+		size.setText(articleType.getSize());
+		color.setText(articleType.getColor());
+		popup.center();
+	}
+
+	public DecoratedPopupPanel createPopup() {
+		DecoratedPopupPanel popup = new DecoratedPopupPanel(true);
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		HorizontalPanel panel = new HorizontalPanel();
@@ -49,6 +77,7 @@ public class ArticleTypeDetailPopup {
 		panel.add(grid);
 		
 		popup.add(panel);
+		return popup;
 	}
 	
 	private Label createLabel(String text) {
@@ -63,20 +92,4 @@ public class ArticleTypeDetailPopup {
 		return img;
 	}
 
-	public void showPopup(ArticleType articleType) {
-		if (articleType == null) {
-			articleType = new ArticleType();
-		}
-		image.setUrl("Jeans2.jpg");
-		image.setWidth(500 + "px");
-		image.setHeight(602 + "px");
-		
-		name.setText(articleType.getName());
-		brand.setText(articleType.getBrand());
-		category.setText(articleType.getCategory());
-		style.setText(articleType.getStyle());
-		size.setText(articleType.getSize());
-		color.setText(articleType.getColor());
-		popup.center();
-	}
 }
