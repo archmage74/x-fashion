@@ -170,4 +170,7 @@ public class PanelMediator {
 		return at;
 	}
 	
+	public void addArticleType(ArticleTypeDTO articleType) {
+		articleTypeDatabase.addArticleType(articleType);
+	}
 }

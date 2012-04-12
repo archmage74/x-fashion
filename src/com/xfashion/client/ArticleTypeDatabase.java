@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ListDataProvider;
@@ -24,25 +23,25 @@ public class ArticleTypeDatabase {
 	public static final String[] CATEGORIES = { "Damenhose", "Herrenhose", "Damenoberteil", "Herrenoberteil", "Kleider", "Strumpfwaren", "Gürtel",
 			"Bademode", "Accessoirs" };
 
-	public static final String[] NAMES = { "Abbie", "Abigail", "Aimee", "Alexandra", "Alice", "Alicia", "Alisha", "Amber", "Amelia", "Amelie", "Amy",
-			"Anna", "Ava", "Bethany", "Brooke", "Caitlin", "Charlotte", "Chloe", "Courtney", "Daisy", "Eleanor", "Elizabeth", "Ella", "Ellie",
-			"Emilia", "Emily", "Emma", "Erin", "Esme", "Eva", "Eve", "Evelyn", "Evie", "Faith", "Florence", "Francesca", "Freya", "Georgia", "Grace",
-			"Gracie", "Hannah", "Harriet", "Hollie", "Holly", "Imogen", "Isabel", "Isabella", "Isabelle", "Isla", "Isobel", "Jasmine", "Jessica",
-			"Julia", "Katie", "Keira", "Lacey", "Lauren", "Layla", "Leah", "Lexi", "Lexie", "Libby", "Lilly", "Lily", "Lola", "Lucy", "Lydia",
-			"Maddison", "Madison", "Maisie", "Maria", "Martha", "Maryam", "Matilda", "Maya", "Megan", "Mia", "Millie", "Molly", "Niamh", "Nicole",
-			"Olivia", "Paige", "Phoebe", "Poppy", "Rebecca", "Rosie", "Ruby", "Sarah", "Scarlett", "Sienna", "Skye", "Sofia", "Sophia", "Sophie",
-			"Summer", "Tia", "Tilly", "Zara", "Zoe", "Gertrud", "Anna", "Martha", "Frieda", "Erna", "Margarethe", "Elisabeth", "Herta", "Else",
-			"Käthe", "Helene", "Marie", "Emma", "Maria", "Luise", "Charlotte", "Elsa", "Hedwig", "Johanna", "Berta", "Ella", "Klara", "Elfriede",
-			"Paula", "Elli", "Anni", "Hildegard", "Alma", "Minna", "Irma", "Ida", "Dora", "Olga", "Ilse", "Auguste", "Emmi", "Wilhelmine", "Irmgard",
-			"Erika", "Grete", "Meta", "Agnes", "Alice", "Gretchen", "Dorothea", "Katharina", "Anita", "Margaretha ", "Annemarie", "Henny", "Elise",
-			"Emilie", "Rosa", "Wilma", "Carla", "Sophie", "Matilde", "Magda", "Anne", "Lina", "Lucy", "Gerda", "Edith", "Lilly", "Magdalene",
-			"Alwine", "Henriette", "Anneliese", "Franziska", "Hilda", "Hermine", "Caroline", "Marianne", "Lisbeth", "Antonie", "Elsbeth", "Amanda",
-			"Lieselotte", "Walli", "Eva", "Walter", "Karl", "Hans", "Wilhelm", "Heinrich", "Otto", "Paul", "Hermann", "Ernst", "Willi", "Friedrich",
-			"Kurt", "Erich", "Alfred", "Herbert", "Franz", "Fritz", "Rudolf", "Richard", "Johannes", "Max", "Gustav", "Werner", "Adolf", "Johann",
-			"Albert", "Georg", "Emil", "Artur", "Bruno", "August", "Helmut", "Josef", "Robert", "Erwin", "Bernhard", "Gerhard", "Henri", "Ludwig",
-			"Hugo", "Julius", "Heinz", "Peter", "Theodor", "Oskar", "Martin", "Eduard", "Waldemar", "Alwin", "Ewald", "Günter", "Jonni", "Konrad",
-			"Arnold", "Ferdinand", "Reinhold", "John", "Klaus", "Harry", "Berthold", "Christian", "Hinrich", "Edmund", "Alfons", "Joachim", "Toni",
-			"Anton", "Alexander", "Edgar", "Wolfgang", "Eugen", "Arno", "Jakob", "Rolf", "Felix", "Horst", "Hubert", "Andreas", "Leo", "Stefan" };
+//	public static final String[] NAMES = { "Abbie", "Abigail", "Aimee", "Alexandra", "Alice", "Alicia", "Alisha", "Amber", "Amelia", "Amelie", "Amy",
+//			"Anna", "Ava", "Bethany", "Brooke", "Caitlin", "Charlotte", "Chloe", "Courtney", "Daisy", "Eleanor", "Elizabeth", "Ella", "Ellie",
+//			"Emilia", "Emily", "Emma", "Erin", "Esme", "Eva", "Eve", "Evelyn", "Evie", "Faith", "Florence", "Francesca", "Freya", "Georgia", "Grace",
+//			"Gracie", "Hannah", "Harriet", "Hollie", "Holly", "Imogen", "Isabel", "Isabella", "Isabelle", "Isla", "Isobel", "Jasmine", "Jessica",
+//			"Julia", "Katie", "Keira", "Lacey", "Lauren", "Layla", "Leah", "Lexi", "Lexie", "Libby", "Lilly", "Lily", "Lola", "Lucy", "Lydia",
+//			"Maddison", "Madison", "Maisie", "Maria", "Martha", "Maryam", "Matilda", "Maya", "Megan", "Mia", "Millie", "Molly", "Niamh", "Nicole",
+//			"Olivia", "Paige", "Phoebe", "Poppy", "Rebecca", "Rosie", "Ruby", "Sarah", "Scarlett", "Sienna", "Skye", "Sofia", "Sophia", "Sophie",
+//			"Summer", "Tia", "Tilly", "Zara", "Zoe", "Gertrud", "Anna", "Martha", "Frieda", "Erna", "Margarethe", "Elisabeth", "Herta", "Else",
+//			"Käthe", "Helene", "Marie", "Emma", "Maria", "Luise", "Charlotte", "Elsa", "Hedwig", "Johanna", "Berta", "Ella", "Klara", "Elfriede",
+//			"Paula", "Elli", "Anni", "Hildegard", "Alma", "Minna", "Irma", "Ida", "Dora", "Olga", "Ilse", "Auguste", "Emmi", "Wilhelmine", "Irmgard",
+//			"Erika", "Grete", "Meta", "Agnes", "Alice", "Gretchen", "Dorothea", "Katharina", "Anita", "Margaretha ", "Annemarie", "Henny", "Elise",
+//			"Emilie", "Rosa", "Wilma", "Carla", "Sophie", "Matilde", "Magda", "Anne", "Lina", "Lucy", "Gerda", "Edith", "Lilly", "Magdalene",
+//			"Alwine", "Henriette", "Anneliese", "Franziska", "Hilda", "Hermine", "Caroline", "Marianne", "Lisbeth", "Antonie", "Elsbeth", "Amanda",
+//			"Lieselotte", "Walli", "Eva", "Walter", "Karl", "Hans", "Wilhelm", "Heinrich", "Otto", "Paul", "Hermann", "Ernst", "Willi", "Friedrich",
+//			"Kurt", "Erich", "Alfred", "Herbert", "Franz", "Fritz", "Rudolf", "Richard", "Johannes", "Max", "Gustav", "Werner", "Adolf", "Johann",
+//			"Albert", "Georg", "Emil", "Artur", "Bruno", "August", "Helmut", "Josef", "Robert", "Erwin", "Bernhard", "Gerhard", "Henri", "Ludwig",
+//			"Hugo", "Julius", "Heinz", "Peter", "Theodor", "Oskar", "Martin", "Eduard", "Waldemar", "Alwin", "Ewald", "Günter", "Jonni", "Konrad",
+//			"Arnold", "Ferdinand", "Reinhold", "John", "Klaus", "Harry", "Berthold", "Christian", "Hinrich", "Edmund", "Alfons", "Joachim", "Toni",
+//			"Anton", "Alexander", "Edgar", "Wolfgang", "Eugen", "Arno", "Jakob", "Rolf", "Felix", "Horst", "Hubert", "Andreas", "Leo", "Stefan" };
 
 	public static final String[] STYLES = { "Jeans", "Jeggings", "Jeanos", "Capri", "Bermuda", "Short", "Hot Pants" };
 
@@ -77,18 +76,20 @@ public class ArticleTypeDatabase {
 	}
 
 	public void init() {
-		readCategories();
-		readStyles();
-		styleFilter = new HashSet<String>();
-		readBrands();
-		brandFilter = new HashSet<String>();
-		createArticleTypes();
 		createCategoryProvider();
 		createStyleProvider();
 		createBrandProvider();
 		createColorProvider();
 		createSizeProvider();
 		createArticleTypeProvider();
+
+		readCategories();
+		readStyles();
+		readBrands();
+		readArticleTypes();
+
+		styleFilter = new HashSet<String>();
+		brandFilter = new HashSet<String>();
 	}
 
 	public void createCategories() {
@@ -152,6 +153,21 @@ public class ArticleTypeDatabase {
 		articleTypeService.readBrands(callback);
 	}
 	
+	private void readArticleTypes() {
+		AsyncCallback<List<ArticleTypeDTO>> callback = new AsyncCallback<List<ArticleTypeDTO>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+			}
+			@Override
+			public void onSuccess(List<ArticleTypeDTO> result) {
+				articleTypeProvider.getList().clear();
+				articleTypes = new ArrayList<ArticleTypeDTO>(result);
+				articleTypeProvider.getList().addAll(result);
+			}
+		};
+		articleTypeService.readArticleTypes(callback);
+	}
+	
 	private void createCategoryProvider() {
 		categoryProvider = new ListDataProvider<CategoryDTO>();
 	}
@@ -181,24 +197,7 @@ public class ArticleTypeDatabase {
 	}
 	
 	private void createArticleTypeProvider() {
-		articleTypeProvider = new ListDataProvider<ArticleTypeDTO>(filteredArticleTypes);
-	}
-	
-	private void createArticleTypes() {
-		articleTypes = new ArrayList<ArticleTypeDTO>();
-		for (String name : NAMES) {
-			ArticleTypeDTO at = new ArticleTypeDTO();
-			at.setName(name);
-			at.setCategory(CATEGORIES[Random.nextInt(CATEGORIES.length)]);
-			at.setStyle(STYLES[Random.nextInt(STYLES.length)]);
-			at.setBrand(BRANDS[Random.nextInt(BRANDS.length)]);
-			at.setSize(SIZES[Random.nextInt(SIZES.length)]);
-			at.setColor(COLORS[Random.nextInt(COLORS.length)]);
-			if (!(at.getCategory().equals("Herrenhose") && at.getStyle().equals("Hot Pants"))) {
-				articleTypes.add(at);
-			}
-		}
-		filteredArticleTypes = new ArrayList<ArticleTypeDTO>(articleTypes);
+		articleTypeProvider = new ListDataProvider<ArticleTypeDTO>();
 	}
 	
 	public void applyFilters() {
@@ -299,7 +298,7 @@ public class ArticleTypeDatabase {
 		List<String> brandOfArticles = new ArrayList<String>();
 		List<ArticleTypeDTO> articlesOfCategory = applyCategoryFilter(new ArrayList<ArticleTypeDTO>(articleTypes), categoryFilter);
 		for (ArticleTypeDTO at : articlesOfCategory) {
-			brandOfArticles.add(at.getStyle());
+			brandOfArticles.add(at.getBrand());
 		}
 		List<BrandCellData> brandCells = brandProvider.getList();
 		for (BrandCellData bcd : brandCells) {
@@ -307,6 +306,10 @@ public class ArticleTypeDatabase {
 			bcd.setSelected(brandFilter.contains(bcd.getName()));
 		}
 		brandProvider.refresh();
+	}
+	
+	public void updateArticleTypeProvider() {
+		
 	}
 
 	public Set<String> getStyleFilter() {
@@ -399,6 +402,22 @@ public class ArticleTypeDatabase {
 		articleTypeService.addBrand(dto, callback);
 	}
 
+	public void addArticleType(final ArticleTypeDTO articleType) {
+		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+			@Override
+			public void onFailure(Throwable caught) { }
+			@Override
+			public void onSuccess(Void result) {
+				articleTypes.add(articleType);
+				// articleTypeProvider.getList().add(articleType);
+				updateStyleProvider();
+				updateBrandProvider();
+				applyFilters();
+			}
+		};
+		articleTypeService.addArticleType(articleType, callback);
+	}
+	
 	public class StyleCell {
 		public String name;
 		public boolean available;

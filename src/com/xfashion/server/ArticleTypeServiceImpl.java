@@ -8,6 +8,7 @@ import javax.jdo.Query;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.xfashion.client.ArticleTypeService;
+import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.BrandDTO;
 import com.xfashion.shared.CategoryDTO;
 import com.xfashion.shared.StyleDTO;
@@ -153,6 +154,52 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 			Brand brand = new Brand();
 			brand.setName(dto.getName());
 			pm.makePersistent(brand);
+		} finally {
+			pm.close();
+		}
+	}
+
+	@Override
+	public List<ArticleTypeDTO> readArticleTypes() throws IllegalArgumentException {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		List<ArticleTypeDTO> dtos = new ArrayList<ArticleTypeDTO>(); 
+		try {
+			List<ArticleType> ats = readArticleTypes(pm);
+			for (ArticleType at : ats) {
+				ArticleTypeDTO dto = new ArticleTypeDTO();
+				dto.setName(at.getName());
+				dto.setCategory(at.getCategory());
+				dto.setStyle(at.getStyle());
+				dto.setBrand(at.getBrand());
+				dto.setColor(at.getColor());
+				dto.setSize(at.getSize());
+				dtos.add(dto);
+			}
+		} finally {
+			pm.close();
+		}
+		return dtos;
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<ArticleType> readArticleTypes(PersistenceManager pm) {
+		Query query = pm.newQuery(ArticleType.class);
+		List<ArticleType> articleTypes = (List<ArticleType>) query.execute();
+		return articleTypes;
+	}
+
+	@Override
+	public void addArticleType(ArticleTypeDTO dto) throws IllegalArgumentException {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			ArticleType articleType = new ArticleType();
+			articleType.setName(dto.getName());
+			articleType.setCategory(dto.getCategory());
+			articleType.setStyle(dto.getStyle());
+			articleType.setBrand(dto.getBrand());
+			articleType.setColor(dto.getColor());
+			articleType.setSize(dto.getSize());
+			pm.makePersistent(articleType);
 		} finally {
 			pm.close();
 		}

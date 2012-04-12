@@ -22,6 +22,7 @@ public class CreateArticleTypePopup {
 	private Label colorLabel = null;
 	private Label sizeLabel = null;
 	
+	private ArticleTypeDTO currentArticleType = null;
 	private PanelMediator panelMediator = null;
 	
 	public CreateArticleTypePopup(PanelMediator panelMediator) {
@@ -33,6 +34,7 @@ public class CreateArticleTypePopup {
 		if (popup == null) {
 			popup = createPopup();
 		}
+		currentArticleType = articleType;
 		categoryLabel.setText(articleType.getCategory());
 		styleLabel.setText(articleType.getStyle());
 		brandLabel.setText(articleType.getBrand());
@@ -65,7 +67,8 @@ public class CreateArticleTypePopup {
 			@Override
 			public void onClick(ClickEvent event) {
 				if(nameTextBox.getText() != null && nameTextBox.getText().length() > 0) {
-					// panelMediator.addArticleType(nameTextBox.getText());
+					currentArticleType.setName(nameTextBox.getText());
+					panelMediator.addArticleType(currentArticleType);
 				}
 				popup.hide();
 			}

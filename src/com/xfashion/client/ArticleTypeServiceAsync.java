@@ -3,6 +3,7 @@ package com.xfashion.client;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.BrandDTO;
 import com.xfashion.shared.CategoryDTO;
 import com.xfashion.shared.StyleDTO;
@@ -22,5 +23,9 @@ public interface ArticleTypeServiceAsync {
 	void readBrands(AsyncCallback<List<BrandDTO>> callback);
 
 	void addBrand(BrandDTO brand, AsyncCallback<Void> callback);
+
+	void addArticleType(ArticleTypeDTO articleType, AsyncCallback<Void> callback);
+
+	void readArticleTypes(AsyncCallback<List<ArticleTypeDTO>> callback);
 
 }
