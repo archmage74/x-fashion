@@ -31,10 +31,6 @@ h1#logo {
 	font-size: 12px;
 	font-weight: bold;
 	color: #fff;
-	background-color: #6F77AA;
-	border-top: 2px solid #2B3781;
-	border-right: 2px solid #2B3781;
-	border-bottom: 2px solid #2B3781;
 	height: 16px;
 	padding-top: 0px;
 	margin-top: 1px;
@@ -116,137 +112,22 @@ h1#logo {
 	color: ff0000;
 }
 
-#categoryUnselected {
+.categoryUnselected {
 	font-size: 20px;
 	font-weight: bold;
 	padding: 7px;
 }
-
-.categoryFemaleTrousers {
-	font-size: 20px;
-	font-weight: bold;
-	color: white;
-	background: #466944;
-}
-#categoryFemaleTrousersSelected {
+.categorySelected {
 	font-size: 20px;
 	font-weight: bold;
 	color: #fff;
-	background-color: #76A573;
-	border: 2px solid #466944;
 	padding: 5px;
 }
-.categoryMaleTrousers {
+.categoryMtrs {
 	font-size: 20px;
 	font-weight: bold;
 	color: white;
 	background: #2B3781;
-}
-#categoryMaleTrousersSelected {
-	font-size: 20px;
-	font-weight: bold;
-	color: #fff;
-	background-color: #6F77AA;
-	border: 2px solid #2B3781;
-	padding: 5px;
-}
-.categoryFemaleTop {
-	font-size: 20px;
-	font-weight: bold;
-	color: white;
-	background: #74A886;
-}
-#categoryFemaleTopSelected {
-	font-size: 20px;
-	font-weight: bold;
-	color: #fff;
-	background-color: #9EC1AA;
-	border: 2px solid #74A886;
-	padding: 5px;
-}
-.categoryMaleTop {
-	font-size: 20px;
-	font-weight: bold;
-	color: white;
-	background: #919BCA;
-}
-#categoryMaleTopSelected {
-	font-size: 20px;
-	font-weight: bold;
-	color: #fff;
-	background-color: #B2B7D9;
-	border: 2px solid #919BCA;
-	padding: 5px;
-}
-.categorySkirt {
-	font-size: 20px;
-	font-weight: bold;
-	color: white;
-	background: #B98DBC;
-}
-#categorySkirtSelected {
-	font-size: 20px;
-	font-weight: bold;
-	color: #fff;
-	background-color: #CEAFD0;
-	border: 2px solid #B98DBC;
-	padding: 5px;
-}
-.categoryStockings {
-	font-size: 20px;
-	font-weight: bold;
-	color: white;
-	background: #A78C7E;
-}
-#categoryStockingsSelected {
-	font-size: 20px;
-	font-weight: bold;
-	color: #fff;
-	background-color: #C1AEA5;
-	border: 2px solid #A78C7E;
-	padding: 5px;
-}
-.categoryBelt {
-	font-size: 20px;
-	font-weight: bold;
-	color: white;
-	background: #71433A;
-}
-#categoryBeltSelected {
-	font-size: 20px;
-	font-weight: bold;
-	color: #fff;
-	background-color: #9F7F79;
-	border: 2px solid #71433A;
-	padding: 5px;
-}
-.categoryBathing {
-	font-size: 20px;
-	font-weight: bold;
-	color: white;
-	background: #578C9B;
-}
-#categoryBathingSelected {
-	font-size: 20px;
-	font-weight: bold;
-	color: #fff;
-	background-color: #8AADB8;
-	border: 2px solid #578C9B;
-	padding: 5px;
-}
-.categoryAccessories {
-	font-size: 20px;
-	font-weight: bold;
-	color: white;
-	background: #7C3044;
-}
-#categoryAccessoriesSelected {
-	font-size: 20px;
-	font-weight: bold;
-	color: #fff;
-	background-color: #A26E7B;
-	border: 2px solid #7C3044;
-	padding: 5px;
 }
 .articleCell {
 	border-collapse: collapse;
@@ -302,6 +183,12 @@ h1#logo {
 	text-align: center;
 	width: 100px;
 	height: 25px;
+}
+.articlePrice {
+	text-align: right;
+	font-size: 20px;
+	width: 100px;
+	height: 50;
 }
 
 /** Set ids using widget.getElement().setId("idOfElement") */
