@@ -7,6 +7,8 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.BrandDTO;
 import com.xfashion.shared.CategoryDTO;
+import com.xfashion.shared.ColorDTO;
+import com.xfashion.shared.SizeDTO;
 import com.xfashion.shared.StyleDTO;
 
 /**
@@ -26,6 +28,14 @@ public interface ArticleTypeService extends RemoteService {
 	List<BrandDTO> readBrands() throws IllegalArgumentException;
 	
 	void addBrand(BrandDTO brand) throws IllegalArgumentException;
+	
+	List<SizeDTO> readSizes() throws IllegalArgumentException;
+	
+	void addSize(SizeDTO brand) throws IllegalArgumentException;
+	
+	List<ColorDTO> readColors() throws IllegalArgumentException;
+	
+	void addColor(ColorDTO brand) throws IllegalArgumentException;
 	
 	void saveCategory(CategoryDTO category) throws IllegalArgumentException;
 	

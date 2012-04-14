@@ -10,8 +10,10 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 @PersistenceCapable
 public class ArticleType implements IsSerializable {
 	
-	@PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+	private Long productNumber;
+
+	@PrimaryKey
 	private String name;
 	
 	@Persistent
@@ -29,6 +31,9 @@ public class ArticleType implements IsSerializable {
 	@Persistent
 	private String color;
 
+	@Persistent
+	private Integer price;
+	
 	public String getName() {
 		return name;
 	}
@@ -99,6 +104,22 @@ public class ArticleType implements IsSerializable {
 			return false;
 		}
 		return o1.equals(o2);
+	}
+
+	public Long getProductNumber() {
+		return productNumber;
+	}
+
+	public void setProductNumber(Long productNumber) {
+		this.productNumber = productNumber;
+	}
+
+	public Integer getPrice() {
+		return price;
+	}
+
+	public void setPrice(Integer price) {
+		this.price = price;
 	}
 
 }

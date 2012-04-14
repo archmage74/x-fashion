@@ -10,38 +10,38 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
 
-public class StylePanel extends FilterPanel {
+public class SizePanel extends FilterPanel {
 
-	private MultiSelectionModel<StyleCellData> selectionModel;
+	private MultiSelectionModel<SizeCellData> selectionModel;
 	
 	protected CreatePopup createPopup;
-
-	public StylePanel(PanelMediator panelMediator) {
+	
+	public SizePanel(PanelMediator panelMediator) {
 		super(panelMediator);
-		panelMediator.setStylePanel(this);
+		panelMediator.setSizePanel(this);
 	}
 	
-	public Panel createPanel(ListDataProvider<StyleCellData> styleProvider) {
-		createPopup = new CreateStylePopup(panelMediator);
-		
+	public Panel createPanel(ListDataProvider<SizeCellData> brandProvider) {
+		createPopup = new CreateSizePopup(panelMediator);
+
 		VerticalPanel panel = new VerticalPanel();
 
-		headerPanel = createHeaderPanel("Stil");
+		Panel headerPanel = createHeaderPanel("Größe");
 		panel.add(headerPanel);
 
-		StyleCell styleCell = new StyleCell();
-		final CellList<StyleCellData> styleList = new CellList<StyleCellData>(styleCell, GWT.<StyleListResources> create(StyleListResources.class));
+		SizeCell styleCell = new SizeCell();
+		CellList<SizeCellData> styleList = new CellList<SizeCellData>(styleCell, GWT.<StyleListResources> create(StyleListResources.class));
 		styleList.setPageSize(30);
 
-		selectionModel = new MultiSelectionModel<StyleCellData>();
+		selectionModel = new MultiSelectionModel<SizeCellData>();
 		styleList.setSelectionModel(selectionModel);
 		selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 			public void onSelectionChange(SelectionChangeEvent event) {
-				panelMediator.setSelectedStyles(selectionModel.getSelectedSet());
+				panelMediator.setSelectedSizes(selectionModel.getSelectedSet());
 			}
 		});
 
-		styleProvider.addDataDisplay(styleList);
+		brandProvider.addDataDisplay(styleList);
 		styleList.addStyleName("styleList");
 		panel.add(styleList);
 
@@ -51,14 +51,14 @@ public class StylePanel extends FilterPanel {
 	public void showCreatePopup() {
 		createPopup.show();
 	}
-	
+
 	public void clearSelection() {
 		selectionModel.clear();
 	}
 
-	class StyleCell extends AbstractCell<StyleCellData> {
+	class SizeCell extends AbstractCell<SizeCellData> {
 		@Override
-		public void render(Context context, StyleCellData style, SafeHtmlBuilder sb) {
+		public void render(Context context, SizeCellData style, SafeHtmlBuilder sb) {
 			if (style == null) {
 				return;
 			}

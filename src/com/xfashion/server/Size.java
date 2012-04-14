@@ -5,29 +5,29 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
-import com.xfashion.shared.StyleDTO;
+import com.xfashion.shared.SizeDTO;
 
 @PersistenceCapable
-public class Style {
+public class Size {
 	
 	@PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private String name;
 	
-	public Style() {
+	public Size() {
 		
 	}
 	
-	public Style(StyleDTO dto) {
+	public Size(SizeDTO dto) {
 		updateFromDTO(dto);
 	}
 	
-	public void updateFromDTO(StyleDTO dto) {
+	public void updateFromDTO(SizeDTO dto) {
 		this.name = dto.getName();
 	}
 	
-	public StyleDTO createDTO() {
-		StyleDTO dto = new StyleDTO();
+	public SizeDTO createDTO() {
+		SizeDTO dto = new SizeDTO();
 		dto.setName(name);
 		return dto;
 	}

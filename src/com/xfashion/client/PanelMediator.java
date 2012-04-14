@@ -12,10 +12,14 @@ public class PanelMediator {
 	private CategoryPanel categoryPanel;
 	private StylePanel stylePanel;
 	private BrandPanel brandPanel;
+	private SizePanel sizePanel;
+	private ColorPanel colorPanel;
 	private ArticleTypePanel articleTypePanel;
 
 	private CreateStylePopup createStylePopup;
 	private CreateBrandPopup createBrandPopup;
+	private CreateSizePopup createSizePopup;
+	private CreateColorPopup createColorPopup;
 	private CreateArticleTypePopup createArticleTypePopup;
 	private ArticleTypeDetailPopup articleTypeDetailPopup;
 	
@@ -25,12 +29,13 @@ public class PanelMediator {
 		articleTypeDatabase.createCategories();
 	}
 
-	void setHeaderStyle(String style) {
-		categoryPanel.setHeaderStyle(style);
-		stylePanel.setHeaderStyle(style);
-		brandPanel.setHeaderStyle(style);
-		articleTypePanel.setHeaderStyle(style);
-		xfashion.setHeaderStyle(style);
+	void setHeaderColor(String color) {
+		categoryPanel.setHeaderColor(color);
+		stylePanel.setHeaderColor(color);
+		brandPanel.setHeaderColor(color);
+		sizePanel.setHeaderColor(color);
+		colorPanel.setHeaderColor(color);
+		articleTypePanel.setHeaderColor(color);
 	}
 
 	public void addStyle(String style) {
@@ -40,7 +45,19 @@ public class PanelMediator {
 	public void addBrand(String brand) {
 		articleTypeDatabase.addBrand(brand);
 	}
-
+	
+	public void addSize(String size) {
+		articleTypeDatabase.addSize(size);
+	}
+	
+	public void addColor(String color) {
+		articleTypeDatabase.addColor(color);
+	}
+	
+	public CategoryDTO getSelectedCategory() {
+		return articleTypeDatabase.getCategoryFilter();
+	}
+	
 	public void setSelectedCategory(CategoryDTO selectedCategory) {
 		articleTypeDatabase.setCategoryFilter(selectedCategory);
 		// articleTypeDatabase.setStyleFilter(new HashSet<String>());
@@ -64,6 +81,26 @@ public class PanelMediator {
 		}
 		articleTypeDatabase.applyFilters();
 		articleTypeDatabase.updateBrandProvider();
+	}
+	
+	public void setSelectedSizes(Set<SizeCellData> sizes) {
+		Set<String> sizeFilter = articleTypeDatabase.getSizeFilter();
+		sizeFilter.clear();
+		for (SizeCellData s : sizes) {
+			sizeFilter.add(s.getName());
+		}
+		articleTypeDatabase.applyFilters();
+		articleTypeDatabase.updateSizeProvider();
+	}
+
+	public void setSelectedColors(Set<ColorCellData> colors) {
+		Set<String> colorFilter = articleTypeDatabase.getColorFilter();
+		colorFilter.clear();
+		for (ColorCellData s : colors) {
+			colorFilter.add(s.getName());
+		}
+		articleTypeDatabase.applyFilters();
+		articleTypeDatabase.updateColorProvider();
 	}
 	
 	public Xfashion getXfashion() {
@@ -164,13 +201,52 @@ public class PanelMediator {
 			at.setBrand(brands.iterator().next());
 		}
 		
-		at.setSize("M");
-		at.setColor("Schwarz");
+		Set<String> sizes = articleTypeDatabase.getSizeFilter();
+		if (sizes.size() == 1) {
+			at.setSize(sizes.iterator().next());
+		}
+
+		Set<String> colors = articleTypeDatabase.getColorFilter();
+		if (colors.size() == 1) {
+			at.setColor(colors.iterator().next());
+		}
 		
 		return at;
 	}
 	
 	public void addArticleType(ArticleTypeDTO articleType) {
 		articleTypeDatabase.addArticleType(articleType);
+	}
+
+	public SizePanel getSizePanel() {
+		return sizePanel;
+	}
+
+	public void setSizePanel(SizePanel sizePanel) {
+		this.sizePanel = sizePanel;
+	}
+
+	public ColorPanel getColorPanel() {
+		return colorPanel;
+	}
+
+	public void setColorPanel(ColorPanel colorPanel) {
+		this.colorPanel = colorPanel;
+	}
+
+	public CreateSizePopup getCreateSizePopup() {
+		return createSizePopup;
+	}
+
+	public void setCreateSizePopup(CreateSizePopup createSizePopup) {
+		this.createSizePopup = createSizePopup;
+	}
+
+	public CreateColorPopup getCreateColorPopup() {
+		return createColorPopup;
+	}
+
+	public void setCreateColorPopup(CreateColorPopup createColorPopup) {
+		this.createColorPopup = createColorPopup;
 	}
 }

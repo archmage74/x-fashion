@@ -5,29 +5,29 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
-import com.xfashion.shared.StyleDTO;
+import com.xfashion.shared.ColorDTO;
 
 @PersistenceCapable
-public class Style {
+public class Color {
 	
 	@PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private String name;
 	
-	public Style() {
+	public Color() {
 		
 	}
 	
-	public Style(StyleDTO dto) {
+	public Color(ColorDTO dto) {
 		updateFromDTO(dto);
 	}
 	
-	public void updateFromDTO(StyleDTO dto) {
+	public void updateFromDTO(ColorDTO dto) {
 		this.name = dto.getName();
 	}
 	
-	public StyleDTO createDTO() {
-		StyleDTO dto = new StyleDTO();
+	public ColorDTO createDTO() {
+		ColorDTO dto = new ColorDTO();
 		dto.setName(name);
 		return dto;
 	}

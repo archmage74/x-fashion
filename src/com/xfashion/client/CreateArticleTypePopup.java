@@ -16,6 +16,8 @@ public class CreateArticleTypePopup {
 	private DialogBox popup = null;
 	
 	private TextBox nameTextBox = null;
+	private TextBox priceTextBox = null;
+	private TextBox productNumberTextBox = null;
 	private Label categoryLabel = null;
 	private Label styleLabel = null;
 	private Label brandLabel = null;
@@ -25,9 +27,12 @@ public class CreateArticleTypePopup {
 	private ArticleTypeDTO currentArticleType = null;
 	private PanelMediator panelMediator = null;
 	
+	private Formatter formatter;
+	
 	public CreateArticleTypePopup(PanelMediator panelMediator) {
 		this.panelMediator = panelMediator;
 		panelMediator.setCreateArticleTypePopup(this);
+		formatter = Formatter.getInstance();
 	}
 	
 	public void showForPrefilledArticleType(ArticleTypeDTO articleType) {
@@ -67,7 +72,7 @@ public class CreateArticleTypePopup {
 			@Override
 			public void onClick(ClickEvent event) {
 				if(nameTextBox.getText() != null && nameTextBox.getText().length() > 0) {
-					currentArticleType.setName(nameTextBox.getText());
+					updateArticleType(currentArticleType);
 					panelMediator.addArticleType(currentArticleType);
 				}
 				popup.hide();
@@ -90,27 +95,41 @@ public class CreateArticleTypePopup {
 		return popup;
 	}
 	
+	private void updateArticleType(ArticleTypeDTO at) {
+		Integer price = formatter.parseEurToCents(priceTextBox.getText());
+		currentArticleType.setPrice(price);
+		long productNumber = Long.parseLong(productNumberTextBox.getText());
+		currentArticleType.setProductNumber(productNumber);
+		currentArticleType.setName(nameTextBox.getText());
+	}
+	
 	private Grid createMainGrid() {
-		Grid grid = new Grid(6, 2);
-		categoryLabel = createGridRow(grid, 0, "Kategorie:");
-		styleLabel = createGridRow(grid, 1, "Stil:");
-		brandLabel = createGridRow(grid, 2, "Marke:");
-		sizeLabel = createGridRow(grid, 3, "Größe:");
-		colorLabel = createGridRow(grid, 4, "Farbe:");
-
-		Label nameLabel = new Label("Name:");
-		nameTextBox = new TextBox();
-		grid.setWidget(5, 0, nameLabel);
-		grid.setWidget(5, 1, nameTextBox);
+		Grid grid = new Grid(8, 2);
+		categoryLabel = createLabelGridRow(grid, 0, "Kategorie:");
+		styleLabel = createLabelGridRow(grid, 1, "Stil:");
+		brandLabel = createLabelGridRow(grid, 2, "Marke:");
+		sizeLabel = createLabelGridRow(grid, 3, "Größe:");
+		colorLabel = createLabelGridRow(grid, 4, "Farbe:");
+		nameTextBox = createTextBoxGridRow(grid, 5, "Name:");
+		priceTextBox = createTextBoxGridRow(grid, 6, "Preis:");
+		productNumberTextBox = createTextBoxGridRow(grid, 7, "EAN:");
 		return grid;
 	}
 	
-	private Label createGridRow(Grid grid, int row, String labelName) {
+	private Label createLabelGridRow(Grid grid, int row, String labelName) {
 		Label label = new Label(labelName);
 		Label content = new Label("");
 		grid.setWidget(row, 0, label);
 		grid.setWidget(row, 1, content);
 		return content;
+	}
+
+	private TextBox createTextBoxGridRow(Grid grid, int row, String labelName) {
+		Label label = new Label(labelName + ":");
+		TextBox textBox = new TextBox();
+		grid.setWidget(row, 0, label);
+		grid.setWidget(row, 1, textBox);
+		return textBox;
 	}
 
 	public PanelMediator getPanelMediator() {

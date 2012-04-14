@@ -6,6 +6,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.BrandDTO;
 import com.xfashion.shared.CategoryDTO;
+import com.xfashion.shared.ColorDTO;
+import com.xfashion.shared.SizeDTO;
 import com.xfashion.shared.StyleDTO;
 
 public interface ArticleTypeServiceAsync {
@@ -27,5 +29,13 @@ public interface ArticleTypeServiceAsync {
 	void addArticleType(ArticleTypeDTO articleType, AsyncCallback<Void> callback);
 
 	void readArticleTypes(AsyncCallback<List<ArticleTypeDTO>> callback);
+
+	void readSizes(AsyncCallback<List<SizeDTO>> callback);
+
+	void addSize(SizeDTO brand, AsyncCallback<Void> callback);
+
+	void readColors(AsyncCallback<List<ColorDTO>> callback);
+
+	void addColor(ColorDTO brand, AsyncCallback<Void> callback);
 
 }

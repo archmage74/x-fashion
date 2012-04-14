@@ -20,6 +20,8 @@ public class ArticleTypeDetailPopup {
 	Label style;
 	Label size;
 	Label color;
+	Label price;
+	Label productNumber;
 	
 	public ArticleTypeDetailPopup(PanelMediator panelMediator) {
 		this.panelMediator = panelMediator;
@@ -37,12 +39,16 @@ public class ArticleTypeDetailPopup {
 		image.setWidth(500 + "px");
 		image.setHeight(602 + "px");
 		
+		Formatter formatter = Formatter.getInstance();
+		
 		name.setText(articleType.getName());
 		brand.setText(articleType.getBrand());
 		category.setText(articleType.getCategory());
 		style.setText(articleType.getStyle());
 		size.setText(articleType.getSize());
 		color.setText(articleType.getColor());
+		price.setText(formatter.formatCents(articleType.getPrice()));
+		productNumber.setText(formatter.formatProductNumber(articleType.getProductNumber()));
 		popup.center();
 	}
 
@@ -55,7 +61,7 @@ public class ArticleTypeDetailPopup {
 		image = createImage("", 1, 1);
 		panel.add(image);
 		
-		Grid grid = new Grid(6, 2);
+		Grid grid = new Grid(8, 2);
 		grid.setWidget(0, 0, createLabel("Name:"));
 		name = createLabel("");
 		grid.setWidget(0, 1, name);
@@ -74,6 +80,12 @@ public class ArticleTypeDetailPopup {
 		grid.setWidget(5, 0, createLabel("Farbe:"));
 		color = createLabel("");
 		grid.setWidget(5, 1, color);
+		grid.setWidget(6, 0, createLabel("Preis:"));
+		price = createLabel("");
+		grid.setWidget(6, 1, price);
+		grid.setWidget(7, 0, createLabel("EAN:"));
+		productNumber = createLabel("");
+		grid.setWidget(7, 1, productNumber);
 		panel.add(grid);
 		
 		popup.add(panel);

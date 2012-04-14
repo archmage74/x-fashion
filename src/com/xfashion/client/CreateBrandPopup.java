@@ -9,20 +9,18 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class CreateBrandPopup {
+public class CreateBrandPopup extends CreatePopup {
 	
 	private DialogBox popup = null;
 	
 	private TextBox brandTextBox = null;
 	
-	private PanelMediator panelMediator = null;
-
 	public CreateBrandPopup(PanelMediator panelMediator) {
-		this.panelMediator = panelMediator;
+		super(panelMediator);
 		panelMediator.setCreateBrandPopup(this);
 	}
 	
-	public void showForCategory() {
+	public void show() {
 		if (popup == null) {
 			popup = createPopup();
 		}
@@ -55,7 +53,7 @@ public class CreateBrandPopup {
 			@Override
 			public void onClick(ClickEvent event) {
 				if(brandTextBox.getText() != null && brandTextBox.getText().length() > 0) {
-					panelMediator.addBrand(brandTextBox.getText());
+					getPanelMediator().addBrand(brandTextBox.getText());
 				}
 				popup.hide();
 			}
@@ -75,10 +73,6 @@ public class CreateBrandPopup {
 		popup.center();
 		
 		return popup;
-	}
-
-	public PanelMediator getPanelMediator() {
-		return panelMediator;
 	}
 
 }

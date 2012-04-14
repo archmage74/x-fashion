@@ -9,26 +9,24 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class CreateStylePopup extends CreatePopup {
+public class CreateSizePopup extends CreatePopup {
 	
 	private DialogBox popup = null;
 	
-	private TextBox styleTextBox = null;
+	private TextBox nameTextBox = null;
 	
-	private PanelMediator panelMediator = null;
-	
-	public CreateStylePopup(PanelMediator panelMediator) {
+	public CreateSizePopup(PanelMediator panelMediator) {
 		super(panelMediator);
-		panelMediator.setCreateStylePopup(this);
+		panelMediator.setCreateSizePopup(this);
 	}
 	
 	public void show() {
 		if (popup == null) {
 			popup = createPopup();
 		}
-		styleTextBox.setText("");
+		nameTextBox.setText("");
 		popup.show();
-		styleTextBox.setFocus(true);
+		nameTextBox.setFocus(true);
 	}
 	
 	private DialogBox createPopup() {
@@ -39,23 +37,23 @@ public class CreateStylePopup extends CreatePopup {
 		popup.setAnimationEnabled(true);
 		VerticalPanel panel = new VerticalPanel();
 		
-		Label headerLabel = new Label("Stil anlegen");
+		Label headerLabel = new Label("Größe anlegen");
 		panel.add(headerLabel);
 		
-		HorizontalPanel styleNamePanel = new HorizontalPanel();
-		Label styleLabel = new Label("Stil: ");
-		styleNamePanel.add(styleLabel);
-		styleTextBox = new TextBox();
-		styleNamePanel.add(styleTextBox);
-		panel.add(styleNamePanel);
+		HorizontalPanel namePanel = new HorizontalPanel();
+		Label styleLabel = new Label("Größe: ");
+		namePanel.add(styleLabel);
+		nameTextBox = new TextBox();
+		namePanel.add(nameTextBox);
+		panel.add(namePanel);
 		
 		HorizontalPanel navPanel = new HorizontalPanel();
 		Button createButton = new Button("Anlegen");
 		createButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				if(styleTextBox.getText() != null && styleTextBox.getText().length() > 0) {
-					panelMediator.addStyle(styleTextBox.getText());
+				if(nameTextBox.getText() != null && nameTextBox.getText().length() > 0) {
+					getPanelMediator().addSize(nameTextBox.getText());
 				}
 				popup.hide();
 			}
@@ -76,9 +74,5 @@ public class CreateStylePopup extends CreatePopup {
 		
 		return popup;
 	}
-	
-	public PanelMediator getPanelMediator() {
-		return panelMediator;
-	}
-	
+
 }

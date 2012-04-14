@@ -2,7 +2,7 @@ package com.xfashion.shared;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class StyleDTO extends DTO implements IsSerializable {
+public class SizeDTO extends DTO implements IsSerializable {
 	
 	private String name;
 
@@ -16,8 +16,8 @@ public class StyleDTO extends DTO implements IsSerializable {
 
 	public boolean equals(Object o) {
 		if (o == null) return false;
-		if (!(o instanceof StyleDTO)) return false;
-		StyleDTO s = (StyleDTO) o;
+		if (!(o instanceof SizeDTO)) return false;
+		SizeDTO s = (SizeDTO) o;
 		boolean equal = true;
 		equal &= attributeEquals(name, s.getName());
 		return equal;

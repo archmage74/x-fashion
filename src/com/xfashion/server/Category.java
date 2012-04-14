@@ -1,47 +1,81 @@
 package com.xfashion.server;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.xfashion.shared.CategoryDTO;
+
 @PersistenceCapable
 public class Category {
 	
 	@PrimaryKey
-    @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private String name;
-
-	@Persistent
-	private List<String> styles = new ArrayList<String>();
+	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+    private String css;
 	
 	@Persistent
-	private List<String> brands = new ArrayList<String>();
+	private String name;
+	
+	@Persistent
+	private String backgroundColor;
+	
+	@Persistent
+	private String borderColor;
+	
+	public Category() {
+		
+	}
+	
+	public Category(CategoryDTO dto) {
+		updateFromDTO(dto);
+	}
+	
+	public void updateFromDTO(CategoryDTO dto) {
+		this.css = dto.getCss();
+		this.name = dto.getName();
+		this.backgroundColor = dto.getBackgroundColor();
+		this.borderColor = dto.getBorderColor();
+	}
+	
+	public CategoryDTO createDTO() {
+		CategoryDTO dto = new CategoryDTO();
+		dto.setCss(css);
+		dto.setName(name);
+		dto.setBackgroundColor(backgroundColor);
+		dto.setBorderColor(borderColor);
+		return dto;
+	}
 	
 	public String getName() {
 		return name;
 	}
-
+	
 	public void setName(String name) {
 		this.name = name;
 	}
-
-	public List<String> getStyles() {
-		return styles;
+	
+	public String getCss() {
+		return css;
+	}
+	
+	public void setCss(String css) {
+		this.css = css;
 	}
 
-	public void setStyles(List<String> styles) {
-		this.styles = styles;
+	public String getBackgroundColor() {
+		return backgroundColor;
 	}
 
-	public List<String> getBrands() {
-		return brands;
+	public void setBackgroundColor(String backgroundColor) {
+		this.backgroundColor = backgroundColor;
 	}
 
-	public void setBrands(List<String> brands) {
-		this.brands = brands;
+	public String getBorderColor() {
+		return borderColor;
+	}
+
+	public void setBorderColor(String borderColor) {
+		this.borderColor = borderColor;
 	}
 }

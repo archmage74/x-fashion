@@ -13,42 +13,26 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.xfashion.shared.CategoryDTO;
 
-public class CategoryPanel {
+public class CategoryPanel extends FilterPanel {
 	
 	private CategoryDTO selectedCategory;
 	
 	private CategoryCell cell;
 	
-	private Panel categoryHeaderPanel; 
-
-	private String headerStyle;
-	
-	private PanelMediator panelMediator;
-	
 	public CategoryPanel(PanelMediator panelMediator) {
-		this.panelMediator = panelMediator;
+		super(panelMediator);
 		panelMediator.setCategoryPanel(this);
 	}
 	
-	public void setHeaderStyle(String style) {
-		if (headerStyle != null) {
-			categoryHeaderPanel.removeStyleName(headerStyle);
-		}
-		headerStyle = style;
-		if (headerStyle != null) {
-			categoryHeaderPanel.addStyleName(headerStyle);
-		}
-	}
-
 	public Panel createPanel(ListDataProvider<CategoryDTO> categoryProvider) {
 		VerticalPanel panel = new VerticalPanel();
 
-		categoryHeaderPanel = new HorizontalPanel();
-		categoryHeaderPanel.addStyleName("filterHeader");
+		headerPanel = new HorizontalPanel();
+		headerPanel.addStyleName("filterHeader");
 		Label categoryLabel = new Label("Kategorie");
 		categoryLabel.addStyleName("filterLabel");
-		categoryHeaderPanel.add(categoryLabel);
-		panel.add(categoryHeaderPanel);
+		headerPanel.add(categoryLabel);
+		panel.add(headerPanel);
 
 		cell = new CategoryCell();
 		final CellList<CategoryDTO> categoryList = new CellList<CategoryDTO>(cell, GWT.<StyleListResources> create(StyleListResources.class));
@@ -60,26 +44,8 @@ public class CategoryPanel {
 			public void onSelectionChange(SelectionChangeEvent event) {
 				selectedCategory = selectionModel.getSelectedObject();
 				if (selectionModel.getSelectedObject() != null) {
-					String selectedCategoryName = selectionModel.getSelectedObject().getName();
-					if (selectedCategoryName.equals("Damenhose")) {
-						panelMediator.setHeaderStyle("categoryFemaleTrousers");
-					} else if (selectedCategoryName.equals("Herrenhose")) {
-						panelMediator.setHeaderStyle("categoryMaleTrousers");
-					} else if (selectedCategoryName.equals("Damenoberteil")) {
-						panelMediator.setHeaderStyle("categoryFemaleTop");
-					} else if (selectedCategoryName.equals("Herrenoberteil")) {
-						panelMediator.setHeaderStyle("categoryMaleTop");
-					} else if (selectedCategoryName.equals("Kleider")) {
-						panelMediator.setHeaderStyle("categorySkirt");
-					} else if (selectedCategoryName.equals("Strumpfwaren")) {
-						panelMediator.setHeaderStyle("categoryStockings");
-					} else if (selectedCategoryName.equals("Gürtel")) {
-						panelMediator.setHeaderStyle("categoryBelt");
-					} else if (selectedCategoryName.equals("Bademode")) {
-						panelMediator.setHeaderStyle("categoryBathing");
-					} else if (selectedCategoryName.equals("Accessoirs")) {
-						panelMediator.setHeaderStyle("categoryAccessories");
-					}
+					CategoryDTO selectedCategory = selectionModel.getSelectedObject();
+					panelMediator.setHeaderColor(selectedCategory.getBorderColor());
 				}
 				panelMediator.setSelectedCategory(selectionModel.getSelectedObject());
 			}
@@ -110,34 +76,35 @@ public class CategoryPanel {
 			if (category == null) {
 				return;
 			}
-			// System.out.println("sel: " + selectedCategory);
-			String categoryId = "categoryUnselected";
-			String categoryName = category.getName();
-			if (categoryName.equals("Herrenhose") && category.equals(selectedCategory)) {
-				categoryId = "categoryMaleTrousersSelected";
-			} else if (categoryName.equals("Damenhose") && category.equals(selectedCategory)) {
-				categoryId = "categoryFemaleTrousersSelected";
-			} else if (categoryName.equals("Herrenoberteil") && category.equals(selectedCategory)) {
-				categoryId = "categoryMaleTopSelected";
-			} else if (categoryName.equals("Damenoberteil") && category.equals(selectedCategory)) {
-				categoryId = "categoryFemaleTopSelected";
-			} else if (categoryName.equals("Kleider") && category.equals(selectedCategory)) {
-				categoryId = "categorySkirtSelected";
-			} else if (categoryName.equals("Strumpfwaren") && category.equals(selectedCategory)) {
-				categoryId = "categoryStockingsSelected";
-			} else if (categoryName.equals("Gürtel") && category.equals(selectedCategory)) {
-				categoryId = "categoryBeltSelected";
-			} else if (categoryName.equals("Bademode") && category.equals(selectedCategory)) {
-				categoryId = "categoryBathingSelected";
-			} else if (categoryName.equals("Accessoirs") && category.equals(selectedCategory)) {
-				categoryId = "categoryAccessoriesSelected";
+
+			String css;
+			String style;
+			if (category.equals(selectedCategory)) {
+				css = "categorySelected";
+				style = createSelectedStyle(category);
+			} else {
+				css = "categoryUnselected";
+				style = "";
 			}
 
-			sb.appendHtmlConstant("<div id=\"" + categoryId + "\">");
-//			sb.appendHtmlConstant("<div class=\"" + categoryClass + "\"style=\"color: " + color + " height:32px; margin-left:3px; margin-right:3px; font-size:20px; \">");
+			sb.appendHtmlConstant("<div class=\"" + css + "\" style=\"" + style + "\">");
 			sb.appendHtmlConstant(category.getName());
 			sb.appendHtmlConstant("</div>");
 		}
+		
+		private String createSelectedStyle(CategoryDTO dto) {
+			String style = "background-color: " + dto.getBackgroundColor() + "; " +
+				"border: 2px solid " + dto.getBorderColor() + ";";
+			return style;
+		}
+	}
+	
+	public void showCreatePopup() {
+		
+	}
+
+	public void clearSelection() {
+	
 	}
 
 }

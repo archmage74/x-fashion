@@ -2,8 +2,10 @@ package com.xfashion.shared;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class ArticleTypeDTO implements IsSerializable {
+public class ArticleTypeDTO extends DTO implements IsSerializable {
 	
+	private Long productNumber;
+
 	private String name;
 	
 	private String category;
@@ -15,6 +17,8 @@ public class ArticleTypeDTO implements IsSerializable {
 	private String size;
 	
 	private String color;
+
+	private Integer price;
 
 	public String getName() {
 		return name;
@@ -78,14 +82,20 @@ public class ArticleTypeDTO implements IsSerializable {
 		return equal;
 	}
 	
-	private boolean attributeEquals(Object o1, Object o2) {
-		if (o1 == o2) {
-			return true;
-		}
-		if (o1 == null) {
-			return false;
-		}
-		return o1.equals(o2);
+	public Long getProductNumber() {
+		return productNumber;
+	}
+	
+	public void setProductNumber(Long productNumber) {
+		this.productNumber = productNumber;
+	}
+
+	public Integer getPrice() {
+		return price;
+	}
+
+	public void setPrice(Integer price) {
+		this.price = price;
 	}
 
 }

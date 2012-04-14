@@ -1,43 +1,34 @@
 package com.xfashion.shared;
 
-import java.util.ArrayList;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class CategoryDTO implements IsSerializable {
 
+	private String css;
+	
 	private String name;
+	
+	private String borderColor;
+	
+	private String backgroundColor;
 
-	private ArrayList<String> styles;
-	
-	private ArrayList<String> brands;
-	
 	public CategoryDTO() {
-		styles = new ArrayList<String>();
+
 	}
 
+	public CategoryDTO(String css, String name, String backgroundColor, String borderColor) {
+		this.css = css;
+		this.name = name;
+		this.backgroundColor = backgroundColor;
+		this.borderColor = borderColor;
+	}
+	
 	public String getName() {
 		return name;
 	}
 	
 	public void setName(String name) {
 		this.name = name;
-	}
-	
-	public ArrayList<String> getStyles() {
-		return styles;
-	}
-
-	public void setStyles(ArrayList<String> styles) {
-		this.styles = styles;
-	}
-
-	public ArrayList<String> getBrands() {
-		return brands;
-	}
-	
-	public void setBrands(ArrayList<String> brands) {
-		this.brands = brands;
 	}
 	
 	@Override
@@ -58,5 +49,29 @@ public class CategoryDTO implements IsSerializable {
 				return false;
 			}
 		}
+	}
+
+	public String getCss() {
+		return css;
+	}
+
+	public void setCss(String css) {
+		this.css = css;
+	}
+
+	public String getBorderColor() {
+		return borderColor;
+	}
+
+	public void setBorderColor(String borderColor) {
+		this.borderColor = borderColor;
+	}
+
+	public String getBackgroundColor() {
+		return backgroundColor;
+	}
+
+	public void setBackgroundColor(String backgroundColor) {
+		this.backgroundColor = backgroundColor;
 	}
 }
