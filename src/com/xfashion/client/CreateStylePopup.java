@@ -15,8 +15,6 @@ public class CreateStylePopup extends CreatePopup {
 	
 	private TextBox styleTextBox = null;
 	
-	private PanelMediator panelMediator = null;
-	
 	public CreateStylePopup(PanelMediator panelMediator) {
 		super(panelMediator);
 		panelMediator.setCreateStylePopup(this);
@@ -55,7 +53,7 @@ public class CreateStylePopup extends CreatePopup {
 			@Override
 			public void onClick(ClickEvent event) {
 				if(styleTextBox.getText() != null && styleTextBox.getText().length() > 0) {
-					panelMediator.addStyle(styleTextBox.getText());
+					getPanelMediator().addStyle(styleTextBox.getText());
 				}
 				popup.hide();
 			}
@@ -75,10 +73,6 @@ public class CreateStylePopup extends CreatePopup {
 		popup.center();
 		
 		return popup;
-	}
-	
-	public PanelMediator getPanelMediator() {
-		return panelMediator;
 	}
 	
 }

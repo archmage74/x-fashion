@@ -23,6 +23,7 @@ public class CreateArticleTypePopup {
 	private Label brandLabel = null;
 	private Label colorLabel = null;
 	private Label sizeLabel = null;
+	private Label errorLabel = null;
 	
 	private ArticleTypeDTO currentArticleType = null;
 	private PanelMediator panelMediator = null;
@@ -36,17 +37,20 @@ public class CreateArticleTypePopup {
 	}
 	
 	public void showForPrefilledArticleType(ArticleTypeDTO articleType) {
-		if (popup == null) {
+//		if (popup == null) {
 			popup = createPopup();
-		}
+//		}
 		currentArticleType = articleType;
 		categoryLabel.setText(articleType.getCategory());
 		styleLabel.setText(articleType.getStyle());
 		brandLabel.setText(articleType.getBrand());
 		colorLabel.setText(articleType.getColor());
 		sizeLabel.setText(articleType.getSize());
+		sizeLabel.setText(articleType.getSize());
 		nameTextBox.setText("");
-
+		priceTextBox.setText("€");
+		productNumberTextBox.setText("");
+		errorLabel.setText(" ");
 		popup.show();
 		nameTextBox.setFocus(true);
 	}
@@ -66,16 +70,22 @@ public class CreateArticleTypePopup {
 		Grid grid = createMainGrid();
 		panel.add(grid);
 		
+		errorLabel = new Label("");
+		errorLabel.addStyleName("errorText");
+		panel.add(errorLabel);
+		
 		HorizontalPanel navPanel = new HorizontalPanel();
 		Button createButton = new Button("Anlegen");
 		createButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				if(nameTextBox.getText() != null && nameTextBox.getText().length() > 0) {
+				try {
 					updateArticleType(currentArticleType);
 					panelMediator.addArticleType(currentArticleType);
+					popup.hide();
+				} catch (CreateArticleException e) {
+					errorLabel.setText(e.getMessage());
 				}
-				popup.hide();
 			}
 		});
 		navPanel.add(createButton);
@@ -95,12 +105,24 @@ public class CreateArticleTypePopup {
 		return popup;
 	}
 	
-	private void updateArticleType(ArticleTypeDTO at) {
-		Integer price = formatter.parseEurToCents(priceTextBox.getText());
-		currentArticleType.setPrice(price);
-		long productNumber = Long.parseLong(productNumberTextBox.getText());
-		currentArticleType.setProductNumber(productNumber);
-		currentArticleType.setName(nameTextBox.getText());
+	private void updateArticleType(ArticleTypeDTO at) throws CreateArticleException {
+		try {
+			Integer price = formatter.parseEurToCents(priceTextBox.getText());
+			currentArticleType.setPrice(price);
+		} catch (Exception e) {
+			throw new CreateArticleException("Ungültiger Preis");
+		}
+		try {
+			long productNumber = Long.parseLong(productNumberTextBox.getText());
+			currentArticleType.setProductNumber(productNumber);
+		} catch (Exception e) {
+			throw new CreateArticleException("Ungültige EAN");
+		}
+		if (nameTextBox.getText() == null || "".equals(nameTextBox.getText())) {
+			throw  new CreateArticleException("Ungültiger Name");
+		} else {
+			currentArticleType.setName(nameTextBox.getText());
+		}
 	}
 	
 	private Grid createMainGrid() {

@@ -1,7 +1,5 @@
 package com.xfashion.client;
 
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
@@ -21,9 +19,7 @@ public abstract class FilterPanel {
 	
 	public void setHeaderColor(String color) {
 		if (color != null) {
-			Element e = headerPanel.getElement();
-			Style s = e.getStyle();
-			s.setBackgroundColor(color.substring(0, color.indexOf(";")));
+			headerPanel.getElement().getStyle().setBackgroundColor(color);
 		} else {
 			headerPanel.getElement().getStyle().setBackgroundColor("#000000");
 		}
@@ -37,6 +33,7 @@ public abstract class FilterPanel {
 		headerPanel.add(label);
 		Button createButton = new Button("+");
 		headerPanel.add(createButton);
+
 		ClickHandler addClickHandler = new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -52,6 +49,8 @@ public abstract class FilterPanel {
 		});
 
 		createButton.addClickHandler(addClickHandler);
+
+		setHeaderColor(null);
 		return headerPanel;
 	}
 	

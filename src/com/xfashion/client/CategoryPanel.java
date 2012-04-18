@@ -33,7 +33,8 @@ public class CategoryPanel extends FilterPanel {
 		categoryLabel.addStyleName("filterLabel");
 		headerPanel.add(categoryLabel);
 		panel.add(headerPanel);
-
+		setHeaderColor(null);
+		
 		cell = new CategoryCell();
 		final CellList<CategoryDTO> categoryList = new CellList<CategoryDTO>(cell, GWT.<StyleListResources> create(StyleListResources.class));
 		categoryList.setPageSize(30);

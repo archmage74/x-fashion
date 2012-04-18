@@ -19,20 +19,20 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.xfashion.shared.ArticleTypeDTO;
 
 public class ArticleTypePanel extends FilterPanel {
-	
+
 	private ArticleTypeDTO selectedArticleType;
-	
+
 	private ArticleTypeCell cell;
-	
+
 	private ArticleTypeDetailPopup articleTypeDetailPopup;
-	
+
 	private CreateArticleTypePopup createArticleTypePopup;
-	
+
 	public ArticleTypePanel(PanelMediator panelMediator) {
 		super(panelMediator);
 		panelMediator.setArticleTypePanel(this);
 	}
-	
+
 	public Panel createPanel(ListDataProvider<ArticleTypeDTO> articleTypeProvider) {
 		articleTypeDetailPopup = new ArticleTypeDetailPopup(panelMediator);
 		createArticleTypePopup = new CreateArticleTypePopup(panelMediator);
@@ -48,12 +48,12 @@ public class ArticleTypePanel extends FilterPanel {
 		addStyleButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				ArticleTypeDTO articleType = panelMediator.createArticleTypeFromSelection();
-				createArticleTypePopup.showForPrefilledArticleType(articleType);
+				addArticle();
 			}
 		});
 		headerPanel.add(addStyleButton);
 		panel.add(headerPanel);
+		setHeaderColor(null);
 
 		cell = new ArticleTypeCell();
 		final CellList<ArticleTypeDTO> articleTypeList = new CellList<ArticleTypeDTO>(cell, GWT.<StyleListResources> create(StyleListResources.class));
@@ -64,16 +64,32 @@ public class ArticleTypePanel extends FilterPanel {
 		articleTypeSelectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 			public void onSelectionChange(SelectionChangeEvent event) {
 				articleTypeDetailPopup.showPopup((ArticleTypeDTO) articleTypeSelectionModel.getLastSelectedObject());
-				// panelMediator.selectArticle((ArticleTypeDTO) articleTypeSelectionModel.getLastSelectedObject());
 			}
 		});
 		articleTypeProvider.addDataDisplay(articleTypeList);
 
 		ScrollPanel articleTypePanel = new ScrollPanel(articleTypeList);
-		articleTypePanel.setSize("400px", "700px");
+		articleTypePanel.setSize("500px", "700px");
 		panel.add(articleTypePanel);
-		
+
 		return panel;
+	}
+
+	private void addArticle() {
+		ArticleTypeDTO articleType = panelMediator.createArticleTypeFromSelection();
+		if (articleType.getCategory() == null) {
+			panelMediator.showError("Keine Kategorie ausgewählt!");
+		} else if (articleType.getBrand() == null) {
+			panelMediator.showError("Keine Marke ausgewählt");
+		} else if (articleType.getStyle() == null) {
+			panelMediator.showError("Kein Stil ausgewählt");
+		} else if (articleType.getSize() == null) {
+			panelMediator.showError("Keine Größe ausgewählt");
+		} else if (articleType.getColor() == null) {
+			panelMediator.showError("Keine Farbe ausgewählt");
+		} else {
+			createArticleTypePopup.showForPrefilledArticleType(articleType);
+		}
 	}
 
 	public ArticleTypeDTO getSelectedCategory() {
@@ -83,7 +99,7 @@ public class ArticleTypePanel extends FilterPanel {
 	public void setSelectedCategory(ArticleTypeDTO selectedArticleType) {
 		this.selectedArticleType = selectedArticleType;
 	}
-	
+
 	public PanelMediator getPanelMediator() {
 		return panelMediator;
 	}
@@ -98,32 +114,32 @@ public class ArticleTypePanel extends FilterPanel {
 			sb.appendHtmlConstant("<tr>");
 			sb.appendHtmlConstant("<td class=\"articleIconTd\" rowspan=\"2\"><img class=\"articleIconImage\" src=\"trouserIcon.png\" /></td>");
 			sb.appendHtmlConstant("<td class=\"articleUpLe\">");
-			sb.appendEscaped(articleType.getCategory());
+			sb.appendEscaped("" + articleType.getCategory());
 			sb.appendHtmlConstant("</td><td class=\"articleUpCe\">");
-			sb.appendEscaped(articleType.getName());
+			sb.appendEscaped("" + articleType.getName());
 			sb.appendHtmlConstant("</td><td class=\"articleUpRi\">");
-			sb.appendEscaped(articleType.getColor());
+			sb.appendEscaped("" + articleType.getColor());
 			sb.appendHtmlConstant("</td><td class=\"articlePrice\" rowspan=\"2\">");
 			String price = NumberFormat.getCurrencyFormat("EUR").format(((double) articleType.getPrice()) / 100);
 			sb.appendEscaped(price);
 			sb.appendHtmlConstant("</td></tr><tr>");
 			sb.appendHtmlConstant("<td class=\"articleBoLe\">");
-			sb.appendEscaped(articleType.getStyle());
+			sb.appendEscaped("" + articleType.getStyle());
 			sb.appendHtmlConstant("</td><td class=\"articleBoCe\">");
-			sb.appendEscaped(articleType.getBrand());
+			sb.appendEscaped("" + articleType.getBrand());
 			sb.appendHtmlConstant("</td><td class=\"articleBoRi\">");
-			sb.appendEscaped(articleType.getSize());
+			sb.appendEscaped("" + articleType.getSize());
 			sb.appendHtmlConstant("</td></tr></table>");
 		}
 	}
-	
+
 	public void showCreatePopup() {
 		ArticleTypeDTO articleType = panelMediator.createArticleTypeFromSelection();
 		createArticleTypePopup.showForPrefilledArticleType(articleType);
 	}
 
 	public void clearSelection() {
-		
+
 	}
-	
+
 }

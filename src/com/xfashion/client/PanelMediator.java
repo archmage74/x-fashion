@@ -23,8 +23,14 @@ public class PanelMediator {
 	private CreateArticleTypePopup createArticleTypePopup;
 	private ArticleTypeDetailPopup articleTypeDetailPopup;
 	
+	private ErrorPopup errorPopup;
+	
 	private ArticleTypeDatabase articleTypeDatabase;
 
+	public PanelMediator() {
+		errorPopup = new ErrorPopup();
+	}
+	
 	public void createCategories() {
 		articleTypeDatabase.createCategories();
 	}
@@ -248,5 +254,9 @@ public class PanelMediator {
 
 	public void setCreateColorPopup(CreateColorPopup createColorPopup) {
 		this.createColorPopup = createColorPopup;
+	}
+
+	public void showError(String errorMessage) {
+		errorPopup.showPopup(errorMessage);
 	}
 }

@@ -1,6 +1,5 @@
 package com.xfashion.server;
 
-import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
@@ -10,10 +9,11 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 @PersistenceCapable
 public class ArticleType implements IsSerializable {
 	
-    @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+	@PrimaryKey
+	@Persistent
 	private Long productNumber;
 
-	@PrimaryKey
+	@Persistent
 	private String name;
 	
 	@Persistent

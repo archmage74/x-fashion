@@ -68,11 +68,11 @@ public class Xfashion implements EntryPoint {
 		CategoryPanel categoryPanel = new CategoryPanel(panelMediator);
 		mainPanel.add(categoryPanel.createPanel(articleTypeDatabase.getCategoryProvider()));
 		
-		StylePanel stylePanel = new StylePanel(panelMediator);
-		mainPanel.add(stylePanel.createPanel(articleTypeDatabase.getStyleProvider()));
-		
 		BrandPanel brandPanel = new BrandPanel(panelMediator);
 		mainPanel.add(brandPanel.createPanel(articleTypeDatabase.getBrandProvider()));
+		
+		StylePanel stylePanel = new StylePanel(panelMediator);
+		mainPanel.add(stylePanel.createPanel(articleTypeDatabase.getStyleProvider()));
 		
 		SizePanel sizePanel = new SizePanel(panelMediator);
 		mainPanel.add(sizePanel.createPanel(articleTypeDatabase.getSizeProvider()));
