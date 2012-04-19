@@ -37,9 +37,9 @@ public class CreateArticleTypePopup {
 	}
 	
 	public void showForPrefilledArticleType(ArticleTypeDTO articleType) {
-//		if (popup == null) {
+		if (popup == null) {
 			popup = createPopup();
-//		}
+		}
 		currentArticleType = articleType;
 		categoryLabel.setText(articleType.getCategory());
 		styleLabel.setText(articleType.getStyle());

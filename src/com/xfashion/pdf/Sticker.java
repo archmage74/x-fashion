@@ -60,19 +60,19 @@ public class Sticker extends HttpServlet {
 		sb.append(createTd(articleType.getBrand(), "articleBoCe"));
 		sb.append(createTd(articleType.getSize(), "articleBoRi"));
 		sb.append("</tr>");
+		sb.append("</table>");
 
+		sb.append("<table class=\"articleCell\" style=\"width: 210px;\">");
 		sb.append("<tr style=\"padding: 0px; margin: 0px;\">");
-		sb.append("<td class=\"articlePrice\" colspan=\"3\">");
+		sb.append("<td style=\"align: center; padding-top: 0px;\">");
+		sb.append("<img width=\"109\" height=\"35\" src=\"http://intern.spielemarkt.at/spielemarkt_at/barcode.php?num=");
+		sb.append(articleType.getProductNumber());
+		sb.append("&type=ean13&imgtype=png\" />");
+		sb.append("</td>");
+		sb.append("<td class=\"articlePrice\">");
 		sb.append(nf.format(((double) articleType.getPrice()) / 100));
 		sb.append("</td>");
 		sb.append("</tr>");
-		
-		sb.append("<tr>");
-		sb.append("<td colspan=\"3\" style=\"align: center; padding-top: 0px;\">");
-		sb.append("<img width=\"218\" height=\"70\" src=\"http://intern.spielemarkt.at/spielemarkt_at/barcode.php?num=1234567891234&type=ean13&imgtype=png\" />");
-		sb.append("</td>");
-		sb.append("</tr>");
-		
 		sb.append("</table>");
 
 		sb.append("</body>");
@@ -96,7 +96,7 @@ public class Sticker extends HttpServlet {
 		sb.append("" + 
 			"body td {\n" +
 			"	font-family: Arial Unicode MS, Arial, sans-serif;\n" +
-			"	font-size: 12px;" +
+			"	font-size: 11px;" +
 			"}\n" +
 			".articleCell {\n" +
 			"	border-collapse: collapse;\n" +
@@ -105,13 +105,13 @@ public class Sticker extends HttpServlet {
 			".articleUpLe {\n" +
 			"	text-align: center;\n" + 
 			"	width: 70px;\n" +
-			"	height: 25px;\n" +
+			"	height: 20px;\n" +
 			"	border-bottom: 1px solid silver;\n" +
 			"}\n" +
 			".articleUpCe {\n" +
 			"	text-align: center;\n" + 
 			"	width: 70px;\n" +
-			"	height: 25px;\n" +
+			"	height: 20px;\n" +
 			"	border-bottom: 1px solid silver;\n" +
 			"	border-left: 1px solid silver;\n" +
 			"	border-right: 1px solid silver;\n" + 
@@ -119,38 +119,31 @@ public class Sticker extends HttpServlet {
 			".articleUpRi {\n" +
 			"	text-align: center;\n" +
 			"	width: 70px;\n" +
-			"	height: 25px;\n" +
+			"	height: 20px;\n" +
 			"	border-bottom: 1px solid silver;\n" + 
 			"}\n" +
 			".articleBoLe {\n" +
 			"	text-align: center;\n" +
 			"	width: 70px;\n" +
-			"	height: 25px;\n" +
+			"	height: 20px;\n" +
 			"}\n" +
 			".articleBoCe {\n" +
 			"	text-align: center;\n" +
 			"	width: 70px;\n" +
-			"	height: 25px;\n" +
+			"	height: 20px;\n" +
 			"	border-left: 1px solid silver;\n" +
 			"	border-right: 1px solid silver;\n" + 
 			"}\n" +
 			".articleBoRi {\n" +
 			"	text-align: center;\n" +
 			"	width: 70px;\n" +
-			"	height: 25px;\n" +
+			"	height: 20px;\n" +
 			"}\n" +
-			".articlePrice {\n" +
-			"	text-align: right;\n" +
-			"	font-size: 20px;\n" +
-			"	width: 70px;\n" +
-			"	height: 50;\n" +
-			"}\n" + 
 			".articlePrice {\n" +
 			"	margin: 0;\n" +
 			"	padding: 0;\n" +
-			"	height: 20px;\n" +
-			"	text-align: center;\n" +
-			"	font-size: 30px;\n" +
+			"	text-align: right;\n" +
+			"	font-size: 14px;\n" +
 			"	font-weight: bold;\n" + 
 			"}\n" +
 			"");

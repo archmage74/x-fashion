@@ -10,6 +10,8 @@ public abstract class FilterCellData {
 	private boolean available;
 	
 	private boolean selected;
+
+	private Integer articleAmount;
 	
 	private String iconPrefix;
 	
@@ -41,6 +43,23 @@ public abstract class FilterCellData {
 		this.selected = selected;
 	}
 
+
+	public String getIconPrefix() {
+		return iconPrefix;
+	}
+
+	public void setIconPrefix(String iconPrefix) {
+		this.iconPrefix = iconPrefix;
+	}
+
+	public Integer getArticleAmount() {
+		return articleAmount;
+	}
+
+	public void setArticleAmount(Integer articleAmount) {
+		this.articleAmount = articleAmount;
+	}
+
 	public void render(SafeHtmlBuilder sb, CategoryDTO selectedCategory) {
 		if (isSelected()) {
 			if (isAvailable()) {
@@ -49,36 +68,44 @@ public abstract class FilterCellData {
 				sb.appendHtmlConstant("<img class=\"filterIconDisabled\" src=\"whitePixel.png\" width=\"22\" height=\"20\"></img>");
 			}
 			String style = createSelectedStyle(selectedCategory);
-			sb.appendHtmlConstant("<div class=\"filterLabelSelected\" style=\"" + style + "\">");
+			sb.appendHtmlConstant("<table cellspacing=\"0\" cellpadding=\"0\" class=\"filterTable\" style=\"" + style + "\"><tr><td class=\"filterText filterLabelSelected\">");
 		} else {
 			if (isAvailable()) {
 				sb.appendHtmlConstant("<img class=\"filterIconEnabled\" src=\"" + iconPrefix + "IconUnselected.png\" width=\"22\" height=\"20\"></img>");
-				sb.appendHtmlConstant("<div class=\"filterLabelUnselected\">");
+				sb.appendHtmlConstant("<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" class=\"filterTable\"><tr><td class=\"filterText filterLabelUnselected\">");
 			} else {
 				sb.appendHtmlConstant("<img class=\"filterIconDisabled\" src=\"whitePixel.png\" width=\"22\" height=\"20\"></img>");
-				sb.appendHtmlConstant("<div class=\"filterLabelDisabled\">");
+				sb.appendHtmlConstant("<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" class=\"filterTable\"><tr><td class=\"filterText filterLabelDisabled\">");
 			}
 		}
 		sb.appendHtmlConstant(getName());
-		sb.appendHtmlConstant("</div>");
+		if (isSelected()) {
+			sb.appendHtmlConstant("</td><td class=\"filterText filterAmountSelected\">");
+		} else {
+			sb.appendHtmlConstant("</td><td class=\"filterText filterAmountUnselected\">");
+		}
+		if (getArticleAmount() != null) {
+			sb.appendHtmlConstant(getArticleAmount().toString());
+		}
+		sb.appendHtmlConstant("</td></tr></table>");
 	}
 	
 	private String createSelectedStyle(CategoryDTO selectedCategory) {
-		String borderColor = selectedCategory.getBorderColor();
-		String backgroundColor = selectedCategory.getBackgroundColor();
-		String style = "background-color: " + backgroundColor + "; " +
+		String style;
+		String borderColor;
+		String backgroundColor;
+		if (selectedCategory != null) {
+			borderColor = selectedCategory.getBorderColor();
+			backgroundColor = selectedCategory.getBackgroundColor();
+		} else {
+			borderColor = "#777;";
+			backgroundColor = "#aaa";
+		}
+		style = "background-color: " + backgroundColor + "; " +
 			"border-top: 2px solid " + borderColor + "; " +
 			"border-right: 2px solid " + borderColor + "; " +
 			"border-bottom: 2px solid " + borderColor + "; ";
 		return style;
-	}
-
-	public String getIconPrefix() {
-		return iconPrefix;
-	}
-
-	public void setIconPrefix(String iconPrefix) {
-		this.iconPrefix = iconPrefix;
 	}
 
 }

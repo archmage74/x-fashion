@@ -1,5 +1,6 @@
 package com.xfashion.client;
 
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -9,19 +10,22 @@ import com.xfashion.shared.ArticleTypeDTO;
 
 public class ArticleTypeDetailPopup {
 
+	public static final String PRINT_STICKER_URL = "/pdf/sticker?productNumber=";
+	
 	PanelMediator panelMediator;
 	
 	DecoratedPopupPanel popup;
 	
-	Image image;
-	Label name;
-	Label brand;
-	Label category;
-	Label style;
-	Label size;
-	Label color;
-	Label price;
-	Label productNumber;
+	private Image image;
+	private Label name;
+	private Label brand;
+	private Label category;
+	private Label style;
+	private Label size;
+	private Label color;
+	private Label price;
+	private Label productNumber;
+	private Anchor printStickerLink;
 	
 	public ArticleTypeDetailPopup(PanelMediator panelMediator) {
 		this.panelMediator = panelMediator;
@@ -49,7 +53,9 @@ public class ArticleTypeDetailPopup {
 		color.setText(articleType.getColor());
 		price.setText(formatter.formatCents(articleType.getPrice()));
 		productNumber.setText(formatter.formatProductNumber(articleType.getProductNumber()));
+		printStickerLink.setHref(PRINT_STICKER_URL + articleType.getProductNumber());
 		popup.center();
+		
 	}
 
 	public DecoratedPopupPanel createPopup() {
@@ -61,7 +67,7 @@ public class ArticleTypeDetailPopup {
 		image = createImage("", 1, 1);
 		panel.add(image);
 		
-		Grid grid = new Grid(8, 2);
+		Grid grid = new Grid(9, 2);
 		grid.setWidget(0, 0, createLabel("Name:"));
 		name = createLabel("");
 		grid.setWidget(0, 1, name);
@@ -86,6 +92,8 @@ public class ArticleTypeDetailPopup {
 		grid.setWidget(7, 0, createLabel("EAN:"));
 		productNumber = createLabel("");
 		grid.setWidget(7, 1, productNumber);
+		printStickerLink = new Anchor("Etikett", false, "", "xfashion_sticker");
+		grid.setWidget(8, 1, printStickerLink);
 		panel.add(grid);
 		
 		popup.add(panel);
