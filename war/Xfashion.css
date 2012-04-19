@@ -6,8 +6,14 @@ h1#logo {
   font-size: 2em;
   font-weight: bold;
   color: #f81;
-  margin: 0px 0px 0px;
+  margin: 0px 0px 0px 0px;
   text-align: left;
+}
+.filterTable {
+	height: 18px;
+	padding: 0px;
+	margin: 0px;
+	border: 0px;
 }
 .filterLabel {
 	font-size: 20px;
@@ -17,30 +23,43 @@ h1#logo {
 	margin-left: 2px;
 	margin-right: 2px;
 }
-
-.filterLabelUnselected {
+.filterText {
 	font-size: 12px;
 	font-weight: bold;
+}
+.filterAmountUnselected {
+	text-align: right;
+	width: 30px;
 	color: #000;
+}
+.filterLabelUnselected {
+	color: #000;
+	width: 95px;
 	height: 18px;
+	padding-left: 2px;
 	padding-top: 2px;
 	margin-top: 1px;
 	margin-right: 4px;
 }
-.filterLabelSelected {
-	font-size: 12px;
-	font-weight: bold;
+.filterAmountSelected {
+	text-align: right;
+	width: 30px;
 	color: #fff;
+}
+.filterLabelSelected {
+	color: #fff;
+	width: 95px;
 	height: 16px;
 	padding-top: 0px;
+	padding-left: 2px;
 	margin-top: 1px;
 	margin-right: 2px;
 }
 .filterLabelDisabled {
-	font-size: 12px;
-	font-weight: bold;
 	color: #bfbfbf;
+	width: 90px;
 	height: 18px;
+	padding-left: 2px;
 	padding-top: 2px;
 	margin-top: 1px;
 	margin-right: 4px;
@@ -49,20 +68,20 @@ h1#logo {
 	float: left;
 	padding: 0px;
 	margin-top: 0px;
-	margin-right: 4px;
+	margin-right: 0px;
 	border: 0px;
 }
 .filterIconDisabled {
 	float: left;
 	padding: 0px;
 	margin-top: 0px;
-	margin-right: 4px;
+	margin-right: 0px;
 	border: 0px;
 }
 .filterHeader {
 	padding: 1px;
 	border: 1px solid silver;
-	background-color: black;
+	/* background-color: black; */
 	width: 100%;
 	margin-bottom: 5px;
 }
@@ -92,7 +111,7 @@ h1#logo {
 	border: 1px solid silver;
 	margin-left: 1px;
 	margin-right: 1px;
-	width: 300px;
+	width: 500px;
 }
 
 /** Most GWT widgets already have a style name defined */
@@ -194,4 +213,9 @@ h1#logo {
 /** Set ids using widget.getElement().setId("idOfElement") */
 #closeButton {
   margin: 15px 6px 6px;
+}
+
+.errorText {
+	color: red;
+	font-weight: bold;
 }
