@@ -1,0 +1,29 @@
+DONE - logo
+
+DONE - show amounts of available article-types for attribute
+
+create category
+
+delete brand/style/color/size
+
+bulk creation of article types
+
+article-type images
+
+edit brand/style/color/size
+
+ordering of brand/style/color/size
+
+name filter
+
+user management
+
+edit category
+
+loading progress bar
+
+print multiple stickers
+
+pdf instead of html
+
+prevent application from sleeping
