@@ -62,20 +62,23 @@ public abstract class FilterCellData {
 
 	public void render(SafeHtmlBuilder sb, CategoryDTO selectedCategory) {
 		if (isSelected()) {
+			String style = createSelectedStyle(selectedCategory);
 			if (isAvailable()) {
 				sb.appendHtmlConstant("<img class=\"filterIconEnabled\" src=\"" + iconPrefix + "IconSelected.png\" width=\"22\" height=\"20\"></img>");
 			} else {
 				sb.appendHtmlConstant("<img class=\"filterIconDisabled\" src=\"whitePixel.png\" width=\"22\" height=\"20\"></img>");
 			}
-			String style = createSelectedStyle(selectedCategory);
-			sb.appendHtmlConstant("<table cellspacing=\"0\" cellpadding=\"0\" class=\"filterTable\" style=\"" + style + "\"><tr><td class=\"filterText filterLabelSelected\">");
+			sb.appendHtmlConstant("<table cellspacing=\"0\" cellpadding=\"0\" class=\"filterTable\" style=\"" + style + "\">");
+			sb.appendHtmlConstant("<tr><td class=\"filterText filterLabelSelected\">");
 		} else {
 			if (isAvailable()) {
 				sb.appendHtmlConstant("<img class=\"filterIconEnabled\" src=\"" + iconPrefix + "IconUnselected.png\" width=\"22\" height=\"20\"></img>");
-				sb.appendHtmlConstant("<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" class=\"filterTable\"><tr><td class=\"filterText filterLabelUnselected\">");
+				sb.appendHtmlConstant("<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" class=\"filterTable\">");
+				sb.appendHtmlConstant("<tr><td class=\"filterText filterLabelUnselected\">");
 			} else {
 				sb.appendHtmlConstant("<img class=\"filterIconDisabled\" src=\"whitePixel.png\" width=\"22\" height=\"20\"></img>");
-				sb.appendHtmlConstant("<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" class=\"filterTable\"><tr><td class=\"filterText filterLabelDisabled\">");
+				sb.appendHtmlConstant("<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" class=\"filterTable\">");
+				sb.appendHtmlConstant("<tr><td class=\"filterText filterLabelDisabled\">");
 			}
 		}
 		sb.appendHtmlConstant(getName());

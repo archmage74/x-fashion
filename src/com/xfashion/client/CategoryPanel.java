@@ -45,10 +45,11 @@ public class CategoryPanel extends FilterPanel {
 			public void onSelectionChange(SelectionChangeEvent event) {
 				selectedCategory = selectionModel.getSelectedObject();
 				if (selectionModel.getSelectedObject() != null) {
-					CategoryDTO selectedCategory = selectionModel.getSelectedObject();
 					panelMediator.setHeaderColor(selectedCategory.getBorderColor());
+				} else {
+					panelMediator.resetHeaderColor();
 				}
-				panelMediator.setSelectedCategory(selectionModel.getSelectedObject());
+				panelMediator.setSelectedCategory(selectedCategory);
 			}
 		});
 		categoryProvider.addDataDisplay(categoryList);

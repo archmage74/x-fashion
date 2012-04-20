@@ -1,11 +1,14 @@
 package com.xfashion.client;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
+import java.util.HashSet;
 
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.CategoryDTO;
 
-public class PanelMediator {
+public class PanelMediator implements ApplicationLoadListener {
 
 	private Xfashion xfashion;
 
@@ -35,7 +38,8 @@ public class PanelMediator {
 		articleTypeDatabase.createCategories();
 	}
 
-	void setHeaderColor(String color) {
+	public void setHeaderColor(String color) {
+		color = null; // override color setting of header
 		categoryPanel.setHeaderColor(color);
 		stylePanel.setHeaderColor(color);
 		brandPanel.setHeaderColor(color);
@@ -44,6 +48,10 @@ public class PanelMediator {
 		articleTypePanel.setHeaderColor(color);
 	}
 
+	public void resetHeaderColor() {
+		setHeaderColor(null);
+	}
+	
 	public void addStyle(String style) {
 		articleTypeDatabase.addStyle(style);
 	}
@@ -66,7 +74,8 @@ public class PanelMediator {
 	
 	public void setSelectedCategory(CategoryDTO selectedCategory) {
 		articleTypeDatabase.setCategoryFilter(selectedCategory);
-		// articleTypeDatabase.setStyleFilter(new HashSet<String>());
+		articleTypeDatabase.updateProviders();
+		updateAvailableArticleNames();
 	}
 
 	public void setSelectedStyles(Set<StyleCellData> styles) {
@@ -76,7 +85,8 @@ public class PanelMediator {
 			styleFilter.add(s.getName());
 		}
 		articleTypeDatabase.applyFilters();
-		articleTypeDatabase.updateStyleProvider();
+		articleTypeDatabase.updateProviders();
+		updateAvailableArticleNames();
 	}
 
 	public void setSelectedBrands(Set<BrandCellData> brands) {
@@ -86,7 +96,8 @@ public class PanelMediator {
 			brandFilter.add(s.getName());
 		}
 		articleTypeDatabase.applyFilters();
-		articleTypeDatabase.updateBrandProvider();
+		articleTypeDatabase.updateProviders();
+		updateAvailableArticleNames();
 	}
 	
 	public void setSelectedSizes(Set<SizeCellData> sizes) {
@@ -96,7 +107,8 @@ public class PanelMediator {
 			sizeFilter.add(s.getName());
 		}
 		articleTypeDatabase.applyFilters();
-		articleTypeDatabase.updateSizeProvider();
+		articleTypeDatabase.updateProviders();
+		updateAvailableArticleNames();
 	}
 
 	public void setSelectedColors(Set<ColorCellData> colors) {
@@ -106,7 +118,8 @@ public class PanelMediator {
 			colorFilter.add(s.getName());
 		}
 		articleTypeDatabase.applyFilters();
-		articleTypeDatabase.updateColorProvider();
+		articleTypeDatabase.updateProviders();
+		updateAvailableArticleNames();
 	}
 	
 	public Xfashion getXfashion() {
@@ -222,6 +235,7 @@ public class PanelMediator {
 	
 	public void addArticleType(ArticleTypeDTO articleType) {
 		articleTypeDatabase.addArticleType(articleType);
+		articleTypePanel.addAvailableArticleName(articleType.getName());
 	}
 
 	public SizePanel getSizePanel() {
@@ -258,5 +272,31 @@ public class PanelMediator {
 
 	public void showError(String errorMessage) {
 		errorPopup.showPopup(errorMessage);
+	}
+
+	public Collection<String> getArticleNames() {
+		HashSet<String> names = new HashSet<String>();
+		if (articleTypeDatabase != null) {
+			List<ArticleTypeDTO> articleTypes = articleTypeDatabase.getArticleTypeProvider().getList();
+			for (ArticleTypeDTO at : articleTypes) {
+				names.add(at.getName());
+			}
+		}
+		return names;
+	}
+	
+	public void updateAvailableArticleNames() {
+		Collection<String> names = getArticleNames();
+		articleTypePanel.setAvailableArticleNames(names);
+	}
+	
+	@Override
+	public void applicationLoaded() {
+		updateAvailableArticleNames();
+	}
+
+	public void setSelectedName(String name) {
+		articleTypeDatabase.setNameFilter(name);
+		
 	}
 }

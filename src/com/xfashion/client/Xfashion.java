@@ -63,6 +63,7 @@ public class Xfashion implements EntryPoint {
 
 		PanelMediator panelMediator = new PanelMediator();
 		panelMediator.setArticleTypeDatabase(articleTypeDatabase);
+		articleTypeDatabase.setApplicationLoadListener(panelMediator);
 		panelMediator.setXfashion(this);
 		
 		CategoryPanel categoryPanel = new CategoryPanel(panelMediator);

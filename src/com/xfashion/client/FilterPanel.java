@@ -21,7 +21,7 @@ public abstract class FilterPanel {
 		if (color != null) {
 			headerPanel.getElement().getStyle().setBackgroundColor(color);
 		} else {
-			headerPanel.getElement().getStyle().setBackgroundColor("#000000");
+			headerPanel.getElement().getStyle().setBackgroundColor("#777");
 		}
 	}
 	

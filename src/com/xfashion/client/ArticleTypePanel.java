@@ -1,17 +1,26 @@
 package com.xfashion.client;
 
+import java.util.Collection;
+
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.SuggestOracle;
+import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.NoSelectionModel;
@@ -23,6 +32,10 @@ public class ArticleTypePanel extends FilterPanel {
 	private ArticleTypeDTO selectedArticleType;
 
 	private ArticleTypeCell cell;
+	
+	private SuggestBox nameSuggestBox;
+	
+	private MultiWordSuggestOracle nameOracle;
 
 	private ArticleTypeDetailPopup articleTypeDetailPopup;
 
@@ -41,17 +54,54 @@ public class ArticleTypePanel extends FilterPanel {
 
 		headerPanel = new HorizontalPanel();
 		headerPanel.addStyleName("filterHeader");
-		Label articleTypeLabel = new Label("Artikel");
-		articleTypeLabel.addStyleName("filterLabel");
-		headerPanel.add(articleTypeLabel);
-		Button addStyleButton = new Button("+");
-		addStyleButton.addClickHandler(new ClickHandler() {
+//		Label articleTypeLabel = new Label("Artikel");
+//		articleTypeLabel.addStyleName("filterLabel");
+//		headerPanel.add(articleTypeLabel);
+		
+		nameOracle = new MultiWordSuggestOracle();
+		nameSuggestBox = new SuggestBox(nameOracle);
+		headerPanel.add(nameSuggestBox);
+		nameOracle.addAll(panelMediator.getArticleNames());
+		nameSuggestBox.setStyleName("nameSuggestBox");
+		
+		SelectionHandler<SuggestOracle.Suggestion> nameSelectionHandler = new SelectionHandler<SuggestOracle.Suggestion>() {
+			@Override
+			public void onSelection(SelectionEvent<Suggestion> event) {
+				String selectedName = event.getSelectedItem().getReplacementString();
+				panelMediator.setSelectedName(selectedName);
+			}
+		};
+		nameSuggestBox.addSelectionHandler(nameSelectionHandler);
+		KeyUpHandler nameValueChangeHandler = new KeyUpHandler() {
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				String name = nameSuggestBox.getValue();
+				if (name == null || name.length() == 0) {
+					panelMediator.setSelectedName(null);
+				}
+			}
+		};
+		nameSuggestBox.addKeyUpHandler(nameValueChangeHandler);
+		
+		Button deleteNameFilterButton = new Button("x");
+		deleteNameFilterButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				nameSuggestBox.setText("");
+				panelMediator.setSelectedName(null);
+			}
+		});
+		deleteNameFilterButton.setStyleName("clearNameFilterButton");
+		headerPanel.add(deleteNameFilterButton);
+		
+		Button addArticleButton = new Button("+");
+		addArticleButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				addArticle();
 			}
 		});
-		headerPanel.add(addStyleButton);
+		headerPanel.add(addArticleButton);
 		panel.add(headerPanel);
 		setHeaderColor(null);
 
@@ -140,6 +190,15 @@ public class ArticleTypePanel extends FilterPanel {
 
 	public void clearSelection() {
 
+	}
+
+	public void addAvailableArticleName(String name) {
+		nameOracle.add(name);
+	}
+
+	public void setAvailableArticleNames(Collection<String> names) {
+		nameOracle.clear();
+		nameOracle.addAll(names);
 	}
 
 }

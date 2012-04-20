@@ -2,7 +2,6 @@ package com.xfashion.client;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -34,10 +33,9 @@ public class ArticleTypeDatabase {
 	private ArticleTypeDataProvider articleTypeProvider;
 
 	private CategoryDTO categoryFilter = null;
-	private Set<String> styleFilter = null;
-	private Set<String> brandFilter = null;
-	private Set<String> colorFilter = null;
-	private Set<String> sizeFilter = null;
+	private String nameFilter = null;
+	
+	private ApplicationLoadListener applicationLoadListener;
 
 	public ArticleTypeDatabase() {
 		init();
@@ -57,11 +55,6 @@ public class ArticleTypeDatabase {
 		readSizes();
 		readColors();
 		readArticleTypes();
-
-		styleFilter = new HashSet<String>();
-		brandFilter = new HashSet<String>();
-		sizeFilter = new HashSet<String>();
-		colorFilter = new HashSet<String>();
 	}
 
 	public void createCategories() {
@@ -83,12 +76,16 @@ public class ArticleTypeDatabase {
 				sizeProvider.isLoaded() &&
 				colorProvider.isLoaded() &&
 				articleTypeProvider.isLoaded()) {
-			updateStyleProvider();
-			updateBrandProvider();
-			updateColorProvider();
-			updateSizeProvider();
+			updateProviders();
 		}
+		fireApplicationLoaded();
 			
+	}
+	
+	private void fireApplicationLoaded() {
+		if (applicationLoadListener != null) {
+			applicationLoadListener.applicationLoaded();
+		}
 	}
 	
 	private void readCategories() {
@@ -225,57 +222,41 @@ public class ArticleTypeDatabase {
 		articleTypeProvider = new ArticleTypeDataProvider();
 	}
 	
+	private List<ArticleTypeDTO> applyFilter(FilterDataProvider<? extends FilterCellData> provider, List<ArticleTypeDTO> articleTypes) {
+		if (articleTypes == null) {
+			articleTypes = new ArrayList<ArticleTypeDTO>();
+		}
+		ArrayList<ArticleTypeDTO> temp = new ArrayList<ArticleTypeDTO>();
+		Set<String> filter = provider.getFilter();
+		
+		if (filter != null && filter.size() > 0) {
+			temp.clear();
+			for (ArticleTypeDTO at : articleTypes) {
+				if (filter.contains(provider.getAttributeContent(at))) {
+					temp.add(at);
+				}
+			}
+			articleTypes.retainAll(temp);
+		}
+		
+		return articleTypes;
+	}
+	
 	public void applyFilters() {
 		List<ArticleTypeDTO> result = new ArrayList<ArticleTypeDTO>(articleTypes);
-		ArrayList<ArticleTypeDTO> temp = new ArrayList<ArticleTypeDTO>();
 
-		result = applyCategoryFilter(result, categoryFilter);
-		
-		if (styleFilter != null && styleFilter.size() > 0) {
-			temp.clear();
-			for (ArticleTypeDTO at : result) {
-				if (styleFilter.contains(at.getStyle())) {
-					temp.add(at);
-				}
-			}
-			result.retainAll(temp);
-		}
-
-		if (brandFilter != null && brandFilter.size() > 0) {
-			temp.clear();
-			for (ArticleTypeDTO at : result) {
-				if (brandFilter.contains(at.getBrand())) {
-					temp.add(at);
-				}
-			}
-			result.retainAll(temp);
-		}
-
-		if (colorFilter != null && colorFilter.size() > 0) {
-			temp.clear();
-			for (ArticleTypeDTO at : result) {
-				if (colorFilter.contains(at.getColor())) {
-					temp.add(at);
-				}
-			}
-			result.retainAll(temp);
-		}
-
-		if (sizeFilter != null && sizeFilter.size() > 0) {
-			temp.clear();
-			for (ArticleTypeDTO at : result) {
-				if (sizeFilter.contains(at.getSize())) {
-					temp.add(at);
-				}
-			}
-			result.retainAll(temp);
-		}
+		result = applyCategoryFilter(categoryFilter, result);
+		result = applyFilter(styleProvider, result);
+		result = applyFilter(brandProvider, result);
+		result = applyFilter(sizeProvider, result);
+		result = applyFilter(colorProvider, result);
+		result = applyNameFilter(nameFilter, result);
 
 		filteredArticleTypes = result;
 		articleTypeProvider.setList(filteredArticleTypes);
 	}
 	
-	private List<ArticleTypeDTO> applyCategoryFilter(List<ArticleTypeDTO> articles, CategoryDTO categoryFilter) {
+	private List<ArticleTypeDTO> applyCategoryFilter(CategoryDTO categoryFilter, List<ArticleTypeDTO> articles) {
 		ArrayList<ArticleTypeDTO> result = new ArrayList<ArticleTypeDTO>(articleTypes);
 		ArrayList<ArticleTypeDTO> temp = new ArrayList<ArticleTypeDTO>();
 
@@ -289,28 +270,40 @@ public class ArticleTypeDatabase {
 		}
 		return result;
 	}
+	
+	private List<ArticleTypeDTO> applyNameFilter(String name, List<ArticleTypeDTO> articles) {
+		ArrayList<ArticleTypeDTO> result = new ArrayList<ArticleTypeDTO>(articles);
+		ArrayList<ArticleTypeDTO> temp = new ArrayList<ArticleTypeDTO>();
+
+		if (name != null) {
+			for (ArticleTypeDTO at : result) {
+				if (name.equals(at.getName())) {
+					temp.add(at);
+				}
+			}
+			result.retainAll(temp);
+		}
+		return result;
+	}
 
 	public CategoryDTO getCategoryFilter() {
 		return categoryFilter;
 	}
 	
-	public void setCategoryFilter(CategoryDTO category) {
-		if (category != null) {
-			categoryFilter = category;
-			updateStyleProvider();
-			updateBrandProvider();
-			updateSizeProvider();
-			updateColorProvider();
-		} else {
-			categoryFilter = null;
-		}
+	public void setNameFilter(String name) {
+		nameFilter = name;
 		applyFilters();
 	}
 
-	public void updateFilterProvider(FilterDataProvider<? extends FilterCellData> provider, Set<String> filter) {
+	public void setCategoryFilter(CategoryDTO category) {
+		categoryFilter = category;
+		applyFilters();
+		updateProviders();
+	}
+
+	public void updateFilterProvider(FilterDataProvider<? extends FilterCellData> provider, List<ArticleTypeDTO> articleTypes) {
 		HashMap<String, Integer> articleAmountPerAttribute = new HashMap<String, Integer>();
-		List<ArticleTypeDTO> articlesOfCategory = applyCategoryFilter(new ArrayList<ArticleTypeDTO>(articleTypes), categoryFilter);
-		for (ArticleTypeDTO at : articlesOfCategory) {
+		for (ArticleTypeDTO at : articleTypes) {
 			String attributeContent = provider.getAttributeContent(at);
 			if (attributeContent != null) {
 				Integer availableArticles = articleAmountPerAttribute.get(attributeContent);
@@ -327,59 +320,68 @@ public class ArticleTypeDatabase {
 			Integer availableArticles = articleAmountPerAttribute.get(scd.getName());
 			scd.setAvailable(availableArticles != null);
 			scd.setArticleAmount(availableArticles);
-			scd.setSelected(filter.contains(scd.getName()));
+			scd.setSelected(provider.getFilter().contains(scd.getName()));
 		}
 		provider.refresh();
 	}
 	
+	public void updateProviders() {
+		updateStyleProvider();
+		updateBrandProvider();
+		updateSizeProvider();
+		updateColorProvider();
+	}
+	
 	public void updateStyleProvider() {
-		updateFilterProvider(styleProvider, styleFilter);
+		List<ArticleTypeDTO> temp = new ArrayList<ArticleTypeDTO>(articleTypes);
+		temp = applyCategoryFilter(categoryFilter, temp);
+		temp = applyFilter(brandProvider, temp);
+		temp = applyFilter(sizeProvider, temp);
+		temp = applyFilter(colorProvider, temp);
+		updateFilterProvider(styleProvider, temp);
 	}
 	
 	public void updateBrandProvider() {
-		updateFilterProvider(brandProvider, brandFilter);
+		List<ArticleTypeDTO> temp = new ArrayList<ArticleTypeDTO>(articleTypes);
+		temp = applyCategoryFilter(categoryFilter, temp);
+		temp = applyFilter(styleProvider, temp);
+		temp = applyFilter(sizeProvider, temp);
+		temp = applyFilter(colorProvider, temp);
+		updateFilterProvider(brandProvider, temp);
 	}
 
 	public void updateSizeProvider() {
-		updateFilterProvider(sizeProvider, sizeFilter);
+		List<ArticleTypeDTO> temp = new ArrayList<ArticleTypeDTO>(articleTypes);
+		temp = applyCategoryFilter(categoryFilter, temp);
+		temp = applyFilter(styleProvider, temp);
+		temp = applyFilter(brandProvider, temp);
+		temp = applyFilter(colorProvider, temp);
+		updateFilterProvider(sizeProvider, temp);
 	}
 	
 	public void updateColorProvider() {
-		updateFilterProvider(colorProvider, colorFilter);
+		List<ArticleTypeDTO> temp = new ArrayList<ArticleTypeDTO>(articleTypes);
+		temp = applyCategoryFilter(categoryFilter, temp);
+		temp = applyFilter(styleProvider, temp);
+		temp = applyFilter(brandProvider, temp);
+		temp = applyFilter(sizeProvider, temp);
+		updateFilterProvider(colorProvider, temp);
 	}
 	
 	public Set<String> getStyleFilter() {
-		return styleFilter;
-	}
-	
-	public void setStyleFilter(Set<String> styles) {
-		styleFilter = styles;
+		return styleProvider.getFilter();
 	}
 
 	public Set<String> getBrandFilter() {
-		return brandFilter;
-	}
-	
-	public void setBrandFilter(Set<String> brands) {
-		brandFilter = brands;
+		return brandProvider.getFilter();
 	}
 
 	public Set<String> getColorFilter() {
-		return colorFilter;
-	}
-
-	public void setColorFilter(Set<String> color) {
-		colorFilter = color;
-		applyFilters();
+		return colorProvider.getFilter();
 	}
 
 	public Set<String> getSizeFilter() {
-		return sizeFilter;
-	}
-
-	public void setSizeFilter(Set<String> size) {
-		sizeFilter = size;
-		applyFilters();
+		return sizeProvider.getFilter();
 	}
 
 	public void addBrandDisplay(HasData<BrandCellData> display) {
@@ -493,11 +495,7 @@ public class ArticleTypeDatabase {
 			@Override
 			public void onSuccess(Void result) {
 				articleTypes.add(articleType);
-				// articleTypeProvider.getList().add(articleType);
-				updateStyleProvider();
-				updateBrandProvider();
-				updateSizeProvider();
-				updateColorProvider();
+				updateProviders();
 				applyFilters();
 			}
 		};
@@ -507,6 +505,14 @@ public class ArticleTypeDatabase {
 	public class StyleCell {
 		public String name;
 		public boolean available;
+	}
+
+	public ApplicationLoadListener getApplicationLoadListener() {
+		return applicationLoadListener;
+	}
+
+	public void setApplicationLoadListener(ApplicationLoadListener applicationLoadListener) {
+		this.applicationLoadListener = applicationLoadListener;
 	}
 
 }
