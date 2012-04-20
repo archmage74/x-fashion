@@ -10,9 +10,15 @@ h1#logo {
   text-align: left;
 }
 .filterTable {
-	height: 18px;
-	padding: 0px;
-	margin: 0px;
+	height: 20px;
+	padding-top: 0px;
+	padding-bottom 0px;
+	padding-left: 0px;
+	padding-right: 0px;
+	margin-top: 1px;
+	margin-bottom: 0px;
+	margin-left: 0px;
+	margin-right: 0px;
 	border: 0px;
 }
 .filterLabel {
@@ -22,6 +28,7 @@ h1#logo {
 	padding-top: 3px;
 	margin-left: 2px;
 	margin-right: 2px;
+	width: 120px;
 }
 .filterText {
 	font-size: 12px;
@@ -68,14 +75,18 @@ h1#logo {
 	float: left;
 	padding: 0px;
 	margin-top: 0px;
+	margin-left: 0px;
 	margin-right: 0px;
+	margin-bottom: 0px;
 	border: 0px;
 }
 .filterIconDisabled {
 	float: left;
 	padding: 0px;
 	margin-top: 0px;
+	margin-left: 0px;
 	margin-right: 0px;
+	margin-bottom: 0px;
 	border: 0px;
 }
 .filterHeader {
@@ -98,13 +109,7 @@ h1#logo {
 	margin-left: 1px;
 	margin-right: 1px;
 	width: 150px;
-}
-
-.sizeList {
-	border: 1px solid silver;
-	margin-left: 1px;
-	margin-right: 1px;
-	width: 150px;
+	padding: 1px;
 }
 
 .articleTypeList {
@@ -112,23 +117,6 @@ h1#logo {
 	margin-left: 1px;
 	margin-right: 1px;
 	width: 500px;
-}
-
-/** Most GWT widgets already have a style name defined */
-.gwt-DialogBox {
-  width: 400px;
-}
-
-.dialogVPanel {
-  margin: 5px;
-}
-
-.serverResponseLabelError {
-  color: red;
-}
-
-#itemType {
-	color: ff0000;
 }
 
 .categoryUnselected {
@@ -208,6 +196,33 @@ h1#logo {
 	font-size: 20px;
 	width: 100px;
 	height: 50;
+}
+
+.nameSuggestBox {
+	margin: 2px 0px 2px 2px;
+	padding: 3px 0px 3px 3px;
+	border-top: 1px solid #999;
+	border-left: 1px solid #CCC;
+	border-right: 0px;
+	border-bottom: 1px solid #CCC;
+	font-size: 100%;
+	font-family: Arial Unicode MS, Arial, sans-serif;
+	width: 441px;
+}
+
+.clearNameFilterButton {
+	margin: 2px 2px 2px 0px;
+	padding: 3px 7px 3px 7px;
+	background-color: #fff;
+	text-decoration: none;
+	cursor: pointer;
+	cursor: hand;
+	font-size: small;
+	border-top: 1px solid #999;
+	border-bottom: 1px solid #CCC;
+	border-left: 0px;
+	border-right: 1px solid #CCC;
+	height: 24px;
 }
 
 /** Set ids using widget.getElement().setId("idOfElement") */
