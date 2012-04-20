@@ -1,29 +1,41 @@
 DONE - logo
-
 DONE - show amounts of available article-types for attribute
+DONE - rework amount of available article-types per attribute 
+DONE - header in grey
+DONE - name filter
 
 create category
 
+edit category
+
 delete brand/style/color/size
-
-bulk creation of article types
-
-article-type images
 
 edit brand/style/color/size
 
 ordering of brand/style/color/size
 
-name filter
+einkaufspreis in barcode
+
+create barcode
+
+article-type images
+
+bulk creation of article types (only multiple sizes are allowed)
 
 user management
 
-edit category
+print multiple stickers / bulk sticker printing
 
-loading progress bar
+bestand pro user, einscannen von jedem artikel
 
-print multiple stickers
+lieferschein bei auslieferung von zentrale
+
+bulk sticker printing
+
+differenz anzeige - lieferschein vs bestandsaufnahme
 
 pdf instead of html
 
 prevent application from sleeping
+
+loading progress bar
