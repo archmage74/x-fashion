@@ -12,7 +12,7 @@ public class Category {
 	
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-    private String css;
+	private Long id;
 	
 	@Persistent
 	private String name;
@@ -23,6 +23,9 @@ public class Category {
 	@Persistent
 	private String borderColor;
 	
+	@Persistent
+	private Integer sortIndex;
+	
 	public Category() {
 		
 	}
@@ -32,21 +35,30 @@ public class Category {
 	}
 	
 	public void updateFromDTO(CategoryDTO dto) {
-		this.css = dto.getCss();
 		this.name = dto.getName();
 		this.backgroundColor = dto.getBackgroundColor();
 		this.borderColor = dto.getBorderColor();
+		this.sortIndex = dto.getSortIndex();
 	}
 	
 	public CategoryDTO createDTO() {
 		CategoryDTO dto = new CategoryDTO();
-		dto.setCss(css);
+		dto.setId(id);
 		dto.setName(name);
 		dto.setBackgroundColor(backgroundColor);
 		dto.setBorderColor(borderColor);
+		dto.setSortIndex(sortIndex);
 		return dto;
 	}
 	
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -55,14 +67,6 @@ public class Category {
 		this.name = name;
 	}
 	
-	public String getCss() {
-		return css;
-	}
-	
-	public void setCss(String css) {
-		this.css = css;
-	}
-
 	public String getBackgroundColor() {
 		return backgroundColor;
 	}
@@ -78,4 +82,13 @@ public class Category {
 	public void setBorderColor(String borderColor) {
 		this.borderColor = borderColor;
 	}
+
+	public Integer getSortIndex() {
+		return sortIndex;
+	}
+
+	public void setSortIndex(Integer sortIndex) {
+		this.sortIndex = sortIndex;
+	}
+
 }

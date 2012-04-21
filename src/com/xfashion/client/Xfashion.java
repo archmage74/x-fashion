@@ -10,6 +10,13 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.xfashion.client.at.ArticleTypeDatabase;
+import com.xfashion.client.at.ArticleTypePanel;
+import com.xfashion.client.brand.BrandPanel;
+import com.xfashion.client.cat.CategoryPanel;
+import com.xfashion.client.color.ColorPanel;
+import com.xfashion.client.size.SizePanel;
+import com.xfashion.client.style.StylePanel;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -64,6 +71,7 @@ public class Xfashion implements EntryPoint {
 		PanelMediator panelMediator = new PanelMediator();
 		panelMediator.setArticleTypeDatabase(articleTypeDatabase);
 		articleTypeDatabase.setApplicationLoadListener(panelMediator);
+		articleTypeDatabase.setApplicationErrorListener(panelMediator);
 		panelMediator.setXfashion(this);
 		
 		CategoryPanel categoryPanel = new CategoryPanel(panelMediator);

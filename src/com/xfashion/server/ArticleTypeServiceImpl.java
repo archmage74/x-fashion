@@ -7,7 +7,7 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-import com.xfashion.client.ArticleTypeService;
+import com.xfashion.client.at.ArticleTypeService;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.BrandDTO;
 import com.xfashion.shared.CategoryDTO;
@@ -24,24 +24,56 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
 			deleteCategories(pm);
-			createCategory(pm, new CategoryDTO("Ftrs", "Damenhose", "#76A573", "#466944"));
-			createCategory(pm, new CategoryDTO("Mtrs", "Herrenhose", "#6F77AA", "#2B3781"));
-			createCategory(pm, new CategoryDTO("Ftop", "Damenoberteil", "#9EC1AA", "#74A886"));
-			createCategory(pm, new CategoryDTO("Mtop", "Herrenoberteil", "#B2B7D9", "#919BCA"));
-			createCategory(pm, new CategoryDTO("Skrt", "Kleider", "#CEAFD0", "#B98DBC"));
-			createCategory(pm, new CategoryDTO("Stks", "Strumpfwaren", "#C1AEA5", "#A78C7E"));
-			createCategory(pm, new CategoryDTO("Belt", "Gürtel", "#9F7F79", "#71433A"));
-			createCategory(pm, new CategoryDTO("Bath", "Bademode", "#8AADB8", "#578C9B"));
-			createCategory(pm, new CategoryDTO("Accs", "Accessoirs", "#A26E7B", "#7C3044"));
+			createCategory(pm, new CategoryDTO("Damenhose", "#76A573", "#466944", 0));
+			createCategory(pm, new CategoryDTO("Herrenhose", "#6F77AA", "#2B3781", 1));
+			createCategory(pm, new CategoryDTO("Damenoberteil", "#9EC1AA", "#74A886", 2));
+			createCategory(pm, new CategoryDTO("Herrenoberteil", "#B2B7D9", "#919BCA", 3));
+			createCategory(pm, new CategoryDTO("Kleider", "#CEAFD0", "#B98DBC", 4));
+			createCategory(pm, new CategoryDTO("Strumpfwaren", "#C1AEA5", "#A78C7E", 5));
+			createCategory(pm, new CategoryDTO("Gürtel", "#9F7F79", "#71433A", 6));
+			createCategory(pm, new CategoryDTO("Bademode", "#8AADB8", "#578C9B", 7));
+			createCategory(pm, new CategoryDTO("Accessoirs", "#A26E7B", "#7C3044", 8));
 		} finally {
 			pm.close();
 		}
 	}
-
+	
 	private void deleteCategories(PersistenceManager pm) {
 		List<Category> all = readCategories(pm);
 		pm.deletePersistentAll(all);
 		pm.flush();
+	}
+
+	@Override
+	public CategoryDTO createCategory(CategoryDTO dto) throws IllegalArgumentException {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			Category category = createCategory(pm, dto);
+			dto.setId(category.getId());
+		} finally {
+			pm.close();
+		}
+		return dto;
+	}
+
+	private Category createCategory(PersistenceManager pm, CategoryDTO dto) {
+		Category c = new Category(dto);
+		return pm.makePersistent(c);
+	}
+	
+	@Override
+	public void deleteCategory(CategoryDTO dto) throws IllegalArgumentException {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			deleteCategory(pm, dto);
+		} finally {
+			pm.close();
+		}
+	}
+	
+	private void deleteCategory(PersistenceManager pm, CategoryDTO dto) {
+		Category category = readCategory(pm, dto.getId());
+		pm.deletePersistent(category);
 	}
 	
 	@Override
@@ -68,28 +100,23 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 	}
 	
 	@Override
-	public void saveCategory(CategoryDTO dto) throws IllegalArgumentException {
+	public void updateCategory(CategoryDTO dto) throws IllegalArgumentException {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
-			saveCategory(pm, dto);
+			updateCategory(pm, dto);
 		} finally {
 			pm.close();
 		}
 	}
 	
-	private void saveCategory(PersistenceManager pm, CategoryDTO dto) {
-		Category category = readCategory(pm, dto.getCss());
+	private void updateCategory(PersistenceManager pm, CategoryDTO dto) {
+		Category category = readCategory(pm, dto.getId());
 		category.updateFromDTO(dto);
 		pm.makePersistent(category);
 	}
 	
-	private void createCategory(PersistenceManager pm, CategoryDTO dto) {
-		Category c = new Category(dto);
-		pm.makePersistent(c);
-	}
-
-	private Category readCategory(PersistenceManager pm, String categoryId) {
-		Category category = pm.getObjectById(Category.class, categoryId);
+	private Category readCategory(PersistenceManager pm, Long id) {
+		Category category = pm.getObjectById(Category.class, id);
 		return category;
 	}
 

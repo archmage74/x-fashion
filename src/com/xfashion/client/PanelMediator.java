@@ -5,10 +5,29 @@ import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
 
+import com.google.gwt.core.client.GWT;
+import com.xfashion.client.at.ArticleTypeDatabase;
+import com.xfashion.client.at.ArticleTypeDetailPopup;
+import com.xfashion.client.at.ArticleTypePanel;
+import com.xfashion.client.at.CreateArticleTypePopup;
+import com.xfashion.client.brand.BrandCellData;
+import com.xfashion.client.brand.BrandPanel;
+import com.xfashion.client.brand.CreateBrandPopup;
+import com.xfashion.client.cat.CategoryPanel;
+import com.xfashion.client.color.ColorCellData;
+import com.xfashion.client.color.ColorPanel;
+import com.xfashion.client.color.CreateColorPopup;
+import com.xfashion.client.resources.ErrorMessages;
+import com.xfashion.client.size.CreateSizePopup;
+import com.xfashion.client.size.SizeCellData;
+import com.xfashion.client.size.SizePanel;
+import com.xfashion.client.style.CreateStylePopup;
+import com.xfashion.client.style.StyleCellData;
+import com.xfashion.client.style.StylePanel;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.CategoryDTO;
 
-public class PanelMediator implements ApplicationLoadListener {
+public class PanelMediator implements ApplicationLoadListener, ApplicationErrorListener {
 
 	private Xfashion xfashion;
 
@@ -25,12 +44,14 @@ public class PanelMediator implements ApplicationLoadListener {
 	private CreateColorPopup createColorPopup;
 	private CreateArticleTypePopup createArticleTypePopup;
 	private ArticleTypeDetailPopup articleTypeDetailPopup;
-	
+
+	private ErrorMessages errorMessages;
 	private ErrorPopup errorPopup;
 	
 	private ArticleTypeDatabase articleTypeDatabase;
 
 	public PanelMediator() {
+		errorMessages = GWT.create(ErrorMessages.class);
 		errorPopup = new ErrorPopup();
 	}
 	
@@ -295,8 +316,32 @@ public class PanelMediator implements ApplicationLoadListener {
 		updateAvailableArticleNames();
 	}
 
+	@Override
+	public void error(String error) {
+		showError(error);
+	}
+	
 	public void setSelectedName(String name) {
 		articleTypeDatabase.setNameFilter(name);
-		
 	}
+
+	public void createCategory(CategoryDTO category) {
+		articleTypeDatabase.createCategory(category);
+	}
+	
+	public void updateCategory(CategoryDTO category) {
+		articleTypeDatabase.updateCategory(category);
+	}
+	
+	public void deleteCategory(CategoryDTO category) {
+		if (articleTypeDatabase.doesCategoryHaveArticles(category)) {
+			showError(errorMessages.categoryIsNotEmpty(category.getName()));
+			return;
+		}
+		if (category.equals(articleTypeDatabase.getCategoryFilter())) {
+			this.setSelectedCategory(null);
+		}
+		articleTypeDatabase.deleteCategory(category);
+	}
+
 }

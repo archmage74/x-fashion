@@ -29,7 +29,7 @@ public abstract class FilterPanel {
 		headerPanel = new HorizontalPanel();
 		headerPanel.addStyleName("filterHeader");
 		Label label = new Label(title);
-		label.addStyleName("filterLabel");
+		label.addStyleName("filterLabel attributeFilterLabel");
 		headerPanel.add(label);
 		Button createButton = new Button("+");
 		headerPanel.add(createButton);

@@ -4,13 +4,13 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.xfashion.shared.CategoryDTO;
 
 public abstract class FilterCellData {
-
+	
 	private String name;
-
+	
 	private boolean available;
 	
 	private boolean selected;
-
+	
 	private Integer articleAmount;
 	
 	private String iconPrefix;
