@@ -28,7 +28,14 @@ h1#logo {
 	padding-top: 3px;
 	margin-left: 2px;
 	margin-right: 2px;
+}
+.attributeFilterLabel {
 	width: 120px;
+	cursor: pointer;
+	cursor: hand;
+}
+.categoryFilterLabel {
+	width: 167px;
 }
 .filterText {
 	font-size: 12px;
@@ -233,4 +240,50 @@ h1#logo {
 .errorText {
 	color: red;
 	font-weight: bold;
+}
+.iconShowTools {
+	width: 23px;
+	height: 23px;
+}
+.buttonShowTools:hover {
+	border-color: #939393;
+}
+.buttonShowTools {
+	margin: 1px;
+	padding: 0px;
+	width: 25px;
+	height: 25px;
+	border-style: inset;
+	border-width: 1px;
+}
+.buttonTool:hover {
+	border-color: #939393;
+}
+.buttonTool {
+	margin: 0px;
+	border: 1px inset #CCC;
+	padding: 0px;
+	width: 17px;
+	height: 15px;
+	font-size: 1px;
+}
+.iconToolButton {
+	margin: 0px;
+	padding: 0px;
+}
+table.toolGrid {
+	margin: 0px;
+	padding: 3px 0px;
+	width: 30px;
+}
+table.toolGrid * td {
+	border: 0px;
+	width: 10px;
+	height: 10px;
+	font-size: 1px;
+}
+.toolPanel {
+	margin: 1px;
+	width: 68px;
+	padding: 0px;
 }

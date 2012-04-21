@@ -3,10 +3,10 @@ DONE - show amounts of available article-types for attribute
 DONE - rework amount of available article-types per attribute 
 DONE - header in grey
 DONE - name filter
-
-create category
-
-edit category
+DONE - create category
+DONE - delete category
+DONE - edit category
+DONE - ordering of category
 
 delete brand/style/color/size
 
@@ -39,3 +39,10 @@ pdf instead of html
 prevent application from sleeping
 
 loading progress bar
+
+NEU - favicon
+
+NEU - name filter enhancement
+Wenn ich R in dasTextfeld schreibe und zb Romania ausgewählt habe, wäre es super wenn ich jetzt mit den Richtungstasten auf der Tastatur (oben unten) zu durch die anderen Namen blättern könnte.
+Aber nicht nur durch die R´s sondern durch alle name die durch die Filter nicht gesperrt sind und das nach Alphabet sortiert.
+
