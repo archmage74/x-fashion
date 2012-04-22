@@ -90,7 +90,7 @@ public class Xfashion implements EntryPoint {
 		mainPanel.add(colorPanel.createPanel(articleTypeDatabase.getColorProvider()));
 		
 		ArticleTypePanel articleTypePanel = new ArticleTypePanel(panelMediator);
-		mainPanel.add(articleTypePanel.createPanel(articleTypeDatabase.getArticleTypeProvider()));
+		mainPanel.add(articleTypePanel.createPanel(articleTypeDatabase.getArticleTypeProvider(), articleTypeDatabase.getNameOracle()));
 		
 //		mainPanel.add(createArticleTypeList(articleTypeDatabase));
 

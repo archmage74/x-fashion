@@ -1,9 +1,6 @@
 package com.xfashion.client;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Set;
-import java.util.HashSet;
 
 import com.google.gwt.core.client.GWT;
 import com.xfashion.client.at.ArticleTypeDatabase;
@@ -13,6 +10,7 @@ import com.xfashion.client.at.CreateArticleTypePopup;
 import com.xfashion.client.brand.BrandCellData;
 import com.xfashion.client.brand.BrandPanel;
 import com.xfashion.client.brand.CreateBrandPopup;
+import com.xfashion.client.cat.CategoryCellData;
 import com.xfashion.client.cat.CategoryPanel;
 import com.xfashion.client.color.ColorCellData;
 import com.xfashion.client.color.ColorPanel;
@@ -96,7 +94,6 @@ public class PanelMediator implements ApplicationLoadListener, ApplicationErrorL
 	public void setSelectedCategory(CategoryDTO selectedCategory) {
 		articleTypeDatabase.setCategoryFilter(selectedCategory);
 		articleTypeDatabase.updateProviders();
-		updateAvailableArticleNames();
 	}
 
 	public void setSelectedStyles(Set<StyleCellData> styles) {
@@ -107,7 +104,6 @@ public class PanelMediator implements ApplicationLoadListener, ApplicationErrorL
 		}
 		articleTypeDatabase.applyFilters();
 		articleTypeDatabase.updateProviders();
-		updateAvailableArticleNames();
 	}
 
 	public void setSelectedBrands(Set<BrandCellData> brands) {
@@ -118,7 +114,6 @@ public class PanelMediator implements ApplicationLoadListener, ApplicationErrorL
 		}
 		articleTypeDatabase.applyFilters();
 		articleTypeDatabase.updateProviders();
-		updateAvailableArticleNames();
 	}
 	
 	public void setSelectedSizes(Set<SizeCellData> sizes) {
@@ -129,7 +124,6 @@ public class PanelMediator implements ApplicationLoadListener, ApplicationErrorL
 		}
 		articleTypeDatabase.applyFilters();
 		articleTypeDatabase.updateProviders();
-		updateAvailableArticleNames();
 	}
 
 	public void setSelectedColors(Set<ColorCellData> colors) {
@@ -140,7 +134,6 @@ public class PanelMediator implements ApplicationLoadListener, ApplicationErrorL
 		}
 		articleTypeDatabase.applyFilters();
 		articleTypeDatabase.updateProviders();
-		updateAvailableArticleNames();
 	}
 	
 	public Xfashion getXfashion() {
@@ -256,7 +249,6 @@ public class PanelMediator implements ApplicationLoadListener, ApplicationErrorL
 	
 	public void addArticleType(ArticleTypeDTO articleType) {
 		articleTypeDatabase.addArticleType(articleType);
-		articleTypePanel.addAvailableArticleName(articleType.getName());
 	}
 
 	public SizePanel getSizePanel() {
@@ -295,25 +287,9 @@ public class PanelMediator implements ApplicationLoadListener, ApplicationErrorL
 		errorPopup.showPopup(errorMessage);
 	}
 
-	public Collection<String> getArticleNames() {
-		HashSet<String> names = new HashSet<String>();
-		if (articleTypeDatabase != null) {
-			List<ArticleTypeDTO> articleTypes = articleTypeDatabase.getArticleTypeProvider().getList();
-			for (ArticleTypeDTO at : articleTypes) {
-				names.add(at.getName());
-			}
-		}
-		return names;
-	}
-	
-	public void updateAvailableArticleNames() {
-		Collection<String> names = getArticleNames();
-		articleTypePanel.setAvailableArticleNames(names);
-	}
-	
 	@Override
 	public void applicationLoaded() {
-		updateAvailableArticleNames();
+		
 	}
 
 	@Override
@@ -333,7 +309,7 @@ public class PanelMediator implements ApplicationLoadListener, ApplicationErrorL
 		articleTypeDatabase.updateCategory(category);
 	}
 	
-	public void deleteCategory(CategoryDTO category) {
+	public void deleteCategory(CategoryCellData category) {
 		if (articleTypeDatabase.doesCategoryHaveArticles(category)) {
 			showError(errorMessages.categoryIsNotEmpty(category.getName()));
 			return;

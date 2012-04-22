@@ -7,11 +7,13 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 
-public abstract class FilterPanel {
+public abstract class FilterPanel<T extends FilterCellData> {
 
 	protected Panel headerPanel; 
 	
 	protected PanelMediator panelMediator;
+	
+	public abstract Panel createPanel(FilterDataProvider<T> provider);
 	
 	public FilterPanel(PanelMediator panelMediator) {
 		this.panelMediator = panelMediator;

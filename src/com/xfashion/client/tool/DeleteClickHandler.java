@@ -1,7 +1,8 @@
-package com.xfashion.client;
+package com.xfashion.client.tool;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.xfashion.client.ICrud;
 
 public class DeleteClickHandler<T> implements ClickHandler {
 	

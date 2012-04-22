@@ -1,7 +1,5 @@
 package com.xfashion.client.at;
 
-import java.util.Collection;
-
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -25,6 +23,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.NoSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
+import com.xfashion.client.FilterDataProvider;
 import com.xfashion.client.FilterPanel;
 import com.xfashion.client.PanelMediator;
 import com.xfashion.client.resources.ErrorMessages;
@@ -39,8 +38,6 @@ public class ArticleTypePanel extends FilterPanel {
 	
 	private SuggestBox nameSuggestBox;
 	
-	private MultiWordSuggestOracle nameOracle;
-
 	private ArticleTypeDetailPopup articleTypeDetailPopup;
 
 	private CreateArticleTypePopup createArticleTypePopup;
@@ -53,7 +50,8 @@ public class ArticleTypePanel extends FilterPanel {
 		panelMediator.setArticleTypePanel(this);
 	}
 
-	public Panel createPanel(ListDataProvider<ArticleTypeDTO> articleTypeProvider) {
+	public Panel createPanel(ListDataProvider<ArticleTypeDTO> articleTypeProvider, MultiWordSuggestOracle nameOracle) {
+
 		articleTypeDetailPopup = new ArticleTypeDetailPopup(panelMediator);
 		createArticleTypePopup = new CreateArticleTypePopup(panelMediator);
 
@@ -65,10 +63,8 @@ public class ArticleTypePanel extends FilterPanel {
 //		articleTypeLabel.addStyleName("filterLabel");
 //		headerPanel.add(articleTypeLabel);
 		
-		nameOracle = new MultiWordSuggestOracle();
 		nameSuggestBox = new SuggestBox(nameOracle);
 		headerPanel.add(nameSuggestBox);
-		nameOracle.addAll(panelMediator.getArticleNames());
 		nameSuggestBox.setStyleName("nameSuggestBox");
 		
 		SelectionHandler<SuggestOracle.Suggestion> nameSelectionHandler = new SelectionHandler<SuggestOracle.Suggestion>() {
@@ -199,13 +195,10 @@ public class ArticleTypePanel extends FilterPanel {
 
 	}
 
-	public void addAvailableArticleName(String name) {
-		nameOracle.add(name);
-	}
-
-	public void setAvailableArticleNames(Collection<String> names) {
-		nameOracle.clear();
-		nameOracle.addAll(names);
+	@Override
+	public Panel createPanel(FilterDataProvider provider) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

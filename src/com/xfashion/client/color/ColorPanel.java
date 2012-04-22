@@ -6,15 +6,15 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.xfashion.client.CreatePopup;
+import com.xfashion.client.FilterDataProvider;
 import com.xfashion.client.FilterPanel;
 import com.xfashion.client.PanelMediator;
 import com.xfashion.client.resources.FilterListResources;
 
-public class ColorPanel extends FilterPanel {
+public class ColorPanel extends FilterPanel<ColorCellData> {
 
 	private MultiSelectionModel<ColorCellData> selectionModel;
 	
@@ -24,8 +24,9 @@ public class ColorPanel extends FilterPanel {
 		super(panelMediator);
 		panelMediator.setColorPanel(this);
 	}
-	
-	public Panel createPanel(ListDataProvider<ColorCellData> brandProvider) {
+
+	@Override
+	public Panel createPanel(FilterDataProvider<ColorCellData> colorProvider) {
 		createPopup = new CreateColorPopup(panelMediator);
 
 		VerticalPanel panel = new VerticalPanel();
@@ -45,7 +46,7 @@ public class ColorPanel extends FilterPanel {
 			}
 		});
 
-		brandProvider.addDataDisplay(styleList);
+		colorProvider.addDataDisplay(styleList);
 		styleList.addStyleName("styleList");
 		panel.add(styleList);
 

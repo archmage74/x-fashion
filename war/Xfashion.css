@@ -1,14 +1,4 @@
-/** Add css rules here for your application. */
 
-
-/** Example rules used by the template application (remove for your app) */
-h1#logo {
-  font-size: 2em;
-  font-weight: bold;
-  color: #f81;
-  margin: 0px 0px 0px 0px;
-  text-align: left;
-}
 .filterTable {
 	height: 20px;
 	padding-top: 0px;
@@ -241,31 +231,26 @@ h1#logo {
 	color: red;
 	font-weight: bold;
 }
-.iconShowTools {
+.buttonShowTools {
+	margin: 2px;
+	padding: 0px;
+	border: 1px inset #CCC;
 	width: 23px;
 	height: 23px;
 }
 .buttonShowTools:hover {
 	border-color: #939393;
 }
-.buttonShowTools {
+.buttonTool {
 	margin: 1px;
 	padding: 0px;
-	width: 25px;
-	height: 25px;
-	border-style: inset;
-	border-width: 1px;
+	border: 1px inset #CCC;
+	background-color: #d4d0c8;
+	width: 10px;
+	height: 11px;
 }
 .buttonTool:hover {
 	border-color: #939393;
-}
-.buttonTool {
-	margin: 0px;
-	border: 1px inset #CCC;
-	padding: 0px;
-	width: 17px;
-	height: 15px;
-	font-size: 1px;
 }
 .iconToolButton {
 	margin: 0px;
@@ -284,6 +269,5 @@ table.toolGrid * td {
 }
 .toolPanel {
 	margin: 1px;
-	width: 68px;
 	padding: 0px;
 }

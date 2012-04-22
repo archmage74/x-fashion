@@ -1,9 +1,9 @@
 package com.xfashion.client.cat;
 
-import com.google.gwt.view.client.ListDataProvider;
-import com.xfashion.shared.CategoryDTO;
+import com.xfashion.client.FilterDataProvider;
+import com.xfashion.shared.ArticleTypeDTO;
 
-public class CategoryDataProvider extends ListDataProvider<CategoryDTO> {
+public class CategoryDataProvider extends FilterDataProvider<CategoryCellData> {
 
 	private boolean loaded;
 	
@@ -17,6 +17,12 @@ public class CategoryDataProvider extends ListDataProvider<CategoryDTO> {
 
 	public void setLoaded(boolean loaded) {
 		this.loaded = loaded;
+	}
+
+	@Override
+	public String getAttributeContent(ArticleTypeDTO articleType) {
+		articleType.getCategory();
+		return null;
 	}
 
 }

@@ -1,13 +1,16 @@
 package com.xfashion.client.at;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ListDataProvider;
 import com.xfashion.client.ApplicationErrorListener;
@@ -16,6 +19,7 @@ import com.xfashion.client.FilterCellData;
 import com.xfashion.client.FilterDataProvider;
 import com.xfashion.client.brand.BrandCellData;
 import com.xfashion.client.brand.BrandDataProvider;
+import com.xfashion.client.cat.CategoryCellData;
 import com.xfashion.client.cat.CategoryDataProvider;
 import com.xfashion.client.color.ColorCellData;
 import com.xfashion.client.color.ColorDataProvider;
@@ -45,6 +49,7 @@ public class ArticleTypeDatabase {
 	private BrandDataProvider brandProvider;
 	private ColorDataProvider colorProvider;
 	private SizeDataProvider sizeProvider;
+	private MultiWordSuggestOracle nameOracle;
 	private ArticleTypeDataProvider articleTypeProvider;
 
 	private CategoryDTO categoryFilter = null;
@@ -62,12 +67,13 @@ public class ArticleTypeDatabase {
 	public void init() {
 		errorMessages = GWT.create(ErrorMessages.class);
 		
-		createCategoryProvider();
-		createStyleProvider();
-		createBrandProvider();
-		createColorProvider();
-		createSizeProvider();
-		createArticleTypeProvider();
+		categoryProvider = new CategoryDataProvider();
+		styleProvider = new StyleDataProvider();
+		brandProvider = new BrandDataProvider();
+		sizeProvider = new SizeDataProvider();
+		colorProvider = new ColorDataProvider();
+		articleTypeProvider = new ArticleTypeDataProvider();
+		nameOracle = new MultiWordSuggestOracle();
 
 		readCategories();
 		readStyles();
@@ -116,8 +122,12 @@ public class ArticleTypeDatabase {
 			@Override
 			public void onSuccess(List<CategoryDTO> result) {
 				Collections.sort(result);
-				List<CategoryDTO> list = categoryProvider.getList();
-				list.addAll(result);
+				List<CategoryCellData> list = categoryProvider.getList();
+				list.clear();
+				for (CategoryDTO dto : result) {
+					CategoryCellData ccd = new CategoryCellData(dto);
+					list.add(ccd);
+				}
 				categoryProvider.setLoaded(true);
 				checkAllRead();
 			}
@@ -137,9 +147,9 @@ public class ArticleTypeDatabase {
 				for (StyleDTO dto : result) {
 					StyleCellData scd = new StyleCellData(dto.getName(), true);
 					list.add(scd);
-					styleProvider.setLoaded(true);
-					checkAllRead();
 				}
+				styleProvider.setLoaded(true);
+				checkAllRead();
 			}
 		};
 		articleTypeService.readStyles(callback);
@@ -156,9 +166,9 @@ public class ArticleTypeDatabase {
 				for (BrandDTO dto : result) {
 					BrandCellData bcd = new BrandCellData(dto.getName(), true);
 					list.add(bcd);
-					brandProvider.setLoaded(true);
-					checkAllRead();
 				}
+				brandProvider.setLoaded(true);
+				checkAllRead();
 			}
 		};
 		articleTypeService.readBrands(callback);
@@ -175,9 +185,9 @@ public class ArticleTypeDatabase {
 				for (SizeDTO dto : result) {
 					SizeCellData scd = new SizeCellData(dto.getName(), true);
 					list.add(scd);
-					sizeProvider.setLoaded(true);
-					checkAllRead();
 				}
+				sizeProvider.setLoaded(true);
+				checkAllRead();
 			}
 		};
 		articleTypeService.readSizes(callback);
@@ -194,9 +204,9 @@ public class ArticleTypeDatabase {
 				for (ColorDTO dto : result) {
 					ColorCellData ccd = new ColorCellData(dto.getName(), true);
 					list.add(ccd);
-					colorProvider.setLoaded(true);
-					checkAllRead();
 				}
+				colorProvider.setLoaded(true);
+				checkAllRead();
 			}
 		};
 		articleTypeService.readColors(callback);
@@ -212,6 +222,7 @@ public class ArticleTypeDatabase {
 				articleTypeProvider.getList().clear();
 				articleTypes = new ArrayList<ArticleTypeDTO>(result);
 				articleTypeProvider.getList().addAll(result);
+				updateAvailableArticleNames();
 				articleTypeProvider.setLoaded(true);
 				checkAllRead();
 			}
@@ -219,28 +230,25 @@ public class ArticleTypeDatabase {
 		articleTypeService.readArticleTypes(callback);
 	}
 	
-	private void createCategoryProvider() {
-		categoryProvider = new CategoryDataProvider();
+	public Collection<String> getArticleNames(List<ArticleTypeDTO> articleTypes) {
+		HashSet<String> names = new HashSet<String>();
+		for (ArticleTypeDTO at : articleTypes) {
+			names.add(at.getName());
+		}
+		return names;
 	}
 	
-	private void createStyleProvider() {
-		styleProvider = new StyleDataProvider();
-	}
-	
-	private void createBrandProvider() {
-		brandProvider = new BrandDataProvider();
-	}
-	
-	private void createSizeProvider() {
-		sizeProvider = new SizeDataProvider();
-	}
-	
-	private void createColorProvider() {
-		colorProvider = new ColorDataProvider();
-	}
-	
-	private void createArticleTypeProvider() {
-		articleTypeProvider = new ArticleTypeDataProvider();
+	public void updateAvailableArticleNames() {
+		List<ArticleTypeDTO> temp = new ArrayList<ArticleTypeDTO>(articleTypes);
+		temp = applyCategoryFilter(categoryFilter, temp);
+		temp = applyFilter(brandProvider, temp);
+		temp = applyFilter(styleProvider, temp);
+		temp = applyFilter(sizeProvider, temp);
+		temp = applyFilter(colorProvider, temp);
+		
+		Collection<String> names = getArticleNames(temp);
+		nameOracle.clear();
+		nameOracle.addAll(names);
 	}
 	
 	private List<ArticleTypeDTO> applyFilter(FilterDataProvider<? extends FilterCellData> provider, List<ArticleTypeDTO> articleTypes) {
@@ -352,6 +360,7 @@ public class ArticleTypeDatabase {
 		updateBrandProvider();
 		updateSizeProvider();
 		updateColorProvider();
+		updateAvailableArticleNames();
 	}
 	
 	public void updateStyleProvider() {
@@ -426,23 +435,23 @@ public class ArticleTypeDatabase {
 		articleTypeProvider.addDataDisplay(display);
 	}
 
-	public ListDataProvider<CategoryDTO> getCategoryProvider() {
+	public CategoryDataProvider getCategoryProvider() {
 		return categoryProvider;
 	}
 
-	public ListDataProvider<StyleCellData> getStyleProvider() {
+	public StyleDataProvider getStyleProvider() {
 		return styleProvider;
 	}
 
-	public ListDataProvider<BrandCellData> getBrandProvider() {
+	public BrandDataProvider getBrandProvider() {
 		return brandProvider;
 	}
 
-	public ListDataProvider<SizeCellData> getSizeProvider() {
+	public SizeDataProvider getSizeProvider() {
 		return sizeProvider;
 	}
 
-	public ListDataProvider<ColorCellData> getColorProvider() {
+	public ColorDataProvider getColorProvider() {
 		return colorProvider;
 	}
 
@@ -456,7 +465,7 @@ public class ArticleTypeDatabase {
 			public void onFailure(Throwable caught) { }
 			@Override
 			public void onSuccess(CategoryDTO result) {
-				categoryProvider.getList().add(result);
+				categoryProvider.getList().add(new CategoryCellData(result));
 			}
 		};
 		articleTypeService.createCategory(category, callback);
@@ -474,7 +483,7 @@ public class ArticleTypeDatabase {
 		articleTypeService.updateCategory(category, callback);
 	}
 	
-	public void deleteCategory(final CategoryDTO category) {
+	public void deleteCategory(final CategoryCellData category) {
 		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -486,10 +495,10 @@ public class ArticleTypeDatabase {
 				categoryProvider.getList().remove(category);
 			}
 		};
-		articleTypeService.deleteCategory(category, callback);
+		articleTypeService.deleteCategory(category.getCategoryDTO(), callback);
 	}
 
-	public boolean doesCategoryHaveArticles(CategoryDTO category) {
+	public boolean doesCategoryHaveArticles(CategoryCellData category) {
 		for (ArticleTypeDTO at : articleTypes) {
 			if (at.getCategory().equals(category.getName())) {
 				return true;
@@ -595,6 +604,14 @@ public class ArticleTypeDatabase {
 
 	public void setApplicationErrorListener(ApplicationErrorListener applicationErrorListener) {
 		this.applicationErrorListener = applicationErrorListener;
+	}
+
+	public MultiWordSuggestOracle getNameOracle() {
+		return nameOracle;
+	}
+
+	public void setNameOracle(MultiWordSuggestOracle nameOracle) {
+		this.nameOracle = nameOracle;
 	}
 
 }

@@ -64,7 +64,7 @@ public abstract class FilterCellData {
 		if (isSelected()) {
 			String style = createSelectedStyle(selectedCategory);
 			if (isAvailable()) {
-				sb.appendHtmlConstant("<img class=\"filterIconEnabled\" src=\"" + iconPrefix + "IconSelected.png\" width=\"22\" height=\"20\"></img>");
+				sb.appendHtmlConstant("<img class=\"filterIconEnabled\" src=\"" + getIconPrefix() + "IconSelected.png\" width=\"22\" height=\"20\"></img>");
 			} else {
 				sb.appendHtmlConstant("<img class=\"filterIconDisabled\" src=\"whitePixel.png\" width=\"22\" height=\"20\"></img>");
 			}
@@ -72,7 +72,7 @@ public abstract class FilterCellData {
 			sb.appendHtmlConstant("<tr><td class=\"filterText filterLabelSelected\">");
 		} else {
 			if (isAvailable()) {
-				sb.appendHtmlConstant("<img class=\"filterIconEnabled\" src=\"" + iconPrefix + "IconUnselected.png\" width=\"22\" height=\"20\"></img>");
+				sb.appendHtmlConstant("<img class=\"filterIconEnabled\" src=\"" + getIconPrefix() + "IconUnselected.png\" width=\"22\" height=\"20\"></img>");
 				sb.appendHtmlConstant("<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" class=\"filterTable\">");
 				sb.appendHtmlConstant("<tr><td class=\"filterText filterLabelUnselected\">");
 			} else {
