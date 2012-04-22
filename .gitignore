@@ -6,3 +6,5 @@ gwt-unitCache
 test-classes
 test
 *.class
+.git
+
