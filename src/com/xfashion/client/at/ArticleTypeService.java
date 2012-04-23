@@ -17,34 +17,53 @@ import com.xfashion.shared.StyleDTO;
 @RemoteServiceRelativePath("articleType")
 public interface ArticleTypeService extends RemoteService {
 	
+	// categories
 	void createCategories() throws IllegalArgumentException;
+	
+	CategoryDTO createCategory(CategoryDTO category);
 	
 	List<CategoryDTO> readCategories() throws IllegalArgumentException;
 	
-	List<StyleDTO> readStyles() throws IllegalArgumentException;
+	void updateCategory(CategoryDTO category) throws IllegalArgumentException;
 	
-	void addStyle(StyleDTO style) throws IllegalArgumentException;
+	void deleteCategory(CategoryDTO category);
+
+	
+	// styles
+	StyleDTO createStyle(StyleDTO style) throws IllegalArgumentException;
+
+	List<StyleDTO> readStyles() throws IllegalArgumentException;
+
+	void updateStyle(StyleDTO dto) throws IllegalArgumentException;
+
+	void deleteStyle(StyleDTO brand);
+	
+	
+	// brands
+	BrandDTO createBrand(BrandDTO brand) throws IllegalArgumentException;
 
 	List<BrandDTO> readBrands() throws IllegalArgumentException;
 	
-	void addBrand(BrandDTO brand) throws IllegalArgumentException;
+	void updateBrand(BrandDTO dto) throws IllegalArgumentException;
+
+	void deleteBrand(BrandDTO brand);
 	
+	
+	// sizes
 	List<SizeDTO> readSizes() throws IllegalArgumentException;
 	
 	void addSize(SizeDTO brand) throws IllegalArgumentException;
 	
+	
+	// colors
 	List<ColorDTO> readColors() throws IllegalArgumentException;
 	
 	void addColor(ColorDTO brand) throws IllegalArgumentException;
 	
-	void updateCategory(CategoryDTO category) throws IllegalArgumentException;
 	
+	// article-types
 	List<ArticleTypeDTO> readArticleTypes() throws IllegalArgumentException;
 	
 	void addArticleType(ArticleTypeDTO articleType) throws IllegalArgumentException;
-
-	CategoryDTO createCategory(CategoryDTO category);
-	
-	void deleteCategory(CategoryDTO category);
 
 }

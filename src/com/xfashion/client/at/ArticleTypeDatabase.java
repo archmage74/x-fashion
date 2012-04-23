@@ -15,9 +15,7 @@ import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ListDataProvider;
 import com.xfashion.client.ApplicationErrorListener;
 import com.xfashion.client.ApplicationLoadListener;
-import com.xfashion.client.FilterCellData;
 import com.xfashion.client.FilterDataProvider;
-import com.xfashion.client.brand.BrandCellData;
 import com.xfashion.client.brand.BrandDataProvider;
 import com.xfashion.client.cat.CategoryCellData;
 import com.xfashion.client.cat.CategoryDataProvider;
@@ -26,12 +24,12 @@ import com.xfashion.client.color.ColorDataProvider;
 import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.size.SizeCellData;
 import com.xfashion.client.size.SizeDataProvider;
-import com.xfashion.client.style.StyleCellData;
 import com.xfashion.client.style.StyleDataProvider;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.BrandDTO;
 import com.xfashion.shared.CategoryDTO;
 import com.xfashion.shared.ColorDTO;
+import com.xfashion.shared.FilterCellData;
 import com.xfashion.shared.SizeDTO;
 import com.xfashion.shared.StyleDTO;
 
@@ -143,11 +141,10 @@ public class ArticleTypeDatabase {
 			}
 			@Override
 			public void onSuccess(List<StyleDTO> result) {
-				List<StyleCellData> list = styleProvider.getList();
-				for (StyleDTO dto : result) {
-					StyleCellData scd = new StyleCellData(dto.getName(), true);
-					list.add(scd);
-				}
+				Collections.sort(result);
+				List<StyleDTO> list = styleProvider.getList();
+				list.clear();
+				list.addAll(result);
 				styleProvider.setLoaded(true);
 				checkAllRead();
 			}
@@ -162,11 +159,10 @@ public class ArticleTypeDatabase {
 			}
 			@Override
 			public void onSuccess(List<BrandDTO> result) {
-				List<BrandCellData> list = brandProvider.getList();
-				for (BrandDTO dto : result) {
-					BrandCellData bcd = new BrandCellData(dto.getName(), true);
-					list.add(bcd);
-				}
+				Collections.sort(result);
+				List<BrandDTO> list = brandProvider.getList();
+				list.clear();
+				list.addAll(result);
 				brandProvider.setLoaded(true);
 				checkAllRead();
 			}
@@ -183,7 +179,7 @@ public class ArticleTypeDatabase {
 			public void onSuccess(List<SizeDTO> result) {
 				List<SizeCellData> list = sizeProvider.getList();
 				for (SizeDTO dto : result) {
-					SizeCellData scd = new SizeCellData(dto.getName(), true);
+					SizeCellData scd = new SizeCellData(dto.getName());
 					list.add(scd);
 				}
 				sizeProvider.setLoaded(true);
@@ -202,7 +198,7 @@ public class ArticleTypeDatabase {
 			public void onSuccess(List<ColorDTO> result) {
 				List<ColorCellData> list = colorProvider.getList();
 				for (ColorDTO dto : result) {
-					ColorCellData ccd = new ColorCellData(dto.getName(), true);
+					ColorCellData ccd = new ColorCellData(dto.getName());
 					list.add(ccd);
 				}
 				colorProvider.setLoaded(true);
@@ -348,7 +344,9 @@ public class ArticleTypeDatabase {
 		List<? extends FilterCellData> cellDataList = provider.getList();
 		for (FilterCellData scd : cellDataList) {
 			Integer availableArticles = articleAmountPerAttribute.get(scd.getName());
-			scd.setAvailable(availableArticles != null);
+			if (availableArticles == null) {
+				availableArticles = 0;
+			}
 			scd.setArticleAmount(availableArticles);
 			scd.setSelected(provider.getFilter().contains(scd.getName()));
 		}
@@ -419,7 +417,7 @@ public class ArticleTypeDatabase {
 		return sizeProvider.getFilter();
 	}
 
-	public void addBrandDisplay(HasData<BrandCellData> display) {
+	public void addBrandDisplay(HasData<BrandDTO> display) {
 		brandProvider.addDataDisplay(display);
 	}
 
@@ -507,36 +505,84 @@ public class ArticleTypeDatabase {
 		return false;
 	}
 	
-	public void addStyle(final String style) {
-		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+	public void createStyle(final StyleDTO dto) {
+		AsyncCallback<StyleDTO> callback = new AsyncCallback<StyleDTO>() {
 			@Override
 			public void onFailure(Throwable caught) { }
 			@Override
-			public void onSuccess(Void result) {
-				StyleCellData scd = new StyleCellData(style, true);
-				styleProvider.getList().add(scd);
+			public void onSuccess(StyleDTO result) {
+				styleProvider.getList().add(result);
 				updateStyleProvider();
 			}
 		};
-		StyleDTO dto = new StyleDTO();
-		dto.setName(style);
-		articleTypeService.addStyle(dto, callback);
+		articleTypeService.createStyle(dto, callback);
 	}
 
-	public void addBrand(final String brand) {
+	public void updateStyle(StyleDTO dto) {
 		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 			@Override
 			public void onFailure(Throwable caught) { }
 			@Override
 			public void onSuccess(Void result) { 
-				BrandCellData bcd = new BrandCellData(brand, true);
-				brandProvider.getList().add(bcd);
+				brandProvider.refresh();
+			}
+		};
+		articleTypeService.updateStyle(dto, callback);
+	}
+
+	public void deleteStyle(final StyleDTO dto) {
+		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				String msg = caught.getMessage();
+				applicationErrorListener.error(errorMessages.styleDeleteFailed(msg));
+			}
+			@Override
+			public void onSuccess(Void result) {
+				styleProvider.getList().remove(dto);
+			}
+		};
+		articleTypeService.deleteStyle(dto, callback);
+	}
+
+	public void createBrand(final BrandDTO brand) {
+		AsyncCallback<BrandDTO> callback = new AsyncCallback<BrandDTO>() {
+			@Override
+			public void onFailure(Throwable caught) { }
+			@Override
+			public void onSuccess(BrandDTO result) {
+				brandProvider.getList().add(result);
 				updateBrandProvider();
 			}
 		};
-		BrandDTO dto = new BrandDTO();
-		dto.setName(brand);
-		articleTypeService.addBrand(dto, callback);
+		articleTypeService.createBrand(brand, callback);
+	}
+	
+	public void updateBrand(BrandDTO brand) {
+		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+			@Override
+			public void onFailure(Throwable caught) { }
+			@Override
+			public void onSuccess(Void result) { 
+				brandProvider.refresh();
+			}
+		};
+		articleTypeService.updateBrand(brand, callback);
+	}
+
+	public void deleteBrand(final BrandDTO brand) {
+		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				String msg = caught.getMessage();
+				applicationErrorListener.error(errorMessages.brandDeleteFailed(msg));
+			}
+			@Override
+			public void onSuccess(Void result) {
+				brandProvider.getList().remove(brand);
+			}
+		};
+		articleTypeService.deleteBrand(brand, callback);
 	}
 
 	public void addSize(final String size) {
@@ -545,7 +591,7 @@ public class ArticleTypeDatabase {
 			public void onFailure(Throwable caught) { }
 			@Override
 			public void onSuccess(Void result) { 
-				SizeCellData scd = new SizeCellData(size, true);
+				SizeCellData scd = new SizeCellData(size);
 				sizeProvider.getList().add(scd);
 				updateSizeProvider();
 			}
@@ -561,7 +607,7 @@ public class ArticleTypeDatabase {
 			public void onFailure(Throwable caught) { }
 			@Override
 			public void onSuccess(Void result) { 
-				ColorCellData ccd = new ColorCellData(color, true);
+				ColorCellData ccd = new ColorCellData(color);
 				colorProvider.getList().add(ccd);
 				updateColorProvider();
 			}

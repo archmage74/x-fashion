@@ -56,10 +56,10 @@ public class CategoryCreatePanel {
 				String[] color = CategoryDTO.COLOR_SCHEMAS[createCategoryColorListBox.getSelectedIndex()];
 				category.setBackgroundColor(color[0]);
 				category.setBorderColor(color[1]);
-				int numCats = categoryPanel.getCategoryProvider().getList().size();
+				int numCats = categoryPanel.getDataProvider().getList().size();
 				int idx = 0;
 				if (numCats != 0) {
-					idx = categoryPanel.getCategoryProvider().getList().get(numCats - 1).getCategoryDTO().getSortIndex() + 1;
+					idx = categoryPanel.getDataProvider().getList().get(numCats - 1).getCategoryDTO().getSortIndex() + 1;
 				}
 				category.setSortIndex(idx);
 				panelMediator.createCategory(category);

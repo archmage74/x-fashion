@@ -18,7 +18,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.RowCountChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
@@ -26,6 +25,7 @@ import com.xfashion.client.FilterDataProvider;
 import com.xfashion.client.FilterPanel;
 import com.xfashion.client.ICrud;
 import com.xfashion.client.PanelMediator;
+import com.xfashion.client.ToolPanel;
 import com.xfashion.client.resources.FilterListResources;
 import com.xfashion.client.tool.Buttons;
 import com.xfashion.shared.CategoryDTO;
@@ -34,33 +34,16 @@ public class CategoryPanel extends FilterPanel<CategoryCellData> implements ICru
 
 	private CategoryCellData selectedCategory;
 
-	private CellList<CategoryCellData> categoryList;
-
 	private VerticalPanel mainPanel;
-
-	private SimplePanel createAnchor;
 
 	private CategoryCell cell;
 
-	private Image toolsButton;
-
-	private CategoryToolPanel toolPanel;
-	
-	private CategoryCreatePanel createPanel;
-
-	private FilterDataProvider<CategoryCellData> categoryProvider;
-
-	// private ErrorMessages errorMessages;
-
-	public CategoryPanel(PanelMediator panelMediator) {
-		super(panelMediator);
-		// errorMessages = GWT.create(ErrorMessages.class);
+	public CategoryPanel(PanelMediator panelMediator, FilterDataProvider<CategoryCellData> dataProvider) {
+		super(panelMediator, dataProvider);
 		panelMediator.setCategoryPanel(this);
 	}
 
-	public Panel createPanel(FilterDataProvider<CategoryCellData> categoryProvider) {
-		this.categoryProvider = categoryProvider;
-
+	public Panel createPanel() {
 		mainPanel = new VerticalPanel();
 
 		headerPanel = new HorizontalPanel();
@@ -68,7 +51,7 @@ public class CategoryPanel extends FilterPanel<CategoryCellData> implements ICru
 		Label categoryLabel = new Label("Kategorie");
 		categoryLabel.addStyleName("filterLabel categoryFilterLabel");
 		headerPanel.add(categoryLabel);
-		toolsButton = Buttons.showTools();
+		Image toolsButton = Buttons.showTools();
 		//toolsButton.addClickHandler(new ClickHandler() {
 		ClickHandler toolsButtonClickHandler = new ClickHandler() {
 			@Override
@@ -83,9 +66,9 @@ public class CategoryPanel extends FilterPanel<CategoryCellData> implements ICru
 		setHeaderColor(null);
 
 		cell = new CategoryCell();
-		categoryList = new CellList<CategoryCellData>(cell, GWT.<FilterListResources> create(FilterListResources.class));
-		categoryList.setPageSize(30);
-		categoryList.addRowCountChangeHandler(new RowCountChangeEvent.Handler() {
+		cellList = new CellList<CategoryCellData>(cell, GWT.<FilterListResources> create(FilterListResources.class));
+		cellList.setPageSize(30);
+		cellList.addRowCountChangeHandler(new RowCountChangeEvent.Handler() {
 			@Override
 			public void onRowCountChange(RowCountChangeEvent event) {
 				if (toolPanel != null) {
@@ -95,7 +78,7 @@ public class CategoryPanel extends FilterPanel<CategoryCellData> implements ICru
 		});
 
 		final SingleSelectionModel<CategoryCellData> selectionModel = new SingleSelectionModel<CategoryCellData>();
-		categoryList.setSelectionModel(selectionModel);
+		cellList.setSelectionModel(selectionModel);
 		selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 			public void onSelectionChange(SelectionChangeEvent event) {
 				if (selectedCategory != null) {
@@ -113,47 +96,23 @@ public class CategoryPanel extends FilterPanel<CategoryCellData> implements ICru
 				}
 			}
 		});
-		categoryProvider.addDataDisplay(categoryList);
+		getDataProvider().addDataDisplay(cellList);
 
-		categoryList.addStyleName("categoryList");
-		mainPanel.add(categoryList);
+		cellList.addStyleName("categoryList");
+		mainPanel.add(cellList);
 
-		createAnchor = new SimplePanel();
-		mainPanel.add(createAnchor);
+		setCreateAnchor(new SimplePanel());
+		mainPanel.add(getCreateAnchor());
 
 		return mainPanel;
 	}
-
-	private void toggleTools() {
-		if (toolPanel != null) {
-			hideTools();
-		} else {
-			showTools();
-		}
-	}
-
-	private void showTools() {
-		toolPanel = new CategoryToolPanel(this);
-		createPanel = new CategoryCreatePanel(this, panelMediator);
-		int right = categoryList.getAbsoluteLeft() + categoryList.getOffsetWidth() - 1;
-		int top = categoryList.getAbsoluteTop() + 1;
-		toolPanel.show(right, top);
-		Widget createWidget = createPanel.show();
-		createAnchor.add(createWidget);
+	
+	@Override
+	protected ToolPanel<CategoryCellData> createToolPanel() {
+		ToolPanel<CategoryCellData> tp = new CategoryToolPanel(this, panelMediator);
+		return tp;
 	}
 	
-	private void hideTools() {
-		toolPanel.hide();
-		toolPanel = null;
-		createPanel.hide();
-		createAnchor.clear();
-	}
-
-	public void refreshToolsPanel() {
-		hideTools();
-		showTools();
-	}
-
 	public void delete(CategoryCellData category) {
 		panelMediator.deleteCategory(category);
 	}
@@ -164,11 +123,11 @@ public class CategoryPanel extends FilterPanel<CategoryCellData> implements ICru
 		} else {
 			category.getCategoryDTO().setInEditMode(true);
 		}
-		categoryProvider.refresh();
+		getDataProvider().refresh();
 	}
 	
 	public void moveUp(CategoryCellData category) {
-		List<CategoryCellData> list = categoryProvider.getList();
+		List<CategoryCellData> list = getDataProvider().getList();
 		int idx = list.indexOf(category);
 		if (idx < 1) {
 			return;
@@ -186,7 +145,7 @@ public class CategoryPanel extends FilterPanel<CategoryCellData> implements ICru
 	}
 	
 	public void moveDown(CategoryCellData category) {
-		List<CategoryCellData> list = categoryProvider.getList();
+		List<CategoryCellData> list = getDataProvider().getList();
 		int idx = list.indexOf(category);
 		if (idx > list.size() - 2) {
 			return;
@@ -218,8 +177,6 @@ public class CategoryPanel extends FilterPanel<CategoryCellData> implements ICru
 				return;
 			}
 			super.onBrowserEvent(context, parent, value, event, valueUpdater);
-			String evs = event.getType();
-
 			if ("change".equals(event.getType())) {
 				updateFromCell(parent, value);
 			}
@@ -277,21 +234,13 @@ public class CategoryPanel extends FilterPanel<CategoryCellData> implements ICru
 			return style;
 		}
 	}
-
+	
 	public void showCreatePopup() {
 
 	}
 
 	public void clearSelection() {
 
-	}
-
-	public FilterDataProvider<CategoryCellData> getCategoryProvider() {
-		return categoryProvider;
-	}
-
-	public void setCategoryProvider(FilterDataProvider<CategoryCellData> categoryProvider) {
-		this.categoryProvider = categoryProvider;
 	}
 
 }

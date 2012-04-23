@@ -1,6 +1,18 @@
 package com.xfashion.shared;
 
-public abstract class DTO {
+import com.google.gwt.user.client.rpc.IsSerializable;
+
+public abstract class DTO implements IsSerializable {
+
+	protected Long id;
+	
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	protected boolean attributeEquals(Object o1, Object o2) {
 		if (o1 == o2) {
@@ -11,6 +23,5 @@ public abstract class DTO {
 		}
 		return o1.equals(o2);
 	}
-
 
 }

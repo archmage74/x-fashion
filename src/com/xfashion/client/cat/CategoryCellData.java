@@ -1,7 +1,7 @@
 package com.xfashion.client.cat;
 
-import com.xfashion.client.FilterCellData;
 import com.xfashion.shared.CategoryDTO;
+import com.xfashion.shared.FilterCellData;
 
 
 public class CategoryCellData extends FilterCellData {
@@ -35,8 +35,12 @@ public class CategoryCellData extends FilterCellData {
 	public CategoryCellData(CategoryDTO categoryDTO) {
 		setCategoryDTO(categoryDTO);
 		setName(categoryDTO.getName());
-		setAvailable(true);
 		setIconPrefix(ICON_PREFIX_CATEGORY);
 	}
-	
+
+	@Override
+	public int getHeight() {
+		return 39;
+	}
+
 }

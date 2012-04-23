@@ -23,14 +23,12 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.NoSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
-import com.xfashion.client.FilterDataProvider;
-import com.xfashion.client.FilterPanel;
 import com.xfashion.client.PanelMediator;
 import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.resources.FilterListResources;
 import com.xfashion.shared.ArticleTypeDTO;
 
-public class ArticleTypePanel extends FilterPanel {
+public class ArticleTypePanel {
 
 	private ArticleTypeDTO selectedArticleType;
 
@@ -44,8 +42,13 @@ public class ArticleTypePanel extends FilterPanel {
 
 	private ErrorMessages errorMessages;
 	
+	private PanelMediator panelMediator;
+	
+	private Panel headerPanel;
+	
 	public ArticleTypePanel(PanelMediator panelMediator) {
-		super(panelMediator);
+//		super(panelMediator, dataProvider);
+		this.panelMediator = panelMediator;
 		errorMessages = GWT.create(ErrorMessages.class);
 		panelMediator.setArticleTypePanel(this);
 	}
@@ -128,6 +131,14 @@ public class ArticleTypePanel extends FilterPanel {
 		return panel;
 	}
 
+	public void setHeaderColor(String color) {
+		if (color != null) {
+			headerPanel.getElement().getStyle().setBackgroundColor(color);
+		} else {
+			headerPanel.getElement().getStyle().setBackgroundColor("#777");
+		}
+	}
+
 	private void addArticle() {
 		ArticleTypeDTO articleType = panelMediator.createArticleTypeFromSelection();
 		if (articleType.getCategory() == null) {
@@ -193,12 +204,6 @@ public class ArticleTypePanel extends FilterPanel {
 
 	public void clearSelection() {
 
-	}
-
-	@Override
-	public Panel createPanel(FilterDataProvider provider) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

@@ -1,65 +1,85 @@
 package com.xfashion.client.cat;
 
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.xfashion.client.tool.Buttons;
-import com.xfashion.client.tool.DeleteClickHandler;
-import com.xfashion.client.tool.DownClickHandler;
-import com.xfashion.client.tool.EditClickHandler;
-import com.xfashion.client.tool.UpClickHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.Widget;
+import com.xfashion.client.FilterPanel;
+import com.xfashion.client.PanelMediator;
+import com.xfashion.client.ToolPanel;
+import com.xfashion.shared.CategoryDTO;
 
-public class CategoryToolPanel {
+public class CategoryToolPanel extends ToolPanel<CategoryCellData> {
 
-	private CategoryPanel categoryPanel;
+	protected ListBox createCategoryColorListBox;
 	
-	private PopupPanel toolsPopup;
-	
-	public CategoryToolPanel(CategoryPanel categoryPanel) {
-		this.categoryPanel = categoryPanel;
+	public CategoryToolPanel(FilterPanel<CategoryCellData> parentPanel, PanelMediator panelMediator) {
+		super(parentPanel, panelMediator);
 	}
-	
-	public PopupPanel show(int right, int top) {
-		toolsPopup = new PopupPanel();
-		VerticalPanel panel = new VerticalPanel();
-		for (CategoryCellData cat : categoryPanel.getCategoryProvider().getList()) {
-			HorizontalPanel toolPanel = new HorizontalPanel();
 
-			Image editButton = Buttons.edit();
-			editButton.addClickHandler(new EditClickHandler<CategoryCellData>(cat, categoryPanel));
-			toolPanel.add(editButton);
-
-			Image upButton = Buttons.up();
-			upButton.addClickHandler(new UpClickHandler<CategoryCellData>(cat, categoryPanel));
-			toolPanel.add(upButton);
-
-			Image downButton = Buttons.down();
-			downButton.addClickHandler(new DownClickHandler<CategoryCellData>(cat, categoryPanel));
-			toolPanel.add(downButton);
-
-			Image deleteButton = Buttons.delete();
-			deleteButton.addClickHandler(new DeleteClickHandler<CategoryCellData>(cat, categoryPanel));
-			toolPanel.add(deleteButton);
-
-			toolPanel.setHeight("39px");
-			toolPanel.setStyleName("toolGrid");
-			panel.add(toolPanel);
-
+	@Override
+	protected void createDTOFromPanel() {
+		CategoryDTO category = new CategoryDTO();
+		String name = createTextBox.getText();
+		if (name == null || name.length() == 0) {
+			panelMediator.showError(errorMessages.categoryCreateNoName());
+			return;
 		}
-		toolsPopup.add(panel);
-
-		int left = right - 56;
-		toolsPopup.setStyleName("toolsPanel");
-		toolsPopup.setPopupPosition(left, top);
-		toolsPopup.show();
-		
-		return toolsPopup;
+		category.setName(name);
+		String[] color = CategoryDTO.COLOR_SCHEMAS[createCategoryColorListBox.getSelectedIndex()];
+		category.setBackgroundColor(color[0]);
+		category.setBorderColor(color[1]);
+		int numCats = parentPanel.getDataProvider().getList().size();
+		int idx = 0;
+		if (numCats != 0) {
+			idx = parentPanel.getDataProvider().getList().get(numCats - 1).getSortIndex() + 1;
+		}
+		category.setSortIndex(idx);
+		panelMediator.createCategory(category);
 	}
 
-	public void hide() {
-		toolsPopup.hide();
-		toolsPopup.clear();
+	@Override
+	protected Widget createCreatePanel() {
+		Grid createGrid = new Grid(3, 1);
+
+		createTextBox = new TextBox();
+		createGrid.setWidget(0, 0, createTextBox);
+
+		final ListBox createCategoryColorListBox = new ListBox();
+		for (String[] color : CategoryDTO.COLOR_SCHEMAS) {
+			createCategoryColorListBox.addItem(color[0] + " / " + color[1]);
+		}
+		createGrid.setWidget(1, 0, createCategoryColorListBox);
+
+		Button addCategoryButton = new Button("Anlegen");
+		addCategoryButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				CategoryDTO category = new CategoryDTO();
+				String name = createTextBox.getText();
+				if (name == null || name.length() == 0) {
+					panelMediator.showError(errorMessages.categoryCreateNoName());
+					return;
+				}
+				category.setName(name);
+				String[] color = CategoryDTO.COLOR_SCHEMAS[createCategoryColorListBox.getSelectedIndex()];
+				category.setBackgroundColor(color[0]);
+				category.setBorderColor(color[1]);
+				int numCats = parentPanel.getDataProvider().getList().size();
+				int idx = 0;
+				if (numCats != 0) {
+					idx = parentPanel.getDataProvider().getList().get(numCats - 1).getCategoryDTO().getSortIndex() + 1;
+				}
+				category.setSortIndex(idx);
+				panelMediator.createCategory(category);
+			}
+		});
+		createGrid.setWidget(2, 0, addCategoryButton);
+
+		return createGrid;
 	}
-	
+
 }

@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.google.gwt.view.client.ListDataProvider;
 import com.xfashion.shared.ArticleTypeDTO;
+import com.xfashion.shared.FilterCellData;
 
 public abstract class FilterDataProvider<T extends FilterCellData> extends ListDataProvider<T> {
 

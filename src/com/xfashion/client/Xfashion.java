@@ -74,20 +74,20 @@ public class Xfashion implements EntryPoint {
 		articleTypeDatabase.setApplicationErrorListener(panelMediator);
 		panelMediator.setXfashion(this);
 		
-		CategoryPanel categoryPanel = new CategoryPanel(panelMediator);
-		mainPanel.add(categoryPanel.createPanel(articleTypeDatabase.getCategoryProvider()));
+		CategoryPanel categoryPanel = new CategoryPanel(panelMediator, articleTypeDatabase.getCategoryProvider());
+		mainPanel.add(categoryPanel.createPanel());
 		
-		BrandPanel brandPanel = new BrandPanel(panelMediator);
-		mainPanel.add(brandPanel.createPanel(articleTypeDatabase.getBrandProvider()));
+		BrandPanel brandPanel = new BrandPanel(panelMediator, articleTypeDatabase.getBrandProvider());
+		mainPanel.add(brandPanel.createPanel());
 		
-		StylePanel stylePanel = new StylePanel(panelMediator);
-		mainPanel.add(stylePanel.createPanel(articleTypeDatabase.getStyleProvider()));
+		StylePanel stylePanel = new StylePanel(panelMediator, articleTypeDatabase.getStyleProvider());
+		mainPanel.add(stylePanel.createPanel());
 		
-		SizePanel sizePanel = new SizePanel(panelMediator);
-		mainPanel.add(sizePanel.createPanel(articleTypeDatabase.getSizeProvider()));
+		SizePanel sizePanel = new SizePanel(panelMediator, articleTypeDatabase.getSizeProvider());
+		mainPanel.add(sizePanel.createPanel());
 		
-		ColorPanel colorPanel = new ColorPanel(panelMediator);
-		mainPanel.add(colorPanel.createPanel(articleTypeDatabase.getColorProvider()));
+		ColorPanel colorPanel = new ColorPanel(panelMediator, articleTypeDatabase.getColorProvider());
+		mainPanel.add(colorPanel.createPanel());
 		
 		ArticleTypePanel articleTypePanel = new ArticleTypePanel(panelMediator);
 		mainPanel.add(articleTypePanel.createPanel(articleTypeDatabase.getArticleTypeProvider(), articleTypeDatabase.getNameOracle()));

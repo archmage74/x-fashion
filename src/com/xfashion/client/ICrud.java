@@ -9,4 +9,6 @@ public interface ICrud<T> {
 	void moveUp(T item);
 	
 	void moveDown(T item);
+	
+	void update(T item);
 }

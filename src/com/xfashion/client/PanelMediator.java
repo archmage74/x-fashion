@@ -7,9 +7,7 @@ import com.xfashion.client.at.ArticleTypeDatabase;
 import com.xfashion.client.at.ArticleTypeDetailPopup;
 import com.xfashion.client.at.ArticleTypePanel;
 import com.xfashion.client.at.CreateArticleTypePopup;
-import com.xfashion.client.brand.BrandCellData;
 import com.xfashion.client.brand.BrandPanel;
-import com.xfashion.client.brand.CreateBrandPopup;
 import com.xfashion.client.cat.CategoryCellData;
 import com.xfashion.client.cat.CategoryPanel;
 import com.xfashion.client.color.ColorCellData;
@@ -19,11 +17,11 @@ import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.size.CreateSizePopup;
 import com.xfashion.client.size.SizeCellData;
 import com.xfashion.client.size.SizePanel;
-import com.xfashion.client.style.CreateStylePopup;
-import com.xfashion.client.style.StyleCellData;
 import com.xfashion.client.style.StylePanel;
 import com.xfashion.shared.ArticleTypeDTO;
+import com.xfashion.shared.BrandDTO;
 import com.xfashion.shared.CategoryDTO;
+import com.xfashion.shared.StyleDTO;
 
 public class PanelMediator implements ApplicationLoadListener, ApplicationErrorListener {
 
@@ -36,8 +34,6 @@ public class PanelMediator implements ApplicationLoadListener, ApplicationErrorL
 	private ColorPanel colorPanel;
 	private ArticleTypePanel articleTypePanel;
 
-	private CreateStylePopup createStylePopup;
-	private CreateBrandPopup createBrandPopup;
 	private CreateSizePopup createSizePopup;
 	private CreateColorPopup createColorPopup;
 	private CreateArticleTypePopup createArticleTypePopup;
@@ -71,14 +67,6 @@ public class PanelMediator implements ApplicationLoadListener, ApplicationErrorL
 		setHeaderColor(null);
 	}
 	
-	public void addStyle(String style) {
-		articleTypeDatabase.addStyle(style);
-	}
-
-	public void addBrand(String brand) {
-		articleTypeDatabase.addBrand(brand);
-	}
-	
 	public void addSize(String size) {
 		articleTypeDatabase.addSize(size);
 	}
@@ -96,20 +84,20 @@ public class PanelMediator implements ApplicationLoadListener, ApplicationErrorL
 		articleTypeDatabase.updateProviders();
 	}
 
-	public void setSelectedStyles(Set<StyleCellData> styles) {
+	public void setSelectedStyles(Set<StyleDTO> styles) {
 		Set<String> styleFilter = articleTypeDatabase.getStyleFilter();
 		styleFilter.clear();
-		for (StyleCellData s : styles) {
+		for (StyleDTO s : styles) {
 			styleFilter.add(s.getName());
 		}
 		articleTypeDatabase.applyFilters();
 		articleTypeDatabase.updateProviders();
 	}
 
-	public void setSelectedBrands(Set<BrandCellData> brands) {
+	public void setSelectedBrands(Set<BrandDTO> brands) {
 		Set<String> brandFilter = articleTypeDatabase.getBrandFilter();
 		brandFilter.clear();
-		for (BrandCellData s : brands) {
+		for (BrandDTO s : brands) {
 			brandFilter.add(s.getName());
 		}
 		articleTypeDatabase.applyFilters();
@@ -174,22 +162,6 @@ public class PanelMediator implements ApplicationLoadListener, ApplicationErrorL
 
 	public void setBrandPanel(BrandPanel brandPanel) {
 		this.brandPanel = brandPanel;
-	}
-
-	public CreateStylePopup getCreateStylePopup() {
-		return createStylePopup;
-	}
-
-	public void setCreateStylePopup(CreateStylePopup createStylePopup) {
-		this.createStylePopup = createStylePopup;
-	}
-
-	public CreateBrandPopup getCreateBrandPopup() {
-		return createBrandPopup;
-	}
-
-	public void setCreateBrandPopup(CreateBrandPopup createBrandPopup) {
-		this.createBrandPopup = createBrandPopup;
 	}
 
 	public ArticleTypePanel getArticleTypePanel() {
@@ -320,4 +292,28 @@ public class PanelMediator implements ApplicationLoadListener, ApplicationErrorL
 		articleTypeDatabase.deleteCategory(category);
 	}
 
+	public void createBrand(BrandDTO brand) {
+		articleTypeDatabase.createBrand(brand);
+	}
+	
+	public void updateBrand(BrandDTO brand) {
+		articleTypeDatabase.updateBrand(brand);
+	}
+	
+	public void deleteBrand(BrandDTO item) {
+		articleTypeDatabase.deleteBrand(item);
+	}
+	
+	public void createStyle(StyleDTO style) {
+		articleTypeDatabase.createStyle(style);
+	}
+
+	public void updateStyle(StyleDTO style) {
+		articleTypeDatabase.updateStyle(style);
+	}
+	
+	public void deleteStyle(StyleDTO item) {
+		articleTypeDatabase.deleteStyle(item);
+	}
+	
 }

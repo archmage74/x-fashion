@@ -5,6 +5,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -12,6 +13,7 @@ import com.xfashion.client.CreatePopup;
 import com.xfashion.client.FilterDataProvider;
 import com.xfashion.client.FilterPanel;
 import com.xfashion.client.PanelMediator;
+import com.xfashion.client.ToolPanel;
 import com.xfashion.client.resources.FilterListResources;
 
 public class ColorPanel extends FilterPanel<ColorCellData> {
@@ -20,13 +22,13 @@ public class ColorPanel extends FilterPanel<ColorCellData> {
 	
 	protected CreatePopup createPopup;
 	
-	public ColorPanel(PanelMediator panelMediator) {
-		super(panelMediator);
+	public ColorPanel(PanelMediator panelMediator, FilterDataProvider<ColorCellData> dataProvider) {
+		super(panelMediator, dataProvider);
 		panelMediator.setColorPanel(this);
 	}
 
 	@Override
-	public Panel createPanel(FilterDataProvider<ColorCellData> colorProvider) {
+	public Panel createPanel() {
 		createPopup = new CreateColorPopup(panelMediator);
 
 		VerticalPanel panel = new VerticalPanel();
@@ -35,20 +37,23 @@ public class ColorPanel extends FilterPanel<ColorCellData> {
 		panel.add(headerPanel);
 
 		ColorCell styleCell = new ColorCell();
-		CellList<ColorCellData> styleList = new CellList<ColorCellData>(styleCell, GWT.<FilterListResources> create(FilterListResources.class));
-		styleList.setPageSize(30);
+		cellList = new CellList<ColorCellData>(styleCell, GWT.<FilterListResources> create(FilterListResources.class));
+		cellList.setPageSize(30);
 
 		selectionModel = new MultiSelectionModel<ColorCellData>();
-		styleList.setSelectionModel(selectionModel);
+		cellList.setSelectionModel(selectionModel);
 		selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 			public void onSelectionChange(SelectionChangeEvent event) {
 				panelMediator.setSelectedColors(selectionModel.getSelectedSet());
 			}
 		});
 
-		colorProvider.addDataDisplay(styleList);
-		styleList.addStyleName("styleList");
-		panel.add(styleList);
+		dataProvider.addDataDisplay(cellList);
+		cellList.addStyleName("styleList");
+		panel.add(cellList);
+
+		Panel createAnchor = new SimplePanel();
+		panel.add(createAnchor);
 
 		return panel;
 	}
@@ -69,6 +74,30 @@ public class ColorPanel extends FilterPanel<ColorCellData> {
 			}
 			style.render(sb, panelMediator.getSelectedCategory());
 		}
+	}
+
+	@Override
+	protected ToolPanel<ColorCellData> createToolPanel() {
+		// TODO
+		return null;
+	}
+
+	@Override
+	public void delete(ColorCellData item) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void edit(ColorCellData item) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void update(ColorCellData item) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
