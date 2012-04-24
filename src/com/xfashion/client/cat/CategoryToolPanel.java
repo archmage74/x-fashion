@@ -12,11 +12,11 @@ import com.xfashion.client.PanelMediator;
 import com.xfashion.client.ToolPanel;
 import com.xfashion.shared.CategoryDTO;
 
-public class CategoryToolPanel extends ToolPanel<CategoryCellData> {
+public class CategoryToolPanel extends ToolPanel<CategoryDTO> {
 
 	protected ListBox createCategoryColorListBox;
 	
-	public CategoryToolPanel(FilterPanel<CategoryCellData> parentPanel, PanelMediator panelMediator) {
+	public CategoryToolPanel(FilterPanel<CategoryDTO> parentPanel, PanelMediator panelMediator) {
 		super(parentPanel, panelMediator);
 	}
 
@@ -71,7 +71,7 @@ public class CategoryToolPanel extends ToolPanel<CategoryCellData> {
 				int numCats = parentPanel.getDataProvider().getList().size();
 				int idx = 0;
 				if (numCats != 0) {
-					idx = parentPanel.getDataProvider().getList().get(numCats - 1).getCategoryDTO().getSortIndex() + 1;
+					idx = parentPanel.getDataProvider().getList().get(numCats - 1).getSortIndex() + 1;
 				}
 				category.setSortIndex(idx);
 				panelMediator.createCategory(category);

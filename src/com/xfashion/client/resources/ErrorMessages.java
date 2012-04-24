@@ -22,4 +22,12 @@ public interface ErrorMessages extends Messages {
 	String styleIsNotEmpty(String styleName);
 	String styleDeleteFailed(String exceptionMessage);
 
+	String sizeCreateNoName();
+	String sizeIsNotEmpty(String brandName);
+	String sizeDeleteFailed(String exceptionMessage);
+
+	String colorCreateNoName();
+	String colorIsNotEmpty(String styleName);
+	String colorDeleteFailed(String exceptionMessage);
+
 }

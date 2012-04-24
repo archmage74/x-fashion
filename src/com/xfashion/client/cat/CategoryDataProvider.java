@@ -2,8 +2,9 @@ package com.xfashion.client.cat;
 
 import com.xfashion.client.FilterDataProvider;
 import com.xfashion.shared.ArticleTypeDTO;
+import com.xfashion.shared.CategoryDTO;
 
-public class CategoryDataProvider extends FilterDataProvider<CategoryCellData> {
+public class CategoryDataProvider extends FilterDataProvider<CategoryDTO> {
 
 	private boolean loaded;
 	

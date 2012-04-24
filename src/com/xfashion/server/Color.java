@@ -12,7 +12,13 @@ public class Color {
 	
 	@PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+	private Long id;
+	
+	@Persistent
 	private String name;
+	
+	@Persistent
+	private Integer sortIndex;
 	
 	public Color() {
 		
@@ -24,11 +30,14 @@ public class Color {
 	
 	public void updateFromDTO(ColorDTO dto) {
 		this.name = dto.getName();
+		this.sortIndex = dto.getSortIndex();
 	}
 	
 	public ColorDTO createDTO() {
 		ColorDTO dto = new ColorDTO();
+		dto.setId(id);
 		dto.setName(name);
+		dto.setSortIndex(sortIndex);
 		return dto;
 	}
 
@@ -38,6 +47,22 @@ public class Color {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Integer getSortIndex() {
+		return sortIndex;
+	}
+
+	public void setSortIndex(Integer sortIndex) {
+		this.sortIndex = sortIndex;
 	}
 	
 }

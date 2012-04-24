@@ -50,15 +50,23 @@ public interface ArticleTypeService extends RemoteService {
 	
 	
 	// sizes
+	SizeDTO createSize(SizeDTO brand) throws IllegalArgumentException;
+	
 	List<SizeDTO> readSizes() throws IllegalArgumentException;
 	
-	void addSize(SizeDTO brand) throws IllegalArgumentException;
+	void updateSize(SizeDTO dto) throws IllegalArgumentException;
+
+	void deleteSize(SizeDTO brand);
 	
 	
 	// colors
+	ColorDTO createColor(ColorDTO brand) throws IllegalArgumentException;
+	
 	List<ColorDTO> readColors() throws IllegalArgumentException;
 	
-	void addColor(ColorDTO brand) throws IllegalArgumentException;
+	void updateColor(ColorDTO dto) throws IllegalArgumentException;
+
+	void deleteColor(ColorDTO brand);
 	
 	
 	// article-types

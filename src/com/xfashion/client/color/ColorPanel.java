@@ -1,46 +1,50 @@
 package com.xfashion.client.color;
 
-import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.view.client.MultiSelectionModel;
+import com.google.gwt.view.client.RowCountChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
-import com.xfashion.client.CreatePopup;
+import com.xfashion.client.FilterCell;
 import com.xfashion.client.FilterDataProvider;
 import com.xfashion.client.FilterPanel;
 import com.xfashion.client.PanelMediator;
 import com.xfashion.client.ToolPanel;
 import com.xfashion.client.resources.FilterListResources;
+import com.xfashion.shared.ColorDTO;
 
-public class ColorPanel extends FilterPanel<ColorCellData> {
+public class ColorPanel extends FilterPanel<ColorDTO> {
 
-	private MultiSelectionModel<ColorCellData> selectionModel;
+	private MultiSelectionModel<ColorDTO> selectionModel;
 	
-	protected CreatePopup createPopup;
-	
-	public ColorPanel(PanelMediator panelMediator, FilterDataProvider<ColorCellData> dataProvider) {
+	public ColorPanel(PanelMediator panelMediator, FilterDataProvider<ColorDTO> dataProvider) {
 		super(panelMediator, dataProvider);
 		panelMediator.setColorPanel(this);
 	}
 
 	@Override
 	public Panel createPanel() {
-		createPopup = new CreateColorPopup(panelMediator);
-
 		VerticalPanel panel = new VerticalPanel();
 
 		Panel headerPanel = createHeaderPanel("Farbe");
 		panel.add(headerPanel);
 
-		ColorCell styleCell = new ColorCell();
-		cellList = new CellList<ColorCellData>(styleCell, GWT.<FilterListResources> create(FilterListResources.class));
+		FilterCell<ColorDTO> filterCell = new FilterCell<ColorDTO>(this, panelMediator);
+		cellList = new CellList<ColorDTO>(filterCell, GWT.<FilterListResources> create(FilterListResources.class));
 		cellList.setPageSize(30);
+		cellList.addRowCountChangeHandler(new RowCountChangeEvent.Handler() {
+			@Override
+			public void onRowCountChange(RowCountChangeEvent event) {
+				if (toolPanel != null) {
+					refreshToolsPanel();
+				}
+			}
+		});
 
-		selectionModel = new MultiSelectionModel<ColorCellData>();
+		selectionModel = new MultiSelectionModel<ColorDTO>();
 		cellList.setSelectionModel(selectionModel);
 		selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 			public void onSelectionChange(SelectionChangeEvent event) {
@@ -52,52 +56,35 @@ public class ColorPanel extends FilterPanel<ColorCellData> {
 		cellList.addStyleName("styleList");
 		panel.add(cellList);
 
-		Panel createAnchor = new SimplePanel();
-		panel.add(createAnchor);
+		setCreateAnchor(new SimplePanel());
+		panel.add(getCreateAnchor());
 
 		return panel;
 	}
 	
-	public void showCreatePopup() {
-		createPopup.show();
-	}
-
 	public void clearSelection() {
 		selectionModel.clear();
 	}
 
-	class ColorCell extends AbstractCell<ColorCellData> {
-		@Override
-		public void render(Context context, ColorCellData style, SafeHtmlBuilder sb) {
-			if (style == null) {
-				return;
-			}
-			style.render(sb, panelMediator.getSelectedCategory());
+	@Override
+	protected ToolPanel<ColorDTO> createToolPanel() {
+		ToolPanel<ColorDTO> tp = new ColorToolPanel(this, panelMediator);
+		return tp;
+	}
+
+	@Override
+	public void delete(ColorDTO color) {
+		if (color.getArticleAmount() != null && color.getArticleAmount() > 0) {
+			panelMediator.showError(errorMessages.brandIsNotEmpty(color.getName()));
+			return;
 		}
+		panelMediator.deleteColor(color);
 	}
-
+	
 	@Override
-	protected ToolPanel<ColorCellData> createToolPanel() {
-		// TODO
-		return null;
-	}
-
-	@Override
-	public void delete(ColorCellData item) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void edit(ColorCellData item) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void update(ColorCellData item) {
-		// TODO Auto-generated method stub
-		
+	public void update(ColorDTO color) {
+		panelMediator.updateColor(color);
+		cellList.redraw();
 	}
 
 }

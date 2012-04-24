@@ -40,8 +40,6 @@ public abstract class FilterPanel<T extends FilterCellData> implements ICrud<T> 
 	
 	public abstract void clearSelection();
 	
-	public abstract void showCreatePopup();
-	
 	protected abstract ToolPanel<T> createToolPanel();
 	
 	public void setHeaderColor(String color) {
@@ -137,7 +135,12 @@ public abstract class FilterPanel<T extends FilterCellData> implements ICrud<T> 
 	
 	@Override
 	public void edit(T item) {
-		
+		if (item.isInEditMode()) {
+			item.setInEditMode(false);
+		} else {
+			item.setInEditMode(true);
+		}
+		getDataProvider().refresh();
 	}
 	
 	public PanelMediator getPanelMediator() {

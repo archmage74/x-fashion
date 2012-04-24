@@ -45,15 +45,23 @@ public interface ArticleTypeServiceAsync {
 
 	
 	// sizes
+	void createSize(SizeDTO brand, AsyncCallback<SizeDTO> callback);
+
 	void readSizes(AsyncCallback<List<SizeDTO>> callback);
 
-	void addSize(SizeDTO brand, AsyncCallback<Void> callback);
+	void updateSize(SizeDTO dto, AsyncCallback<Void> callback);
+
+	void deleteSize(SizeDTO brand, AsyncCallback<Void> callback);
 
 	
 	// colors
+	void createColor(ColorDTO brand, AsyncCallback<ColorDTO> callback);
+
 	void readColors(AsyncCallback<List<ColorDTO>> callback);
 
-	void addColor(ColorDTO brand, AsyncCallback<Void> callback);
+	void updateColor(ColorDTO dto, AsyncCallback<Void> callback);
+
+	void deleteColor(ColorDTO brand, AsyncCallback<Void> callback);
 
 
 	// article-types

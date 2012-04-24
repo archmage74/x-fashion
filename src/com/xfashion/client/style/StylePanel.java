@@ -1,8 +1,6 @@
 package com.xfashion.client.style;
 
-import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -11,6 +9,7 @@ import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.RowCountChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.xfashion.client.CreatePopup;
+import com.xfashion.client.FilterCell;
 import com.xfashion.client.FilterDataProvider;
 import com.xfashion.client.FilterPanel;
 import com.xfashion.client.PanelMediator;
@@ -35,8 +34,8 @@ public class StylePanel extends FilterPanel<StyleDTO> {
 		headerPanel = createHeaderPanel("Stil");
 		panel.add(headerPanel);
 
-		StyleCell styleCell = new StyleCell();
-		cellList = new CellList<StyleDTO>(styleCell, GWT.<FilterListResources> create(FilterListResources.class));
+		FilterCell<StyleDTO> filterCell = new FilterCell<StyleDTO>(this, panelMediator);
+		cellList = new CellList<StyleDTO>(filterCell, GWT.<FilterListResources> create(FilterListResources.class));
 		cellList.setPageSize(30);
 		cellList.addRowCountChangeHandler(new RowCountChangeEvent.Handler() {
 			@Override
@@ -73,16 +72,6 @@ public class StylePanel extends FilterPanel<StyleDTO> {
 		selectionModel.clear();
 	}
 
-	class StyleCell extends AbstractCell<StyleDTO> {
-		@Override
-		public void render(Context context, StyleDTO style, SafeHtmlBuilder sb) {
-			if (style == null) {
-				return;
-			}
-			style.render(sb, panelMediator.getSelectedCategory());
-		}
-	}
-
 	@Override
 	protected ToolPanel<StyleDTO> createToolPanel() {
 		ToolPanel<StyleDTO> tp = new StyleToolPanel(this, panelMediator);
@@ -97,6 +86,7 @@ public class StylePanel extends FilterPanel<StyleDTO> {
 	@Override
 	public void update(StyleDTO item) {
 		panelMediator.updateStyle(item);
+		getDataProvider().refresh();
 	}
 
 }

@@ -27,15 +27,15 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
 			deleteCategories(pm);
-			createCategory(pm, new CategoryDTO("Damenhose", "#76A573", "#466944", 0));
-			createCategory(pm, new CategoryDTO("Herrenhose", "#6F77AA", "#2B3781", 1));
-			createCategory(pm, new CategoryDTO("Damenoberteil", "#9EC1AA", "#74A886", 2));
-			createCategory(pm, new CategoryDTO("Herrenoberteil", "#B2B7D9", "#919BCA", 3));
-			createCategory(pm, new CategoryDTO("Kleider", "#CEAFD0", "#B98DBC", 4));
-			createCategory(pm, new CategoryDTO("Strumpfwaren", "#C1AEA5", "#A78C7E", 5));
-			createCategory(pm, new CategoryDTO("Gürtel", "#9F7F79", "#71433A", 6));
-			createCategory(pm, new CategoryDTO("Bademode", "#8AADB8", "#578C9B", 7));
-			createCategory(pm, new CategoryDTO("Accessoirs", "#A26E7B", "#7C3044", 8));
+			createCategory(pm, new CategoryDTO("Damenhose", 0, "#76A573", "#466944"));
+			createCategory(pm, new CategoryDTO("Herrenhose", 1, "#6F77AA", "#2B3781"));
+			createCategory(pm, new CategoryDTO("Damenoberteil", 2, "#9EC1AA", "#74A886"));
+			createCategory(pm, new CategoryDTO("Herrenoberteil", 3, "#B2B7D9", "#919BCA"));
+			createCategory(pm, new CategoryDTO("Kleider", 4, "#CEAFD0", "#B98DBC"));
+			createCategory(pm, new CategoryDTO("Strumpfwaren", 5, "#C1AEA5", "#A78C7E"));
+			createCategory(pm, new CategoryDTO("Gürtel", 6, "#9F7F79", "#71433A"));
+			createCategory(pm, new CategoryDTO("Bademode", 7, "#8AADB8", "#578C9B"));
+			createCategory(pm, new CategoryDTO("Accessoirs", 8, "#A26E7B", "#7C3044"));
 		} finally {
 			pm.close();
 		}
@@ -285,6 +285,23 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 	// sizes
 	// *************
 	@Override
+	public SizeDTO createSize(SizeDTO dto) throws IllegalArgumentException {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			Size size = createSize(pm, dto);
+			dto.setId(size.getId());
+		} finally {
+			pm.close();
+		}
+		return dto;
+	}
+	
+	private Size createSize(PersistenceManager pm, SizeDTO dto) {
+		Size size = new Size(dto);
+		return pm.makePersistent(size);
+	}
+
+	@Override
 	public List<SizeDTO> readSizes() throws IllegalArgumentException {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		List<SizeDTO> sizes = new ArrayList<SizeDTO>(); 
@@ -307,15 +324,60 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 		return sizes;
 	}
 
+	private Size readSize(PersistenceManager pm, Long id) {
+		Size item = pm.getObjectById(Size.class, id);
+		return item;
+	}
+
 	@Override
-	public void addSize(SizeDTO dto) throws IllegalArgumentException {
+	public void updateSize(SizeDTO dto) throws IllegalArgumentException {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
-			Size o = new Size(dto);
-			pm.makePersistent(o);
+			updateSize(pm, dto);
 		} finally {
 			pm.close();
 		}
+	}
+	
+	private void updateSize(PersistenceManager pm, SizeDTO dto) {
+		Size item = readSize(pm, dto.getId());
+		item.updateFromDTO(dto);
+		pm.makePersistent(item);
+	}
+	
+	@Override
+	public void deleteSize(SizeDTO dto) throws IllegalArgumentException {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			deleteSize(pm, dto);
+		} finally {
+			pm.close();
+		}
+	}
+	
+	private void deleteSize(PersistenceManager pm, SizeDTO dto) {
+		Size item = readSize(pm, dto.getId());
+		pm.deletePersistent(item);
+	}
+	
+	// *************
+	// colors
+	// *************
+	@Override
+	public ColorDTO createColor(ColorDTO dto) throws IllegalArgumentException {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			Color color = createColor(pm, dto);
+			dto.setId(color.getId());
+		} finally {
+			pm.close();
+		}
+		return dto;
+	}
+
+	private Color createColor(PersistenceManager pm, ColorDTO dto) {
+		Color color = new Color(dto);
+		return pm.makePersistent(color);
 	}
 
 	@Override
@@ -341,17 +403,46 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 		return colors;
 	}
 
+	private Color readColor(PersistenceManager pm, Long id) {
+		Color item = pm.getObjectById(Color.class, id);
+		return item;
+	}
+
 	@Override
-	public void addColor(ColorDTO dto) throws IllegalArgumentException {
+	public void updateColor(ColorDTO dto) throws IllegalArgumentException {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
-			Color o = new Color(dto);
-			pm.makePersistent(o);
+			updateColor(pm, dto);
 		} finally {
 			pm.close();
 		}
 	}
-
+	
+	private void updateColor(PersistenceManager pm, ColorDTO dto) {
+		Color item = readColor(pm, dto.getId());
+		item.updateFromDTO(dto);
+		pm.makePersistent(item);
+	}
+	
+	@Override
+	public void deleteColor(ColorDTO dto) throws IllegalArgumentException {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			deleteColor(pm, dto);
+		} finally {
+			pm.close();
+		}
+	}
+	
+	private void deleteColor(PersistenceManager pm, ColorDTO dto) {
+		Color item = readColor(pm, dto.getId());
+		pm.deletePersistent(item);
+	}
+	
+	
+	// *************
+	// article-types
+	// *************
 	@Override
 	public List<ArticleTypeDTO> readArticleTypes() throws IllegalArgumentException {
 		PersistenceManager pm = PMF.get().getPersistenceManager();

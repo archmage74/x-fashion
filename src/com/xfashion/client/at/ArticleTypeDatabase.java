@@ -17,12 +17,9 @@ import com.xfashion.client.ApplicationErrorListener;
 import com.xfashion.client.ApplicationLoadListener;
 import com.xfashion.client.FilterDataProvider;
 import com.xfashion.client.brand.BrandDataProvider;
-import com.xfashion.client.cat.CategoryCellData;
 import com.xfashion.client.cat.CategoryDataProvider;
-import com.xfashion.client.color.ColorCellData;
 import com.xfashion.client.color.ColorDataProvider;
 import com.xfashion.client.resources.ErrorMessages;
-import com.xfashion.client.size.SizeCellData;
 import com.xfashion.client.size.SizeDataProvider;
 import com.xfashion.client.style.StyleDataProvider;
 import com.xfashion.shared.ArticleTypeDTO;
@@ -120,12 +117,9 @@ public class ArticleTypeDatabase {
 			@Override
 			public void onSuccess(List<CategoryDTO> result) {
 				Collections.sort(result);
-				List<CategoryCellData> list = categoryProvider.getList();
+				List<CategoryDTO> list = categoryProvider.getList();
 				list.clear();
-				for (CategoryDTO dto : result) {
-					CategoryCellData ccd = new CategoryCellData(dto);
-					list.add(ccd);
-				}
+				list.addAll(result);
 				categoryProvider.setLoaded(true);
 				checkAllRead();
 			}
@@ -177,11 +171,10 @@ public class ArticleTypeDatabase {
 			}
 			@Override
 			public void onSuccess(List<SizeDTO> result) {
-				List<SizeCellData> list = sizeProvider.getList();
-				for (SizeDTO dto : result) {
-					SizeCellData scd = new SizeCellData(dto.getName());
-					list.add(scd);
-				}
+				Collections.sort(result);
+				List<SizeDTO> list = sizeProvider.getList();
+				list.clear();
+				list.addAll(result);
 				sizeProvider.setLoaded(true);
 				checkAllRead();
 			}
@@ -196,11 +189,10 @@ public class ArticleTypeDatabase {
 			}
 			@Override
 			public void onSuccess(List<ColorDTO> result) {
-				List<ColorCellData> list = colorProvider.getList();
-				for (ColorDTO dto : result) {
-					ColorCellData ccd = new ColorCellData(dto.getName());
-					list.add(ccd);
-				}
+				Collections.sort(result);
+				List<ColorDTO> list = colorProvider.getList();
+				list.clear();
+				list.addAll(result);
 				colorProvider.setLoaded(true);
 				checkAllRead();
 			}
@@ -421,11 +413,11 @@ public class ArticleTypeDatabase {
 		brandProvider.addDataDisplay(display);
 	}
 
-	public void addSizeDisplay(HasData<SizeCellData> display) {
+	public void addSizeDisplay(HasData<SizeDTO> display) {
 		sizeProvider.addDataDisplay(display);
 	}
 
-	public void addColorDisplay(HasData<ColorCellData> display) {
+	public void addColorDisplay(HasData<ColorDTO> display) {
 		colorProvider.addDataDisplay(display);
 	}
 
@@ -463,7 +455,7 @@ public class ArticleTypeDatabase {
 			public void onFailure(Throwable caught) { }
 			@Override
 			public void onSuccess(CategoryDTO result) {
-				categoryProvider.getList().add(new CategoryCellData(result));
+				categoryProvider.getList().add(result);
 			}
 		};
 		articleTypeService.createCategory(category, callback);
@@ -481,7 +473,7 @@ public class ArticleTypeDatabase {
 		articleTypeService.updateCategory(category, callback);
 	}
 	
-	public void deleteCategory(final CategoryCellData category) {
+	public void deleteCategory(final CategoryDTO category) {
 		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -493,10 +485,10 @@ public class ArticleTypeDatabase {
 				categoryProvider.getList().remove(category);
 			}
 		};
-		articleTypeService.deleteCategory(category.getCategoryDTO(), callback);
+		articleTypeService.deleteCategory(category, callback);
 	}
 
-	public boolean doesCategoryHaveArticles(CategoryCellData category) {
+	public boolean doesCategoryHaveArticles(CategoryDTO category) {
 		for (ArticleTypeDTO at : articleTypes) {
 			if (at.getCategory().equals(category.getName())) {
 				return true;
@@ -585,36 +577,84 @@ public class ArticleTypeDatabase {
 		articleTypeService.deleteBrand(brand, callback);
 	}
 
-	public void addSize(final String size) {
-		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+	public void createSize(final SizeDTO size) {
+		AsyncCallback<SizeDTO> callback = new AsyncCallback<SizeDTO>() {
 			@Override
 			public void onFailure(Throwable caught) { }
 			@Override
-			public void onSuccess(Void result) { 
-				SizeCellData scd = new SizeCellData(size);
-				sizeProvider.getList().add(scd);
+			public void onSuccess(SizeDTO result) { 
+				sizeProvider.getList().add(result);
 				updateSizeProvider();
 			}
 		};
-		SizeDTO dto = new SizeDTO();
-		dto.setName(size);
-		articleTypeService.addSize(dto, callback);
+		articleTypeService.createSize(size, callback);
 	}
 
-	public void addColor(final String color) {
+	public void updateSize(SizeDTO size) {
 		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 			@Override
 			public void onFailure(Throwable caught) { }
 			@Override
 			public void onSuccess(Void result) { 
-				ColorCellData ccd = new ColorCellData(color);
-				colorProvider.getList().add(ccd);
+				brandProvider.refresh();
+			}
+		};
+		articleTypeService.updateSize(size, callback);
+	}
+
+	public void deleteSize(final SizeDTO size) {
+		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				String msg = caught.getMessage();
+				applicationErrorListener.error(errorMessages.sizeDeleteFailed(msg));
+			}
+			@Override
+			public void onSuccess(Void result) {
+				sizeProvider.getList().remove(size);
+			}
+		};
+		articleTypeService.deleteSize(size, callback);
+	}
+
+	public void createColor(final ColorDTO color) {
+		AsyncCallback<ColorDTO> callback = new AsyncCallback<ColorDTO>() {
+			@Override
+			public void onFailure(Throwable caught) { }
+			@Override
+			public void onSuccess(ColorDTO result) { 
+				colorProvider.getList().add(result);
 				updateColorProvider();
 			}
 		};
-		ColorDTO dto = new ColorDTO();
-		dto.setName(color);
-		articleTypeService.addColor(dto, callback);
+		articleTypeService.createColor(color, callback);
+	}
+
+	public void updateColor(ColorDTO color) {
+		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+			@Override
+			public void onFailure(Throwable caught) { }
+			@Override
+			public void onSuccess(Void result) { 
+				colorProvider.refresh();
+			}
+		};
+		articleTypeService.updateColor(color, callback);
+	}
+
+	public void deleteColor(final ColorDTO color) {
+		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				String msg = caught.getMessage();
+				applicationErrorListener.error(errorMessages.colorDeleteFailed(msg));
+			}
+			@Override
+			public void onSuccess(Void result) {
+				colorProvider.getList().remove(color);
+			}
+		};
+		articleTypeService.deleteColor(color, callback);
 	}
 
 	public void addArticleType(final ArticleTypeDTO articleType) {

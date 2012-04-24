@@ -1,45 +1,49 @@
 package com.xfashion.client.size;
 
-import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.view.client.MultiSelectionModel;
+import com.google.gwt.view.client.RowCountChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
-import com.xfashion.client.CreatePopup;
+import com.xfashion.client.FilterCell;
 import com.xfashion.client.FilterDataProvider;
 import com.xfashion.client.FilterPanel;
 import com.xfashion.client.PanelMediator;
 import com.xfashion.client.ToolPanel;
 import com.xfashion.client.resources.FilterListResources;
+import com.xfashion.shared.SizeDTO;
 
-public class SizePanel extends FilterPanel<SizeCellData> {
+public class SizePanel extends FilterPanel<SizeDTO> {
 
-	private MultiSelectionModel<SizeCellData> selectionModel;
+	private MultiSelectionModel<SizeDTO> selectionModel;
 	
-	protected CreatePopup createPopup;
-	
-	public SizePanel(PanelMediator panelMediator, FilterDataProvider<SizeCellData> dataProvider) {
+	public SizePanel(PanelMediator panelMediator, FilterDataProvider<SizeDTO> dataProvider) {
 		super(panelMediator, dataProvider);
 		panelMediator.setSizePanel(this);
 	}
 	
 	public Panel createPanel() {
-		createPopup = new CreateSizePopup(panelMediator);
-
 		VerticalPanel panel = new VerticalPanel();
 
 		Panel headerPanel = createHeaderPanel("Größe");
 		panel.add(headerPanel);
 
-		SizeCell styleCell = new SizeCell();
-		cellList = new CellList<SizeCellData>(styleCell, GWT.<FilterListResources> create(FilterListResources.class));
+		FilterCell<SizeDTO> filterCell = new FilterCell<SizeDTO>(this, panelMediator);
+		cellList = new CellList<SizeDTO>(filterCell, GWT.<FilterListResources> create(FilterListResources.class));
 		cellList.setPageSize(30);
+		cellList.addRowCountChangeHandler(new RowCountChangeEvent.Handler() {
+			@Override
+			public void onRowCountChange(RowCountChangeEvent event) {
+				if (toolPanel != null) {
+					refreshToolsPanel();
+				}
+			}
+		});
 
-		selectionModel = new MultiSelectionModel<SizeCellData>();
+		selectionModel = new MultiSelectionModel<SizeDTO>();
 		cellList.setSelectionModel(selectionModel);
 		selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 			public void onSelectionChange(SelectionChangeEvent event) {
@@ -51,64 +55,35 @@ public class SizePanel extends FilterPanel<SizeCellData> {
 		cellList.addStyleName("styleList");
 		panel.add(cellList);
 
-		Panel createAnchor = new SimplePanel();
-		panel.add(createAnchor);
+		setCreateAnchor(new SimplePanel());
+		panel.add(getCreateAnchor());
 
 		return panel;
 	}
 	
-	public void showCreatePopup() {
-		createPopup.show();
-	}
-
 	public void clearSelection() {
 		selectionModel.clear();
 	}
 
-	class SizeCell extends AbstractCell<SizeCellData> {
-		@Override
-		public void render(Context context, SizeCellData style, SafeHtmlBuilder sb) {
-			if (style == null) {
-				return;
-			}
-			style.render(sb, panelMediator.getSelectedCategory());
+	@Override
+	protected ToolPanel<SizeDTO> createToolPanel() {
+		ToolPanel<SizeDTO> tp = new SizeToolPanel(this, panelMediator);
+		return tp;
+	}
+
+	@Override
+	public void delete(SizeDTO size) {
+		if (size.getArticleAmount() != null && size.getArticleAmount() > 0) {
+			panelMediator.showError(errorMessages.brandIsNotEmpty(size.getName()));
+			return;
 		}
+		panelMediator.deleteSize(size);
 	}
-
+	
 	@Override
-	protected ToolPanel<SizeCellData> createToolPanel() {
-		// TODO
-		return null;
-	}
-
-	@Override
-	public void delete(SizeCellData item) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void edit(SizeCellData item) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void moveUp(SizeCellData item) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void moveDown(SizeCellData item) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void update(SizeCellData item) {
-		// TODO Auto-generated method stub
-		
+	public void update(SizeDTO size) {
+		panelMediator.updateSize(size);
+		cellList.redraw();
 	}
 
 }

@@ -89,6 +89,11 @@ public abstract class ToolPanel<T extends FilterCellData> {
 	}
 
 	public void hide() {
+		for (T cellData : parentPanel.getDataProvider().getList()) {
+			if (cellData.isInEditMode()) {
+				cellData.setInEditMode(false);
+			}
+		}
 		toolsPopup.hide();
 		toolsPopup.clear();
 		toolsPopup = null;

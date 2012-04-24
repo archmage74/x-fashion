@@ -7,12 +7,11 @@ DONE - create category
 DONE - delete category
 DONE - edit category
 DONE - ordering of category
+DONE - delete brand/style/color/size
+DONE - edit brand/style/color/size
+DONE - ordering of brand/style/color/size
 
-delete brand/style/color/size
-
-edit brand/style/color/size
-
-ordering of brand/style/color/size
+update of article-types when editing attributes
 
 einkaufspreis in barcode
 

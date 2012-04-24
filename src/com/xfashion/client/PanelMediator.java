@@ -8,19 +8,16 @@ import com.xfashion.client.at.ArticleTypeDetailPopup;
 import com.xfashion.client.at.ArticleTypePanel;
 import com.xfashion.client.at.CreateArticleTypePopup;
 import com.xfashion.client.brand.BrandPanel;
-import com.xfashion.client.cat.CategoryCellData;
 import com.xfashion.client.cat.CategoryPanel;
-import com.xfashion.client.color.ColorCellData;
 import com.xfashion.client.color.ColorPanel;
-import com.xfashion.client.color.CreateColorPopup;
 import com.xfashion.client.resources.ErrorMessages;
-import com.xfashion.client.size.CreateSizePopup;
-import com.xfashion.client.size.SizeCellData;
 import com.xfashion.client.size.SizePanel;
 import com.xfashion.client.style.StylePanel;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.BrandDTO;
 import com.xfashion.shared.CategoryDTO;
+import com.xfashion.shared.ColorDTO;
+import com.xfashion.shared.SizeDTO;
 import com.xfashion.shared.StyleDTO;
 
 public class PanelMediator implements ApplicationLoadListener, ApplicationErrorListener {
@@ -34,8 +31,6 @@ public class PanelMediator implements ApplicationLoadListener, ApplicationErrorL
 	private ColorPanel colorPanel;
 	private ArticleTypePanel articleTypePanel;
 
-	private CreateSizePopup createSizePopup;
-	private CreateColorPopup createColorPopup;
 	private CreateArticleTypePopup createArticleTypePopup;
 	private ArticleTypeDetailPopup articleTypeDetailPopup;
 
@@ -67,14 +62,6 @@ public class PanelMediator implements ApplicationLoadListener, ApplicationErrorL
 		setHeaderColor(null);
 	}
 	
-	public void addSize(String size) {
-		articleTypeDatabase.addSize(size);
-	}
-	
-	public void addColor(String color) {
-		articleTypeDatabase.addColor(color);
-	}
-	
 	public CategoryDTO getSelectedCategory() {
 		return articleTypeDatabase.getCategoryFilter();
 	}
@@ -104,20 +91,20 @@ public class PanelMediator implements ApplicationLoadListener, ApplicationErrorL
 		articleTypeDatabase.updateProviders();
 	}
 	
-	public void setSelectedSizes(Set<SizeCellData> sizes) {
+	public void setSelectedSizes(Set<SizeDTO> sizes) {
 		Set<String> sizeFilter = articleTypeDatabase.getSizeFilter();
 		sizeFilter.clear();
-		for (SizeCellData s : sizes) {
+		for (SizeDTO s : sizes) {
 			sizeFilter.add(s.getName());
 		}
 		articleTypeDatabase.applyFilters();
 		articleTypeDatabase.updateProviders();
 	}
 
-	public void setSelectedColors(Set<ColorCellData> colors) {
+	public void setSelectedColors(Set<ColorDTO> colors) {
 		Set<String> colorFilter = articleTypeDatabase.getColorFilter();
 		colorFilter.clear();
-		for (ColorCellData s : colors) {
+		for (ColorDTO s : colors) {
 			colorFilter.add(s.getName());
 		}
 		articleTypeDatabase.applyFilters();
@@ -239,22 +226,6 @@ public class PanelMediator implements ApplicationLoadListener, ApplicationErrorL
 		this.colorPanel = colorPanel;
 	}
 
-	public CreateSizePopup getCreateSizePopup() {
-		return createSizePopup;
-	}
-
-	public void setCreateSizePopup(CreateSizePopup createSizePopup) {
-		this.createSizePopup = createSizePopup;
-	}
-
-	public CreateColorPopup getCreateColorPopup() {
-		return createColorPopup;
-	}
-
-	public void setCreateColorPopup(CreateColorPopup createColorPopup) {
-		this.createColorPopup = createColorPopup;
-	}
-
 	public void showError(String errorMessage) {
 		errorPopup.showPopup(errorMessage);
 	}
@@ -281,7 +252,7 @@ public class PanelMediator implements ApplicationLoadListener, ApplicationErrorL
 		articleTypeDatabase.updateCategory(category);
 	}
 	
-	public void deleteCategory(CategoryCellData category) {
+	public void deleteCategory(CategoryDTO category) {
 		if (articleTypeDatabase.doesCategoryHaveArticles(category)) {
 			showError(errorMessages.categoryIsNotEmpty(category.getName()));
 			return;
@@ -314,6 +285,30 @@ public class PanelMediator implements ApplicationLoadListener, ApplicationErrorL
 	
 	public void deleteStyle(StyleDTO item) {
 		articleTypeDatabase.deleteStyle(item);
+	}
+	
+	public void createSize(SizeDTO size) {
+		articleTypeDatabase.createSize(size);
+	}
+	
+	public void updateSize(SizeDTO size) {
+		articleTypeDatabase.updateSize(size);
+	}
+	
+	public void deleteSize(SizeDTO item) {
+		articleTypeDatabase.deleteSize(item);
+	}
+	
+	public void createColor(ColorDTO color) {
+		articleTypeDatabase.createColor(color);
+	}
+	
+	public void updateColor(ColorDTO size) {
+		articleTypeDatabase.updateColor(size);
+	}
+	
+	public void deleteColor(ColorDTO item) {
+		articleTypeDatabase.deleteColor(item);
 	}
 	
 }

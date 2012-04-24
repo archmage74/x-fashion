@@ -2,24 +2,27 @@ package com.xfashion.shared;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class SizeDTO extends DTO implements IsSerializable {
+public class SizeDTO extends FilterCellData implements IsSerializable {
 	
-	private String name;
-
-	public String getName() {
-		return name;
+	public static String ICON_PREFIX_SIZE = "size";
+	
+	public SizeDTO() {
+		setIconPrefix(ICON_PREFIX_SIZE);
 	}
-
-	public void setName(String name) {
-		this.name = name;
-	} 
-
+	
+	public SizeDTO(String name, int sortIndex) {
+		setName(name);
+		setSortIndex(sortIndex);
+		setIconPrefix(ICON_PREFIX_SIZE);
+	}
+	
 	public boolean equals(Object o) {
 		if (o == null) return false;
 		if (!(o instanceof SizeDTO)) return false;
 		SizeDTO s = (SizeDTO) o;
 		boolean equal = true;
-		equal &= attributeEquals(name, s.getName());
+		equal &= attributeEquals(getName(), s.getName());
+		equal &= attributeEquals(getSortIndex(), s.getSortIndex());
 		return equal;
 	}
 
