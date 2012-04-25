@@ -80,6 +80,10 @@ public class StylePanel extends FilterPanel<StyleDTO> {
 
 	@Override
 	public void delete(StyleDTO item) {
+		if (item.getArticleAmount() != null && item.getArticleAmount() > 0) {
+			panelMediator.showError(errorMessages.styleIsNotEmpty(item.getName()));
+			return;
+		}
 		panelMediator.deleteStyle(item);
 	}
 

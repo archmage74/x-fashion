@@ -11,6 +11,8 @@ DONE - delete brand/style/color/size
 DONE - edit brand/style/color/size
 DONE - ordering of brand/style/color/size
 
+delete article
+
 update of article-types when editing attributes
 
 einkaufspreis in barcode
@@ -18,6 +20,8 @@ einkaufspreis in barcode
 create barcode
 
 article-type images
+
+edit article
 
 bulk creation of article types (only multiple sizes are allowed)
 
@@ -39,9 +43,9 @@ prevent application from sleeping
 
 loading progress bar
 
-NEU - favicon
-
 NEU - name filter enhancement
 Wenn ich R in dasTextfeld schreibe und zb Romania ausgewählt habe, wäre es super wenn ich jetzt mit den Richtungstasten auf der Tastatur (oben unten) zu durch die anderen Namen blättern könnte.
 Aber nicht nur durch die R´s sondern durch alle name die durch die Filter nicht gesperrt sind und das nach Alphabet sortiert.
+
+NEU - favicon
 

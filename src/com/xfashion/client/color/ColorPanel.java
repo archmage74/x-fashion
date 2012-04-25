@@ -75,7 +75,7 @@ public class ColorPanel extends FilterPanel<ColorDTO> {
 	@Override
 	public void delete(ColorDTO color) {
 		if (color.getArticleAmount() != null && color.getArticleAmount() > 0) {
-			panelMediator.showError(errorMessages.brandIsNotEmpty(color.getName()));
+			panelMediator.showError(errorMessages.colorIsNotEmpty(color.getName()));
 			return;
 		}
 		panelMediator.deleteColor(color);

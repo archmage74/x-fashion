@@ -123,7 +123,7 @@ public abstract class ToolPanel<T extends FilterCellData> {
 	protected void fillDTOFromPanel(T dto) {
 		String name = createTextBox.getText();
 		if (name == null || name.length() == 0) {
-			panelMediator.showError(errorMessages.categoryCreateNoName());
+			panelMediator.showError(errorMessages.createAttributeNoName());
 			return;
 		}
 		dto.setName(name);

@@ -25,7 +25,7 @@ public class CategoryToolPanel extends ToolPanel<CategoryDTO> {
 		CategoryDTO category = new CategoryDTO();
 		String name = createTextBox.getText();
 		if (name == null || name.length() == 0) {
-			panelMediator.showError(errorMessages.categoryCreateNoName());
+			panelMediator.showError(errorMessages.createAttributeNoName());
 			return;
 		}
 		category.setName(name);
@@ -61,7 +61,7 @@ public class CategoryToolPanel extends ToolPanel<CategoryDTO> {
 				CategoryDTO category = new CategoryDTO();
 				String name = createTextBox.getText();
 				if (name == null || name.length() == 0) {
-					panelMediator.showError(errorMessages.categoryCreateNoName());
+					panelMediator.showError(errorMessages.createAttributeNoName());
 					return;
 				}
 				category.setName(name);

@@ -74,7 +74,7 @@ public class SizePanel extends FilterPanel<SizeDTO> {
 	@Override
 	public void delete(SizeDTO size) {
 		if (size.getArticleAmount() != null && size.getArticleAmount() > 0) {
-			panelMediator.showError(errorMessages.brandIsNotEmpty(size.getName()));
+			panelMediator.showError(errorMessages.sizeIsNotEmpty(size.getName()));
 			return;
 		}
 		panelMediator.deleteSize(size);
