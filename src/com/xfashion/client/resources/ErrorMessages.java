@@ -27,4 +27,6 @@ public interface ErrorMessages extends Messages {
 	String articleCreateNoSize();
 	String articleCreateNoColor();
 
+	String invalidPrice();
+	String invalidName();
 }

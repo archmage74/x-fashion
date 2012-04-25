@@ -1,39 +1,79 @@
 package com.xfashion.server;
 
+import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+import com.xfashion.shared.ArticleTypeDTO;
 
 @PersistenceCapable
 public class ArticleType implements IsSerializable {
 	
+	public static final String ID_COUNTER_NAME = "ArticleType";
+	
 	@PrimaryKey
-	@Persistent
+	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Long productNumber;
 
 	@Persistent
 	private String name;
 	
 	@Persistent
-	private String category;
+	private Long categoryId;
 	
 	@Persistent
-	private String style;
+	private Long styleId;
 	
 	@Persistent
-	private String brand;
+	private Long brandId;
 	
 	@Persistent
-	private String size;
+	private Long sizeId;
 	
 	@Persistent
-	private String color;
+	private Long colorId;
+	
+	@Persistent
+	private Integer buyPrice;
+	
+	@Persistent
+	private Integer sellPrice;
 
-	@Persistent
-	private Integer price;
+	public ArticleType() {
+		
+	}
 	
+	public ArticleType(ArticleTypeDTO dto) {
+		updateFromDTO(dto);
+	}
+	
+	public void updateFromDTO(ArticleTypeDTO dto) {
+		this.name = dto.getName();
+		this.categoryId = dto.getCategoryId();
+		this.styleId = dto.getStyleId();
+		this.brandId = dto.getBrandId();
+		this.sizeId = dto.getSizeId();
+		this.colorId = dto.getColorId();
+		this.buyPrice = dto.getBuyPrice();
+		this.sellPrice = dto.getSellPrice();
+	}
+	
+	public ArticleTypeDTO createDTO() {
+		ArticleTypeDTO dto = new ArticleTypeDTO();
+		dto.setProductNumber(productNumber);
+		dto.setName(name);
+		dto.setCategoryId(categoryId);
+		dto.setStyleId(styleId);
+		dto.setBrandId(brandId);
+		dto.setSizeId(sizeId);
+		dto.setColorId(colorId);
+		dto.setBuyPrice(buyPrice);
+		dto.setSellPrice(sellPrice);
+		return dto;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -42,44 +82,68 @@ public class ArticleType implements IsSerializable {
 		this.name = name;
 	}
 
-	public String getStyle() {
-		return style;
+	public Long getProductNumber() {
+		return productNumber;
 	}
 
-	public String getCategory() {
-		return category;
+	public void setProductNumber(Long productNumber) {
+		this.productNumber = productNumber;
 	}
 
-	public void setCategory(String category) {
-		this.category = category;
+	public Long getCategoryId() {
+		return categoryId;
 	}
 
-	public void setStyle(String style) {
-		this.style = style;
+	public void setCategoryId(Long categoryId) {
+		this.categoryId = categoryId;
 	}
 
-	public String getBrand() {
-		return brand;
+	public Long getStyleId() {
+		return styleId;
 	}
 
-	public void setBrand(String brand) {
-		this.brand = brand;
+	public void setStyleId(Long styleId) {
+		this.styleId = styleId;
 	}
 
-	public String getSize() {
-		return size;
+	public Long getBrandId() {
+		return brandId;
 	}
 
-	public void setSize(String size) {
-		this.size = size;
+	public void setBrandId(Long brandId) {
+		this.brandId = brandId;
 	}
 
-	public String getColor() {
-		return color;
+	public Long getSizeId() {
+		return sizeId;
 	}
 
-	public void setColor(String color) {
-		this.color = color;
+	public void setSizeId(Long sizeId) {
+		this.sizeId = sizeId;
+	}
+
+	public Long getColorId() {
+		return colorId;
+	}
+
+	public void setColorId(Long colorId) {
+		this.colorId = colorId;
+	}
+
+	public Integer getBuyPrice() {
+		return buyPrice;
+	}
+
+	public void setBuyPrice(Integer buyPrice) {
+		this.buyPrice = buyPrice;
+	}
+
+	public Integer getSellPrice() {
+		return sellPrice;
+	}
+
+	public void setSellPrice(Integer sellPrice) {
+		this.sellPrice = sellPrice;
 	}
 
 	public boolean equals(Object o) {
@@ -87,12 +151,15 @@ public class ArticleType implements IsSerializable {
 		if (!(o instanceof ArticleType)) return false;
 		ArticleType s = (ArticleType) o;
 		boolean equal = true;
+		equal &= attributeEquals(productNumber, s.getProductNumber());
 		equal &= attributeEquals(name, s.getName());
-		equal &= attributeEquals(category, s.getCategory());
-		equal &= attributeEquals(style, s.getStyle());
-		equal &= attributeEquals(brand, s.getBrand());
-		equal &= attributeEquals(size, s.getSize());
-		equal &= attributeEquals(color, s.getColor());
+		equal &= attributeEquals(categoryId, s.getCategoryId());
+		equal &= attributeEquals(styleId, s.getStyleId());
+		equal &= attributeEquals(brandId, s.getBrandId());
+		equal &= attributeEquals(sizeId, s.getSizeId());
+		equal &= attributeEquals(colorId, s.getColorId());
+		equal &= attributeEquals(buyPrice, s.getBuyPrice());
+		equal &= attributeEquals(sellPrice, s.getSellPrice());
 		return equal;
 	}
 	
@@ -104,22 +171,6 @@ public class ArticleType implements IsSerializable {
 			return false;
 		}
 		return o1.equals(o2);
-	}
-
-	public Long getProductNumber() {
-		return productNumber;
-	}
-
-	public void setProductNumber(Long productNumber) {
-		this.productNumber = productNumber;
-	}
-
-	public Integer getPrice() {
-		return price;
-	}
-
-	public void setPrice(Integer price) {
-		this.price = price;
 	}
 
 }

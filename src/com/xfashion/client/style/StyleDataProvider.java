@@ -6,8 +6,8 @@ import com.xfashion.shared.StyleDTO;
 
 public class StyleDataProvider extends FilterDataProvider<StyleDTO> {
 	
-	public String getAttributeContent(ArticleTypeDTO articleType) {
-		return articleType.getStyle();
+	public Long getAttributeContent(ArticleTypeDTO articleType) {
+		return articleType.getStyleId();
 	}
 
 }

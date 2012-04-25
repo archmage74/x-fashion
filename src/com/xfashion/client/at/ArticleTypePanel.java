@@ -46,9 +46,12 @@ public class ArticleTypePanel {
 	
 	private Panel headerPanel;
 	
+	private ProvidesArticleFilter provider;
+	
 	public ArticleTypePanel(PanelMediator panelMediator) {
 //		super(panelMediator, dataProvider);
 		this.panelMediator = panelMediator;
+		provider = panelMediator.getArticleTypeDatabase();
 		errorMessages = GWT.create(ErrorMessages.class);
 		panelMediator.setArticleTypePanel(this);
 	}
@@ -141,15 +144,15 @@ public class ArticleTypePanel {
 
 	private void addArticle() {
 		ArticleTypeDTO articleType = panelMediator.createArticleTypeFromSelection();
-		if (articleType.getCategory() == null) {
+		if (articleType.getCategoryId() == null) {
 			panelMediator.showError(errorMessages.articleCreateNoCategory());
-		} else if (articleType.getBrand() == null) {
+		} else if (articleType.getBrandId() == null) {
 			panelMediator.showError(errorMessages.articleCreateNoBrand());
-		} else if (articleType.getStyle() == null) {
+		} else if (articleType.getStyleId() == null) {
 			panelMediator.showError(errorMessages.articleCreateNoStyle());
-		} else if (articleType.getSize() == null) {
+		} else if (articleType.getSizeId() == null) {
 			panelMediator.showError(errorMessages.articleCreateNoSize());
-		} else if (articleType.getColor() == null) {
+		} else if (articleType.getColorId() == null) {
 			panelMediator.showError(errorMessages.articleCreateNoColor());
 		} else {
 			createArticleTypePopup.showForPrefilledArticleType(articleType);
@@ -178,21 +181,21 @@ public class ArticleTypePanel {
 			sb.appendHtmlConstant("<tr>");
 			sb.appendHtmlConstant("<td class=\"articleIconTd\" rowspan=\"2\"><img class=\"articleIconImage\" src=\"trouserIcon.png\" /></td>");
 			sb.appendHtmlConstant("<td class=\"articleUpLe\">");
-			sb.appendEscaped("" + articleType.getCategory());
+			sb.appendEscaped("" + provider.getCategoryProvider().resolveData(articleType.getCategoryId()).getName());
 			sb.appendHtmlConstant("</td><td class=\"articleUpCe\">");
 			sb.appendEscaped("" + articleType.getName());
 			sb.appendHtmlConstant("</td><td class=\"articleUpRi\">");
-			sb.appendEscaped("" + articleType.getColor());
+			sb.appendEscaped("" + provider.getColorProvider().resolveData(articleType.getColorId()).getName());
 			sb.appendHtmlConstant("</td><td class=\"articlePrice\" rowspan=\"2\">");
-			String price = NumberFormat.getCurrencyFormat("EUR").format(((double) articleType.getPrice()) / 100);
+			String price = NumberFormat.getCurrencyFormat("EUR").format(((double) articleType.getSellPrice()) / 100);
 			sb.appendEscaped(price);
 			sb.appendHtmlConstant("</td></tr><tr>");
 			sb.appendHtmlConstant("<td class=\"articleBoLe\">");
-			sb.appendEscaped("" + articleType.getStyle());
+			sb.appendEscaped("" + provider.getStyleProvider().resolveData(articleType.getStyleId()).getName());
 			sb.appendHtmlConstant("</td><td class=\"articleBoCe\">");
-			sb.appendEscaped("" + articleType.getBrand());
+			sb.appendEscaped("" + provider.getBrandProvider().resolveData(articleType.getBrandId()).getName());
 			sb.appendHtmlConstant("</td><td class=\"articleBoRi\">");
-			sb.appendEscaped("" + articleType.getSize());
+			sb.appendEscaped("" + provider.getSizeProvider().resolveData(articleType.getSizeId()).getName());
 			sb.appendHtmlConstant("</td></tr></table>");
 		}
 	}

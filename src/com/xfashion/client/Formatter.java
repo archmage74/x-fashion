@@ -7,9 +7,11 @@ public class Formatter {
 	private static Formatter formatter;
 	
 	private NumberFormat currencyFormat;
+	private NumberFormat currencyValueFormat;
 	
 	public Formatter() {
 		currencyFormat = NumberFormat.getCurrencyFormat("EUR");
+		currencyValueFormat = NumberFormat.getDecimalFormat();
 	}
 	
 	public static Formatter getInstance() {
@@ -24,7 +26,7 @@ public class Formatter {
 	}
 	
 	public Integer parseEurToCents(String eur) {
-		return new Double(currencyFormat.parse(eur) * 100).intValue();
+		return (new Double(currencyFormat.parse("€" + eur) * 100.0)).intValue();
 	}
 	
 	public String formatProductNumber(Long productNumber) {

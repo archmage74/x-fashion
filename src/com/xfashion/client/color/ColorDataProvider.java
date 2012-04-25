@@ -6,8 +6,8 @@ import com.xfashion.shared.ColorDTO;
 
 public class ColorDataProvider extends FilterDataProvider<ColorDTO> {
 	
-	public String getAttributeContent(ArticleTypeDTO articleType) {
-		return articleType.getColor();
+	public Long getAttributeContent(ArticleTypeDTO articleType) {
+		return articleType.getColorId();
 	}
 
 }

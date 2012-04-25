@@ -18,7 +18,8 @@ public class CategoryDTO extends FilterCellData implements IsSerializable {
 		
 	}
 
-	public CategoryDTO(String name, int sortIndex, String backgroundColor, String borderColor) {
+	public CategoryDTO(Long id, String name, int sortIndex, String backgroundColor, String borderColor) {
+		setId(id);
 		setName(name);
 		setSortIndex(sortIndex);
 		setBackgroundColor(backgroundColor);

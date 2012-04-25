@@ -51,26 +51,26 @@ public class Sticker extends HttpServlet {
 
 		sb.append("<table class=\"articleCell\">");
 		sb.append("<tr>");
-		sb.append(createTd(articleType.getCategory(), "articleUpLe"));
+		sb.append(createTd(articleType.getCategoryId(), "articleUpLe"));
 		sb.append(createTd(articleType.getName(), "articleUpCe"));
-		sb.append(createTd(articleType.getColor(), "articleUpRi"));
+		sb.append(createTd(articleType.getColorId(), "articleUpRi"));
 		sb.append("</tr>");
 		sb.append("<tr>");
-		sb.append(createTd(articleType.getStyle(), "articleBoLe"));
-		sb.append(createTd(articleType.getBrand(), "articleBoCe"));
-		sb.append(createTd(articleType.getSize(), "articleBoRi"));
+		sb.append(createTd(articleType.getStyleId(), "articleBoLe"));
+		sb.append(createTd(articleType.getBrandId(), "articleBoCe"));
+		sb.append(createTd(articleType.getSizeId(), "articleBoRi"));
 		sb.append("</tr>");
 		sb.append("</table>");
 
 		sb.append("<table class=\"articleCell\" style=\"width: 210px;\">");
 		sb.append("<tr style=\"padding: 0px; margin: 0px;\">");
 		sb.append("<td style=\"align: center; padding-top: 0px;\">");
-		sb.append("<img width=\"109\" height=\"35\" src=\"http://intern.spielemarkt.at/spielemarkt_at/barcode.php?num=");
-		sb.append(articleType.getProductNumber());
+		sb.append("<img width=\"142\" height=\"46\" src=\"http://intern.spielemarkt.at/spielemarkt_at/barcode.php?num=");
+		sb.append(new BarcodeHelper().generateEan(articleType));
 		sb.append("&type=ean13&imgtype=png\" />");
 		sb.append("</td>");
 		sb.append("<td class=\"articlePrice\">");
-		sb.append(nf.format(((double) articleType.getPrice()) / 100));
+		sb.append(nf.format(((double) articleType.getSellPrice()) / 100));
 		sb.append("</td>");
 		sb.append("</tr>");
 		sb.append("</table>");
@@ -78,6 +78,10 @@ public class Sticker extends HttpServlet {
 		sb.append("</body>");
 		sb.append("</html>");
 		return sb.toString();
+	}
+	
+	private StringBuffer createTd(Long s, String style) {
+		return createTd("" + s, style);
 	}
 
 	private StringBuffer createTd(String s, String style) {

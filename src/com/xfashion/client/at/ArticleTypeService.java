@@ -70,8 +70,8 @@ public interface ArticleTypeService extends RemoteService {
 	
 	
 	// article-types
-	List<ArticleTypeDTO> readArticleTypes() throws IllegalArgumentException;
+	ArticleTypeDTO createArticleType(ArticleTypeDTO articleType) throws IllegalArgumentException;
 	
-	void addArticleType(ArticleTypeDTO articleType) throws IllegalArgumentException;
+	List<ArticleTypeDTO> readArticleTypes() throws IllegalArgumentException;
 
 }

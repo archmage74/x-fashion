@@ -2,21 +2,8 @@ package com.xfashion.client;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.xfashion.client.at.ArticleTypeDatabase;
-import com.xfashion.client.at.ArticleTypePanel;
-import com.xfashion.client.brand.BrandPanel;
-import com.xfashion.client.cat.CategoryPanel;
-import com.xfashion.client.color.ColorPanel;
-import com.xfashion.client.size.SizePanel;
-import com.xfashion.client.style.StylePanel;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -37,8 +24,6 @@ public class Xfashion implements EntryPoint {
 	// private final GreetingServiceAsync greetingService =
 	// GWT.create(GreetingService.class);
 
-	private Panel mainPanel;
-	
 	ArticleTypeDatabase articleTypeDatabase;
 
 	static class StyleCell extends AbstractCell<String> {
@@ -58,58 +43,10 @@ public class Xfashion implements EntryPoint {
 	 */
 	public void onModuleLoad() {
 		articleTypeDatabase = new ArticleTypeDatabase();
-		
-		VerticalPanel panel = new VerticalPanel();
-		addMainPanel(panel);
-		addNavPanel(panel);
-		RootPanel.get("mainPanelContainer").add(panel);
-	}
-	
-	public void addMainPanel(Panel panel) {
-		mainPanel = new HorizontalPanel();
-
 		PanelMediator panelMediator = new PanelMediator();
+		panelMediator.setXfashion(this);
 		panelMediator.setArticleTypeDatabase(articleTypeDatabase);
 		articleTypeDatabase.setApplicationLoadListener(panelMediator);
-		articleTypeDatabase.setApplicationErrorListener(panelMediator);
-		panelMediator.setXfashion(this);
-		
-		CategoryPanel categoryPanel = new CategoryPanel(panelMediator, articleTypeDatabase.getCategoryProvider());
-		mainPanel.add(categoryPanel.createPanel());
-		
-		BrandPanel brandPanel = new BrandPanel(panelMediator, articleTypeDatabase.getBrandProvider());
-		mainPanel.add(brandPanel.createPanel());
-		
-		StylePanel stylePanel = new StylePanel(panelMediator, articleTypeDatabase.getStyleProvider());
-		mainPanel.add(stylePanel.createPanel());
-		
-		SizePanel sizePanel = new SizePanel(panelMediator, articleTypeDatabase.getSizeProvider());
-		mainPanel.add(sizePanel.createPanel());
-		
-		ColorPanel colorPanel = new ColorPanel(panelMediator, articleTypeDatabase.getColorProvider());
-		mainPanel.add(colorPanel.createPanel());
-		
-		ArticleTypePanel articleTypePanel = new ArticleTypePanel(panelMediator);
-		mainPanel.add(articleTypePanel.createPanel(articleTypeDatabase.getArticleTypeProvider(), articleTypeDatabase.getNameOracle()));
-		
-//		mainPanel.add(createArticleTypeList(articleTypeDatabase));
-
-		panel.add(mainPanel);
-	}
+	}		
 	
-	public void addNavPanel(Panel panel) {
-		HorizontalPanel navPanel = new HorizontalPanel();
-		
-		Button createCategoriesButton = new Button("create categories");
-		createCategoriesButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				articleTypeDatabase.createCategories();
-			}
-		});
-		
-		navPanel.add(createCategoriesButton);
-		panel.add(navPanel);
-	}
-
 }

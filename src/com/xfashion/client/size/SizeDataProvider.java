@@ -6,8 +6,8 @@ import com.xfashion.shared.SizeDTO;
 
 public class SizeDataProvider extends FilterDataProvider<SizeDTO> {
 	
-	public String getAttributeContent(ArticleTypeDTO articleType) {
-		return articleType.getSize();
+	public Long getAttributeContent(ArticleTypeDTO articleType) {
+		return articleType.getSizeId();
 	}
 
 }

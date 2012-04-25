@@ -2,7 +2,9 @@ package com.xfashion.server;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
+import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 
@@ -27,15 +29,15 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
 			deleteCategories(pm);
-			createCategory(pm, new CategoryDTO("Damenhose", 0, "#76A573", "#466944"));
-			createCategory(pm, new CategoryDTO("Herrenhose", 1, "#6F77AA", "#2B3781"));
-			createCategory(pm, new CategoryDTO("Damenoberteil", 2, "#9EC1AA", "#74A886"));
-			createCategory(pm, new CategoryDTO("Herrenoberteil", 3, "#B2B7D9", "#919BCA"));
-			createCategory(pm, new CategoryDTO("Kleider", 4, "#CEAFD0", "#B98DBC"));
-			createCategory(pm, new CategoryDTO("Strumpfwaren", 5, "#C1AEA5", "#A78C7E"));
-			createCategory(pm, new CategoryDTO("Gürtel", 6, "#9F7F79", "#71433A"));
-			createCategory(pm, new CategoryDTO("Bademode", 7, "#8AADB8", "#578C9B"));
-			createCategory(pm, new CategoryDTO("Accessoirs", 8, "#A26E7B", "#7C3044"));
+			createCategory(pm, new CategoryDTO(1L, "Damenhose", 0, "#76A573", "#466944"));
+			createCategory(pm, new CategoryDTO(2L, "Herrenhose", 1, "#6F77AA", "#2B3781"));
+			createCategory(pm, new CategoryDTO(3L, "Damenoberteil", 2, "#9EC1AA", "#74A886"));
+			createCategory(pm, new CategoryDTO(4L, "Herrenoberteil", 3, "#B2B7D9", "#919BCA"));
+			createCategory(pm, new CategoryDTO(5L, "Kleider", 4, "#CEAFD0", "#B98DBC"));
+			createCategory(pm, new CategoryDTO(6L, "Strumpfwaren", 5, "#C1AEA5", "#A78C7E"));
+			createCategory(pm, new CategoryDTO(7L, "Gürtel", 6, "#9F7F79", "#71433A"));
+			createCategory(pm, new CategoryDTO(8L, "Bademode", 7, "#8AADB8", "#578C9B"));
+			createCategory(pm, new CategoryDTO(9L, "Accessoirs", 8, "#A26E7B", "#7C3044"));
 		} finally {
 			pm.close();
 		}
@@ -450,15 +452,7 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 		try {
 			List<ArticleType> ats = readArticleTypes(pm);
 			for (ArticleType at : ats) {
-				ArticleTypeDTO dto = new ArticleTypeDTO();
-				dto.setName(at.getName());
-				dto.setCategory(at.getCategory());
-				dto.setStyle(at.getStyle());
-				dto.setBrand(at.getBrand());
-				dto.setColor(at.getColor());
-				dto.setSize(at.getSize());
-				dto.setPrice(at.getPrice());
-				dto.setProductNumber(at.getProductNumber());
+				ArticleTypeDTO dto = at.createDTO();
 				dtos.add(dto);
 			}
 		} finally {
@@ -475,22 +469,35 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 	}
 
 	@Override
-	public void addArticleType(ArticleTypeDTO dto) throws IllegalArgumentException {
+	public ArticleTypeDTO createArticleType(ArticleTypeDTO dto) throws IllegalArgumentException {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
-			ArticleType articleType = new ArticleType();
-			articleType.setName(dto.getName());
-			articleType.setCategory(dto.getCategory());
-			articleType.setStyle(dto.getStyle());
-			articleType.setBrand(dto.getBrand());
-			articleType.setColor(dto.getColor());
-			articleType.setSize(dto.getSize());
-			articleType.setPrice(dto.getPrice());
-			articleType.setProductNumber(dto.getProductNumber());
-			pm.makePersistent(articleType);
+			ArticleType articleType = createArticleType(pm, dto);
+			dto.setProductNumber(articleType.getProductNumber());
 		} finally {
 			pm.close();
 		}
+		return dto;
 	}
-
+	
+	private ArticleType createArticleType(PersistenceManager pm, ArticleTypeDTO dto) {
+		ArticleType at = new ArticleType(dto);
+		at.setProductNumber(generateArticleId(pm));
+		return pm.makePersistent(at);
+	}
+	
+	private Long generateArticleId(PersistenceManager pm) {
+		IdCounter idCounter;
+		try {
+			idCounter = pm.getObjectById(IdCounter.class, ArticleType.ID_COUNTER_NAME);
+		} catch (JDOObjectNotFoundException e) {
+			idCounter = new IdCounter();
+			idCounter.setId(ArticleType.ID_COUNTER_NAME);
+			idCounter.setIdCounter(0L);
+		}
+		Long newId = (idCounter.getIdCounter() + 1L);
+		idCounter.setIdCounter(newId);
+		pm.makePersistent(idCounter);
+		return new Long(newId);
+	}
 }

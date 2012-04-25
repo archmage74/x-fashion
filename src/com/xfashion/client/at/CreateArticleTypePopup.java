@@ -1,5 +1,6 @@
 package com.xfashion.client.at;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
@@ -11,6 +12,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.xfashion.client.Formatter;
 import com.xfashion.client.PanelMediator;
+import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.shared.ArticleTypeDTO;
 
 public class CreateArticleTypePopup {
@@ -18,8 +20,8 @@ public class CreateArticleTypePopup {
 	private DialogBox popup = null;
 	
 	private TextBox nameTextBox = null;
-	private TextBox priceTextBox = null;
-	private TextBox productNumberTextBox = null;
+	private TextBox buyPriceTextBox = null;
+	private TextBox sellPriceTextBox = null;
 	private Label categoryLabel = null;
 	private Label styleLabel = null;
 	private Label brandLabel = null;
@@ -29,11 +31,18 @@ public class CreateArticleTypePopup {
 	
 	private ArticleTypeDTO currentArticleType = null;
 	private PanelMediator panelMediator = null;
+	private ProvidesArticleFilter provider; 
 	
 	private Formatter formatter;
 	
+	private ErrorMessages errorMessages;
+	// private TextMessages textMessages;
+	
 	public CreateArticleTypePopup(PanelMediator panelMediator) {
+		errorMessages = GWT.create(ErrorMessages.class);
+		// textMessages = GWT.create(TextMessages.class);
 		this.panelMediator = panelMediator;
+		provider = panelMediator.getArticleTypeDatabase();
 		panelMediator.setCreateArticleTypePopup(this);
 		formatter = Formatter.getInstance();
 	}
@@ -43,15 +52,15 @@ public class CreateArticleTypePopup {
 			popup = createPopup();
 		}
 		currentArticleType = articleType;
-		categoryLabel.setText(articleType.getCategory());
-		styleLabel.setText(articleType.getStyle());
-		brandLabel.setText(articleType.getBrand());
-		colorLabel.setText(articleType.getColor());
-		sizeLabel.setText(articleType.getSize());
-		sizeLabel.setText(articleType.getSize());
+		categoryLabel.setText(provider.getCategoryProvider().resolveData(articleType.getCategoryId()).getName());
+		styleLabel.setText(provider.getStyleProvider().resolveData(articleType.getStyleId()).getName());
+		brandLabel.setText(provider.getBrandProvider().resolveData(articleType.getBrandId()).getName());
+		colorLabel.setText(provider.getColorProvider().resolveData(articleType.getColorId()).getName());
+		sizeLabel.setText(provider.getSizeProvider().resolveData(articleType.getSizeId()).getName());
+
 		nameTextBox.setText("");
-		priceTextBox.setText("€");
-		productNumberTextBox.setText("");
+		sellPriceTextBox.setText("");
+		buyPriceTextBox.setText("");
 		errorLabel.setText(" ");
 		popup.show();
 		nameTextBox.setFocus(true);
@@ -109,19 +118,19 @@ public class CreateArticleTypePopup {
 	
 	private void updateArticleType(ArticleTypeDTO at) throws CreateArticleException {
 		try {
-			Integer price = formatter.parseEurToCents(priceTextBox.getText());
-			currentArticleType.setPrice(price);
+			Integer price = formatter.parseEurToCents(sellPriceTextBox.getText());
+			currentArticleType.setSellPrice(price);
 		} catch (Exception e) {
-			throw new CreateArticleException("Ungültiger Preis");
+			throw new CreateArticleException(errorMessages.invalidPrice());
 		}
 		try {
-			long productNumber = Long.parseLong(productNumberTextBox.getText());
-			currentArticleType.setProductNumber(productNumber);
+			Integer price = formatter.parseEurToCents(buyPriceTextBox.getText());
+			currentArticleType.setBuyPrice(price);
 		} catch (Exception e) {
-			throw new CreateArticleException("Ungültige EAN");
+			throw new CreateArticleException(errorMessages.invalidPrice());
 		}
 		if (nameTextBox.getText() == null || "".equals(nameTextBox.getText())) {
-			throw  new CreateArticleException("Ungültiger Name");
+			throw  new CreateArticleException(errorMessages.invalidName());
 		} else {
 			currentArticleType.setName(nameTextBox.getText());
 		}
@@ -135,8 +144,8 @@ public class CreateArticleTypePopup {
 		sizeLabel = createLabelGridRow(grid, 3, "Größe:");
 		colorLabel = createLabelGridRow(grid, 4, "Farbe:");
 		nameTextBox = createTextBoxGridRow(grid, 5, "Name:");
-		priceTextBox = createTextBoxGridRow(grid, 6, "Preis:");
-		productNumberTextBox = createTextBoxGridRow(grid, 7, "EAN:");
+		buyPriceTextBox = createPriceTextBoxGridRow(grid, 6, "Einkaufspreis:");
+		sellPriceTextBox = createPriceTextBoxGridRow(grid, 7, "Verkaufspreis:");
 		return grid;
 	}
 	
@@ -149,10 +158,31 @@ public class CreateArticleTypePopup {
 	}
 
 	private TextBox createTextBoxGridRow(Grid grid, int row, String labelName) {
-		Label label = new Label(labelName + ":");
+		Label label = new Label(labelName);
 		TextBox textBox = new TextBox();
+		textBox.setStyleName("baseInput");
 		grid.setWidget(row, 0, label);
 		grid.setWidget(row, 1, textBox);
+		return textBox;
+	}
+
+	private TextBox createPriceTextBoxGridRow(Grid grid, int row, String labelName) {
+		Label label = new Label(labelName);
+		
+		HorizontalPanel hp = new HorizontalPanel();
+
+		Label euroLabel = new Label("€");
+		euroLabel.setStyleName("pricePrefix");
+		
+		TextBox textBox = new TextBox();
+		textBox.setStyleName("baseInput");
+		textBox.addStyleName("priceInput");
+		
+		hp.add(euroLabel);
+		hp.add(textBox);
+		
+		grid.setWidget(row, 0, label);
+		grid.setWidget(row, 1, hp);
 		return textBox;
 	}
 

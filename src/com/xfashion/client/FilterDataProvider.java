@@ -1,6 +1,8 @@
 package com.xfashion.client;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.google.gwt.view.client.ListDataProvider;
@@ -11,13 +13,16 @@ public abstract class FilterDataProvider<T extends FilterCellData> extends ListD
 
 	private boolean loaded;
 
-	private Set<String> filter;
+	private Set<Long> filter;
 	
-	public abstract String getAttributeContent(ArticleTypeDTO articleType);
+	private HashMap<Long, T> idToItem;
+	
+	public abstract Long getAttributeContent(ArticleTypeDTO articleType);
 
 	public FilterDataProvider() {
+		idToItem = new HashMap<Long, T>();
 		loaded = false;
-		filter = new HashSet<String>();
+		filter = new HashSet<Long>();
 	}
 	
 	public boolean isLoaded() {
@@ -28,12 +33,34 @@ public abstract class FilterDataProvider<T extends FilterCellData> extends ListD
 		this.loaded = loaded;
 	}
 
-	public Set<String> getFilter() {
+	public Set<Long> getFilter() {
 		return filter;
 	}
 
-	public void setFilter(Set<String> filter) {
+	public void setFilter(Set<Long> filter) {
 		this.filter = filter;
 	}
-
+	
+	public T resolveData(Long id) {
+		return idToItem.get(id);
+	}
+	
+	
+	public void refreshResolver() {
+		refreshResolver(getList());
+	}
+	
+	private void refreshResolver(List<T> list) {
+		idToItem.clear();
+		for (T item : list) {
+			idToItem.put(item.getId(), item);
+		}
+	}
+	
+	@Override
+	public void setList(List<T> listToWrap) {
+		refreshResolver(listToWrap);
+		super.setList(listToWrap);
+	}
+	
 }

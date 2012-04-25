@@ -194,7 +194,21 @@
 	width: 100px;
 	height: 50;
 }
-
+.pricePrefix {
+	text-align: center;
+	font-size: 14px;
+	vertical-align: middle;
+	padding-top: 2px;
+	width: 20px;
+	height: 14px;
+}
+.baseInput {
+	font-size: 12px;
+	height: 14px;
+}
+.priceInput {
+	width: 80px;
+}
 .nameSuggestBox {
 	margin: 2px 0px 2px 2px;
 	padding: 3px 0px 3px 3px;

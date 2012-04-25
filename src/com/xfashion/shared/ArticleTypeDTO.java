@@ -8,17 +8,27 @@ public class ArticleTypeDTO extends DTO implements IsSerializable {
 
 	private String name;
 	
-	private String category;
+	private Long categoryId;
 	
-	private String style;
+	private Long styleId;
 	
-	private String brand;
+	private Long brandId;
 	
-	private String size;
+	private Long sizeId;
 	
-	private String color;
+	private Long colorId;
 
-	private Integer price;
+	private Integer buyPrice;
+	
+	private Integer sellPrice;
+
+	public Long getProductNumber() {
+		return productNumber;
+	}
+
+	public void setProductNumber(Long productNumber) {
+		this.productNumber = productNumber;
+	}
 
 	public String getName() {
 		return name;
@@ -28,74 +38,77 @@ public class ArticleTypeDTO extends DTO implements IsSerializable {
 		this.name = name;
 	}
 
-	public String getStyle() {
-		return style;
+	public Long getCategoryId() {
+		return categoryId;
 	}
 
-	public String getCategory() {
-		return category;
+	public void setCategoryId(Long categoryId) {
+		this.categoryId = categoryId;
 	}
 
-	public void setCategory(String category) {
-		this.category = category;
+	public Long getStyleId() {
+		return styleId;
 	}
 
-	public void setStyle(String style) {
-		this.style = style;
+	public void setStyleId(Long styleId) {
+		this.styleId = styleId;
 	}
 
-	public String getBrand() {
-		return brand;
+	public Long getBrandId() {
+		return brandId;
 	}
 
-	public void setBrand(String brand) {
-		this.brand = brand;
+	public void setBrandId(Long brandId) {
+		this.brandId = brandId;
 	}
 
-	public String getSize() {
-		return size;
+	public Long getSizeId() {
+		return sizeId;
 	}
 
-	public void setSize(String size) {
-		this.size = size;
+	public void setSizeId(Long sizeId) {
+		this.sizeId = sizeId;
 	}
 
-	public String getColor() {
-		return color;
+	public Long getColorId() {
+		return colorId;
 	}
 
-	public void setColor(String color) {
-		this.color = color;
+	public void setColorId(Long colorId) {
+		this.colorId = colorId;
 	}
 
+	public Integer getBuyPrice() {
+		return buyPrice;
+	}
+
+	public void setBuyPrice(Integer buyPrice) {
+		this.buyPrice = buyPrice;
+	}
+
+	public Integer getSellPrice() {
+		return sellPrice;
+	}
+
+	public void setSellPrice(Integer sellPrice) {
+		this.sellPrice = sellPrice;
+	}
+	
 	public boolean equals(Object o) {
 		if (o == null) return false;
 		if (!(o instanceof ArticleTypeDTO)) return false;
 		ArticleTypeDTO s = (ArticleTypeDTO) o;
 		boolean equal = true;
+		equal &= attributeEquals(productNumber, s.getProductNumber());
 		equal &= attributeEquals(name, s.getName());
-		equal &= attributeEquals(category, s.getCategory());
-		equal &= attributeEquals(style, s.getStyle());
-		equal &= attributeEquals(brand, s.getBrand());
-		equal &= attributeEquals(size, s.getSize());
-		equal &= attributeEquals(color, s.getColor());
+		equal &= attributeEquals(categoryId, s.getCategoryId());
+		equal &= attributeEquals(styleId, s.getStyleId());
+		equal &= attributeEquals(brandId, s.getBrandId());
+		equal &= attributeEquals(sizeId, s.getSizeId());
+		equal &= attributeEquals(colorId, s.getColorId());
+		equal &= attributeEquals(buyPrice, s.getBuyPrice());
+		equal &= attributeEquals(sellPrice, s.getSellPrice());
 		return equal;
-	}
-	
-	public Long getProductNumber() {
-		return productNumber;
-	}
-	
-	public void setProductNumber(Long productNumber) {
-		this.productNumber = productNumber;
-	}
-
-	public Integer getPrice() {
-		return price;
-	}
-
-	public void setPrice(Integer price) {
-		this.price = price;
 	}
 
 }

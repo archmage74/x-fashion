@@ -30,7 +30,7 @@ import com.xfashion.shared.FilterCellData;
 import com.xfashion.shared.SizeDTO;
 import com.xfashion.shared.StyleDTO;
 
-public class ArticleTypeDatabase {
+public class ArticleTypeDatabase implements ProvidesArticleFilter {
 
 	private ArticleTypeServiceAsync articleTypeService = (ArticleTypeServiceAsync) GWT.create(ArticleTypeService.class);
 
@@ -54,7 +54,7 @@ public class ArticleTypeDatabase {
 	private ApplicationErrorListener applicationErrorListener;
 	
 	private ErrorMessages errorMessages;
-
+	
 	public ArticleTypeDatabase() {
 		init();
 	}
@@ -98,8 +98,8 @@ public class ArticleTypeDatabase {
 				colorProvider.isLoaded() &&
 				articleTypeProvider.isLoaded()) {
 			updateProviders();
+			fireApplicationLoaded();
 		}
-		fireApplicationLoaded();
 			
 	}
 	
@@ -120,6 +120,7 @@ public class ArticleTypeDatabase {
 				List<CategoryDTO> list = categoryProvider.getList();
 				list.clear();
 				list.addAll(result);
+				categoryProvider.refreshResolver();
 				categoryProvider.setLoaded(true);
 				checkAllRead();
 			}
@@ -139,6 +140,7 @@ public class ArticleTypeDatabase {
 				List<StyleDTO> list = styleProvider.getList();
 				list.clear();
 				list.addAll(result);
+				styleProvider.refreshResolver();
 				styleProvider.setLoaded(true);
 				checkAllRead();
 			}
@@ -157,6 +159,7 @@ public class ArticleTypeDatabase {
 				List<BrandDTO> list = brandProvider.getList();
 				list.clear();
 				list.addAll(result);
+				brandProvider.refreshResolver();
 				brandProvider.setLoaded(true);
 				checkAllRead();
 			}
@@ -175,6 +178,7 @@ public class ArticleTypeDatabase {
 				List<SizeDTO> list = sizeProvider.getList();
 				list.clear();
 				list.addAll(result);
+				sizeProvider.refreshResolver();
 				sizeProvider.setLoaded(true);
 				checkAllRead();
 			}
@@ -193,6 +197,7 @@ public class ArticleTypeDatabase {
 				List<ColorDTO> list = colorProvider.getList();
 				list.clear();
 				list.addAll(result);
+				colorProvider.refreshResolver();
 				colorProvider.setLoaded(true);
 				checkAllRead();
 			}
@@ -244,7 +249,7 @@ public class ArticleTypeDatabase {
 			articleTypes = new ArrayList<ArticleTypeDTO>();
 		}
 		ArrayList<ArticleTypeDTO> temp = new ArrayList<ArticleTypeDTO>();
-		Set<String> filter = provider.getFilter();
+		Set<Long> filter = provider.getFilter();
 		
 		if (filter != null && filter.size() > 0) {
 			temp.clear();
@@ -279,7 +284,7 @@ public class ArticleTypeDatabase {
 
 		if (categoryFilter != null) {
 			for (ArticleTypeDTO at : result) {
-				if (categoryFilter.getName().equals(at.getCategory())) {
+				if (categoryFilter.getId().equals(at.getCategoryId())) {
 					temp.add(at);
 				}
 			}
@@ -320,9 +325,9 @@ public class ArticleTypeDatabase {
 	}
 
 	public void updateFilterProvider(FilterDataProvider<? extends FilterCellData> provider, List<ArticleTypeDTO> articleTypes) {
-		HashMap<String, Integer> articleAmountPerAttribute = new HashMap<String, Integer>();
+		HashMap<Long, Integer> articleAmountPerAttribute = new HashMap<Long, Integer>();
 		for (ArticleTypeDTO at : articleTypes) {
-			String attributeContent = provider.getAttributeContent(at);
+			Long attributeContent = provider.getAttributeContent(at);
 			if (attributeContent != null) {
 				Integer availableArticles = articleAmountPerAttribute.get(attributeContent);
 				if (availableArticles == null) {
@@ -335,12 +340,12 @@ public class ArticleTypeDatabase {
 		}
 		List<? extends FilterCellData> cellDataList = provider.getList();
 		for (FilterCellData scd : cellDataList) {
-			Integer availableArticles = articleAmountPerAttribute.get(scd.getName());
+			Integer availableArticles = articleAmountPerAttribute.get(scd.getId());
 			if (availableArticles == null) {
 				availableArticles = 0;
 			}
 			scd.setArticleAmount(availableArticles);
-			scd.setSelected(provider.getFilter().contains(scd.getName()));
+			scd.setSelected(provider.getFilter().contains(scd.getId()));
 		}
 		provider.refresh();
 	}
@@ -393,19 +398,19 @@ public class ArticleTypeDatabase {
 		updateFilterProvider(colorProvider, temp);
 	}
 	
-	public Set<String> getStyleFilter() {
+	public Set<Long> getStyleFilter() {
 		return styleProvider.getFilter();
 	}
 
-	public Set<String> getBrandFilter() {
+	public Set<Long> getBrandFilter() {
 		return brandProvider.getFilter();
 	}
 
-	public Set<String> getColorFilter() {
+	public Set<Long> getColorFilter() {
 		return colorProvider.getFilter();
 	}
 
-	public Set<String> getSizeFilter() {
+	public Set<Long> getSizeFilter() {
 		return sizeProvider.getFilter();
 	}
 
@@ -458,6 +463,7 @@ public class ArticleTypeDatabase {
 				categoryProvider.getList().add(result);
 			}
 		};
+		category.setId(categoryProvider.freeCatgegoryId());
 		articleTypeService.createCategory(category, callback);
 	}
 	
@@ -490,7 +496,7 @@ public class ArticleTypeDatabase {
 
 	public boolean doesCategoryHaveArticles(CategoryDTO category) {
 		for (ArticleTypeDTO at : articleTypes) {
-			if (at.getCategory().equals(category.getName())) {
+			if (at.getCategoryId().equals(category.getId())) {
 				return true;
 			}
 		}
@@ -657,18 +663,17 @@ public class ArticleTypeDatabase {
 		articleTypeService.deleteColor(color, callback);
 	}
 
-	public void addArticleType(final ArticleTypeDTO articleType) {
-		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+	public void createArticleType(final ArticleTypeDTO articleType) {
+		AsyncCallback<ArticleTypeDTO> callback = new AsyncCallback<ArticleTypeDTO>() {
 			@Override
 			public void onFailure(Throwable caught) { }
 			@Override
-			public void onSuccess(Void result) {
-				articleTypes.add(articleType);
-				updateProviders();
+			public void onSuccess(ArticleTypeDTO result) {
+				articleTypes.add(result);
 				applyFilters();
 			}
 		};
-		articleTypeService.addArticleType(articleType, callback);
+		articleTypeService.createArticleType(articleType, callback);
 	}
 	
 	public class StyleCell {

@@ -72,40 +72,40 @@ public class PanelMediator implements ApplicationLoadListener, ApplicationErrorL
 	}
 
 	public void setSelectedStyles(Set<StyleDTO> styles) {
-		Set<String> styleFilter = articleTypeDatabase.getStyleFilter();
+		Set<Long> styleFilter = articleTypeDatabase.getStyleFilter();
 		styleFilter.clear();
 		for (StyleDTO s : styles) {
-			styleFilter.add(s.getName());
+			styleFilter.add(s.getId());
 		}
 		articleTypeDatabase.applyFilters();
 		articleTypeDatabase.updateProviders();
 	}
 
 	public void setSelectedBrands(Set<BrandDTO> brands) {
-		Set<String> brandFilter = articleTypeDatabase.getBrandFilter();
+		Set<Long> brandFilter = articleTypeDatabase.getBrandFilter();
 		brandFilter.clear();
 		for (BrandDTO s : brands) {
-			brandFilter.add(s.getName());
+			brandFilter.add(s.getId());
 		}
 		articleTypeDatabase.applyFilters();
 		articleTypeDatabase.updateProviders();
 	}
 	
 	public void setSelectedSizes(Set<SizeDTO> sizes) {
-		Set<String> sizeFilter = articleTypeDatabase.getSizeFilter();
+		Set<Long> sizeFilter = articleTypeDatabase.getSizeFilter();
 		sizeFilter.clear();
 		for (SizeDTO s : sizes) {
-			sizeFilter.add(s.getName());
+			sizeFilter.add(s.getId());
 		}
 		articleTypeDatabase.applyFilters();
 		articleTypeDatabase.updateProviders();
 	}
 
 	public void setSelectedColors(Set<ColorDTO> colors) {
-		Set<String> colorFilter = articleTypeDatabase.getColorFilter();
+		Set<Long> colorFilter = articleTypeDatabase.getColorFilter();
 		colorFilter.clear();
 		for (ColorDTO s : colors) {
-			colorFilter.add(s.getName());
+			colorFilter.add(s.getId());
 		}
 		articleTypeDatabase.applyFilters();
 		articleTypeDatabase.updateProviders();
@@ -180,34 +180,34 @@ public class PanelMediator implements ApplicationLoadListener, ApplicationErrorL
 
 		CategoryDTO category = articleTypeDatabase.getCategoryFilter();
 		if (category != null) {
-			at.setCategory(category.getName());
+			at.setCategoryId(category.getId());
 		}
 
-		Set<String> styles = articleTypeDatabase.getStyleFilter();
+		Set<Long> styles = articleTypeDatabase.getStyleFilter();
 		if (styles.size() == 1) {
-			at.setStyle(styles.iterator().next());
+			at.setStyleId(styles.iterator().next());
 		}
 		
-		Set<String> brands = articleTypeDatabase.getBrandFilter();
+		Set<Long> brands = articleTypeDatabase.getBrandFilter();
 		if (brands.size() == 1) {
-			at.setBrand(brands.iterator().next());
+			at.setBrandId(brands.iterator().next());
 		}
 		
-		Set<String> sizes = articleTypeDatabase.getSizeFilter();
+		Set<Long> sizes = articleTypeDatabase.getSizeFilter();
 		if (sizes.size() == 1) {
-			at.setSize(sizes.iterator().next());
+			at.setSizeId(sizes.iterator().next());
 		}
 
-		Set<String> colors = articleTypeDatabase.getColorFilter();
+		Set<Long> colors = articleTypeDatabase.getColorFilter();
 		if (colors.size() == 1) {
-			at.setColor(colors.iterator().next());
+			at.setColorId(colors.iterator().next());
 		}
 		
 		return at;
 	}
 	
 	public void addArticleType(ArticleTypeDTO articleType) {
-		articleTypeDatabase.addArticleType(articleType);
+		articleTypeDatabase.createArticleType(articleType);
 	}
 
 	public SizePanel getSizePanel() {
@@ -232,7 +232,9 @@ public class PanelMediator implements ApplicationLoadListener, ApplicationErrorL
 
 	@Override
 	public void applicationLoaded() {
-		
+		MainPanel mp = new MainPanel();
+		mp.addMainPanel(this);
+		mp.addNavPanel(this);
 	}
 
 	@Override

@@ -1,6 +1,5 @@
 package com.xfashion.server;
 
-import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
@@ -11,7 +10,7 @@ import com.xfashion.shared.CategoryDTO;
 public class Category {
 	
 	@PrimaryKey
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+	@Persistent
 	private Long id;
 	
 	@Persistent
@@ -35,6 +34,7 @@ public class Category {
 	}
 	
 	public void updateFromDTO(CategoryDTO dto) {
+		this.id = dto.getId();
 		this.name = dto.getName();
 		this.backgroundColor = dto.getBackgroundColor();
 		this.borderColor = dto.getBorderColor();

@@ -6,8 +6,8 @@ import com.xfashion.shared.BrandDTO;
 
 public class BrandDataProvider extends FilterDataProvider<BrandDTO> {
 	
-	public String getAttributeContent(ArticleTypeDTO articleType) {
-		return articleType.getBrand();
+	public Long getAttributeContent(ArticleTypeDTO articleType) {
+		return articleType.getBrandId();
 	}
 
 }

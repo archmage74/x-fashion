@@ -29,8 +29,11 @@ public class ArticleTypeDetailPopup {
 	private Label productNumber;
 	private Anchor printStickerLink;
 	
+	private ProvidesArticleFilter provider;
+	
 	public ArticleTypeDetailPopup(PanelMediator panelMediator) {
 		this.panelMediator = panelMediator;
+		provider = panelMediator.getArticleTypeDatabase();
 		panelMediator.setArticleTypeDetailPopup(this);
 	}
 	
@@ -48,12 +51,12 @@ public class ArticleTypeDetailPopup {
 		Formatter formatter = Formatter.getInstance();
 		
 		name.setText(articleType.getName());
-		brand.setText(articleType.getBrand());
-		category.setText(articleType.getCategory());
-		style.setText(articleType.getStyle());
-		size.setText(articleType.getSize());
-		color.setText(articleType.getColor());
-		price.setText(formatter.formatCents(articleType.getPrice()));
+		brand.setText(provider.getBrandProvider().resolveData(articleType.getBrandId()).getName());
+		category.setText(provider.getCategoryProvider().resolveData(articleType.getCategoryId()).getName());
+		style.setText(provider.getStyleProvider().resolveData(articleType.getStyleId()).getName());
+		size.setText(provider.getSizeProvider().resolveData(articleType.getSizeId()).getName());
+		color.setText(provider.getColorProvider().resolveData(articleType.getColorId()).getName());
+		price.setText(formatter.formatCents(articleType.getSellPrice()));
 		productNumber.setText(formatter.formatProductNumber(articleType.getProductNumber()));
 		printStickerLink.setHref(PRINT_STICKER_URL + articleType.getProductNumber());
 		popup.center();
