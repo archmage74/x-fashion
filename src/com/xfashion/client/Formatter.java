@@ -26,7 +26,7 @@ public class Formatter {
 	}
 	
 	public Integer parseEurToCents(String eur) {
-		return (new Double(currencyFormat.parse("€" + eur) * 100.0)).intValue();
+		return new Integer((int) Math.round(currencyValueFormat.parse(eur) * 100.0));
 	}
 	
 	public String formatProductNumber(Long productNumber) {

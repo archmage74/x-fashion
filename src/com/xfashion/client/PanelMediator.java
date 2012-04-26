@@ -206,8 +206,12 @@ public class PanelMediator implements ApplicationLoadListener, ApplicationErrorL
 		return at;
 	}
 	
-	public void addArticleType(ArticleTypeDTO articleType) {
+	public void createArticleType(ArticleTypeDTO articleType) {
 		articleTypeDatabase.createArticleType(articleType);
+	}
+	
+	public void deleteArticleType(ArticleTypeDTO articleType) {
+		articleTypeDatabase.deleteArticleType(articleType);
 	}
 
 	public SizePanel getSizePanel() {

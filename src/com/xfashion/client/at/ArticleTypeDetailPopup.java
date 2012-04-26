@@ -1,6 +1,10 @@
 package com.xfashion.client.at;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -8,15 +12,18 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.xfashion.client.Formatter;
 import com.xfashion.client.PanelMediator;
+import com.xfashion.client.resources.TextMessages;
 import com.xfashion.shared.ArticleTypeDTO;
 
 public class ArticleTypeDetailPopup {
 
 	public static final String PRINT_STICKER_URL = "/pdf/sticker?productNumber=";
 	
-	PanelMediator panelMediator;
+	private PanelMediator panelMediator;
 	
-	DecoratedPopupPanel popup;
+	private DecoratedPopupPanel articleTypeDetailPopup;
+	
+	private ArticleTypeDTO articleType;
 	
 	private Image image;
 	private Label name;
@@ -31,18 +38,22 @@ public class ArticleTypeDetailPopup {
 	
 	private ProvidesArticleFilter provider;
 	
+	private TextMessages textMessages;
+	
 	public ArticleTypeDetailPopup(PanelMediator panelMediator) {
 		this.panelMediator = panelMediator;
 		provider = panelMediator.getArticleTypeDatabase();
 		panelMediator.setArticleTypeDetailPopup(this);
+		textMessages = GWT.create(TextMessages.class);
 	}
 	
 	public void showPopup(ArticleTypeDTO articleType) {
 		if (articleType == null) {
 			return;
 		}
-		if (popup == null) {
-			popup = createPopup();
+		this.articleType = articleType;
+		if (articleTypeDetailPopup == null) {
+			articleTypeDetailPopup = createPopup();
 		}
 		image.setUrl("Jeans2.jpg");
 		image.setWidth(500 + "px");
@@ -59,7 +70,7 @@ public class ArticleTypeDetailPopup {
 		price.setText(formatter.formatCents(articleType.getSellPrice()));
 		productNumber.setText(formatter.formatProductNumber(articleType.getProductNumber()));
 		printStickerLink.setHref(PRINT_STICKER_URL + articleType.getProductNumber());
-		popup.center();
+		articleTypeDetailPopup.center();
 		
 	}
 
@@ -72,7 +83,7 @@ public class ArticleTypeDetailPopup {
 		image = createImage("", 1, 1);
 		panel.add(image);
 		
-		Grid grid = new Grid(9, 2);
+		Grid grid = new Grid(10, 2);
 		grid.setWidget(0, 0, createLabel("Name:"));
 		name = createLabel("");
 		grid.setWidget(0, 1, name);
@@ -99,6 +110,16 @@ public class ArticleTypeDetailPopup {
 		grid.setWidget(7, 1, productNumber);
 		printStickerLink = new Anchor("Etikett", false, "", "xfashion_sticker");
 		grid.setWidget(8, 1, printStickerLink);
+		Button deleteArticleButton = new Button(textMessages.deleteArticleTypeButton());
+		deleteArticleButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				articleTypeDetailPopup.hide();
+				panelMediator.deleteArticleType(articleType);
+			}
+		}); 
+		grid.setWidget(9, 1, deleteArticleButton);
+		
 		panel.add(grid);
 		
 		popup.add(panel);

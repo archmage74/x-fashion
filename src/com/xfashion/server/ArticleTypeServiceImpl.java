@@ -2,7 +2,6 @@ package com.xfashion.server;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
@@ -468,6 +467,11 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 		return articleTypes;
 	}
 
+	private ArticleType readArticleType(PersistenceManager pm, Long id) {
+		ArticleType item = pm.getObjectById(ArticleType.class, id);
+		return item;
+	}
+
 	@Override
 	public ArticleTypeDTO createArticleType(ArticleTypeDTO dto) throws IllegalArgumentException {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
@@ -499,5 +503,19 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 		idCounter.setIdCounter(newId);
 		pm.makePersistent(idCounter);
 		return new Long(newId);
+	}
+	
+	public void deleteArticleType(ArticleTypeDTO dto) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			deleteArticleType(pm, dto);
+		} finally {
+			pm.close();
+		}
+	}
+	
+	private void deleteArticleType(PersistenceManager pm, ArticleTypeDTO dto) {
+		ArticleType item = readArticleType(pm, dto.getProductNumber());
+		pm.deletePersistent(item);
 	}
 }

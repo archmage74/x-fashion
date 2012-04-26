@@ -92,7 +92,7 @@ public class CreateArticleTypePopup {
 			public void onClick(ClickEvent event) {
 				try {
 					updateArticleType(currentArticleType);
-					panelMediator.addArticleType(currentArticleType);
+					panelMediator.createArticleType(currentArticleType);
 					popup.hide();
 				} catch (CreateArticleException e) {
 					errorLabel.setText(e.getMessage());
