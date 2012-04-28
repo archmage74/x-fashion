@@ -10,16 +10,11 @@ DONE - ordering of category
 DONE - delete brand/style/color/size
 DONE - edit brand/style/color/size
 DONE - ordering of brand/style/color/size
-
-delete article
-
-update of article-types when editing attributes
-
-einkaufspreis in barcode
-
-create barcode
-
-article-type images
+DONE - update of article-types when editing attributes
+DONE - einkaufspreis in barcode
+DONE - create barcode
+DONE - article-type images
+DONE - delete article
 
 edit article
 
@@ -42,6 +37,8 @@ pdf instead of html
 prevent application from sleeping
 
 loading progress bar
+
+lazy loading of images in image management
 
 NEU - name filter enhancement
 Wenn ich R in dasTextfeld schreibe und zb Romania ausgewählt habe, wäre es super wenn ich jetzt mit den Richtungstasten auf der Tastatur (oben unten) zu durch die anderen Namen blättern könnte.
