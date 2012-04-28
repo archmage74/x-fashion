@@ -179,7 +179,18 @@ public class ArticleTypePanel {
 			}
 			sb.appendHtmlConstant("<table class=\"articleCell\">");
 			sb.appendHtmlConstant("<tr>");
-			sb.appendHtmlConstant("<td class=\"articleIconTd\" rowspan=\"2\"><img class=\"articleIconImage\" src=\"trouserIcon.png\" /></td>");
+			StringBuffer imageHtml = new StringBuffer();
+			
+			imageHtml.append("<td class=\"articleIconTd\" rowspan=\"2\"><img class=\"articleIconImage\" ");
+			if (articleType.getImageId() != null) {
+				imageHtml.append("src=\"/img/showimage?id=");
+				imageHtml.append("" + articleType.getImageId());
+				imageHtml.append("&options=s48-c");
+				imageHtml.append("\"");
+			}
+			imageHtml.append("/></td>");
+			sb.appendHtmlConstant(imageHtml.toString());
+			
 			sb.appendHtmlConstant("<td class=\"articleUpLe\">");
 			sb.appendEscaped("" + provider.getCategoryProvider().resolveData(articleType.getCategoryId()).getName());
 			sb.appendHtmlConstant("</td><td class=\"articleUpCe\">");

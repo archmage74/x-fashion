@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.xfashion.server.ArticleType;
 import com.xfashion.server.PMF;
+import com.xfashion.shared.ArticleTypeDTO;
 
 public class Sticker extends HttpServlet {
 
@@ -34,7 +35,8 @@ public class Sticker extends HttpServlet {
 
 	private void service2(PersistenceManager pm, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		Long productNumber = Long.parseLong(request.getParameter("productNumber"));
-		ArticleType articleType = pm.getObjectById(ArticleType.class, productNumber);
+		ArticleType at = pm.getObjectById(ArticleType.class, productNumber);
+		ArticleTypeDTO articleType = at.createDTO();
 
 		NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.GERMAN);
 		String html = render(articleType, currencyFormat);
@@ -42,7 +44,7 @@ public class Sticker extends HttpServlet {
 		response.getOutputStream().print(html);
 	}
 
-	private String render(ArticleType articleType, NumberFormat nf) {
+	private String render(ArticleTypeDTO articleType, NumberFormat nf) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<html><head>");
 		sb.append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-15\" />");

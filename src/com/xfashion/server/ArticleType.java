@@ -40,6 +40,9 @@ public class ArticleType implements IsSerializable {
 	
 	@Persistent
 	private Integer sellPrice;
+	
+	@Persistent
+	private Long imageId;
 
 	public ArticleType() {
 		
@@ -50,27 +53,29 @@ public class ArticleType implements IsSerializable {
 	}
 	
 	public void updateFromDTO(ArticleTypeDTO dto) {
-		this.name = dto.getName();
-		this.categoryId = dto.getCategoryId();
-		this.styleId = dto.getStyleId();
-		this.brandId = dto.getBrandId();
-		this.sizeId = dto.getSizeId();
-		this.colorId = dto.getColorId();
-		this.buyPrice = dto.getBuyPrice();
-		this.sellPrice = dto.getSellPrice();
+		setName(dto.getName());
+		setCategoryId(dto.getCategoryId());
+		setStyleId(dto.getStyleId());
+		setBrandId(dto.getBrandId());
+		setSizeId(dto.getSizeId());
+		setColorId(dto.getColorId());
+		setBuyPrice(dto.getBuyPrice());
+		setSellPrice(dto.getSellPrice());
+		setImageId(dto.getImageId());
 	}
 	
 	public ArticleTypeDTO createDTO() {
 		ArticleTypeDTO dto = new ArticleTypeDTO();
-		dto.setProductNumber(productNumber);
-		dto.setName(name);
-		dto.setCategoryId(categoryId);
-		dto.setStyleId(styleId);
-		dto.setBrandId(brandId);
-		dto.setSizeId(sizeId);
-		dto.setColorId(colorId);
-		dto.setBuyPrice(buyPrice);
-		dto.setSellPrice(sellPrice);
+		dto.setProductNumber(getProductNumber());
+		dto.setName(getName());
+		dto.setCategoryId(getCategoryId());
+		dto.setStyleId(getStyleId());
+		dto.setBrandId(getBrandId());
+		dto.setSizeId(getSizeId());
+		dto.setColorId(getColorId());
+		dto.setBuyPrice(getBuyPrice());
+		dto.setSellPrice(getSellPrice());
+		dto.setImageId(getImageId());
 		return dto;
 	}
 
@@ -145,6 +150,14 @@ public class ArticleType implements IsSerializable {
 	public void setSellPrice(Integer sellPrice) {
 		this.sellPrice = sellPrice;
 	}
+	
+	public Long getImageId() {
+		return imageId;
+	}
+	
+	public void setImageId(Long imageId) {
+		this.imageId = imageId;
+	}
 
 	public boolean equals(Object o) {
 		if (o == null) return false;
@@ -160,6 +173,7 @@ public class ArticleType implements IsSerializable {
 		equal &= attributeEquals(colorId, s.getColorId());
 		equal &= attributeEquals(buyPrice, s.getBuyPrice());
 		equal &= attributeEquals(sellPrice, s.getSellPrice());
+		equal &= attributeEquals(imageId, s.getImageId());
 		return equal;
 	}
 	

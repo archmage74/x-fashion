@@ -3,6 +3,8 @@ package com.xfashion.client.at;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.Grid;
@@ -12,8 +14,10 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.xfashion.client.Formatter;
 import com.xfashion.client.PanelMediator;
+import com.xfashion.client.img.ImageManagementPopup;
 import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.shared.ArticleTypeDTO;
+import com.xfashion.shared.img.ArticleTypeImageDTO;
 
 public class CreateArticleTypePopup {
 	
@@ -27,6 +31,7 @@ public class CreateArticleTypePopup {
 	private Label brandLabel = null;
 	private Label colorLabel = null;
 	private Label sizeLabel = null;
+	private Label imageLabel = null;
 	private Label errorLabel = null;
 	
 	private ArticleTypeDTO currentArticleType = null;
@@ -34,6 +39,8 @@ public class CreateArticleTypePopup {
 	private ProvidesArticleFilter provider; 
 	
 	private Formatter formatter;
+	
+	private ImageManagementPopup imagePopup;
 	
 	private ErrorMessages errorMessages;
 	// private TextMessages textMessages;
@@ -66,6 +73,15 @@ public class CreateArticleTypePopup {
 		nameTextBox.setFocus(true);
 	}
 	
+	public void hide() {
+		if (imagePopup != null) {
+			imagePopup.hide();
+		}
+		if (popup.isShowing()) {
+			popup.hide();
+		}
+	}
+	
 	private DialogBox createPopup() {
 		// Caption popupCaption = new Caption
 		final DialogBox popup = new DialogBox();
@@ -81,11 +97,32 @@ public class CreateArticleTypePopup {
 		Grid grid = createMainGrid();
 		panel.add(grid);
 		
+		Button imageButton = new Button("Bild auswählen");
+		imageButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				if (imagePopup == null) {
+					imagePopup = new ImageManagementPopup();
+					imagePopup.addSelectionHandler(new SelectionHandler<ArticleTypeImageDTO>() {
+						@Override
+						public void onSelection(SelectionEvent<ArticleTypeImageDTO> event) {
+							imageLabel.setText(event.getSelectedItem().getName());
+							currentArticleType.setImageId(event.getSelectedItem().getId());
+						}
+					});
+				}
+				imagePopup.show();
+			}
+		});
+		panel.add(imageButton);
+		
 		errorLabel = new Label("");
 		errorLabel.addStyleName("errorText");
 		panel.add(errorLabel);
 		
+
 		HorizontalPanel navPanel = new HorizontalPanel();
+		
 		Button createButton = new Button("Anlegen");
 		createButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -93,7 +130,7 @@ public class CreateArticleTypePopup {
 				try {
 					updateArticleType(currentArticleType);
 					panelMediator.createArticleType(currentArticleType);
-					popup.hide();
+					hide();
 				} catch (CreateArticleException e) {
 					errorLabel.setText(e.getMessage());
 				}
@@ -104,7 +141,7 @@ public class CreateArticleTypePopup {
 		cancelButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				popup.hide();
+				hide();
 			}
 		});
 		navPanel.add(cancelButton);
@@ -115,6 +152,8 @@ public class CreateArticleTypePopup {
 		
 		return popup;
 	}
+	
+	
 	
 	private void updateArticleType(ArticleTypeDTO at) throws CreateArticleException {
 		try {
@@ -137,7 +176,7 @@ public class CreateArticleTypePopup {
 	}
 	
 	private Grid createMainGrid() {
-		Grid grid = new Grid(8, 2);
+		Grid grid = new Grid(9, 2);
 		categoryLabel = createLabelGridRow(grid, 0, "Kategorie:");
 		styleLabel = createLabelGridRow(grid, 1, "Stil:");
 		brandLabel = createLabelGridRow(grid, 2, "Marke:");
@@ -146,6 +185,7 @@ public class CreateArticleTypePopup {
 		nameTextBox = createTextBoxGridRow(grid, 5, "Name:");
 		buyPriceTextBox = createPriceTextBoxGridRow(grid, 6, "Einkaufspreis:");
 		sellPriceTextBox = createPriceTextBoxGridRow(grid, 7, "Verkaufspreis:");
+		imageLabel = createLabelGridRow(grid, 8, "Bild:");
 		return grid;
 	}
 	

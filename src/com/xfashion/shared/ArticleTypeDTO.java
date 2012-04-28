@@ -21,6 +21,8 @@ public class ArticleTypeDTO extends DTO implements IsSerializable {
 	private Integer buyPrice;
 	
 	private Integer sellPrice;
+	
+	private Long imageId;
 
 	public Long getProductNumber() {
 		return productNumber;
@@ -94,6 +96,14 @@ public class ArticleTypeDTO extends DTO implements IsSerializable {
 		this.sellPrice = sellPrice;
 	}
 	
+	public Long getImageId() {
+		return imageId;
+	}
+
+	public void setImageId(Long imageId) {
+		this.imageId = imageId;
+	}
+
 	public boolean equals(Object o) {
 		if (o == null) return false;
 		if (!(o instanceof ArticleTypeDTO)) return false;

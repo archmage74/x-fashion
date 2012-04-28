@@ -14,7 +14,7 @@ import com.xfashion.shared.StyleDTO;
 /**
  * The client side stub for the RPC service.
  */
-@RemoteServiceRelativePath("articleType")
+@RemoteServiceRelativePath("articleTypeService")
 public interface ArticleTypeService extends RemoteService {
 	
 	// categories

@@ -1,10 +1,10 @@
 package com.xfashion.pdf;
 
-import com.xfashion.server.ArticleType;
+import com.xfashion.shared.ArticleTypeDTO;
 
 public class BarcodeHelper {
 
-	public String generateEan(ArticleType at) {
+	public String generateEan(ArticleTypeDTO at) {
 		int type = 1;
 		long categoryId = at.getCategoryId();
 		int buyPrice = at.getBuyPrice() / 100;
