@@ -56,7 +56,7 @@ public class ImageManagementPopup implements HasSelectionHandlers<ArticleTypeIma
 	}
 	
 	public void show() {
-		if (popup.isShowing()) {
+		if (popup != null && popup.isShowing()) {
 			return;
 		}
 		popup = createPopup();
