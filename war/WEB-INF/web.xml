@@ -11,18 +11,48 @@
 	</servlet>
 
 	<servlet>
+		<servlet-name>imageUploadServlet</servlet-name>
+		<servlet-class>com.xfashion.server.img.ImageUploadServiceImpl</servlet-class>
+	</servlet>
+
+	<servlet>
 		<servlet-name>sticker</servlet-name>
 		<servlet-class>com.xfashion.pdf.Sticker</servlet-class>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>imageupload</servlet-name>
+		<servlet-class>com.xfashion.server.img.ImageUploadServlet</servlet-class>
+	</servlet>
+  
+	<servlet>
+		<servlet-name>showimage</servlet-name>
+		<servlet-class>com.xfashion.server.img.ShowImage</servlet-class>
 	</servlet>
   
   	<servlet-mapping>
 		<servlet-name>articleTypeServlet</servlet-name>
-		<url-pattern>/xfashion/articleType</url-pattern>
+		<url-pattern>/xfashion/articleTypeService</url-pattern>
+	</servlet-mapping>
+
+  	<servlet-mapping>
+		<servlet-name>imageUploadServlet</servlet-name>
+		<url-pattern>/xfashion/imageUploadService</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
 		<servlet-name>sticker</servlet-name>
 		<url-pattern>/pdf/sticker</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>imageupload</servlet-name>
+		<url-pattern>/img/imageupload</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>showimage</servlet-name>
+		<url-pattern>/img/showimage</url-pattern>
 	</servlet-mapping>
 
 	<!-- Default page to serve -->
