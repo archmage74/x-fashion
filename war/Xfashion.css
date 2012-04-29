@@ -241,10 +241,6 @@
 	border-right: 1px solid #CCC;
 	height: 24px;
 }
-.dialogHeader {
-	font-size: 20px;
-	font-weight: bold;
-}
 /** Set ids using widget.getElement().setId("idOfElement") */
 #closeButton {
   margin: 15px 6px 6px;
@@ -293,6 +289,10 @@ table.toolGrid * td {
 .toolPanel {
 	margin: 1px;
 	padding: 0px;
+}
+.dialogHeader {
+	font-size: 20px;
+	font-weight: bold;
 }
 .leftDialogButton {
 	align: left;
