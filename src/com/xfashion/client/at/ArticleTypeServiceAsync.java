@@ -17,6 +17,8 @@ public interface ArticleTypeServiceAsync {
 	
 	void createCategory(CategoryDTO category, AsyncCallback<CategoryDTO> callback);
 
+	void readCategory(Long categoryId, AsyncCallback<CategoryDTO> callback);
+	
 	void readCategories(AsyncCallback<List<CategoryDTO>> callback);
 
 	void updateCategory(CategoryDTO category, AsyncCallback<Void> callback);
@@ -27,6 +29,8 @@ public interface ArticleTypeServiceAsync {
 	// styles
 	void createStyle(StyleDTO style, AsyncCallback<StyleDTO> callback);
 
+	void readStyle(Long categoryId, AsyncCallback<StyleDTO> callback);
+	
 	void readStyles(AsyncCallback<List<StyleDTO>> callback);
 
 	void updateStyle(StyleDTO dto, AsyncCallback<Void> callback);
@@ -37,6 +41,8 @@ public interface ArticleTypeServiceAsync {
 	// brands
 	void createBrand(BrandDTO brand, AsyncCallback<BrandDTO> callback);
 
+	void readBrand(Long categoryId, AsyncCallback<BrandDTO> callback);
+	
 	void readBrands(AsyncCallback<List<BrandDTO>> callback);
 
 	void updateBrand(BrandDTO dto, AsyncCallback<Void> callback);
@@ -47,6 +53,8 @@ public interface ArticleTypeServiceAsync {
 	// sizes
 	void createSize(SizeDTO brand, AsyncCallback<SizeDTO> callback);
 
+	void readSize(Long categoryId, AsyncCallback<SizeDTO> callback);
+	
 	void readSizes(AsyncCallback<List<SizeDTO>> callback);
 
 	void updateSize(SizeDTO dto, AsyncCallback<Void> callback);
@@ -57,6 +65,8 @@ public interface ArticleTypeServiceAsync {
 	// colors
 	void createColor(ColorDTO brand, AsyncCallback<ColorDTO> callback);
 
+	void readColor(Long categoryId, AsyncCallback<ColorDTO> callback);
+	
 	void readColors(AsyncCallback<List<ColorDTO>> callback);
 
 	void updateColor(ColorDTO dto, AsyncCallback<Void> callback);

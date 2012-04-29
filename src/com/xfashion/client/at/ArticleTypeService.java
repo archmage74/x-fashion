@@ -22,6 +22,8 @@ public interface ArticleTypeService extends RemoteService {
 	
 	CategoryDTO createCategory(CategoryDTO category);
 	
+	CategoryDTO readCategory(Long categoryId) throws IllegalArgumentException;
+	
 	List<CategoryDTO> readCategories() throws IllegalArgumentException;
 	
 	void updateCategory(CategoryDTO category) throws IllegalArgumentException;
@@ -32,6 +34,8 @@ public interface ArticleTypeService extends RemoteService {
 	// styles
 	StyleDTO createStyle(StyleDTO style) throws IllegalArgumentException;
 
+	StyleDTO readStyle(Long categoryId) throws IllegalArgumentException;
+	
 	List<StyleDTO> readStyles() throws IllegalArgumentException;
 
 	void updateStyle(StyleDTO dto) throws IllegalArgumentException;
@@ -41,31 +45,37 @@ public interface ArticleTypeService extends RemoteService {
 	
 	// brands
 	BrandDTO createBrand(BrandDTO brand) throws IllegalArgumentException;
-
+	
+	BrandDTO readBrand(Long categoryId) throws IllegalArgumentException;
+	
 	List<BrandDTO> readBrands() throws IllegalArgumentException;
 	
 	void updateBrand(BrandDTO dto) throws IllegalArgumentException;
-
+	
 	void deleteBrand(BrandDTO brand);
 	
 	
 	// sizes
 	SizeDTO createSize(SizeDTO brand) throws IllegalArgumentException;
 	
+	SizeDTO readSize(Long categoryId) throws IllegalArgumentException;
+	
 	List<SizeDTO> readSizes() throws IllegalArgumentException;
 	
 	void updateSize(SizeDTO dto) throws IllegalArgumentException;
-
+	
 	void deleteSize(SizeDTO brand);
 	
 	
 	// colors
 	ColorDTO createColor(ColorDTO brand) throws IllegalArgumentException;
 	
+	ColorDTO readColor(Long categoryId) throws IllegalArgumentException;
+	
 	List<ColorDTO> readColors() throws IllegalArgumentException;
 	
 	void updateColor(ColorDTO dto) throws IllegalArgumentException;
-
+	
 	void deleteColor(ColorDTO brand);
 	
 	

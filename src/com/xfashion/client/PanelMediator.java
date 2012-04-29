@@ -1,5 +1,7 @@
 package com.xfashion.client;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import com.google.gwt.core.client.GWT;
@@ -11,6 +13,7 @@ import com.xfashion.client.brand.BrandPanel;
 import com.xfashion.client.cat.CategoryPanel;
 import com.xfashion.client.color.ColorPanel;
 import com.xfashion.client.resources.ErrorMessages;
+import com.xfashion.client.size.SizeDataProvider;
 import com.xfashion.client.size.SizePanel;
 import com.xfashion.client.style.StylePanel;
 import com.xfashion.shared.ArticleTypeDTO;
@@ -190,7 +193,17 @@ public class PanelMediator implements ApplicationLoadListener, ApplicationErrorL
 	public void setArticleTypeDetailPopup(ArticleTypeDetailPopup articleTypeDetailPopup) {
 		this.articleTypeDetailPopup = articleTypeDetailPopup;
 	}
-
+	
+	public List<SizeDTO> getSelectedSizes() {
+		ArrayList<SizeDTO> list = new ArrayList<SizeDTO>();
+		Set<Long> sizes = articleTypeDatabase.getSizeFilter();
+		SizeDataProvider sizeProvider = articleTypeDatabase.getSizeProvider();
+		for (Long id : sizes) {
+			list.add(sizeProvider.resolveData(id));
+		}
+		return list;
+	}
+	
 	public ArticleTypeDTO createArticleTypeFromSelection() {
 		ArticleTypeDTO at = new ArticleTypeDTO();
 
@@ -209,11 +222,6 @@ public class PanelMediator implements ApplicationLoadListener, ApplicationErrorL
 			at.setBrandId(brands.iterator().next());
 		}
 		
-		Set<Long> sizes = articleTypeDatabase.getSizeFilter();
-		if (sizes.size() == 1) {
-			at.setSizeId(sizes.iterator().next());
-		}
-
 		Set<Long> colors = articleTypeDatabase.getColorFilter();
 		if (colors.size() == 1) {
 			at.setColorId(colors.iterator().next());

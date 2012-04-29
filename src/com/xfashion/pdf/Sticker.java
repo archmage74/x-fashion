@@ -8,14 +8,23 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.xfashion.client.at.ArticleTypeService;
 import com.xfashion.server.ArticleType;
+import com.xfashion.server.ArticleTypeServiceImpl;
 import com.xfashion.server.PMF;
 import com.xfashion.shared.ArticleTypeDTO;
 
 public class Sticker extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-
+	
+	private ArticleTypeService articleTypeService; 
+	
+	@Override
+	public void init() {
+		articleTypeService = new ArticleTypeServiceImpl();
+	}
+	
 	@Override
 	public void service(HttpServletRequest request, HttpServletResponse response) {
 		response.setContentType("text/html; charset=iso-8859-15");
@@ -53,14 +62,14 @@ public class Sticker extends HttpServlet {
 
 		sb.append("<table class=\"articleCell\">");
 		sb.append("<tr>");
-		sb.append(createTd(articleType.getCategoryId(), "articleUpLe"));
+		sb.append(createTd(readCategoryName(articleType.getCategoryId()), "articleUpLe"));
 		sb.append(createTd(articleType.getName(), "articleUpCe"));
-		sb.append(createTd(articleType.getColorId(), "articleUpRi"));
+		sb.append(createTd(readColorName(articleType.getColorId()), "articleUpRi"));
 		sb.append("</tr>");
 		sb.append("<tr>");
-		sb.append(createTd(articleType.getStyleId(), "articleBoLe"));
-		sb.append(createTd(articleType.getBrandId(), "articleBoCe"));
-		sb.append(createTd(articleType.getSizeId(), "articleBoRi"));
+		sb.append(createTd(readStyleName(articleType.getStyleId()), "articleBoLe"));
+		sb.append(createTd(readBrandName(articleType.getBrandId()), "articleBoCe"));
+		sb.append(createTd(readSizeName(articleType.getSizeId()), "articleBoRi"));
 		sb.append("</tr>");
 		sb.append("</table>");
 
@@ -82,10 +91,6 @@ public class Sticker extends HttpServlet {
 		return sb.toString();
 	}
 	
-	private StringBuffer createTd(Long s, String style) {
-		return createTd("" + s, style);
-	}
-
 	private StringBuffer createTd(String s, String style) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<td class=\"");
@@ -94,6 +99,26 @@ public class Sticker extends HttpServlet {
 		sb.append(s);
 		sb.append("</td>");
 		return sb;
+	}
+	
+	private String readCategoryName(Long id) {
+		return articleTypeService.readCategory(id).getName();
+	}
+	
+	private String readStyleName(Long id) {
+		return articleTypeService.readStyle(id).getName();
+	}
+	
+	private String readBrandName(Long id) {
+		return articleTypeService.readBrand(id).getName();
+	}
+	
+	private String readColorName(Long id) {
+		return articleTypeService.readColor(id).getName();
+	}
+	
+	private String readSizeName(Long id) {
+		return articleTypeService.readSize(id).getName();
 	}
 	
 	private StringBuffer createStyles() {

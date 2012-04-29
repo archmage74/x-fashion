@@ -1,5 +1,7 @@
 package com.xfashion.client.at;
 
+import java.util.List;
+
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -27,6 +29,7 @@ import com.xfashion.client.PanelMediator;
 import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.resources.FilterListResources;
 import com.xfashion.shared.ArticleTypeDTO;
+import com.xfashion.shared.SizeDTO;
 
 public class ArticleTypePanel {
 
@@ -144,18 +147,19 @@ public class ArticleTypePanel {
 
 	private void addArticle() {
 		ArticleTypeDTO articleType = panelMediator.createArticleTypeFromSelection();
+		List<SizeDTO> sizes = panelMediator.getSelectedSizes();
 		if (articleType.getCategoryId() == null) {
 			panelMediator.showError(errorMessages.articleCreateNoCategory());
 		} else if (articleType.getBrandId() == null) {
 			panelMediator.showError(errorMessages.articleCreateNoBrand());
 		} else if (articleType.getStyleId() == null) {
 			panelMediator.showError(errorMessages.articleCreateNoStyle());
-		} else if (articleType.getSizeId() == null) {
+		} else if (sizes.size() == 0) {
 			panelMediator.showError(errorMessages.articleCreateNoSize());
 		} else if (articleType.getColorId() == null) {
 			panelMediator.showError(errorMessages.articleCreateNoColor());
 		} else {
-			createArticleTypePopup.showForPrefilledArticleType(articleType);
+			createArticleTypePopup.showForPrefilledArticleType(articleType, sizes);
 		}
 	}
 
@@ -209,15 +213,6 @@ public class ArticleTypePanel {
 			sb.appendEscaped("" + provider.getSizeProvider().resolveData(articleType.getSizeId()).getName());
 			sb.appendHtmlConstant("</td></tr></table>");
 		}
-	}
-
-	public void showCreatePopup() {
-		ArticleTypeDTO articleType = panelMediator.createArticleTypeFromSelection();
-		createArticleTypePopup.showForPrefilledArticleType(articleType);
-	}
-
-	public void clearSelection() {
-
 	}
 
 }

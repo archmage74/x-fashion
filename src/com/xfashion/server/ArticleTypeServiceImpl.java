@@ -59,6 +59,19 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 		return pm.makePersistent(c);
 	}
 	
+	@Override
+	public CategoryDTO readCategory(Long id) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		CategoryDTO dto = null;
+		try {
+			Category category = readCategory(pm, id);
+			dto = category.createDTO();
+		} finally {
+			pm.close();
+		}
+		return dto;
+	}
+	
 	private Category readCategory(PersistenceManager pm, Long id) {
 		Category category = pm.getObjectById(Category.class, id);
 		return category;
@@ -145,6 +158,24 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 	}
 
 	@Override
+	public StyleDTO readStyle(Long id) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		StyleDTO dto = null;
+		try {
+			Style style = readStyle(pm, id);
+			dto = style.createDTO();
+		} finally {
+			pm.close();
+		}
+		return dto;
+	}
+	
+	private Style readStyle(PersistenceManager pm, Long id) {
+		Style item = pm.getObjectById(Style.class, id);
+		return item;
+	}
+	
+	@Override
 	public List<StyleDTO> readStyles() throws IllegalArgumentException {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		List<StyleDTO> styles = new ArrayList<StyleDTO>(); 
@@ -165,11 +196,6 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 		Query query = pm.newQuery(Style.class);
 		List<Style> styles = (List<Style>) query.execute();
 		return styles;
-	}
-
-	private Style readStyle(PersistenceManager pm, Long id) {
-		Style item = pm.getObjectById(Style.class, id);
-		return item;
 	}
 
 	@Override
@@ -224,6 +250,24 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 	}
 
 	@Override
+	public BrandDTO readBrand(Long id) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		BrandDTO dto = null;
+		try {
+			Brand brand = readBrand(pm, id);
+			dto = brand.createDTO();
+		} finally {
+			pm.close();
+		}
+		return dto;
+	}
+	
+	private Brand readBrand(PersistenceManager pm, Long id) {
+		Brand item = pm.getObjectById(Brand.class, id);
+		return item;
+	}
+	
+	@Override
 	public List<BrandDTO> readBrands() throws IllegalArgumentException {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		List<BrandDTO> brands = new ArrayList<BrandDTO>(); 
@@ -244,11 +288,6 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 		Query query = pm.newQuery(Brand.class);
 		List<Brand> brands = (List<Brand>) query.execute();
 		return brands;
-	}
-
-	private Brand readBrand(PersistenceManager pm, Long id) {
-		Brand item = pm.getObjectById(Brand.class, id);
-		return item;
 	}
 
 	@Override
@@ -303,6 +342,24 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 	}
 
 	@Override
+	public SizeDTO readSize(Long id) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		SizeDTO dto = null;
+		try {
+			Size size = readSize(pm, id);
+			dto = size.createDTO();
+		} finally {
+			pm.close();
+		}
+		return dto;
+	}
+	
+	private Size readSize(PersistenceManager pm, Long id) {
+		Size item = pm.getObjectById(Size.class, id);
+		return item;
+	}
+	
+	@Override
 	public List<SizeDTO> readSizes() throws IllegalArgumentException {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		List<SizeDTO> sizes = new ArrayList<SizeDTO>(); 
@@ -323,11 +380,6 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 		Query query = pm.newQuery(Size.class);
 		List<Size> sizes = (List<Size>) query.execute();
 		return sizes;
-	}
-
-	private Size readSize(PersistenceManager pm, Long id) {
-		Size item = pm.getObjectById(Size.class, id);
-		return item;
 	}
 
 	@Override
@@ -382,6 +434,24 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 	}
 
 	@Override
+	public ColorDTO readColor(Long id) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		ColorDTO dto = null;
+		try {
+			Color color = readColor(pm, id);
+			dto = color.createDTO();
+		} finally {
+			pm.close();
+		}
+		return dto;
+	}
+	
+	private Color readColor(PersistenceManager pm, Long id) {
+		Color item = pm.getObjectById(Color.class, id);
+		return item;
+	}
+	
+	@Override
 	public List<ColorDTO> readColors() throws IllegalArgumentException {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		List<ColorDTO> colors = new ArrayList<ColorDTO>(); 
@@ -402,11 +472,6 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 		Query query = pm.newQuery(Color.class);
 		List<Color> colors = (List<Color>) query.execute();
 		return colors;
-	}
-
-	private Color readColor(PersistenceManager pm, Long id) {
-		Color item = pm.getObjectById(Color.class, id);
-		return item;
 	}
 
 	@Override

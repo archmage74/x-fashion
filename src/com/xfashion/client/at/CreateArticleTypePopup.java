@@ -1,5 +1,7 @@
 package com.xfashion.client.at;
 
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -16,7 +18,9 @@ import com.xfashion.client.Formatter;
 import com.xfashion.client.PanelMediator;
 import com.xfashion.client.img.ImageManagementPopup;
 import com.xfashion.client.resources.ErrorMessages;
+import com.xfashion.client.resources.TextMessages;
 import com.xfashion.shared.ArticleTypeDTO;
+import com.xfashion.shared.SizeDTO;
 import com.xfashion.shared.img.ArticleTypeImageDTO;
 
 public class CreateArticleTypePopup {
@@ -35,6 +39,8 @@ public class CreateArticleTypePopup {
 	private Label errorLabel = null;
 	
 	private ArticleTypeDTO currentArticleType = null;
+	private List<SizeDTO> currentSizes = null;
+	
 	private PanelMediator panelMediator = null;
 	private ProvidesArticleFilter provider; 
 	
@@ -43,27 +49,42 @@ public class CreateArticleTypePopup {
 	private ImageManagementPopup imagePopup;
 	
 	private ErrorMessages errorMessages;
-	// private TextMessages textMessages;
+	private TextMessages textMessages;
 	
 	public CreateArticleTypePopup(PanelMediator panelMediator) {
 		errorMessages = GWT.create(ErrorMessages.class);
-		// textMessages = GWT.create(TextMessages.class);
+		textMessages = GWT.create(TextMessages.class);
 		this.panelMediator = panelMediator;
 		provider = panelMediator.getArticleTypeDatabase();
 		panelMediator.setCreateArticleTypePopup(this);
 		formatter = Formatter.getInstance();
 	}
 	
-	public void showForPrefilledArticleType(ArticleTypeDTO articleType) {
+	public void showForPrefilledArticleType(ArticleTypeDTO articleType, List<SizeDTO> sizes) {
 		if (popup == null) {
 			popup = createPopup();
 		}
 		currentArticleType = articleType;
+		currentSizes = sizes;
+		
 		categoryLabel.setText(provider.getCategoryProvider().resolveData(articleType.getCategoryId()).getName());
 		styleLabel.setText(provider.getStyleProvider().resolveData(articleType.getStyleId()).getName());
 		brandLabel.setText(provider.getBrandProvider().resolveData(articleType.getBrandId()).getName());
 		colorLabel.setText(provider.getColorProvider().resolveData(articleType.getColorId()).getName());
-		sizeLabel.setText(provider.getSizeProvider().resolveData(articleType.getSizeId()).getName());
+		if (sizes.size() > 1) {
+			sizeLabel.setText(textMessages.articleCreateMultipleSizes());
+			StringBuffer sb = new StringBuffer();
+			for (SizeDTO size : currentSizes) {
+				if (sb.length() != 0) {
+					sb.append(", ");
+				}
+				sb.append(size.getName());
+			}
+			sizeLabel.setTitle(sb.toString());
+		} else {
+			sizeLabel.setText(sizes.get(0).getName());
+			sizeLabel.setTitle("");
+		}
 
 		nameTextBox.setText("");
 		sellPriceTextBox.setText("");
@@ -91,13 +112,14 @@ public class CreateArticleTypePopup {
 		
 		VerticalPanel panel = new VerticalPanel();
 
-		Label headerLabel = new Label("Artikel anlegen");
+		Label headerLabel = new Label(textMessages.articleCreateHeader());
+		headerLabel.setStyleName("dialogHeader");
 		panel.add(headerLabel);
 		
 		Grid grid = createMainGrid();
 		panel.add(grid);
 		
-		Button imageButton = new Button("Bild auswählen");
+		Button imageButton = new Button(textMessages.selectImage());
 		imageButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -123,13 +145,12 @@ public class CreateArticleTypePopup {
 
 		HorizontalPanel navPanel = new HorizontalPanel();
 		
-		Button createButton = new Button("Anlegen");
+		Button createButton = new Button(textMessages.articleCreate());
 		createButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				try {
-					updateArticleType(currentArticleType);
-					panelMediator.createArticleType(currentArticleType);
+					createArticles();
 					hide();
 				} catch (CreateArticleException e) {
 					errorLabel.setText(e.getMessage());
@@ -137,7 +158,7 @@ public class CreateArticleTypePopup {
 			}
 		});
 		navPanel.add(createButton);
-		Button cancelButton = new Button("Abbrechen");
+		Button cancelButton = new Button(textMessages.cancel());
 		cancelButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -153,7 +174,13 @@ public class CreateArticleTypePopup {
 		return popup;
 	}
 	
-	
+	private void createArticles() throws CreateArticleException {
+		updateArticleType(currentArticleType);
+		for (SizeDTO size : currentSizes) {
+			currentArticleType.setSizeId(size.getId());
+			panelMediator.createArticleType(currentArticleType);
+		}
+	}
 	
 	private void updateArticleType(ArticleTypeDTO at) throws CreateArticleException {
 		try {
@@ -177,15 +204,15 @@ public class CreateArticleTypePopup {
 	
 	private Grid createMainGrid() {
 		Grid grid = new Grid(9, 2);
-		categoryLabel = createLabelGridRow(grid, 0, "Kategorie:");
-		styleLabel = createLabelGridRow(grid, 1, "Stil:");
-		brandLabel = createLabelGridRow(grid, 2, "Marke:");
-		sizeLabel = createLabelGridRow(grid, 3, "Größe:");
-		colorLabel = createLabelGridRow(grid, 4, "Farbe:");
-		nameTextBox = createTextBoxGridRow(grid, 5, "Name:");
-		buyPriceTextBox = createPriceTextBoxGridRow(grid, 6, "Einkaufspreis:");
-		sellPriceTextBox = createPriceTextBoxGridRow(grid, 7, "Verkaufspreis:");
-		imageLabel = createLabelGridRow(grid, 8, "Bild:");
+		categoryLabel = createLabelGridRow(grid, 0, textMessages.category() + ":");
+		brandLabel = createLabelGridRow(grid, 1, textMessages.brand() + ":");
+		styleLabel = createLabelGridRow(grid, 2, textMessages.style() + ":");
+		sizeLabel = createLabelGridRow(grid, 3, textMessages.size() + ":");
+		colorLabel = createLabelGridRow(grid, 4, textMessages.color() + ":");
+		nameTextBox = createTextBoxGridRow(grid, 5, textMessages.name() + ":");
+		buyPriceTextBox = createPriceTextBoxGridRow(grid, 6, textMessages.buyPrice() + ":");
+		sellPriceTextBox = createPriceTextBoxGridRow(grid, 7, textMessages.sellPrice() + ":");
+		imageLabel = createLabelGridRow(grid, 8, textMessages.image() + ":");
 		return grid;
 	}
 	

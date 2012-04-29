@@ -7,6 +7,11 @@ public interface TextMessages extends Messages {
 	String deleteArticleTypeButton();
 	String confirmDeleteArticle();
 	
+	String articleCreateMultipleSizes();
+	String articleCreateHeader();
+	String articleCreate();
+	String selectImage();
+	
 	String name();
 	String brand();
 	String style();
@@ -17,6 +22,7 @@ public interface TextMessages extends Messages {
 	String sellPrice();
 	String ean();
 	String sticker();
+	String image();
 	
 	String currencySign();
 	String yes();
