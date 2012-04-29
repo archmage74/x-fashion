@@ -7,4 +7,5 @@ test-classes
 test
 *.class
 .git
-gwt
+.gwt
+
