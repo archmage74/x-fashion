@@ -676,6 +676,20 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter {
 		articleTypeService.createArticleType(articleType, callback);
 	}
 	
+	public void updateArticleType(final ArticleTypeDTO articleType) {
+		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+			@Override
+			public void onFailure(Throwable caught) { }
+			@Override
+			public void onSuccess(Void result) {
+				articleTypeProvider.refresh();
+				applyFilters();
+				updateProviders();
+			}
+		};
+		articleTypeService.updateArticleType(articleType, callback);
+	}
+	
 	public void deleteArticleType(final ArticleTypeDTO articleType) {
 		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 			@Override

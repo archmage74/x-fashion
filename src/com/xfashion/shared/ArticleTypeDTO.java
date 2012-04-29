@@ -120,5 +120,19 @@ public class ArticleTypeDTO extends DTO implements IsSerializable {
 		equal &= attributeEquals(sellPrice, s.getSellPrice());
 		return equal;
 	}
-
+	
+	public ArticleTypeDTO clone() {
+		ArticleTypeDTO clone = new ArticleTypeDTO();
+		clone.setProductNumber(getProductNumber());
+		clone.setName(getName());
+		clone.setCategoryId(getCategoryId());
+		clone.setStyleId(getStyleId());
+		clone.setBrandId(getBrandId());
+		clone.setSizeId(getSizeId());
+		clone.setColorId(getColorId());
+		clone.setBuyPrice(getBuyPrice());
+		clone.setSellPrice(getSellPrice());
+		clone.setImageId(getImageId());
+		return clone;
+	}
 }

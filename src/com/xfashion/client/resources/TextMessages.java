@@ -1,11 +1,11 @@
 package com.xfashion.client.resources;
 
 import com.google.gwt.i18n.client.Messages;
-import com.google.gwt.safehtml.shared.SafeHtml;
 
 public interface TextMessages extends Messages {
 
-	SafeHtml deleteArticleTypeButton();
+	String deleteArticleTypeButton();
+	String confirmDeleteArticle();
 	
 	String name();
 	String brand();
@@ -18,8 +18,12 @@ public interface TextMessages extends Messages {
 	String ean();
 	String sticker();
 	
-	String confirmDeleteArticle();
+	String currencySign();
 	String yes();
 	String no();
-	
+	String save();
+	String cancel();
+	String edit();
+	String close();
+
 }

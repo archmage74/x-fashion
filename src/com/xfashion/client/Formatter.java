@@ -21,8 +21,12 @@ public class Formatter {
 		return formatter;
 	}
 	
-	public String formatCents(Integer cents) {
+	public String formatCentsToCurrency(Integer cents) {
 		return currencyFormat.format(cents.doubleValue() / 100);
+	}
+	
+	public String formatCentsToValue(Integer cents) {
+		return currencyValueFormat.format(cents.doubleValue() / 100);
 	}
 	
 	public Integer parseEurToCents(String eur) {

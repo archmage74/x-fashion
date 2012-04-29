@@ -30,7 +30,7 @@ public class PanelMediator implements ApplicationLoadListener, ApplicationErrorL
 	private SizePanel sizePanel;
 	private ColorPanel colorPanel;
 	private ArticleTypePanel articleTypePanel;
-
+	
 	private CreateArticleTypePopup createArticleTypePopup;
 	private ArticleTypeDetailPopup articleTypeDetailPopup;
 
@@ -118,6 +118,14 @@ public class PanelMediator implements ApplicationLoadListener, ApplicationErrorL
 	public void setXfashion(Xfashion xfashion) {
 		this.xfashion = xfashion;
 	}
+	
+	public ArticleTypeDatabase getArticleTypeDatabase() {
+		return articleTypeDatabase;
+	}
+
+	public void setArticleTypeDatabase(ArticleTypeDatabase articleTypeDatabase) {
+		this.articleTypeDatabase = articleTypeDatabase;
+	}
 
 	public CategoryPanel getCategoryPanel() {
 		return categoryPanel;
@@ -125,14 +133,6 @@ public class PanelMediator implements ApplicationLoadListener, ApplicationErrorL
 
 	public void setCategoryPanel(CategoryPanel categoryPanel) {
 		this.categoryPanel = categoryPanel;
-	}
-
-	public ArticleTypeDatabase getArticleTypeDatabase() {
-		return articleTypeDatabase;
-	}
-
-	public void setArticleTypeDatabase(ArticleTypeDatabase articleTypeDatabase) {
-		this.articleTypeDatabase = articleTypeDatabase;
 	}
 
 	public StylePanel getStylePanel() {
@@ -149,6 +149,22 @@ public class PanelMediator implements ApplicationLoadListener, ApplicationErrorL
 
 	public void setBrandPanel(BrandPanel brandPanel) {
 		this.brandPanel = brandPanel;
+	}
+
+	public SizePanel getSizePanel() {
+		return sizePanel;
+	}
+
+	public void setSizePanel(SizePanel sizePanel) {
+		this.sizePanel = sizePanel;
+	}
+
+	public ColorPanel getColorPanel() {
+		return colorPanel;
+	}
+
+	public void setColorPanel(ColorPanel colorPanel) {
+		this.colorPanel = colorPanel;
 	}
 
 	public ArticleTypePanel getArticleTypePanel() {
@@ -210,24 +226,12 @@ public class PanelMediator implements ApplicationLoadListener, ApplicationErrorL
 		articleTypeDatabase.createArticleType(articleType);
 	}
 	
+	public void updateArticleType(ArticleTypeDTO articleType) {
+		articleTypeDatabase.updateArticleType(articleType);
+	}
+	
 	public void deleteArticleType(ArticleTypeDTO articleType) {
 		articleTypeDatabase.deleteArticleType(articleType);
-	}
-
-	public SizePanel getSizePanel() {
-		return sizePanel;
-	}
-
-	public void setSizePanel(SizePanel sizePanel) {
-		this.sizePanel = sizePanel;
-	}
-
-	public ColorPanel getColorPanel() {
-		return colorPanel;
-	}
-
-	public void setColorPanel(ColorPanel colorPanel) {
-		this.colorPanel = colorPanel;
 	}
 
 	public void showError(String errorMessage) {

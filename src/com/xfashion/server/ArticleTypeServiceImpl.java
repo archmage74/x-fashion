@@ -445,34 +445,6 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 	// article-types
 	// *************
 	@Override
-	public List<ArticleTypeDTO> readArticleTypes() throws IllegalArgumentException {
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		List<ArticleTypeDTO> dtos = new ArrayList<ArticleTypeDTO>(); 
-		try {
-			List<ArticleType> ats = readArticleTypes(pm);
-			for (ArticleType at : ats) {
-				ArticleTypeDTO dto = at.createDTO();
-				dtos.add(dto);
-			}
-		} finally {
-			pm.close();
-		}
-		return dtos;
-	}
-
-	@SuppressWarnings("unchecked")
-	private List<ArticleType> readArticleTypes(PersistenceManager pm) {
-		Query query = pm.newQuery(ArticleType.class);
-		List<ArticleType> articleTypes = (List<ArticleType>) query.execute();
-		return articleTypes;
-	}
-
-	private ArticleType readArticleType(PersistenceManager pm, Long id) {
-		ArticleType item = pm.getObjectById(ArticleType.class, id);
-		return item;
-	}
-
-	@Override
 	public ArticleTypeDTO createArticleType(ArticleTypeDTO dto) throws IllegalArgumentException {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
@@ -505,6 +477,51 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 		return new Long(newId);
 	}
 	
+	@Override
+	public List<ArticleTypeDTO> readArticleTypes() throws IllegalArgumentException {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		List<ArticleTypeDTO> dtos = new ArrayList<ArticleTypeDTO>(); 
+		try {
+			List<ArticleType> ats = readArticleTypes(pm);
+			for (ArticleType at : ats) {
+				ArticleTypeDTO dto = at.createDTO();
+				dtos.add(dto);
+			}
+		} finally {
+			pm.close();
+		}
+		return dtos;
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<ArticleType> readArticleTypes(PersistenceManager pm) {
+		Query query = pm.newQuery(ArticleType.class);
+		List<ArticleType> articleTypes = (List<ArticleType>) query.execute();
+		return articleTypes;
+	}
+
+	private ArticleType readArticleType(PersistenceManager pm, Long id) {
+		ArticleType item = pm.getObjectById(ArticleType.class, id);
+		return item;
+	}
+	
+	@Override
+	public void updateArticleType(ArticleTypeDTO dto) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			updateArticleType(pm, dto);
+		} finally {
+			pm.close();
+		}
+	}
+	
+	private void updateArticleType(PersistenceManager pm, ArticleTypeDTO dto) {
+		ArticleType item = readArticleType(pm, dto.getProductNumber());
+		item.updateFromDTO(dto);
+		pm.makePersistent(item);
+	}
+
+	@Override
 	public void deleteArticleType(ArticleTypeDTO dto) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
