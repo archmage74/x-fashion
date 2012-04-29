@@ -16,8 +16,7 @@ DONE - create barcode
 DONE - article-type images
 DONE - delete article
 DONE - edit article
-
-bulk creation of article types (only multiple sizes are allowed)
+DONE - bulk creation of article types (only multiple sizes are allowed)
 
 user management
 
@@ -37,7 +36,7 @@ prevent application from sleeping
 
 loading progress bar
 
-lazy loading of images in image management
+NEU - lazy loading of images in image management
 
 NEU - name filter enhancement
 Wenn ich R in dasTextfeld schreibe und zb Romania ausgewählt habe, wäre es super wenn ich jetzt mit den Richtungstasten auf der Tastatur (oben unten) zu durch die anderen Namen blättern könnte.
