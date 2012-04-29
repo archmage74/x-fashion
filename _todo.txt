@@ -15,8 +15,7 @@ DONE - einkaufspreis in barcode
 DONE - create barcode
 DONE - article-type images
 DONE - delete article
-
-edit article
+DONE - edit article
 
 bulk creation of article types (only multiple sizes are allowed)
 
