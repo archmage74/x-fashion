@@ -16,6 +16,11 @@
 	</servlet>
 
 	<servlet>
+		<servlet-name>userServlet</servlet-name>
+		<servlet-class>com.xfashion.server.user.UserServiceImpl</servlet-class>
+	</servlet>
+
+	<servlet>
 		<servlet-name>sticker</servlet-name>
 		<servlet-class>com.xfashion.pdf.Sticker</servlet-class>
 	</servlet>
@@ -38,6 +43,11 @@
   	<servlet-mapping>
 		<servlet-name>imageUploadServlet</servlet-name>
 		<url-pattern>/xfashion/imageUploadService</url-pattern>
+	</servlet-mapping>
+
+  	<servlet-mapping>
+		<servlet-name>userServlet</servlet-name>
+		<url-pattern>/xfashion/userService</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>

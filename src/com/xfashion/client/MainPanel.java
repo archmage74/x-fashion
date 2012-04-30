@@ -1,12 +1,9 @@
 package com.xfashion.client;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.xfashion.client.at.ArticleTypeDatabase;
 import com.xfashion.client.at.ArticleTypePanel;
 import com.xfashion.client.brand.BrandPanel;
@@ -14,54 +11,67 @@ import com.xfashion.client.cat.CategoryPanel;
 import com.xfashion.client.color.ColorPanel;
 import com.xfashion.client.size.SizePanel;
 import com.xfashion.client.style.StylePanel;
+import com.xfashion.client.user.UserManagement;
 
 public class MainPanel {
 	
-	public void addMainPanel(PanelMediator panelMediator) {
-		VerticalPanel panel = new VerticalPanel();
-		RootPanel.get("mainPanelContainer").add(panel);
+	private Panel contentPanel;
+	
+	private PanelMediator panelMediator;
+	
+	private Panel articleTypeManagement;
+	
+	private UserManagement userManagement;
+	
+	public MainPanel(PanelMediator panelMediator) {
+		this.panelMediator = panelMediator;
+		contentPanel = new SimplePanel();
+		RootPanel.get("mainPanelContainer").add(contentPanel);
+		userManagement = new UserManagement();
+	}
+	
+	public void showArticleTypePanel() {
+		contentPanel.clear();
 		
-		Panel mainPanel = new HorizontalPanel();
+		if (articleTypeManagement == null) {
+			createArticleTypeManagement();
+		}
+
+		contentPanel.add(articleTypeManagement);
+	}
+
+	private void createArticleTypeManagement() {
+		articleTypeManagement = new HorizontalPanel();
 		ArticleTypeDatabase articleTypeDatabase = panelMediator.getArticleTypeDatabase();
-		
+
 		articleTypeDatabase.setApplicationLoadListener(panelMediator);
 		articleTypeDatabase.setApplicationErrorListener(panelMediator);
 
 		CategoryPanel categoryPanel = new CategoryPanel(panelMediator, articleTypeDatabase.getCategoryProvider());
-		mainPanel.add(categoryPanel.createPanel());
-		
+		articleTypeManagement.add(categoryPanel.createPanel());
+
 		BrandPanel brandPanel = new BrandPanel(panelMediator, articleTypeDatabase.getBrandProvider());
-		mainPanel.add(brandPanel.createPanel());
-		
+		articleTypeManagement.add(brandPanel.createPanel());
+
 		StylePanel stylePanel = new StylePanel(panelMediator, articleTypeDatabase.getStyleProvider());
-		mainPanel.add(stylePanel.createPanel());
-		
+		articleTypeManagement.add(stylePanel.createPanel());
+
 		SizePanel sizePanel = new SizePanel(panelMediator, articleTypeDatabase.getSizeProvider());
-		mainPanel.add(sizePanel.createPanel());
-		
+		articleTypeManagement.add(sizePanel.createPanel());
+
 		ColorPanel colorPanel = new ColorPanel(panelMediator, articleTypeDatabase.getColorProvider());
-		mainPanel.add(colorPanel.createPanel());
-		
+		articleTypeManagement.add(colorPanel.createPanel());
+
 		ArticleTypePanel articleTypePanel = new ArticleTypePanel(panelMediator);
-		mainPanel.add(articleTypePanel.createPanel(articleTypeDatabase.getArticleTypeProvider(), articleTypeDatabase.getNameOracle()));
-		
-		panel.add(mainPanel);
+		articleTypeManagement.add(articleTypePanel.createPanel(articleTypeDatabase.getArticleTypeProvider(), articleTypeDatabase.getNameOracle()));
 	}
 	
-	public void addNavPanel(final PanelMediator panelMediator) {
-		HorizontalPanel navPanel = new HorizontalPanel();
-		RootPanel.get("navPanelContainer").add(navPanel);
+	public void showUserManagementPanel() {
+		contentPanel.clear();
 		
-		Button createCategoriesButton = new Button("create categories");
-		createCategoriesButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				panelMediator.getArticleTypeDatabase().createCategories();
-			}
-		});
+		Panel panel = userManagement.getPanel();
 		
-		navPanel.add(createCategoriesButton);
+		contentPanel.add(panel);
 	}
-
-
+	
 }

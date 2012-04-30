@@ -1,3 +1,12 @@
+.contentHeader {
+	padding: 3px;
+	border: 1px solid silver;
+	background-color: #777777;
+	width: 100%;
+	font-size: 20px;
+	font-weight: bold;
+	color: white;
+}
 
 .filterTable {
 	height: 20px;

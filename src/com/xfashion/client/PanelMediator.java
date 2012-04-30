@@ -12,6 +12,7 @@ import com.xfashion.client.at.CreateArticleTypePopup;
 import com.xfashion.client.brand.BrandPanel;
 import com.xfashion.client.cat.CategoryPanel;
 import com.xfashion.client.color.ColorPanel;
+import com.xfashion.client.menu.MenuPanel;
 import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.size.SizeDataProvider;
 import com.xfashion.client.size.SizePanel;
@@ -24,9 +25,9 @@ import com.xfashion.shared.SizeDTO;
 import com.xfashion.shared.StyleDTO;
 
 public class PanelMediator implements ApplicationLoadListener, ApplicationErrorListener {
-
+	
 	private Xfashion xfashion;
-
+	
 	private CategoryPanel categoryPanel;
 	private StylePanel stylePanel;
 	private BrandPanel brandPanel;
@@ -36,12 +37,12 @@ public class PanelMediator implements ApplicationLoadListener, ApplicationErrorL
 	
 	private CreateArticleTypePopup createArticleTypePopup;
 	private ArticleTypeDetailPopup articleTypeDetailPopup;
-
+	
 	private ErrorMessages errorMessages;
 	private ErrorPopup errorPopup;
 	
 	private ArticleTypeDatabase articleTypeDatabase;
-
+	
 	public PanelMediator() {
 		errorMessages = GWT.create(ErrorMessages.class);
 		errorPopup = new ErrorPopup();
@@ -248,9 +249,10 @@ public class PanelMediator implements ApplicationLoadListener, ApplicationErrorL
 
 	@Override
 	public void applicationLoaded() {
-		MainPanel mp = new MainPanel();
-		mp.addMainPanel(this);
-		mp.addNavPanel(this);
+		MainPanel mainPanel = new MainPanel(this);
+		mainPanel.showArticleTypePanel();
+		MenuPanel menuPanel = new MenuPanel(mainPanel);
+		menuPanel.addNavPanel();
 	}
 
 	@Override
