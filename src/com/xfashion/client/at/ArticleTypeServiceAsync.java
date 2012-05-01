@@ -79,6 +79,8 @@ public interface ArticleTypeServiceAsync {
 
 	void readArticleTypes(AsyncCallback<List<ArticleTypeDTO>> callback);
 	
+	void readArticleType(Long productNumber, AsyncCallback<ArticleTypeDTO> callback);
+
 	void updateArticleType(ArticleTypeDTO articleType, AsyncCallback<Void> callback);
 
 	void deleteArticleType(ArticleTypeDTO articleType, AsyncCallback<Void> callback);

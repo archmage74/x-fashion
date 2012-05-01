@@ -32,4 +32,7 @@ public interface TextMessages extends Messages {
 	String edit();
 	String close();
 
+	String notepadManagementHeader();
+	String printSticker();
+
 }

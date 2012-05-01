@@ -8,12 +8,13 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.RowCountChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
-import com.xfashion.client.CreatePopup;
+import com.xfashion.client.ErrorEvent;
 import com.xfashion.client.FilterCell;
 import com.xfashion.client.FilterDataProvider;
 import com.xfashion.client.FilterPanel;
 import com.xfashion.client.PanelMediator;
 import com.xfashion.client.ToolPanel;
+import com.xfashion.client.Xfashion;
 import com.xfashion.client.resources.FilterListResources;
 import com.xfashion.shared.StyleDTO;
 
@@ -21,8 +22,6 @@ public class StylePanel extends FilterPanel<StyleDTO> {
 
 	private MultiSelectionModel<StyleDTO> selectionModel;
 	
-	protected CreatePopup createPopup;
-
 	public StylePanel(PanelMediator panelMediator, FilterDataProvider<StyleDTO> dataProvider) {
 		super(panelMediator, dataProvider);
 		panelMediator.setStylePanel(this);
@@ -64,10 +63,6 @@ public class StylePanel extends FilterPanel<StyleDTO> {
 		return panel;
 	}
 	
-	public void showCreatePopup() {
-		createPopup.show();
-	}
-	
 	public void clearSelection() {
 		selectionModel.clear();
 	}
@@ -81,7 +76,7 @@ public class StylePanel extends FilterPanel<StyleDTO> {
 	@Override
 	public void delete(StyleDTO item) {
 		if (item.getArticleAmount() != null && item.getArticleAmount() > 0) {
-			panelMediator.showError(errorMessages.styleIsNotEmpty(item.getName()));
+			Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.styleIsNotEmpty(item.getName())));
 			return;
 		}
 		panelMediator.deleteStyle(item);

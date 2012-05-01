@@ -17,8 +17,8 @@ DONE - article-type images
 DONE - delete article
 DONE - edit article
 DONE - bulk creation of article types (only multiple sizes are allowed)
-
-user management
+DONE - user management
+REMOVED - loading progress bar (removed because pre-loading of data happens during user-login)
 
 print multiple stickers / bulk sticker printing
 
@@ -30,11 +30,9 @@ bulk sticker printing
 
 differenz anzeige - lieferschein vs bestandsaufnahme
 
-pdf instead of html
+pdf instead of html (really needed or is html sufficient?)
 
 prevent application from sleeping
-
-loading progress bar
 
 NEU - lazy loading of images in image management
 
@@ -44,3 +42,10 @@ Aber nicht nur durch die R´s sondern durch alle name die durch die Filter nicht
 
 NEU - favicon
 
+NEU - remove expired reset-password-tokens
+
+NEU - height/number of entries in size + style
+
+NEU - define user-roles (admin, shop, ?)
+
+ 

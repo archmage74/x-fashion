@@ -22,6 +22,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.xfashion.client.Formatter;
 import com.xfashion.client.PanelMediator;
+import com.xfashion.client.Xfashion;
 import com.xfashion.client.brand.ChooseBrandPopup;
 import com.xfashion.client.cat.ChooseCategoryPopup;
 import com.xfashion.client.color.ChooseColorPopup;
@@ -199,6 +200,16 @@ public class ArticleTypeDetailPopup {
 		headerLabel = new Label();
 		headerLabel.setStyleName("dialogHeader");
 		hp.add(headerLabel);
+		
+		hp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		Button addToNotepadButton = new Button("+");
+		addToNotepadButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Xfashion.eventBus.fireEvent(new AddArticleEvent(articleType));
+			}
+		});
+		hp.add(addToNotepadButton);
 		
 		hp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		printStickerLink = new Anchor(textMessages.sticker(), false, "", "xfashion_sticker");

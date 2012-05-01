@@ -8,11 +8,13 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.RowCountChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
+import com.xfashion.client.ErrorEvent;
 import com.xfashion.client.FilterCell;
 import com.xfashion.client.FilterDataProvider;
 import com.xfashion.client.FilterPanel;
 import com.xfashion.client.PanelMediator;
 import com.xfashion.client.ToolPanel;
+import com.xfashion.client.Xfashion;
 import com.xfashion.client.resources.FilterListResources;
 import com.xfashion.shared.ColorDTO;
 
@@ -75,7 +77,7 @@ public class ColorPanel extends FilterPanel<ColorDTO> {
 	@Override
 	public void delete(ColorDTO color) {
 		if (color.getArticleAmount() != null && color.getArticleAmount() > 0) {
-			panelMediator.showError(errorMessages.colorIsNotEmpty(color.getName()));
+			Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.colorIsNotEmpty(color.getName())));
 			return;
 		}
 		panelMediator.deleteColor(color);

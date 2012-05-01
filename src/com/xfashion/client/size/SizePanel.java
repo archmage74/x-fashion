@@ -8,11 +8,13 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.RowCountChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
+import com.xfashion.client.ErrorEvent;
 import com.xfashion.client.FilterCell;
 import com.xfashion.client.FilterDataProvider;
 import com.xfashion.client.FilterPanel;
 import com.xfashion.client.PanelMediator;
 import com.xfashion.client.ToolPanel;
+import com.xfashion.client.Xfashion;
 import com.xfashion.client.resources.FilterListResources;
 import com.xfashion.shared.SizeDTO;
 
@@ -74,7 +76,7 @@ public class SizePanel extends FilterPanel<SizeDTO> {
 	@Override
 	public void delete(SizeDTO size) {
 		if (size.getArticleAmount() != null && size.getArticleAmount() > 0) {
-			panelMediator.showError(errorMessages.sizeIsNotEmpty(size.getName()));
+			Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.sizeIsNotEmpty(size.getName())));
 			return;
 		}
 		panelMediator.deleteSize(size);

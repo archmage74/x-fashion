@@ -25,7 +25,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.NoSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
+import com.xfashion.client.ErrorEvent;
 import com.xfashion.client.PanelMediator;
+import com.xfashion.client.Xfashion;
 import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.resources.FilterListResources;
 import com.xfashion.shared.ArticleTypeDTO;
@@ -149,15 +151,15 @@ public class ArticleTypePanel {
 		ArticleTypeDTO articleType = panelMediator.createArticleTypeFromSelection();
 		List<SizeDTO> sizes = panelMediator.getSelectedSizes();
 		if (articleType.getCategoryId() == null) {
-			panelMediator.showError(errorMessages.articleCreateNoCategory());
+			Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.articleCreateNoCategory()));
 		} else if (articleType.getBrandId() == null) {
-			panelMediator.showError(errorMessages.articleCreateNoBrand());
+			Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.articleCreateNoBrand()));
 		} else if (articleType.getStyleId() == null) {
-			panelMediator.showError(errorMessages.articleCreateNoStyle());
+			Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.articleCreateNoStyle()));
 		} else if (sizes.size() == 0) {
-			panelMediator.showError(errorMessages.articleCreateNoSize());
+			Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.articleCreateNoSize()));
 		} else if (articleType.getColorId() == null) {
-			panelMediator.showError(errorMessages.articleCreateNoColor());
+			Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.articleCreateNoColor()));
 		} else {
 			createArticleTypePopup.showForPrefilledArticleType(articleType, sizes);
 		}

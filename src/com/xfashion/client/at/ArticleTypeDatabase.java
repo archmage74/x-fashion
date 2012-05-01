@@ -13,9 +13,9 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ListDataProvider;
-import com.xfashion.client.ApplicationErrorListener;
-import com.xfashion.client.ApplicationLoadListener;
+import com.xfashion.client.ErrorEvent;
 import com.xfashion.client.FilterDataProvider;
+import com.xfashion.client.Xfashion;
 import com.xfashion.client.brand.BrandDataProvider;
 import com.xfashion.client.cat.CategoryDataProvider;
 import com.xfashion.client.color.ColorDataProvider;
@@ -50,13 +50,10 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter {
 	private CategoryDTO categoryFilter = null;
 	private String nameFilter = null;
 	
-	private ApplicationLoadListener applicationLoadListener;
-	private ApplicationErrorListener applicationErrorListener;
-	
 	private ErrorMessages errorMessages;
 	
 	public ArticleTypeDatabase() {
-		init();
+		
 	}
 
 	public void init() {
@@ -98,15 +95,9 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter {
 				colorProvider.isLoaded() &&
 				articleTypeProvider.isLoaded()) {
 			updateProviders();
-			fireApplicationLoaded();
+			Xfashion.eventBus.fireEvent(new ArticlesDatabaseLoadedEvent());
 		}
 			
-	}
-	
-	private void fireApplicationLoaded() {
-		if (applicationLoadListener != null) {
-			applicationLoadListener.applicationLoaded();
-		}
 	}
 	
 	private void readCategories() {
@@ -484,7 +475,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter {
 			@Override
 			public void onFailure(Throwable caught) {
 				String msg = caught.getMessage();
-				applicationErrorListener.error(errorMessages.categoryDeleteFailed(msg));
+				Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.categoryDeleteFailed(msg)));
 			}
 			@Override
 			public void onSuccess(Void result) {
@@ -533,7 +524,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter {
 			@Override
 			public void onFailure(Throwable caught) {
 				String msg = caught.getMessage();
-				applicationErrorListener.error(errorMessages.styleDeleteFailed(msg));
+				Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.styleDeleteFailed(msg)));
 			}
 			@Override
 			public void onSuccess(Void result) {
@@ -573,7 +564,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter {
 			@Override
 			public void onFailure(Throwable caught) {
 				String msg = caught.getMessage();
-				applicationErrorListener.error(errorMessages.brandDeleteFailed(msg));
+				Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.brandDeleteFailed(msg)));
 			}
 			@Override
 			public void onSuccess(Void result) {
@@ -613,7 +604,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter {
 			@Override
 			public void onFailure(Throwable caught) {
 				String msg = caught.getMessage();
-				applicationErrorListener.error(errorMessages.sizeDeleteFailed(msg));
+				Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.sizeDeleteFailed(msg)));
 			}
 			@Override
 			public void onSuccess(Void result) {
@@ -653,7 +644,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter {
 			@Override
 			public void onFailure(Throwable caught) {
 				String msg = caught.getMessage();
-				applicationErrorListener.error(errorMessages.colorDeleteFailed(msg));
+				Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.colorDeleteFailed(msg)));
 			}
 			@Override
 			public void onSuccess(Void result) {
@@ -707,22 +698,6 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter {
 	public class StyleCell {
 		public String name;
 		public boolean available;
-	}
-
-	public ApplicationLoadListener getApplicationLoadListener() {
-		return applicationLoadListener;
-	}
-
-	public void setApplicationLoadListener(ApplicationLoadListener applicationLoadListener) {
-		this.applicationLoadListener = applicationLoadListener;
-	}
-
-	public ApplicationErrorListener getApplicationErrorListener() {
-		return applicationErrorListener;
-	}
-
-	public void setApplicationErrorListener(ApplicationErrorListener applicationErrorListener) {
-		this.applicationErrorListener = applicationErrorListener;
 	}
 
 	public MultiWordSuggestOracle getNameOracle() {

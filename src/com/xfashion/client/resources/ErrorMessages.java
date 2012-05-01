@@ -29,4 +29,6 @@ public interface ErrorMessages extends Messages {
 
 	String invalidPrice();
 	String invalidName();
+
+	String createUserNoUserManagement();
 }

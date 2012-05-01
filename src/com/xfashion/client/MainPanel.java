@@ -9,43 +9,85 @@ import com.xfashion.client.at.ArticleTypePanel;
 import com.xfashion.client.brand.BrandPanel;
 import com.xfashion.client.cat.CategoryPanel;
 import com.xfashion.client.color.ColorPanel;
+import com.xfashion.client.notepad.NotepadManagement;
 import com.xfashion.client.size.SizePanel;
 import com.xfashion.client.style.StylePanel;
 import com.xfashion.client.user.UserManagement;
+import com.xfashion.client.user.UserProfile;
 
-public class MainPanel {
+public class MainPanel implements ErrorHandler {
+
+	private boolean DEV_MODE = true;
 	
 	private Panel contentPanel;
-	
-	private PanelMediator panelMediator;
-	
+
 	private Panel articleTypeManagement;
-	
+
+	private ArticleTypeDatabase articleTypeDatabase;
+
 	private UserManagement userManagement;
 	
-	public MainPanel(PanelMediator panelMediator) {
-		this.panelMediator = panelMediator;
+	private NotepadManagement notepadManagement;
+	
+	private UserProfile userProfile;
+
+	private ErrorPopup errorPopup;
+
+	public MainPanel() {
 		contentPanel = new SimplePanel();
 		RootPanel.get("mainPanelContainer").add(contentPanel);
 		userManagement = new UserManagement();
+		notepadManagement = new NotepadManagement();
+		userProfile = new UserProfile();
+
+		articleTypeDatabase = new ArticleTypeDatabase();
+		articleTypeDatabase.init();
+
+		Xfashion.eventBus.addHandler(ErrorEvent.TYPE, this);
+	}
+
+	public void showArticleTypePanel() {
+		if (!DEV_MODE && UserManagement.loggedInUser == null) {
+			showUserProfilePanel();
+		} else {
+			contentPanel.clear();
+			if (articleTypeManagement == null) {
+				PanelMediator panelMediator = new PanelMediator();
+				panelMediator.setArticleTypeDatabase(articleTypeDatabase);
+				createArticleTypeManagement(articleTypeDatabase, panelMediator);
+			}
+			contentPanel.add(articleTypeManagement);
+		}
+	}
+
+	public void showUserManagementPanel() {
+		if (!DEV_MODE && UserManagement.loggedInUser == null) {
+			showUserProfilePanel();
+		} else {
+			contentPanel.clear();
+			Panel panel = userManagement.getPanel();
+			contentPanel.add(panel);
+		}
 	}
 	
-	public void showArticleTypePanel() {
-		contentPanel.clear();
-		
-		if (articleTypeManagement == null) {
-			createArticleTypeManagement();
+	public void showNotepadManagementProfilePanel() {
+		if (!DEV_MODE && UserManagement.loggedInUser == null) {
+			showUserProfilePanel();
+		} else {
+			contentPanel.clear();
+			Panel panel = notepadManagement.getPanel();
+			contentPanel.add(panel);
 		}
-
-		contentPanel.add(articleTypeManagement);
 	}
 
-	private void createArticleTypeManagement() {
-		articleTypeManagement = new HorizontalPanel();
-		ArticleTypeDatabase articleTypeDatabase = panelMediator.getArticleTypeDatabase();
+	public void showUserProfilePanel() {
+		contentPanel.clear();
+		Panel panel = userProfile.getPanel();
+		contentPanel.add(panel);
+	}
 
-		articleTypeDatabase.setApplicationLoadListener(panelMediator);
-		articleTypeDatabase.setApplicationErrorListener(panelMediator);
+	private void createArticleTypeManagement(ArticleTypeDatabase articleTypeDatabase, PanelMediator panelMediator) {
+		articleTypeManagement = new HorizontalPanel();
 
 		CategoryPanel categoryPanel = new CategoryPanel(panelMediator, articleTypeDatabase.getCategoryProvider());
 		articleTypeManagement.add(categoryPanel.createPanel());
@@ -65,13 +107,13 @@ public class MainPanel {
 		ArticleTypePanel articleTypePanel = new ArticleTypePanel(panelMediator);
 		articleTypeManagement.add(articleTypePanel.createPanel(articleTypeDatabase.getArticleTypeProvider(), articleTypeDatabase.getNameOracle()));
 	}
-	
-	public void showUserManagementPanel() {
-		contentPanel.clear();
-		
-		Panel panel = userManagement.getPanel();
-		
-		contentPanel.add(panel);
+
+	@Override
+	public void onError(ErrorEvent event) {
+		if (errorPopup == null) {
+			errorPopup = new ErrorPopup();
+		}
+		errorPopup.showPopup(event.getErrorMessage());
 	}
-	
+
 }

@@ -12,7 +12,10 @@ public class User {
 
 	@PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private String username;
+	private Long id;
+    
+    @Persistent
+    private String username;
 	
 	@Persistent
 	private String password;
@@ -43,6 +46,7 @@ public class User {
 	
 	public UserDTO createDTO() {
 		UserDTO dto = new UserDTO();
+		dto.setId(getId());
 		dto.setUsername(getUsername());
 		dto.setDescription(getDescription());
 		dto.setEmail(getEmail());
@@ -50,10 +54,18 @@ public class User {
 		return dto;
 	}
 	
+	public Long getId() {
+		return id;
+	}
+	
+	public void setId(Long id) {
+		this.id = id;
+	}
+	
 	public String getUsername() {
 		return username;
 	}
-
+	
 	public void setUsername(String username) {
 		this.username = username;
 	}
@@ -65,7 +77,23 @@ public class User {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
+	
+	public void encodeAndSetPassword(String password) {
+		String hash = MD5.getMD5Hash(password); 
+		setPassword(hash);
+	}
+	
+	public boolean validatePassword(String pwd) {
+		if (pwd == null) {
+			return false;
+		}
+		String hash = MD5.getMD5Hash(pwd);
+		if(!hash.equals(getPassword())) {
+			return false;
+		}
+		return true;
+	}
+	
 	public String getDescription() {
 		return description;
 	}

@@ -12,7 +12,6 @@ import com.xfashion.client.at.CreateArticleTypePopup;
 import com.xfashion.client.brand.BrandPanel;
 import com.xfashion.client.cat.CategoryPanel;
 import com.xfashion.client.color.ColorPanel;
-import com.xfashion.client.menu.MenuPanel;
 import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.size.SizeDataProvider;
 import com.xfashion.client.size.SizePanel;
@@ -24,9 +23,7 @@ import com.xfashion.shared.ColorDTO;
 import com.xfashion.shared.SizeDTO;
 import com.xfashion.shared.StyleDTO;
 
-public class PanelMediator implements ApplicationLoadListener, ApplicationErrorListener {
-	
-	private Xfashion xfashion;
+public class PanelMediator {
 	
 	private CategoryPanel categoryPanel;
 	private StylePanel stylePanel;
@@ -39,13 +36,11 @@ public class PanelMediator implements ApplicationLoadListener, ApplicationErrorL
 	private ArticleTypeDetailPopup articleTypeDetailPopup;
 	
 	private ErrorMessages errorMessages;
-	private ErrorPopup errorPopup;
 	
 	private ArticleTypeDatabase articleTypeDatabase;
 	
 	public PanelMediator() {
 		errorMessages = GWT.create(ErrorMessages.class);
-		errorPopup = new ErrorPopup();
 	}
 	
 	public void createCategories() {
@@ -113,14 +108,6 @@ public class PanelMediator implements ApplicationLoadListener, ApplicationErrorL
 		}
 		articleTypeDatabase.applyFilters();
 		articleTypeDatabase.updateProviders();
-	}
-	
-	public Xfashion getXfashion() {
-		return xfashion;
-	}
-
-	public void setXfashion(Xfashion xfashion) {
-		this.xfashion = xfashion;
 	}
 	
 	public ArticleTypeDatabase getArticleTypeDatabase() {
@@ -243,23 +230,6 @@ public class PanelMediator implements ApplicationLoadListener, ApplicationErrorL
 		articleTypeDatabase.deleteArticleType(articleType);
 	}
 
-	public void showError(String errorMessage) {
-		errorPopup.showPopup(errorMessage);
-	}
-
-	@Override
-	public void applicationLoaded() {
-		MainPanel mainPanel = new MainPanel(this);
-		mainPanel.showArticleTypePanel();
-		MenuPanel menuPanel = new MenuPanel(mainPanel);
-		menuPanel.addNavPanel();
-	}
-
-	@Override
-	public void error(String error) {
-		showError(error);
-	}
-	
 	public void setSelectedName(String name) {
 		articleTypeDatabase.setNameFilter(name);
 	}
@@ -274,7 +244,7 @@ public class PanelMediator implements ApplicationLoadListener, ApplicationErrorL
 	
 	public void deleteCategory(CategoryDTO category) {
 		if (articleTypeDatabase.doesCategoryHaveArticles(category)) {
-			showError(errorMessages.categoryIsNotEmpty(category.getName()));
+			Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.categoryIsNotEmpty(category.getName())));
 			return;
 		}
 		if (category.equals(articleTypeDatabase.getCategoryFilter())) {
@@ -330,5 +300,5 @@ public class PanelMediator implements ApplicationLoadListener, ApplicationErrorL
 	public void deleteColor(ColorDTO item) {
 		articleTypeDatabase.deleteColor(item);
 	}
-	
+
 }

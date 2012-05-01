@@ -5,11 +5,14 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 
 public interface UserMessages extends Messages {
 
-	@DefaultMessage("User Mangement")
+	@DefaultMessage("User Management")
 	String userManagementHeader();
 	
 	@DefaultMessage("Name")
 	String username();
+	
+	@DefaultMessage("Passwort")
+	String password();
 	
 	@DefaultMessage("Beschreibung")
 	String description();
@@ -26,13 +29,13 @@ public interface UserMessages extends Messages {
 	@DefaultMessage("User anlegen")
 	String createUser();
 	
-	@DefaultMessage("Passwort senden")
+	@DefaultMessage("Passwort-Ändern-Link")
 	SafeHtml sendPassword();
 
-	@DefaultMessage("Generiert ein neues passwort und sendet es an die angegebene E-Mail Adresse.")
+	@DefaultMessage("Generiert einen Passwort-Ändern-Link und sendet diesen per E-Mail and den Benutzer.")
 	String sendPasswordHint();
 
-	@DefaultMessage("Ein neues Passwort wurde erstellt und versendet.")
+	@DefaultMessage("Ein Passwort-Ändern-Link wurde erstellt und versendet.")
 	String passwordSent();
 	
 	
@@ -45,6 +48,19 @@ public interface UserMessages extends Messages {
 
 	@DefaultMessage("E-Mail-Adresse darf nicht leer sein.")
 	String errorEmailEmpty();
+
+	@DefaultMessage("Login")
+	String userLoginHeader();
+
+	@DefaultMessage("User Profil")
+	String userProfileHeader();
+	
+	@DefaultMessage("Login")
+	String login();
+	
+	@DefaultMessage("Name und/oder Passwort falsch.")
+	String loginFailed();
+
 
 
 }

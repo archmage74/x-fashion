@@ -3,6 +3,8 @@ package com.xfashion.shared;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class UserDTO implements IsSerializable {
+
+	private Long id;
 	
 	private String username;
 	
@@ -29,6 +31,14 @@ public class UserDTO implements IsSerializable {
 		setPassword(password);
 		setDescription(description);
 		setEmail(email);
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 	
 	public String getUsername() {

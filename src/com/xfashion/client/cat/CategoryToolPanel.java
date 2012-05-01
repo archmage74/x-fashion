@@ -7,9 +7,11 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.xfashion.client.ErrorEvent;
 import com.xfashion.client.FilterPanel;
 import com.xfashion.client.PanelMediator;
 import com.xfashion.client.ToolPanel;
+import com.xfashion.client.Xfashion;
 import com.xfashion.shared.CategoryDTO;
 
 public class CategoryToolPanel extends ToolPanel<CategoryDTO> {
@@ -25,7 +27,7 @@ public class CategoryToolPanel extends ToolPanel<CategoryDTO> {
 		CategoryDTO category = new CategoryDTO();
 		String name = createTextBox.getText();
 		if (name == null || name.length() == 0) {
-			panelMediator.showError(errorMessages.createAttributeNoName());
+			Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.createAttributeNoName()));
 			return;
 		}
 		category.setName(name);
@@ -61,7 +63,7 @@ public class CategoryToolPanel extends ToolPanel<CategoryDTO> {
 				CategoryDTO category = new CategoryDTO();
 				String name = createTextBox.getText();
 				if (name == null || name.length() == 0) {
-					panelMediator.showError(errorMessages.createAttributeNoName());
+					Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.createAttributeNoName()));
 					return;
 				}
 				category.setName(name);

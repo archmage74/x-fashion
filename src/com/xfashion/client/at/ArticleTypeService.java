@@ -84,6 +84,8 @@ public interface ArticleTypeService extends RemoteService {
 	
 	List<ArticleTypeDTO> readArticleTypes() throws IllegalArgumentException;
 	
+	ArticleTypeDTO readArticleType(Long productNumber) throws IllegalArgumentException;
+	
 	void updateArticleType(ArticleTypeDTO articleType) throws IllegalArgumentException;
 	
 	void deleteArticleType(ArticleTypeDTO articleType) throws IllegalArgumentException;
