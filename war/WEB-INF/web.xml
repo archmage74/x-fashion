@@ -19,10 +19,25 @@
 		<servlet-name>userServlet</servlet-name>
 		<servlet-class>com.xfashion.server.user.UserServiceImpl</servlet-class>
 	</servlet>
+	
+	<servlet>
+		<servlet-name>notepadServlet</servlet-name>
+		<servlet-class>com.xfashion.server.notepad.NotepadServiceImpl</servlet-class>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>resetPasswordServlet</servlet-name>
+		<servlet-class>com.xfashion.server.user.ResetPasswordServlet</servlet-class>
+	</servlet>
 
 	<servlet>
 		<servlet-name>sticker</servlet-name>
 		<servlet-class>com.xfashion.pdf.Sticker</servlet-class>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>multisticker</servlet-name>
+		<servlet-class>com.xfashion.pdf.MultiSticker</servlet-class>
 	</servlet>
 	
 	<servlet>
@@ -49,10 +64,25 @@
 		<servlet-name>userServlet</servlet-name>
 		<url-pattern>/xfashion/userService</url-pattern>
 	</servlet-mapping>
-
+	
+  	<servlet-mapping>
+		<servlet-name>notepadServlet</servlet-name>
+		<url-pattern>/xfashion/notepadService</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>resetPasswordServlet</servlet-name>
+		<url-pattern>/resetpassword/*</url-pattern>
+	</servlet-mapping>
+	
 	<servlet-mapping>
 		<servlet-name>sticker</servlet-name>
 		<url-pattern>/pdf/sticker</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>multisticker</servlet-name>
+		<url-pattern>/pdf/multisticker</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
