@@ -39,8 +39,10 @@ public class MultiSticker extends HttpServlet {
 		ServletOutputStream out = res.getOutputStream();
 		
 		out.print(stickerRenderer.renderHeader());
+		boolean firstpage = true;
 		for (Long productNumber : notepad.getArticleTypes()) {
-			out.print(stickerRenderer.render(productNumber, currencyFormat));
+			out.print(stickerRenderer.render(productNumber, currencyFormat, !firstpage));
+			firstpage = false;
 		}
 		out.print(stickerRenderer.renderFooter());
 	}

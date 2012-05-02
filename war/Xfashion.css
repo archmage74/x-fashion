@@ -164,6 +164,7 @@
 }
 .articleUpLe {
 	margin: 0px;
+	padding: 0px;
 	text-align: center; 
 	width: 100px;
 	height: 25px;
@@ -171,6 +172,7 @@
 }
 .articleUpCe {
 	margin: 0px;
+	padding: 0px;
 	text-align: center; 
 	width: 100px;
 	height: 25px;
@@ -180,6 +182,7 @@
 }
 .articleUpRi {
 	margin: 0px;
+	padding: 0px;
 	text-align: center;
 	width: 100px;
 	height: 25px;
@@ -187,12 +190,14 @@
 }
 .articleBoLe {
 	margin: 0px;
+	padding: 0px;
 	text-align: center;
 	width: 100px;
 	height: 25px;
 }
 .articleBoCe {
 	margin: 0px;
+	padding: 0px;
 	text-align: center;
 	width: 100px;
 	height: 25px;
@@ -201,6 +206,7 @@
 }
 .articleBoRi {
 	margin: 0px;
+	padding: 0px;
 	text-align: center;
 	width: 100px;
 	height: 25px;

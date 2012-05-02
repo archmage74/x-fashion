@@ -23,6 +23,8 @@ public class MainPanel implements ErrorHandler {
 
 	private Panel articleTypeManagement;
 
+	private PanelMediator panelMediator;
+	
 	private ArticleTypeDatabase articleTypeDatabase;
 
 	private UserManagement userManagement;
@@ -34,14 +36,17 @@ public class MainPanel implements ErrorHandler {
 	private ErrorPopup errorPopup;
 
 	public MainPanel() {
+		articleTypeDatabase = new ArticleTypeDatabase();
+		articleTypeDatabase.init();
+		panelMediator = new PanelMediator();
+		panelMediator.setArticleTypeDatabase(articleTypeDatabase);
+
 		contentPanel = new SimplePanel();
 		RootPanel.get("mainPanelContainer").add(contentPanel);
 		userManagement = new UserManagement();
-		notepadManagement = new NotepadManagement();
+		notepadManagement = new NotepadManagement(articleTypeDatabase);
 		userProfile = new UserProfile();
 
-		articleTypeDatabase = new ArticleTypeDatabase();
-		articleTypeDatabase.init();
 
 		Xfashion.eventBus.addHandler(ErrorEvent.TYPE, this);
 	}
@@ -52,8 +57,6 @@ public class MainPanel implements ErrorHandler {
 		} else {
 			contentPanel.clear();
 			if (articleTypeManagement == null) {
-				PanelMediator panelMediator = new PanelMediator();
-				panelMediator.setArticleTypeDatabase(articleTypeDatabase);
 				createArticleTypeManagement(articleTypeDatabase, panelMediator);
 			}
 			contentPanel.add(articleTypeManagement);

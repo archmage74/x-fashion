@@ -24,10 +24,18 @@ public class StickerRenderer {
 	}
 	
 	public String render(Long productNumber, NumberFormat nf) {
+		return render(productNumber, nf, false);
+	}
+	
+	public String render(Long productNumber, NumberFormat nf, boolean pagebreakBefore) {
 		ArticleTypeDTO articleType = readArticleType(productNumber);
 		
 		StringBuffer sb = new StringBuffer();
-		sb.append("<table class=\"articleCell\">");
+		String pagebreak = "";
+		if (pagebreakBefore) {
+			pagebreak = "style=\"page-break-before:always;\"";
+		}
+		sb.append("<table class=\"articleCell\" " + pagebreak + ">");
 		sb.append("<tr>");
 		sb.append(createTd(readCategoryName(articleType.getCategoryId()), "articleUpLe"));
 		sb.append(createTd(articleType.getName(), "articleUpCe"));
@@ -40,7 +48,7 @@ public class StickerRenderer {
 		sb.append("</tr>");
 		sb.append("</table>");
 
-		sb.append("<table class=\"articleCell\" style=\"width: 210px; page-break-after:always;\">");
+		sb.append("<table class=\"articleCell\" style=\"width: 210px;\">");
 		sb.append("<tr style=\"padding: 0px; margin: 0px;\">");
 		sb.append("<td style=\"align: center; padding-top: 0px;\">");
 		sb.append("<img width=\"142\" height=\"46\" src=\"http://intern.spielemarkt.at/spielemarkt_at/barcode.php?num=");

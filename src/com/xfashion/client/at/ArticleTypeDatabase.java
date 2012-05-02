@@ -12,7 +12,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.view.client.HasData;
-import com.google.gwt.view.client.ListDataProvider;
 import com.xfashion.client.ErrorEvent;
 import com.xfashion.client.FilterDataProvider;
 import com.xfashion.client.Xfashion;
@@ -206,6 +205,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter {
 				articleTypeProvider.getList().clear();
 				articleTypes = new ArrayList<ArticleTypeDTO>(result);
 				articleTypeProvider.getList().addAll(result);
+				articleTypeProvider.refreshResolver();
 				updateAvailableArticleNames();
 				articleTypeProvider.setLoaded(true);
 				checkAllRead();
@@ -441,7 +441,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter {
 		return colorProvider;
 	}
 
-	public ListDataProvider<ArticleTypeDTO> getArticleTypeProvider() {
+	public ArticleTypeDataProvider getArticleTypeProvider() {
 		return articleTypeProvider;
 	}
 

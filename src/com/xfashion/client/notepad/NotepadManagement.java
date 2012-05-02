@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.AddArticleEvent;
 import com.xfashion.client.at.AddArticleHandler;
+import com.xfashion.client.at.ArticleTypeDatabase;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.shared.notepad.NotepadDTO;
 
@@ -30,7 +31,10 @@ public class NotepadManagement implements AddArticleHandler {
 	
 	private ListBox articleListBox;
 	
-	public NotepadManagement() {
+	private ArticleTypeDatabase articleTypeDatabase;
+	
+	public NotepadManagement(ArticleTypeDatabase articleTypeDatabase) {
+		this.articleTypeDatabase = articleTypeDatabase; 
 		textMessages = GWT.create(TextMessages.class);
 		notepadService = (NotepadServiceAsync) GWT.create(NotepadService.class);
 		currentNotepad = new NotepadDTO();
@@ -77,7 +81,7 @@ public class NotepadManagement implements AddArticleHandler {
 		lb.setWidth("200px");
 		lb.setVisibleItemCount(30);
 		for (Long productNumber : currentNotepad.getArticleTypes()) {
-			lb.addItem("" + productNumber);
+			lb.addItem(articleTypeDatabase.getArticleTypeProvider().resolveData(productNumber).getName());
 		}
 		return lb;
 	}

@@ -1,12 +1,15 @@
 package com.xfashion.shared.notepad;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.xfashion.shared.ArticleTypeDTO;
 
-public class NotepadDTO implements IsSerializable {
+public class NotepadDTO implements Serializable, IsSerializable {
+	
+	private static final long serialVersionUID = -5274228818084728571L;
 	
 	private Long id;
 	
