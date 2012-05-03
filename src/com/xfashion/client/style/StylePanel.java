@@ -35,7 +35,7 @@ public class StylePanel extends FilterPanel<StyleDTO> {
 
 		FilterCell<StyleDTO> filterCell = new FilterCell<StyleDTO>(this, panelMediator);
 		cellList = new CellList<StyleDTO>(filterCell, GWT.<FilterListResources> create(FilterListResources.class));
-		cellList.setPageSize(30);
+		cellList.setPageSize(38);
 		cellList.addRowCountChangeHandler(new RowCountChangeEvent.Handler() {
 			@Override
 			public void onRowCountChange(RowCountChangeEvent event) {

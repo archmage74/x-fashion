@@ -4,6 +4,8 @@ import com.google.gwt.i18n.client.Messages;
 
 public interface ErrorMessages extends Messages {
 
+	String noteImplemented();
+	
 	String createAttributeNoName();
 
 	String categoryIsNotEmpty(String categoryName);
@@ -31,4 +33,6 @@ public interface ErrorMessages extends Messages {
 	String invalidName();
 
 	String createUserNoUserManagement();
+	
+	String noArticlesInNotepad();
 }

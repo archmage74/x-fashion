@@ -36,7 +36,7 @@ public class ColorPanel extends FilterPanel<ColorDTO> {
 
 		FilterCell<ColorDTO> filterCell = new FilterCell<ColorDTO>(this, panelMediator);
 		cellList = new CellList<ColorDTO>(filterCell, GWT.<FilterListResources> create(FilterListResources.class));
-		cellList.setPageSize(30);
+		cellList.setPageSize(38);
 		cellList.addRowCountChangeHandler(new RowCountChangeEvent.Handler() {
 			@Override
 			public void onRowCountChange(RowCountChangeEvent event) {

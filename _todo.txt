@@ -19,20 +19,19 @@ DONE - edit article
 DONE - bulk creation of article types (only multiple sizes are allowed)
 DONE - user management
 REMOVED - loading progress bar (removed because pre-loading of data happens during user-login)
+DONE - print multiple stickers / bulk sticker printing
 
-print multiple stickers / bulk sticker printing
+einscannen von jedem artikel
 
-bestand pro user, einscannen von jedem artikel
+bestand pro user
 
 lieferschein bei auslieferung von zentrale
-
-bulk sticker printing
 
 differenz anzeige - lieferschein vs bestandsaufnahme
 
 pdf instead of html (really needed or is html sufficient?)
 
-prevent application from sleeping
+prevent application from sleeping (needed any more?)
 
 NEU - lazy loading of images in image management
 
@@ -48,4 +47,3 @@ NEU - height/number of entries in size + style
 
 NEU - define user-roles (admin, shop, ?)
 
- 

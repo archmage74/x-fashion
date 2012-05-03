@@ -36,7 +36,7 @@ public class BrandPanel extends FilterPanel<BrandDTO> {
 
 		FilterCell<BrandDTO> filterCell = new FilterCell<BrandDTO>(this, panelMediator);
 		cellList = new CellList<BrandDTO>(filterCell, GWT.<FilterListResources> create(FilterListResources.class));
-		cellList.setPageSize(30);
+		cellList.setPageSize(38);
 		cellList.addRowCountChangeHandler(new RowCountChangeEvent.Handler() {
 			@Override
 			public void onRowCountChange(RowCountChangeEvent event) {

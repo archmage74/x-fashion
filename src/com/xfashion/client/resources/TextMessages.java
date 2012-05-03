@@ -6,6 +6,7 @@ public interface TextMessages extends Messages {
 
 	String deleteArticleTypeButton();
 	String confirmDeleteArticle();
+	String toNotepadButton();
 	
 	String articleCreateMultipleSizes();
 	String articleCreateHeader();
@@ -34,5 +35,12 @@ public interface TextMessages extends Messages {
 
 	String notepadManagementHeader();
 	String printSticker();
+	String clearNotepad();
+	String registerArticles();
+	String notepadToStock();
+	String loadNotepad();
+	String retrieveNotepad();
+	String saveNotepad();
+	String orderNotepad();
 
 }

@@ -350,6 +350,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter {
 	}
 	
 	public void updateStyleProvider() {
+		styleProvider.refreshResolver();
 		List<ArticleTypeDTO> temp = new ArrayList<ArticleTypeDTO>(articleTypes);
 		temp = applyCategoryFilter(categoryFilter, temp);
 		temp = applyFilter(brandProvider, temp);
@@ -360,6 +361,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter {
 	}
 	
 	public void updateBrandProvider() {
+		brandProvider.refreshResolver();
 		List<ArticleTypeDTO> temp = new ArrayList<ArticleTypeDTO>(articleTypes);
 		temp = applyCategoryFilter(categoryFilter, temp);
 		temp = applyFilter(styleProvider, temp);
@@ -370,6 +372,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter {
 	}
 
 	public void updateSizeProvider() {
+		sizeProvider.refreshResolver();
 		List<ArticleTypeDTO> temp = new ArrayList<ArticleTypeDTO>(articleTypes);
 		temp = applyCategoryFilter(categoryFilter, temp);
 		temp = applyFilter(styleProvider, temp);
@@ -380,6 +383,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter {
 	}
 	
 	public void updateColorProvider() {
+		colorProvider.refreshResolver();
 		List<ArticleTypeDTO> temp = new ArrayList<ArticleTypeDTO>(articleTypes);
 		temp = applyCategoryFilter(categoryFilter, temp);
 		temp = applyFilter(styleProvider, temp);
@@ -514,6 +518,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter {
 			@Override
 			public void onSuccess(Void result) { 
 				brandProvider.refresh();
+				updateStyleProvider();
 			}
 		};
 		articleTypeService.updateStyle(dto, callback);
@@ -529,6 +534,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter {
 			@Override
 			public void onSuccess(Void result) {
 				styleProvider.getList().remove(dto);
+				updateStyleProvider();
 			}
 		};
 		articleTypeService.deleteStyle(dto, callback);
@@ -554,6 +560,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter {
 			@Override
 			public void onSuccess(Void result) { 
 				brandProvider.refresh();
+				updateBrandProvider();
 			}
 		};
 		articleTypeService.updateBrand(brand, callback);
@@ -569,6 +576,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter {
 			@Override
 			public void onSuccess(Void result) {
 				brandProvider.getList().remove(brand);
+				updateBrandProvider();
 			}
 		};
 		articleTypeService.deleteBrand(brand, callback);
@@ -593,7 +601,8 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter {
 			public void onFailure(Throwable caught) { }
 			@Override
 			public void onSuccess(Void result) { 
-				brandProvider.refresh();
+				sizeProvider.refresh();
+				updateSizeProvider();
 			}
 		};
 		articleTypeService.updateSize(size, callback);
@@ -609,6 +618,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter {
 			@Override
 			public void onSuccess(Void result) {
 				sizeProvider.getList().remove(size);
+				updateSizeProvider();
 			}
 		};
 		articleTypeService.deleteSize(size, callback);
@@ -633,7 +643,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter {
 			public void onFailure(Throwable caught) { }
 			@Override
 			public void onSuccess(Void result) { 
-				colorProvider.refresh();
+				updateColorProvider();
 			}
 		};
 		articleTypeService.updateColor(color, callback);
@@ -649,6 +659,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter {
 			@Override
 			public void onSuccess(Void result) {
 				colorProvider.getList().remove(color);
+				updateColorProvider();
 			}
 		};
 		articleTypeService.deleteColor(color, callback);

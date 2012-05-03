@@ -1,11 +1,14 @@
 package com.xfashion.client.notepad;
 
+import java.util.Collections;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
@@ -14,6 +17,7 @@ import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.AddArticleEvent;
 import com.xfashion.client.at.AddArticleHandler;
 import com.xfashion.client.at.ArticleTypeDatabase;
+import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.shared.notepad.NotepadDTO;
 
@@ -26,6 +30,7 @@ public class NotepadManagement implements AddArticleHandler {
 	private Panel panel;
 	
 	private TextMessages textMessages;
+	private ErrorMessages errorMessages;
 	
 	private NotepadDTO currentNotepad;
 	
@@ -36,6 +41,7 @@ public class NotepadManagement implements AddArticleHandler {
 	public NotepadManagement(ArticleTypeDatabase articleTypeDatabase) {
 		this.articleTypeDatabase = articleTypeDatabase; 
 		textMessages = GWT.create(TextMessages.class);
+		errorMessages = GWT.create(ErrorMessages.class);
 		notepadService = (NotepadServiceAsync) GWT.create(NotepadService.class);
 		currentNotepad = new NotepadDTO();
 		Xfashion.eventBus.addHandler(AddArticleEvent.TYPE, this);
@@ -54,20 +60,107 @@ public class NotepadManagement implements AddArticleHandler {
 		
 		Label l = createHeader();
 		vp.add(l);
+		
+		HorizontalPanel hp = new HorizontalPanel();
 
 		articleListBox = createArticleListBox();
-		vp.add(articleListBox);
+		refreshListBox();
+		hp.add(articleListBox);
 		
+		VerticalPanel buttonPanel = createButtonPanel();
+		
+		hp.add(buttonPanel);
+		vp.add(hp);
+		
+		return vp;
+	}
+
+	private VerticalPanel createButtonPanel() {
+		VerticalPanel buttonPanel = new VerticalPanel();
+
+		Button registerArticlesButton = new Button(textMessages.registerArticles());
+		registerArticlesButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				//TODO
+				Xfashion.fireError(errorMessages.noteImplemented());
+			}
+		});
+		buttonPanel.add(registerArticlesButton);
+
+		Button loadNotepadButton = new Button(textMessages.loadNotepad());
+		loadNotepadButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				//TODO
+				Xfashion.fireError(errorMessages.noteImplemented());
+			}
+		});
+		buttonPanel.add(loadNotepadButton);
+
+		Button retrieveNotepadButton = new Button(textMessages.retrieveNotepad());
+		retrieveNotepadButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				//TODO
+				Xfashion.fireError(errorMessages.noteImplemented());
+			}
+		});
+		buttonPanel.add(retrieveNotepadButton);
+
+		Button saveNotepadButton = new Button(textMessages.saveNotepad());
+		saveNotepadButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				//TODO
+				Xfashion.fireError(errorMessages.noteImplemented());
+			}
+		});
+		buttonPanel.add(saveNotepadButton);
+
+		Button orderNotepadButton = new Button(textMessages.orderNotepad());
+		orderNotepadButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				orderNotepad();
+			}
+		});
+		buttonPanel.add(orderNotepadButton);
+
 		Button printStickerButton = new Button(textMessages.printSticker());
 		printStickerButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				sendNotepad();
+				if (currentNotepad.getArticleTypes().size() > 0 ) {
+					sendNotepad();
+				} else {
+					Xfashion.fireError(errorMessages.noArticlesInNotepad());
+				}
 			}
 		});
-		vp.add(printStickerButton);
-		
-		return vp;
+		buttonPanel.add(printStickerButton);
+
+		Button notepadToStockButton = new Button(textMessages.notepadToStock());
+		notepadToStockButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				//TODO
+				Xfashion.fireError(errorMessages.noteImplemented());
+			}
+		});
+		buttonPanel.add(notepadToStockButton);
+
+		Button clearNotepadButton = new Button(textMessages.clearNotepad());
+		clearNotepadButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				currentNotepad.getArticleTypes().clear();
+				refreshListBox();
+			}
+		});
+		buttonPanel.add(clearNotepadButton);
+
+		return buttonPanel;
 	}
 
 	private Label createHeader() {
@@ -78,12 +171,16 @@ public class NotepadManagement implements AddArticleHandler {
 	
 	private ListBox createArticleListBox() {
 		ListBox lb = new ListBox();
-		lb.setWidth("200px");
+		lb.setWidth("300px");
 		lb.setVisibleItemCount(30);
-		for (Long productNumber : currentNotepad.getArticleTypes()) {
-			lb.addItem(articleTypeDatabase.getArticleTypeProvider().resolveData(productNumber).getName());
-		}
 		return lb;
+	}
+
+	private void refreshListBox() {
+		articleListBox.clear();
+		for (Long productNumber : currentNotepad.getArticleTypes()) {
+			articleListBox.addItem(articleTypeDatabase.getArticleTypeProvider().resolveData(productNumber).getName());
+		}
 	}
 
 	@Override
@@ -107,4 +204,10 @@ public class NotepadManagement implements AddArticleHandler {
 		};
 		notepadService.sendNotepad(currentNotepad, callback);
 	}
+	
+	protected void orderNotepad() {
+		Collections.sort(currentNotepad.getArticleTypes());
+		refreshListBox();
+	}
+	
 }
