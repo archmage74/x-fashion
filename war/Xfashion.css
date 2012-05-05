@@ -10,6 +10,13 @@
 .navigationPanel {
 	padding-left: 10px;
 }
+
+.filterPanel {
+	overflow: hidden;
+	position: relative;
+	zoom: 1;
+	width: 160px;
+}
 .filterTable {
 	height: 20px;
 	padding-top: 0px;
@@ -31,12 +38,12 @@
 	margin-right: 2px;
 }
 .attributeFilterLabel {
-	width: 120px;
+	width: 101px;
 	cursor: pointer;
 	cursor: hand;
 }
 .categoryFilterLabel {
-	width: 167px;
+	width: 120px;
 }
 .filterText {
 	font-size: 12px;
@@ -100,7 +107,7 @@
 .filterHeader {
 	padding: 1px;
 	border: 1px solid silver;
-	/* background-color: black; */
+	background-color: #777;
 	width: 100%;
 	margin-bottom: 5px;
 }
@@ -109,7 +116,6 @@
 	border: 1px solid silver;
 	margin-left: 1px;
 	margin-right: 1px;
-	width: 200px;
 }
 
 .styleList {
@@ -247,7 +253,7 @@
 	border-bottom: 1px solid #CCC;
 	font-size: 100%;
 	font-family: Arial Unicode MS, Arial, sans-serif;
-	width: 441px;
+	width: 474px;
 }
 
 .clearNameFilterButton {
@@ -281,6 +287,14 @@
 	height: 23px;
 }
 .buttonShowTools:hover {
+	border-color: #939393;
+}
+.buttonMinMax {
+	margin: 2px;
+	padding: 0px;
+	border: 1px inset #CCC;
+}
+.buttonMinMax:hover {
 	border-color: #939393;
 }
 .buttonTool {
@@ -322,4 +336,10 @@ table.toolGrid * td {
 }
 .rightDialogButton {
 	align: right;
+}
+
+.floatingNotepad {
+	position: absolute;
+	right: 0px;
+	top: 100px;
 }

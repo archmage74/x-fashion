@@ -76,6 +76,11 @@ public class MenuPanel implements LoginHandler {
 				mainPanel.showUserProfilePanel();
 			}
 		};
+		Command test = new Command() {
+			public void execute() {
+				mainPanel.test();
+			}
+		};
 
 		MenuItem articleTypeItem = new MenuItem(menuMessages.articleType(), showArticleType);
 		menu.addItem(articleTypeItem);
@@ -85,6 +90,8 @@ public class MenuPanel implements LoginHandler {
 		menu.addItem(notepadManagementItem);
 		MenuItem userProfileItem = new MenuItem(menuMessages.userProfile(), showUserProfile);
 		menu.addItem(userProfileItem);
+		MenuItem testItem = new MenuItem(menuMessages.test(), test);
+		menu.addItem(testItem);
 
 		navPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_BOTTOM);
 		navPanel.add(menu);

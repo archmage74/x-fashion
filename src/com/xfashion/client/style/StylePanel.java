@@ -27,11 +27,11 @@ public class StylePanel extends FilterPanel<StyleDTO> {
 		panelMediator.setStylePanel(this);
 	}
 	
-	public Panel createPanel() {
-		VerticalPanel panel = new VerticalPanel();
+	public Panel createListPanel() {
+		listPanel = new VerticalPanel();
 
-		headerPanel = createHeaderPanel("Stil");
-		panel.add(headerPanel);
+		headerPanel = createHeaderPanel(textMessages.style());
+		listPanel.add(headerPanel);
 
 		FilterCell<StyleDTO> filterCell = new FilterCell<StyleDTO>(this, panelMediator);
 		cellList = new CellList<StyleDTO>(filterCell, GWT.<FilterListResources> create(FilterListResources.class));
@@ -55,12 +55,12 @@ public class StylePanel extends FilterPanel<StyleDTO> {
 
 		dataProvider.addDataDisplay(cellList);
 		cellList.addStyleName("styleList");
-		panel.add(cellList);
+		listPanel.add(cellList);
 
 		setCreateAnchor(new SimplePanel());
-		panel.add(getCreateAnchor());
+		listPanel.add(getCreateAnchor());
 
-		return panel;
+		return listPanel;
 	}
 	
 	public void clearSelection() {
@@ -79,12 +79,12 @@ public class StylePanel extends FilterPanel<StyleDTO> {
 			Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.styleIsNotEmpty(item.getName())));
 			return;
 		}
-		panelMediator.deleteStyle(item);
+		Xfashion.eventBus.fireEvent(new DeleteStyleEvent(item));
 	}
 
 	@Override
 	public void update(StyleDTO item) {
-		panelMediator.updateStyle(item);
+		Xfashion.eventBus.fireEvent(new UpdateStyleEvent(item));
 		getDataProvider().refresh();
 	}
 

@@ -19,5 +19,6 @@ public interface MenuMessages extends Messages {
 	@DefaultMessage("Merkliste")
 	String notepadManagement();
 	
-	
+	@DefaultMessage("Test")
+	String test();
 }

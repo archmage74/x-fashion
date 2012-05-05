@@ -4,15 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import com.google.gwt.core.client.GWT;
-import com.xfashion.client.at.ArticleTypeDatabase;
 import com.xfashion.client.at.ArticleTypeDetailPopup;
 import com.xfashion.client.at.ArticleTypePanel;
 import com.xfashion.client.at.CreateArticleTypePopup;
 import com.xfashion.client.brand.BrandPanel;
 import com.xfashion.client.cat.CategoryPanel;
 import com.xfashion.client.color.ColorPanel;
-import com.xfashion.client.resources.ErrorMessages;
+import com.xfashion.client.db.ArticleTypeDatabase;
 import com.xfashion.client.size.SizeDataProvider;
 import com.xfashion.client.size.SizePanel;
 import com.xfashion.client.style.StylePanel;
@@ -35,32 +33,15 @@ public class PanelMediator {
 	private CreateArticleTypePopup createArticleTypePopup;
 	private ArticleTypeDetailPopup articleTypeDetailPopup;
 	
-	private ErrorMessages errorMessages;
-	
 	private ArticleTypeDatabase articleTypeDatabase;
 	
 	public PanelMediator() {
-		errorMessages = GWT.create(ErrorMessages.class);
 	}
 	
 	public void createCategories() {
 		articleTypeDatabase.createCategories();
 	}
 
-	public void setHeaderColor(String color) {
-		color = null; // override color setting of header
-		categoryPanel.setHeaderColor(color);
-		stylePanel.setHeaderColor(color);
-		brandPanel.setHeaderColor(color);
-		sizePanel.setHeaderColor(color);
-		colorPanel.setHeaderColor(color);
-		articleTypePanel.setHeaderColor(color);
-	}
-
-	public void resetHeaderColor() {
-		setHeaderColor(null);
-	}
-	
 	public CategoryDTO getSelectedCategory() {
 		return articleTypeDatabase.getCategoryFilter();
 	}
@@ -232,73 +213,6 @@ public class PanelMediator {
 
 	public void setSelectedName(String name) {
 		articleTypeDatabase.setNameFilter(name);
-	}
-
-	public void createCategory(CategoryDTO category) {
-		articleTypeDatabase.createCategory(category);
-	}
-	
-	public void updateCategory(CategoryDTO category) {
-		articleTypeDatabase.updateCategory(category);
-	}
-	
-	public void deleteCategory(CategoryDTO category) {
-		if (articleTypeDatabase.doesCategoryHaveArticles(category)) {
-			Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.categoryIsNotEmpty(category.getName())));
-			return;
-		}
-		if (category.equals(articleTypeDatabase.getCategoryFilter())) {
-			this.setSelectedCategory(null);
-		}
-		articleTypeDatabase.deleteCategory(category);
-	}
-
-	public void createBrand(BrandDTO brand) {
-		articleTypeDatabase.createBrand(brand);
-	}
-	
-	public void updateBrand(BrandDTO brand) {
-		articleTypeDatabase.updateBrand(brand);
-	}
-	
-	public void deleteBrand(BrandDTO item) {
-		articleTypeDatabase.deleteBrand(item);
-	}
-	
-	public void createStyle(StyleDTO style) {
-		articleTypeDatabase.createStyle(style);
-	}
-
-	public void updateStyle(StyleDTO style) {
-		articleTypeDatabase.updateStyle(style);
-	}
-	
-	public void deleteStyle(StyleDTO item) {
-		articleTypeDatabase.deleteStyle(item);
-	}
-	
-	public void createSize(SizeDTO size) {
-		articleTypeDatabase.createSize(size);
-	}
-	
-	public void updateSize(SizeDTO size) {
-		articleTypeDatabase.updateSize(size);
-	}
-	
-	public void deleteSize(SizeDTO item) {
-		articleTypeDatabase.deleteSize(item);
-	}
-	
-	public void createColor(ColorDTO color) {
-		articleTypeDatabase.createColor(color);
-	}
-	
-	public void updateColor(ColorDTO size) {
-		articleTypeDatabase.updateColor(size);
-	}
-	
-	public void deleteColor(ColorDTO item) {
-		articleTypeDatabase.deleteColor(item);
 	}
 
 }

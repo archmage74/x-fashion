@@ -40,7 +40,7 @@ public class CategoryToolPanel extends ToolPanel<CategoryDTO> {
 			idx = parentPanel.getDataProvider().getList().get(numCats - 1).getSortIndex() + 1;
 		}
 		category.setSortIndex(idx);
-		panelMediator.createCategory(category);
+		Xfashion.eventBus.fireEvent(new CreateCategoryEvent(category));
 	}
 
 	@Override
@@ -76,7 +76,7 @@ public class CategoryToolPanel extends ToolPanel<CategoryDTO> {
 					idx = parentPanel.getDataProvider().getList().get(numCats - 1).getSortIndex() + 1;
 				}
 				category.setSortIndex(idx);
-				panelMediator.createCategory(category);
+				Xfashion.eventBus.fireEvent(new CreateCategoryEvent(category));
 			}
 		});
 		createGrid.setWidget(2, 0, addCategoryButton);

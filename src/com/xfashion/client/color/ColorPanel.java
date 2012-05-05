@@ -28,11 +28,11 @@ public class ColorPanel extends FilterPanel<ColorDTO> {
 	}
 
 	@Override
-	public Panel createPanel() {
-		VerticalPanel panel = new VerticalPanel();
+	public Panel createListPanel() {
+		listPanel = new VerticalPanel();
 
-		Panel headerPanel = createHeaderPanel("Farbe");
-		panel.add(headerPanel);
+		Panel headerPanel = createHeaderPanel(textMessages.color());
+		listPanel.add(headerPanel);
 
 		FilterCell<ColorDTO> filterCell = new FilterCell<ColorDTO>(this, panelMediator);
 		cellList = new CellList<ColorDTO>(filterCell, GWT.<FilterListResources> create(FilterListResources.class));
@@ -56,12 +56,12 @@ public class ColorPanel extends FilterPanel<ColorDTO> {
 
 		dataProvider.addDataDisplay(cellList);
 		cellList.addStyleName("styleList");
-		panel.add(cellList);
+		listPanel.add(cellList);
 
 		setCreateAnchor(new SimplePanel());
-		panel.add(getCreateAnchor());
+		listPanel.add(getCreateAnchor());
 
-		return panel;
+		return listPanel;
 	}
 	
 	public void clearSelection() {
@@ -80,12 +80,12 @@ public class ColorPanel extends FilterPanel<ColorDTO> {
 			Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.colorIsNotEmpty(color.getName())));
 			return;
 		}
-		panelMediator.deleteColor(color);
+		Xfashion.eventBus.fireEvent(new DeleteColorEvent(color));
 	}
 	
 	@Override
 	public void update(ColorDTO color) {
-		panelMediator.updateColor(color);
+		Xfashion.eventBus.fireEvent(new UpdateColorEvent(color));
 		cellList.redraw();
 	}
 

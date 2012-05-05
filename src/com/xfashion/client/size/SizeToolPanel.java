@@ -3,6 +3,7 @@ package com.xfashion.client.size;
 import com.xfashion.client.FilterPanel;
 import com.xfashion.client.PanelMediator;
 import com.xfashion.client.ToolPanel;
+import com.xfashion.client.Xfashion;
 import com.xfashion.shared.SizeDTO;
 
 public class SizeToolPanel extends ToolPanel<SizeDTO> {
@@ -15,7 +16,7 @@ public class SizeToolPanel extends ToolPanel<SizeDTO> {
 	protected void createDTOFromPanel() {
 		SizeDTO size = new SizeDTO();
 		fillDTOFromPanel(size);
-		panelMediator.createSize(size);
+		Xfashion.eventBus.fireEvent(new CreateSizeEvent(size));
 	}
 
 }

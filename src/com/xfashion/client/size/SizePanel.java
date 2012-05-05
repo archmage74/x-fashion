@@ -27,11 +27,11 @@ public class SizePanel extends FilterPanel<SizeDTO> {
 		panelMediator.setSizePanel(this);
 	}
 	
-	public Panel createPanel() {
-		VerticalPanel panel = new VerticalPanel();
+	public Panel createListPanel() {
+		listPanel = new VerticalPanel();
 
-		Panel headerPanel = createHeaderPanel("Größe");
-		panel.add(headerPanel);
+		Panel headerPanel = createHeaderPanel(textMessages.size());
+		listPanel.add(headerPanel);
 
 		FilterCell<SizeDTO> filterCell = new FilterCell<SizeDTO>(this, panelMediator);
 		cellList = new CellList<SizeDTO>(filterCell, GWT.<FilterListResources> create(FilterListResources.class));
@@ -55,12 +55,12 @@ public class SizePanel extends FilterPanel<SizeDTO> {
 
 		dataProvider.addDataDisplay(cellList);
 		cellList.addStyleName("styleList");
-		panel.add(cellList);
+		listPanel.add(cellList);
 
 		setCreateAnchor(new SimplePanel());
-		panel.add(getCreateAnchor());
+		listPanel.add(getCreateAnchor());
 
-		return panel;
+		return listPanel;
 	}
 	
 	public void clearSelection() {
@@ -79,12 +79,12 @@ public class SizePanel extends FilterPanel<SizeDTO> {
 			Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.sizeIsNotEmpty(size.getName())));
 			return;
 		}
-		panelMediator.deleteSize(size);
+		Xfashion.eventBus.fireEvent(new DeleteSizeEvent(size));
 	}
 	
 	@Override
 	public void update(SizeDTO size) {
-		panelMediator.updateSize(size);
+		Xfashion.eventBus.fireEvent(new UpdateSizeEvent(size));
 		cellList.redraw();
 	}
 

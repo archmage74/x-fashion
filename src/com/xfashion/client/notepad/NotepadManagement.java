@@ -1,5 +1,6 @@
 package com.xfashion.client.notepad;
 
+import java.util.ArrayList;
 import java.util.Collections;
 
 import com.google.gwt.core.client.GWT;
@@ -16,9 +17,11 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.AddArticleEvent;
 import com.xfashion.client.at.AddArticleHandler;
-import com.xfashion.client.at.ArticleTypeDatabase;
+import com.xfashion.client.at.ArticleTypeDataProvider;
+import com.xfashion.client.db.ArticleTypeDatabase;
 import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.resources.TextMessages;
+import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.notepad.NotepadDTO;
 
 public class NotepadManagement implements AddArticleHandler {
@@ -36,10 +39,13 @@ public class NotepadManagement implements AddArticleHandler {
 	
 	private ListBox articleListBox;
 	
+	private ArticleTypeDataProvider articleTypeProvider;
+	
 	private ArticleTypeDatabase articleTypeDatabase;
 	
 	public NotepadManagement(ArticleTypeDatabase articleTypeDatabase) {
-		this.articleTypeDatabase = articleTypeDatabase; 
+		this.articleTypeDatabase = articleTypeDatabase;
+		articleTypeProvider = new ArticleTypeDataProvider();
 		textMessages = GWT.create(TextMessages.class);
 		errorMessages = GWT.create(ErrorMessages.class);
 		notepadService = (NotepadServiceAsync) GWT.create(NotepadService.class);
@@ -186,6 +192,7 @@ public class NotepadManagement implements AddArticleHandler {
 	@Override
 	public void onAddArticle(AddArticleEvent event) {
 		currentNotepad.addArticleType(event.getArticleType());
+		articleTypeProvider.getList().add(event.getArticleType());
 		if (articleListBox != null) {
 			articleListBox.addItem(event.getArticleType().getName());
 		}
@@ -207,7 +214,20 @@ public class NotepadManagement implements AddArticleHandler {
 	
 	protected void orderNotepad() {
 		Collections.sort(currentNotepad.getArticleTypes());
+		ArrayList<ArticleTypeDTO> al = new ArrayList<ArticleTypeDTO>();
+		for (Long productNumber : currentNotepad.getArticleTypes()) {
+			al.add(articleTypeDatabase.getArticleTypeProvider().resolveData(productNumber));
+		}
+		articleTypeProvider.setList(al);
 		refreshListBox();
+	}
+
+	public ArticleTypeDataProvider getArticleTypeProvider() {
+		return articleTypeProvider;
+	}
+
+	public void setArticleTypeProvider(ArticleTypeDataProvider articleTypeProvider) {
+		this.articleTypeProvider = articleTypeProvider;
 	}
 	
 }

@@ -28,11 +28,11 @@ public class BrandPanel extends FilterPanel<BrandDTO> {
 	}
 	
 	@Override
-	public Panel createPanel() {
-		VerticalPanel panel = new VerticalPanel();
+	public Panel createListPanel() {
+		listPanel = new VerticalPanel();
 
-		Panel headerPanel = createHeaderPanel("Marke");
-		panel.add(headerPanel);
+		Panel headerPanel = createHeaderPanel(textMessages.brand());
+		listPanel.add(headerPanel);
 
 		FilterCell<BrandDTO> filterCell = new FilterCell<BrandDTO>(this, panelMediator);
 		cellList = new CellList<BrandDTO>(filterCell, GWT.<FilterListResources> create(FilterListResources.class));
@@ -56,12 +56,12 @@ public class BrandPanel extends FilterPanel<BrandDTO> {
 
 		getDataProvider().addDataDisplay(cellList);
 		cellList.addStyleName("styleList");
-		panel.add(cellList);
+		listPanel.add(cellList);
 
 		setCreateAnchor(new SimplePanel());
-		panel.add(getCreateAnchor());
+		listPanel.add(getCreateAnchor());
 
-		return panel;
+		return listPanel;
 	}
 
 	protected ToolPanel<BrandDTO> createToolPanel() {
@@ -79,12 +79,12 @@ public class BrandPanel extends FilterPanel<BrandDTO> {
 			Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.brandIsNotEmpty(brand.getName())));
 			return;
 		}
-		panelMediator.deleteBrand(brand);
+		Xfashion.eventBus.fireEvent(new DeleteBrandEvent(brand));
 	}
 	
 	@Override
 	public void update(BrandDTO brand) {
-		panelMediator.updateBrand(brand);
+		Xfashion.eventBus.fireEvent(new UpdateBrandEvent(brand));
 		cellList.redraw();
 	}
 

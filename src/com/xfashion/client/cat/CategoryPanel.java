@@ -18,6 +18,7 @@ import com.xfashion.client.FilterPanel;
 import com.xfashion.client.ICrud;
 import com.xfashion.client.PanelMediator;
 import com.xfashion.client.ToolPanel;
+import com.xfashion.client.Xfashion;
 import com.xfashion.client.resources.FilterListResources;
 import com.xfashion.client.tool.Buttons;
 import com.xfashion.shared.CategoryDTO;
@@ -26,8 +27,6 @@ public class CategoryPanel extends FilterPanel<CategoryDTO> implements ICrud<Cat
 
 	private CategoryDTO selectedCategory;
 
-	private VerticalPanel mainPanel;
-
 	private CategoryCell cell;
 
 	public CategoryPanel(PanelMediator panelMediator, FilterDataProvider<CategoryDTO> dataProvider) {
@@ -35,16 +34,15 @@ public class CategoryPanel extends FilterPanel<CategoryDTO> implements ICrud<Cat
 		panelMediator.setCategoryPanel(this);
 	}
 
-	public Panel createPanel() {
-		mainPanel = new VerticalPanel();
+	public Panel createListPanel() {
+		listPanel = new VerticalPanel();
 
 		headerPanel = new HorizontalPanel();
 		headerPanel.addStyleName("filterHeader");
-		Label categoryLabel = new Label("Kategorie");
+		Label categoryLabel = new Label(textMessages.category());
 		categoryLabel.addStyleName("filterLabel categoryFilterLabel");
 		headerPanel.add(categoryLabel);
 		Image toolsButton = Buttons.showTools();
-		//toolsButton.addClickHandler(new ClickHandler() {
 		ClickHandler toolsButtonClickHandler = new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -54,12 +52,11 @@ public class CategoryPanel extends FilterPanel<CategoryDTO> implements ICrud<Cat
 		toolsButton.addClickHandler(toolsButtonClickHandler);
 		headerPanel.add(toolsButton);
 
-		mainPanel.add(headerPanel);
-		setHeaderColor(null);
+		listPanel.add(headerPanel);
 
 		cell = new CategoryCell(this, panelMediator);
 		cellList = new CellList<CategoryDTO>(cell, GWT.<FilterListResources> create(FilterListResources.class));
-		cellList.setPageSize(30);
+		cellList.setPageSize(20);
 		cellList.addRowCountChangeHandler(new RowCountChangeEvent.Handler() {
 			@Override
 			public void onRowCountChange(RowCountChangeEvent event) {
@@ -79,11 +76,9 @@ public class CategoryPanel extends FilterPanel<CategoryDTO> implements ICrud<Cat
 				selectedCategory = selectionModel.getSelectedObject();
 				if (selectionModel.getSelectedObject() != null) {
 					selectedCategory.setSelected(true);
-					panelMediator.setHeaderColor(selectedCategory.getBorderColor());
 					panelMediator.setSelectedCategory(selectedCategory);
 				} else {
 					selectedCategory = null;
-					panelMediator.resetHeaderColor();
 					panelMediator.setSelectedCategory(null);
 				}
 			}
@@ -91,12 +86,12 @@ public class CategoryPanel extends FilterPanel<CategoryDTO> implements ICrud<Cat
 		getDataProvider().addDataDisplay(cellList);
 
 		cellList.addStyleName("categoryList");
-		mainPanel.add(cellList);
+		listPanel.add(cellList);
 
 		setCreateAnchor(new SimplePanel());
-		mainPanel.add(getCreateAnchor());
-
-		return mainPanel;
+		listPanel.add(getCreateAnchor());
+		
+		return listPanel;
 	}
 	
 	@Override
@@ -106,11 +101,11 @@ public class CategoryPanel extends FilterPanel<CategoryDTO> implements ICrud<Cat
 	}
 	
 	public void delete(CategoryDTO category) {
-		panelMediator.deleteCategory(category);
+		Xfashion.eventBus.fireEvent(new DeleteCategoryEvent(category));
 	}
 
 	public void update(CategoryDTO category) {
-		panelMediator.updateCategory(category);
+		Xfashion.eventBus.fireEvent(new UpdateCategoryEvent(category));
 		cellList.redraw();
 	}
 
@@ -122,76 +117,6 @@ public class CategoryPanel extends FilterPanel<CategoryDTO> implements ICrud<Cat
 		return panelMediator;
 	}
 
-//	class CategoryCell extends AbstractCell<CategoryDTO> {
-//
-//		public CategoryCell() {
-//			super("change", "keydown");
-//		}
-//
-//		@Override
-//		public void onBrowserEvent(Context context, Element parent, CategoryDTO value, NativeEvent event, ValueUpdater<CategoryDTO> valueUpdater) {
-//			if (value == null) {
-//				return;
-//			}
-//			super.onBrowserEvent(context, parent, value, event, valueUpdater);
-//			if ("change".equals(event.getType())) {
-//				updateFromCell(parent, value);
-//			}
-//		}
-//
-//		@Override
-//		public void onEnterKeyDown(Context context, Element parent, CategoryDTO value, NativeEvent event, ValueUpdater<CategoryDTO> valueUpdater) {
-//			if (value == null) {
-//				return;
-//			}
-//			updateFromCell(parent, value);
-//		}
-//
-//		private void updateFromCell(Element parent, CategoryDTO value) {
-//			if (value.isInEditMode()) {
-//				value.setName(readCategoryName(parent));
-//				value.setInEditMode(false);
-//				update(value);
-//			}
-//		}
-//
-//		protected String readCategoryName(Element parent) {
-//			InputElement e = parent.getFirstChild().getFirstChild().cast();
-//			return e.getValue();
-//		}
-//
-//		@Override
-//		public void render(Context context, CategoryDTO category, SafeHtmlBuilder sb) {
-//			if (category == null) {
-//				return;
-//			}
-//
-//			String css;
-//			String style;
-//			if (category.isSelected()) {
-//				css = "categorySelected";
-//				style = createSelectedStyle(category);
-//			} else {
-//				css = "categoryUnselected";
-//				style = "";
-//			}
-//
-//			sb.appendHtmlConstant("<div class=\"" + css + "\" style=\"" + style + "\">");
-//			if (category.isInEditMode()) {
-//				sb.appendHtmlConstant("<input type=\"text\" value=\"" + category.getName() + "\" style=\"height: 19px; border: 1px inset;\" />");
-//			} else {
-//				sb.appendHtmlConstant(category.getName());
-//			}
-//			sb.appendHtmlConstant("</div>");
-//		}
-//
-//		private String createSelectedStyle(CategoryDTO cellData) {
-//			CategoryDTO dto = cellData;
-//			String style = "background-color: " + dto.getBackgroundColor() + "; " + "border: 2px solid " + dto.getBorderColor() + ";";
-//			return style;
-//		}
-//	}
-//	
 	public void showCreatePopup() {
 
 	}

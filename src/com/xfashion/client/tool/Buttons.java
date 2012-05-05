@@ -14,6 +14,18 @@ public class Buttons {
 		return icon;
 	}
 	
+	public static Image minimize() {
+		Image icon = new Image(images.iconMinimize());
+		icon.setStyleName("buttonMinMax");
+		return icon;
+	}
+	
+	public static Image maximize() {
+		Image icon = new Image(images.iconMaximize());
+		icon.setStyleName("buttonMinMax");
+		return icon;
+	}
+	
 	public static Image edit() {
 		Image icon = new Image(images.iconEdit());
 		icon.setStyleName("buttonTool");

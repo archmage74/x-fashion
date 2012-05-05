@@ -21,6 +21,12 @@ DONE - user management
 REMOVED - loading progress bar (removed because pre-loading of data happens during user-login)
 DONE - print multiple stickers / bulk sticker printing
 
+minimize filter panels
+
+show notepad right beside article-types
+
+multi-column size-panel
+
 einscannen von jedem artikel
 
 bestand pro user
@@ -32,6 +38,8 @@ differenz anzeige - lieferschein vs bestandsaufnahme
 pdf instead of html (really needed or is html sufficient?)
 
 prevent application from sleeping (needed any more?)
+
+NEU benutzerrechte (shop, admin)
 
 NEU - lazy loading of images in image management
 
