@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.xfashion.client.notepad.NotepadService;
+import com.xfashion.shared.notepad.ArticleAmountDTO;
 import com.xfashion.shared.notepad.NotepadDTO;
 
 public class MultiSticker extends HttpServlet {
@@ -40,9 +41,12 @@ public class MultiSticker extends HttpServlet {
 		
 		out.print(stickerRenderer.renderHeader());
 		boolean firstpage = true;
-		for (Long productNumber : notepad.getArticleTypes()) {
-			out.print(stickerRenderer.render(productNumber, currencyFormat, !firstpage));
-			firstpage = false;
+		for (ArticleAmountDTO aa : notepad.getArticleTypes()) {
+			Long productNumber = aa.getProductNumber();
+			for (int i=0; i<aa.getAmount(); i++) {
+				out.print(stickerRenderer.render(productNumber, currencyFormat, !firstpage));
+				firstpage = false;
+			}
 		}
 		out.print(stickerRenderer.renderFooter());
 	}

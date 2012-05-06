@@ -226,7 +226,13 @@
 .articlePrice {
 	text-align: right;
 	font-size: 20px;
-	width: 100px;
+	width: 75px;
+	height: 50;
+}
+.articleAmount {
+	text-align: right;
+	font-size: 20px;
+	width: 40px;
 	height: 50;
 }
 .pricePrefix {

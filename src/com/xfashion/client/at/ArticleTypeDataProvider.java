@@ -3,10 +3,9 @@ package com.xfashion.client.at;
 import java.util.HashMap;
 import java.util.List;
 
-import com.google.gwt.view.client.ListDataProvider;
 import com.xfashion.shared.ArticleTypeDTO;
 
-public class ArticleTypeDataProvider extends ListDataProvider<ArticleTypeDTO> {
+public class ArticleTypeDataProvider extends ArticleDataProvider<ArticleTypeDTO> {
 
 	private boolean loaded;
 	
@@ -17,6 +16,10 @@ public class ArticleTypeDataProvider extends ListDataProvider<ArticleTypeDTO> {
 		idToItem = new HashMap<Long, ArticleTypeDTO>();
 	}
 	
+	public ArticleTypeDTO retrieveArticleType(ArticleTypeDTO item) {
+		return item;
+	}
+
 	public boolean isLoaded() {
 		return loaded;
 	}

@@ -13,10 +13,10 @@ public class NotepadDTO implements Serializable, IsSerializable {
 	
 	private Long id;
 	
-	private List<Long> articleTypes;
+	private List<ArticleAmountDTO> articles;
 
 	public NotepadDTO() {
-		articleTypes = new ArrayList<Long>();
+		articles = new ArrayList<ArticleAmountDTO>();
 	}
 	
 	public Long getId() {
@@ -27,16 +27,37 @@ public class NotepadDTO implements Serializable, IsSerializable {
 		this.id = id;
 	}
 
-	public List<Long> getArticleTypes() {
-		return articleTypes;
+	public List<ArticleAmountDTO> getArticleTypes() {
+		return articles;
 	}
 
-	public void setArticleTypes(List<Long> articleTypes) {
-		this.articleTypes = articleTypes;
+	public void setArticleTypes(List<ArticleAmountDTO> articles) {
+		this.articles = articles;
 	}
 
 	public void addArticleType(ArticleTypeDTO articleType) {
-		getArticleTypes().add(articleType.getProductNumber());
+		ArticleAmountDTO articleAmount = retrieveArticleAmount(articleType.getProductNumber());
+		articleAmount.increaseAmount();
+	}
+	
+	public void deductArticleType(ArticleTypeDTO articleType) {
+		ArticleAmountDTO articleAmount = retrieveArticleAmount(articleType.getProductNumber());
+		if (articleAmount.getAmount() > 1) {
+			articleAmount.decreaseAmount();
+		} else {
+			articles.remove(articleAmount);
+		}
+	}
+	
+	public ArticleAmountDTO retrieveArticleAmount(Long productNumber) {
+		for (ArticleAmountDTO a : articles) {
+			if (productNumber.equals(a.getProductNumber())) {
+				return a;
+			}
+		}
+		ArticleAmountDTO a = new ArticleAmountDTO(productNumber, 0);
+		articles.add(a);
+		return a;
 	}
 	
 }

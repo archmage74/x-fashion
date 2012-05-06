@@ -50,7 +50,7 @@ public class MainPanel implements ErrorHandler {
 			showUserProfilePanel();
 		} else {
 			contentPanel.clear();
-			Panel panel = articleTypeManagement.getPanel(articleTypeDatabase, panelMediator, notepadManagement.getArticleTypeProvider());
+			Panel panel = articleTypeManagement.getPanel(articleTypeDatabase, panelMediator, notepadManagement.getArticleProvider());
 			contentPanel.add(panel);
 		}
 	}

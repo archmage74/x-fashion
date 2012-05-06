@@ -14,10 +14,10 @@ import com.xfashion.client.PanelMediator;
 import com.xfashion.client.PanelWidthAnimation;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTable;
-import com.xfashion.client.at.ArticleTypeDataProvider;
 import com.xfashion.client.at.ProvidesArticleFilter;
 import com.xfashion.client.resources.ImageResources;
 import com.xfashion.client.resources.TextMessages;
+import com.xfashion.shared.notepad.ArticleAmountDTO;
 
 public class NotepadPanel implements IsMinimizable {
 
@@ -45,7 +45,7 @@ public class NotepadPanel implements IsMinimizable {
 		this.provider = panelMediator.getArticleTypeDatabase();
 	}
 	
-	public Panel createPanel(ArticleTypeDataProvider articleTypeProvider) {
+	public Panel createPanel(ArticleAmountDataProvider articleTypeProvider) {
 		Panel articlePanel = createArticlePanel(articleTypeProvider);
 		scrollPanel = new SimplePanel();
 		scrollPanel.setStyleName("filterPanel");
@@ -54,7 +54,7 @@ public class NotepadPanel implements IsMinimizable {
 		return scrollPanel;
 	}
 	
-	protected Panel createArticlePanel(ArticleTypeDataProvider articleTypeProvider) {
+	protected Panel createArticlePanel(ArticleAmountDataProvider articleAmountProvider) {
 
 		VerticalPanel panel = new VerticalPanel();
 
@@ -62,8 +62,8 @@ public class NotepadPanel implements IsMinimizable {
 		panel.add(headerPanel);
 		
 		
-		ArticleTable att = new CountingArticleTable(provider);
-		Panel atp = att.create(articleTypeProvider, panelMediator);
+		ArticleTable<ArticleAmountDTO> att = new CountingArticleTable(provider);
+		Panel atp = att.create(articleAmountProvider, panelMediator);
 		panel.add(atp);
 		
 		return panel;
@@ -100,9 +100,11 @@ public class NotepadPanel implements IsMinimizable {
 		if (isMinimized()) {
 			PanelWidthAnimation pwa = new PanelWidthAnimation(this, PANEL_MIN_WIDTH, PANEL_MAX_WIDTH);
 			pwa.run(300);
+			Xfashion.eventBus.fireEvent(new NotepadStartMaximizeEvent());
 		} else {
 			PanelWidthAnimation pwa = new PanelWidthAnimation(this, PANEL_MAX_WIDTH, PANEL_MIN_WIDTH);
 			pwa.run(300);
+			Xfashion.eventBus.fireEvent(new NotepadStartMinimizeEvent());
 		}
 	}
 	
@@ -124,7 +126,6 @@ public class NotepadPanel implements IsMinimizable {
 		} else {
 			if (this.minimized) {
 				minmaxButton.setResource(images.iconMinimize());
-				Xfashion.eventBus.fireEvent(new NotepadMaximizedEvent());
 			}
 		}
 		this.minimized = minimized;

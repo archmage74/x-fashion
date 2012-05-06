@@ -8,13 +8,16 @@ import com.xfashion.client.brand.BrandPanel;
 import com.xfashion.client.cat.CategoryPanel;
 import com.xfashion.client.color.ColorPanel;
 import com.xfashion.client.db.ArticleTypeDatabase;
-import com.xfashion.client.notepad.NotepadMaximizedEvent;
-import com.xfashion.client.notepad.NotepadMaximizedHandler;
+import com.xfashion.client.notepad.ArticleAmountDataProvider;
+import com.xfashion.client.notepad.NotepadStartMaximizeEvent;
+import com.xfashion.client.notepad.NotepadStartMaximizeHandler;
 import com.xfashion.client.notepad.NotepadPanel;
+import com.xfashion.client.notepad.NotepadStartMinimizeEvent;
+import com.xfashion.client.notepad.NotepadStartMinimizeHandler;
 import com.xfashion.client.size.SizePanel;
 import com.xfashion.client.style.StylePanel;
 
-public class ArticleTypeManagement implements NotepadMaximizedHandler {
+public class ArticleTypeManagement implements NotepadStartMaximizeHandler, NotepadStartMinimizeHandler {
 
 	HorizontalPanel panel;
 	
@@ -24,7 +27,7 @@ public class ArticleTypeManagement implements NotepadMaximizedHandler {
 	ColorPanel colorPanel;
 	NotepadPanel notepadPanel;
 
-	public Panel getPanel(ArticleTypeDatabase articleTypeDatabase, PanelMediator panelMediator, ArticleTypeDataProvider notepadArticleProvider) {
+	public Panel getPanel(ArticleTypeDatabase articleTypeDatabase, PanelMediator panelMediator, ArticleAmountDataProvider notepadArticleProvider) {
 		if (panel == null) {
 			panel = new HorizontalPanel();
 	
@@ -50,17 +53,26 @@ public class ArticleTypeManagement implements NotepadMaximizedHandler {
 			panel.add(notepadPanel.createPanel(notepadArticleProvider));
 		}
 		
-		Xfashion.eventBus.addHandler(NotepadMaximizedEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(NotepadStartMaximizeEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(NotepadStartMinimizeEvent.TYPE, this);
 		
 		return panel;
 	}
 
 	@Override
-	public void onNotepadMaximized(NotepadMaximizedEvent event) {
+	public void onNotepadStartMaximize(NotepadStartMaximizeEvent event) {
 		brandPanel.minimize();
 		stylePanel.minimize();
 		sizePanel.minimize();
 		colorPanel.minimize();
+	}
+
+	@Override
+	public void onNotepadStartMinimize(NotepadStartMinimizeEvent event) {
+		brandPanel.maximize();
+		stylePanel.maximize();
+		sizePanel.maximize();
+		colorPanel.maximize();
 	}
 
 

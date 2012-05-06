@@ -16,9 +16,11 @@ import com.xfashion.client.resources.ArticleTableResources;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.shared.ArticleTypeDTO;
 
-public abstract class ArticleTable {
+public abstract class ArticleTable<T> {
 
 	private ProvidesArticleFilter provider;
+	
+	protected ArticleDataProvider<T> articleProvider;
 
 	private ArticleTypeDetailPopup articleTypeDetailPopup;
 
@@ -29,17 +31,18 @@ public abstract class ArticleTable {
 		this.provider = provider;
 	}
 	
-	protected abstract void addNavColumns(CellTable<ArticleTypeDTO> cellTable);
+	protected abstract void addNavColumns(CellTable<T> cellTable);
 
-	public Panel create(ArticleTypeDataProvider articleTypeProvider, PanelMediator panelMediator) {
-
+	public Panel create(final ArticleDataProvider<T> ap, PanelMediator panelMediator) {
+		articleProvider = ap; 
 		articleTypeDetailPopup = new ArticleTypeDetailPopup(panelMediator);
 
-		CellTable<ArticleTypeDTO> cellTable = new CellTable<ArticleTypeDTO>(10000, GWT.<ArticleTableResources> create(ArticleTableResources.class));
+		CellTable<T> cellTable = new CellTable<T>(10000, GWT.<ArticleTableResources> create(ArticleTableResources.class));
 
-		Column<ArticleTypeDTO, SafeHtml> image = new Column<ArticleTypeDTO, SafeHtml>(new SafeHtmlCell()) {
+		Column<T, SafeHtml> image = new Column<T, SafeHtml>(new SafeHtmlCell()) {
 			@Override
-			public SafeHtml getValue(ArticleTypeDTO at) {
+			public SafeHtml getValue(T a) {
+				ArticleTypeDTO at = ap.retrieveArticleType(a);
 				StringBuffer imageHtml = new StringBuffer();
 				imageHtml.append("<img class=\"articleIconImage\" ");
 				if (at.getImageId() != null) {
@@ -56,9 +59,10 @@ public abstract class ArticleTable {
 		};
 		cellTable.addColumn(image);
 
-		Column<ArticleTypeDTO, SafeHtml> categoryStyle = new Column<ArticleTypeDTO, SafeHtml>(new SafeHtmlCell()) {
+		Column<T, SafeHtml> categoryStyle = new Column<T, SafeHtml>(new SafeHtmlCell()) {
 			@Override
-			public SafeHtml getValue(ArticleTypeDTO at) {
+			public SafeHtml getValue(T a) {
+				ArticleTypeDTO at = ap.retrieveArticleType(a);
 				SafeHtmlBuilder sb = new SafeHtmlBuilder();
 				sb.appendHtmlConstant("<div class=\"articleUpLe\">");
 				sb.appendEscaped(provider.getCategoryProvider().resolveData(at.getCategoryId()).getName());
@@ -71,9 +75,10 @@ public abstract class ArticleTable {
 		};
 		cellTable.addColumn(categoryStyle);
 
-		Column<ArticleTypeDTO, SafeHtml> nameBrand = new Column<ArticleTypeDTO, SafeHtml>(new SafeHtmlCell()) {
+		Column<T, SafeHtml> nameBrand = new Column<T, SafeHtml>(new SafeHtmlCell()) {
 			@Override
-			public SafeHtml getValue(ArticleTypeDTO at) {
+			public SafeHtml getValue(T a) {
+				ArticleTypeDTO at = ap.retrieveArticleType(a);
 				SafeHtmlBuilder html = new SafeHtmlBuilder();
 				StringBuffer sb = new StringBuffer();
 				sb.append("<div class=\"articleUpCe\"");
@@ -92,9 +97,10 @@ public abstract class ArticleTable {
 		};
 		cellTable.addColumn(nameBrand);
 
-		Column<ArticleTypeDTO, SafeHtml> colorSize = new Column<ArticleTypeDTO, SafeHtml>(new SafeHtmlCell()) {
+		Column<T, SafeHtml> colorSize = new Column<T, SafeHtml>(new SafeHtmlCell()) {
 			@Override
-			public SafeHtml getValue(ArticleTypeDTO at) {
+			public SafeHtml getValue(T a) {
+				ArticleTypeDTO at = ap.retrieveArticleType(a);
 				SafeHtmlBuilder sb = new SafeHtmlBuilder();
 				sb.appendHtmlConstant("<div class=\"articleUpLe\">");
 				sb.appendEscaped(provider.getColorProvider().resolveData(at.getColorId()).getName());
@@ -108,9 +114,10 @@ public abstract class ArticleTable {
 		cellTable.addColumn(colorSize);
 
 		NumberFormat priceFormat = NumberFormat.getCurrencyFormat("EUR");
-		Column<ArticleTypeDTO, Number> price = new Column<ArticleTypeDTO, Number>(new NumberCell(priceFormat)) {
+		Column<T, Number> price = new Column<T, Number>(new NumberCell(priceFormat)) {
 			@Override
-			public Number getValue(ArticleTypeDTO at) {
+			public Number getValue(T a) {
+				ArticleTypeDTO at = ap.retrieveArticleType(a);
 				return at.getBuyPrice() / 100.0;
 			}
 		};
@@ -119,20 +126,21 @@ public abstract class ArticleTable {
 
 		addNavColumns(cellTable);
 
-		CellPreviewEvent.Handler<ArticleTypeDTO> cellPreviewHandler = new CellPreviewEvent.Handler<ArticleTypeDTO>() {
+		CellPreviewEvent.Handler<T> cellPreviewHandler = new CellPreviewEvent.Handler<T>() {
 			@Override
-			public void onCellPreview(CellPreviewEvent<ArticleTypeDTO> event) {
-				if ("click".equals(event.getNativeEvent().getType()) && event.getColumn() != 5) {
-					articleTypeDetailPopup.showPopup(event.getValue());
+			public void onCellPreview(CellPreviewEvent<T> event) {
+				ArticleTypeDTO at = ap.retrieveArticleType(event.getValue());
+				if ("click".equals(event.getNativeEvent().getType()) && event.getColumn() < 5) {
+					articleTypeDetailPopup.showPopup(at);
 				}
 			}
 		};
 		cellTable.addHandler(cellPreviewHandler, CellPreviewEvent.getType());
 
-		articleTypeProvider.addDataDisplay(cellTable);
+		articleProvider.addDataDisplay(cellTable);
 
 		ScrollPanel articleTypePanel = new ScrollPanel(cellTable);
-		articleTypePanel.setHeight("800px");
+		articleTypePanel.setHeight("750px");
 		return articleTypePanel;
 	}
 

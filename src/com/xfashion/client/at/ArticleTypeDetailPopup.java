@@ -29,6 +29,7 @@ import com.xfashion.client.color.ChooseColorPopup;
 import com.xfashion.client.img.ImageManagementPopup;
 import com.xfashion.client.img.ImageUploadService;
 import com.xfashion.client.img.ImageUploadServiceAsync;
+import com.xfashion.client.notepad.NotepadAddArticleEvent;
 import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.client.size.ChooseSizePopup;
@@ -206,7 +207,7 @@ public class ArticleTypeDetailPopup {
 		addToNotepadButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				Xfashion.eventBus.fireEvent(new AddArticleEvent(articleType));
+				Xfashion.eventBus.fireEvent(new NotepadAddArticleEvent(articleType));
 			}
 		});
 		hp.add(addToNotepadButton);
