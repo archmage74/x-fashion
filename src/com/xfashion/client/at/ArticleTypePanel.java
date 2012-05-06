@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.xfashion.client.ErrorEvent;
 import com.xfashion.client.PanelMediator;
 import com.xfashion.client.Xfashion;
+import com.xfashion.client.name.NameFilterEvent;
 import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.SizeDTO;
@@ -78,7 +79,7 @@ public class ArticleTypePanel {
 			@Override
 			public void onSelection(SelectionEvent<Suggestion> event) {
 				String selectedName = event.getSelectedItem().getReplacementString();
-				panelMediator.setSelectedName(selectedName);
+				Xfashion.eventBus.fireEvent(new NameFilterEvent(selectedName));
 			}
 		};
 		nameSuggestBox.addSelectionHandler(nameSelectionHandler);
@@ -87,7 +88,7 @@ public class ArticleTypePanel {
 			public void onKeyUp(KeyUpEvent event) {
 				String name = nameSuggestBox.getValue();
 				if (name == null || name.length() == 0) {
-					panelMediator.setSelectedName(null);
+					Xfashion.eventBus.fireEvent(new NameFilterEvent(null));
 				}
 			}
 		};
@@ -99,7 +100,7 @@ public class ArticleTypePanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				nameSuggestBox.setText("");
-				panelMediator.setSelectedName(null);
+				Xfashion.eventBus.fireEvent(new NameFilterEvent(null));
 			}
 		});
 		deleteNameFilterButton.setStyleName("clearNameFilterButton");

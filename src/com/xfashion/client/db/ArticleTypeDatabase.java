@@ -12,6 +12,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.view.client.HasData;
+import com.google.gwt.view.client.ListDataProvider;
 import com.xfashion.client.ErrorEvent;
 import com.xfashion.client.FilterDataProvider;
 import com.xfashion.client.Xfashion;
@@ -40,6 +41,8 @@ import com.xfashion.client.color.DeleteColorEvent;
 import com.xfashion.client.color.DeleteColorHandler;
 import com.xfashion.client.color.UpdateColorEvent;
 import com.xfashion.client.color.UpdateColorHandler;
+import com.xfashion.client.name.NameFilterEvent;
+import com.xfashion.client.name.NameFilterHandler;
 import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.size.CreateSizeEvent;
 import com.xfashion.client.size.CreateSizeHandler;
@@ -65,7 +68,7 @@ import com.xfashion.shared.StyleDTO;
 
 public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHandler, UpdateBrandHandler, DeleteBrandHandler, CreateStyleHandler,
 		UpdateStyleHandler, DeleteStyleHandler, CreateSizeHandler, UpdateSizeHandler, DeleteSizeHandler, CreateColorHandler, UpdateColorHandler,
-		DeleteColorHandler, CreateCategoryHandler, UpdateCategoryHandler, DeleteCategoryHandler {
+		DeleteColorHandler, CreateCategoryHandler, UpdateCategoryHandler, DeleteCategoryHandler, NameFilterHandler {
 
 	private ArticleTypeServiceAsync articleTypeService = (ArticleTypeServiceAsync) GWT.create(ArticleTypeService.class);
 
@@ -79,6 +82,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 	private BrandDataProvider brandProvider;
 	private ColorDataProvider colorProvider;
 	private SizeDataProvider sizeProvider;
+	private ListDataProvider<String> nameProvider;
 	private MultiWordSuggestOracle nameOracle;
 	private ArticleTypeDataProvider articleTypeProvider;
 
@@ -100,6 +104,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 		brandProvider = new BrandDataProvider();
 		sizeProvider = new SizeDataProvider();
 		colorProvider = new ColorDataProvider();
+		nameProvider = new ListDataProvider<String>();
 		articleTypeProvider = new ArticleTypeDataProvider();
 		nameOracle = new MultiWordSuggestOracle();
 
@@ -131,6 +136,8 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 		Xfashion.eventBus.addHandler(CreateColorEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(UpdateColorEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(DeleteColorEvent.TYPE, this);
+		
+		Xfashion.eventBus.addHandler(NameFilterEvent.TYPE, this);
 	}
 
 	public void createCategories() {
@@ -292,9 +299,11 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 		temp = applyFilter(sizeProvider, temp);
 		temp = applyFilter(colorProvider, temp);
 
-		Collection<String> names = getArticleNames(temp);
+		List<String> nameList = new ArrayList<String>(getArticleNames(temp));
+		Collections.sort(nameList);
+		nameProvider.setList(nameList);
 		nameOracle.clear();
-		nameOracle.addAll(names);
+		nameOracle.addAll(nameList);
 	}
 
 	private List<ArticleTypeDTO> applyFilter(FilterDataProvider<? extends FilterCellData> provider, List<ArticleTypeDTO> articleTypes) {
@@ -365,8 +374,9 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 		return categoryFilter;
 	}
 
-	public void setNameFilter(String name) {
-		nameFilter = name;
+	@Override
+	public void onNameFilter(NameFilterEvent event) {
+		nameFilter = event.getName();
 		applyFilters();
 		updateProviders();
 	}
@@ -779,10 +789,10 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 			@Override
 			public void onFailure(Throwable caught) {
 			}
-
 			@Override
 			public void onSuccess(ArticleTypeDTO result) {
 				articleTypes.add(result);
+				updateAvailableArticleNames();
 				applyFilters();
 			}
 		};
@@ -832,6 +842,14 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 
 	public void setNameOracle(MultiWordSuggestOracle nameOracle) {
 		this.nameOracle = nameOracle;
+	}
+
+	public ListDataProvider<String> getNameProvider() {
+		return nameProvider;
+	}
+
+	public void setNameProvider(ListDataProvider<String> nameProvider) {
+		this.nameProvider = nameProvider;
 	}
 
 }

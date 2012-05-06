@@ -211,8 +211,4 @@ public class PanelMediator {
 		articleTypeDatabase.deleteArticleType(articleType);
 	}
 
-	public void setSelectedName(String name) {
-		articleTypeDatabase.setNameFilter(name);
-	}
-
 }

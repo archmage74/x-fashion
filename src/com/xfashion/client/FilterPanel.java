@@ -19,6 +19,9 @@ import com.xfashion.shared.FilterCellData;
 
 public abstract class FilterPanel<T extends FilterCellData> implements ICrud<T>, IsMinimizable {
 
+	public static final int PANEL_MAX_WIDTH = 155;
+	public static final int PANEL_MIN_WIDTH = 22;
+	
 	protected Panel headerPanel;
 	protected Panel scrollPanel;
 	protected Panel listPanel;
@@ -180,14 +183,14 @@ public abstract class FilterPanel<T extends FilterCellData> implements ICrud<T>,
 	
 	public void minimize() {
 		if (!isMinimized()) {
-			PanelWidthAnimation pwa = new PanelWidthAnimation(this, 155, 25);
+			PanelWidthAnimation pwa = new PanelWidthAnimation(this, PANEL_MAX_WIDTH, PANEL_MIN_WIDTH);
 			pwa.run(300);
 		}
 	}
 	
 	public void maximize() {
 		if (isMinimized()) {
-			PanelWidthAnimation pwa = new PanelWidthAnimation(this, 25, 155);
+			PanelWidthAnimation pwa = new PanelWidthAnimation(this, PANEL_MIN_WIDTH, PANEL_MAX_WIDTH);
 			pwa.run(300);
 		}
 	}

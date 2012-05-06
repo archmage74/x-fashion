@@ -8,10 +8,11 @@ import com.xfashion.client.brand.BrandPanel;
 import com.xfashion.client.cat.CategoryPanel;
 import com.xfashion.client.color.ColorPanel;
 import com.xfashion.client.db.ArticleTypeDatabase;
+import com.xfashion.client.name.NamePanel;
 import com.xfashion.client.notepad.ArticleAmountDataProvider;
+import com.xfashion.client.notepad.NotepadPanel;
 import com.xfashion.client.notepad.NotepadStartMaximizeEvent;
 import com.xfashion.client.notepad.NotepadStartMaximizeHandler;
-import com.xfashion.client.notepad.NotepadPanel;
 import com.xfashion.client.notepad.NotepadStartMinimizeEvent;
 import com.xfashion.client.notepad.NotepadStartMinimizeHandler;
 import com.xfashion.client.size.SizePanel;
@@ -25,6 +26,7 @@ public class ArticleTypeManagement implements NotepadStartMaximizeHandler, Notep
 	StylePanel stylePanel;
 	SizePanel sizePanel;
 	ColorPanel colorPanel;
+	NamePanel namePanel;
 	NotepadPanel notepadPanel;
 
 	public Panel getPanel(ArticleTypeDatabase articleTypeDatabase, PanelMediator panelMediator, ArticleAmountDataProvider notepadArticleProvider) {
@@ -45,6 +47,9 @@ public class ArticleTypeManagement implements NotepadStartMaximizeHandler, Notep
 	
 			colorPanel = new ColorPanel(panelMediator, articleTypeDatabase.getColorProvider());
 			panel.add(colorPanel.createPanel());
+			
+			namePanel = new NamePanel(articleTypeDatabase.getNameProvider());
+			panel.add(namePanel.createPanel());
 	
 			ArticleTypePanel articleTypePanel = new ArticleTypePanel(panelMediator);
 			panel.add(articleTypePanel.createPanel(articleTypeDatabase.getArticleTypeProvider(), articleTypeDatabase.getNameOracle()));
@@ -65,6 +70,7 @@ public class ArticleTypeManagement implements NotepadStartMaximizeHandler, Notep
 		stylePanel.minimize();
 		sizePanel.minimize();
 		colorPanel.minimize();
+		namePanel.minimize();
 	}
 
 	@Override
@@ -73,6 +79,7 @@ public class ArticleTypeManagement implements NotepadStartMaximizeHandler, Notep
 		stylePanel.maximize();
 		sizePanel.maximize();
 		colorPanel.maximize();
+		namePanel.maximize();
 	}
 
 
