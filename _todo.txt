@@ -20,12 +20,19 @@ DONE - bulk creation of article types (only multiple sizes are allowed)
 DONE - user management
 REMOVED - loading progress bar (removed because pre-loading of data happens during user-login)
 DONE - print multiple stickers / bulk sticker printing
-
-minimize filter panels
-
-show notepad right beside article-types
+DONE - minimize filter panels
+DONE - show notepad right beside article-types
+DONE - order: marke - stil - name - farbe - groesse
 
 multi-column size-panel
+
+bulk editing of articles (current shown articles or notepad)
+
+filter table style like name-filter
+
+colored color-filter-attributes
+
+style per category
 
 einscannen von jedem artikel
 
@@ -55,3 +62,4 @@ NEU - height/number of entries in size + style
 
 NEU - define user-roles (admin, shop, ?)
 
+farbe
