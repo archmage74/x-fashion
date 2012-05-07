@@ -22,39 +22,35 @@ public class ArticleTypeManagement implements NotepadStartMaximizeHandler, Notep
 
 	HorizontalPanel panel;
 	
+	CategoryPanel categoryPanel;
 	BrandPanel brandPanel;
 	StylePanel stylePanel;
 	SizePanel sizePanel;
 	ColorPanel colorPanel;
 	NamePanel namePanel;
 	NotepadPanel notepadPanel;
+	ArticleTypePanel articleTypePanel;
 
 	public Panel getPanel(ArticleTypeDatabase articleTypeDatabase, PanelMediator panelMediator, ArticleAmountDataProvider notepadArticleProvider) {
 		if (panel == null) {
 			panel = new HorizontalPanel();
 	
-			CategoryPanel categoryPanel = new CategoryPanel(panelMediator, articleTypeDatabase.getCategoryProvider());
-			panel.add(categoryPanel.createPanel());
-	
+			categoryPanel = new CategoryPanel(panelMediator, articleTypeDatabase.getCategoryProvider());
 			brandPanel = new BrandPanel(panelMediator, articleTypeDatabase.getBrandProvider());
-			panel.add(brandPanel.createPanel());
-	
 			stylePanel = new StylePanel(panelMediator, articleTypeDatabase.getStyleProvider());
-			panel.add(stylePanel.createPanel());
-	
 			sizePanel = new SizePanel(panelMediator, articleTypeDatabase.getSizeProvider());
-			panel.add(sizePanel.createPanel());
-	
 			colorPanel = new ColorPanel(panelMediator, articleTypeDatabase.getColorProvider());
-			panel.add(colorPanel.createPanel());
-			
 			namePanel = new NamePanel(articleTypeDatabase.getNameProvider());
-			panel.add(namePanel.createPanel());
-	
-			ArticleTypePanel articleTypePanel = new ArticleTypePanel(panelMediator);
-			panel.add(articleTypePanel.createPanel(articleTypeDatabase.getArticleTypeProvider(), articleTypeDatabase.getNameOracle()));
-	
+			articleTypePanel = new ArticleTypePanel(panelMediator);
 			notepadPanel = new NotepadPanel(panelMediator);
+
+			panel.add(categoryPanel.createPanel());
+			panel.add(brandPanel.createPanel());
+			panel.add(stylePanel.createPanel());
+			panel.add(namePanel.createPanel());
+			panel.add(colorPanel.createPanel());
+			panel.add(sizePanel.createPanel());
+			panel.add(articleTypePanel.createPanel(articleTypeDatabase.getArticleTypeProvider(), articleTypeDatabase.getNameOracle()));
 			panel.add(notepadPanel.createPanel(notepadArticleProvider));
 		}
 		

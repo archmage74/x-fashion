@@ -90,6 +90,7 @@ public class NamePanel implements IsMinimizable {
 		};
 		cellTable.addHandler(cellPreviewHandler, CellPreviewEvent.getType());
 
+		cellTable.setWidth("160px");
 		dataProvider.addDataDisplay(cellTable);
 		listPanel.add(cellTable);
 		
