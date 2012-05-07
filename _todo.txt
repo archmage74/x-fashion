@@ -23,6 +23,9 @@ DONE - print multiple stickers / bulk sticker printing
 DONE - minimize filter panels
 DONE - show notepad right beside article-types
 DONE - order: marke - stil - name - farbe - groesse
+DONE - buttons to add +1 or +10 articles to notepad
+
+define styles per category
 
 multi-column size-panel
 
@@ -31,8 +34,6 @@ bulk editing of articles (current shown articles or notepad)
 filter table style like name-filter
 
 colored color-filter-attributes
-
-style per category
 
 einscannen von jedem artikel
 

@@ -28,5 +28,19 @@ public class ArticleTypeTable extends ArticleTable<ArticleTypeDTO> {
 				Xfashion.eventBus.fireEvent(new NotepadAddArticleEvent(at));
 			}
 		});
+
+		Column<ArticleTypeDTO, String> tenToNotepadButton = new Column<ArticleTypeDTO, String>(new ButtonCell()) {
+			@Override
+			public String getValue(ArticleTypeDTO at) {
+				return textMessages.tenToNotepadButton();
+			}
+		};
+		cellTable.addColumn(tenToNotepadButton);
+		tenToNotepadButton.setFieldUpdater(new FieldUpdater<ArticleTypeDTO, String>() {
+			@Override
+			public void update(int index, ArticleTypeDTO at, String value) {
+				Xfashion.eventBus.fireEvent(new NotepadAddArticleEvent(at));
+			}
+		});
 	}
 }

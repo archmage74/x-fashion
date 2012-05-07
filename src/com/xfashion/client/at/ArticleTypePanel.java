@@ -23,6 +23,7 @@ import com.xfashion.client.PanelMediator;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.name.NameFilterEvent;
 import com.xfashion.client.resources.ErrorMessages;
+import com.xfashion.client.resources.TextMessages;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.SizeDTO;
 
@@ -42,11 +43,11 @@ public class ArticleTypePanel {
 	
 	private ProvidesArticleFilter provider;
 	
-//	private TextMessages textMessages;
+	private TextMessages textMessages;
 	
 	public ArticleTypePanel(PanelMediator panelMediator) {
 		this.panelMediator = panelMediator;
-//		textMessages = GWT.create(TextMessages.class);
+		textMessages = GWT.create(TextMessages.class);
 		provider = panelMediator.getArticleTypeDatabase();
 		errorMessages = GWT.create(ErrorMessages.class);
 		panelMediator.setArticleTypePanel(this);
@@ -95,7 +96,7 @@ public class ArticleTypePanel {
 		nameSuggestBox.addKeyUpHandler(nameValueChangeHandler);
 		
 		headerPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
-		Button deleteNameFilterButton = new Button("x");
+		Button deleteNameFilterButton = new Button(textMessages.clearNameSuggestFilter());
 		deleteNameFilterButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -107,7 +108,7 @@ public class ArticleTypePanel {
 		headerPanel.add(deleteNameFilterButton);
 		
 		headerPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-		Button addArticleButton = new Button("+");
+		Button addArticleButton = new Button(textMessages.createArticle());
 		addArticleButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {

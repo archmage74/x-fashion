@@ -37,6 +37,10 @@ public class ArticleAmountDTO implements IsSerializable {
 		this.amount ++;
 	}
 
+	public void increaseAmount(Integer amount) {
+		this.amount += amount;
+	}
+
 	public void decreaseAmount() {
 		this.amount --;
 	}

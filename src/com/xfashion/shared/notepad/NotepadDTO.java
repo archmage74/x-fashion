@@ -40,6 +40,11 @@ public class NotepadDTO implements Serializable, IsSerializable {
 		articleAmount.increaseAmount();
 	}
 	
+	public void addArticleType(ArticleTypeDTO articleType, Integer amount) {
+		ArticleAmountDTO articleAmount = retrieveArticleAmount(articleType.getProductNumber());
+		articleAmount.increaseAmount(amount);
+	}
+	
 	public void deductArticleType(ArticleTypeDTO articleType) {
 		ArticleAmountDTO articleAmount = retrieveArticleAmount(articleType.getProductNumber());
 		if (articleAmount.getAmount() > 1) {
