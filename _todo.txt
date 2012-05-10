@@ -25,8 +25,7 @@ DONE - show notepad right beside article-types
 DONE - order: marke - stil - name - farbe - groesse
 DONE - buttons to add +1 or +10 articles to notepad
 REMOVED pdf instead of html (removed because html is sufficient)
-
-define styles per category
+DONE - define styles per category
 
 multi-column size-panel
 
