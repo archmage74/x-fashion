@@ -135,6 +135,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 			@Override
 			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
 			}
 
 			@Override
@@ -157,6 +158,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 		AsyncCallback<List<CategoryDTO>> callback = new AsyncCallback<List<CategoryDTO>>() {
 			@Override
 			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
 			}
 
 			@Override
@@ -178,6 +180,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 		AsyncCallback<List<BrandDTO>> callback = new AsyncCallback<List<BrandDTO>>() {
 			@Override
 			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
 			}
 
 			@Override
@@ -198,6 +201,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 		AsyncCallback<List<SizeDTO>> callback = new AsyncCallback<List<SizeDTO>>() {
 			@Override
 			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
 			}
 
 			@Override
@@ -218,6 +222,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 		AsyncCallback<List<ColorDTO>> callback = new AsyncCallback<List<ColorDTO>>() {
 			@Override
 			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
 			}
 
 			@Override
@@ -238,6 +243,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 		AsyncCallback<List<ArticleTypeDTO>> callback = new AsyncCallback<List<ArticleTypeDTO>>() {
 			@Override
 			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
 			}
 
 			@Override
@@ -406,6 +412,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 		AsyncCallback<CategoryDTO> callback = new AsyncCallback<CategoryDTO>() {
 			@Override
 			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
 			}
 
 			@Override
@@ -426,6 +433,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 		AsyncCallback<CategoryDTO> callback = new AsyncCallback<CategoryDTO>() {
 			@Override
 			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
 			}
 
 			@Override
@@ -487,6 +495,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 			@Override
 			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
 			}
 
 			@Override
@@ -509,6 +518,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 		AsyncCallback<BrandDTO> callback = new AsyncCallback<BrandDTO>() {
 			@Override
 			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
 			}
 
 			@Override
@@ -525,6 +535,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 			@Override
 			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
 			}
 
 			@Override
@@ -559,6 +570,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 		AsyncCallback<SizeDTO> callback = new AsyncCallback<SizeDTO>() {
 			@Override
 			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
 			}
 
 			@Override
@@ -575,6 +587,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 			@Override
 			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
 			}
 
 			@Override
@@ -609,6 +622,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 		AsyncCallback<ColorDTO> callback = new AsyncCallback<ColorDTO>() {
 			@Override
 			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
 			}
 
 			@Override
@@ -625,6 +639,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 			@Override
 			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
 			}
 
 			@Override
@@ -657,6 +672,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 		AsyncCallback<ArticleTypeDTO> callback = new AsyncCallback<ArticleTypeDTO>() {
 			@Override
 			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
 			}
 			@Override
 			public void onSuccess(ArticleTypeDTO result) {
@@ -672,6 +688,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 			@Override
 			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
 			}
 
 			@Override
@@ -688,6 +705,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 			@Override
 			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
 			}
 
 			@Override

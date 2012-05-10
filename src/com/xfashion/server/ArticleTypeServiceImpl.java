@@ -513,7 +513,7 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 	// article-types
 	// *************
 	@Override
-	public ArticleTypeDTO createArticleType(ArticleTypeDTO dto) throws IllegalArgumentException {
+	synchronized public ArticleTypeDTO createArticleType(ArticleTypeDTO dto) throws IllegalArgumentException {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
 			ArticleType articleType = createArticleType(pm, dto);
