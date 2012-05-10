@@ -5,6 +5,8 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.xfashion.shared.StyleDTO;
 
 @PersistenceCapable
@@ -12,8 +14,8 @@ public class Style {
 	
 	@PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-    private Long id;
-    
+    private Key key;
+	
 	@Persistent
 	private String name;
 	
@@ -35,18 +37,18 @@ public class Style {
 	
 	public StyleDTO createDTO() {
 		StyleDTO dto = new StyleDTO();
-		dto.setId(id);
+		dto.setId(getKeyString());
 		dto.setName(name);
 		dto.setSortIndex(sortIndex);
 		return dto;
 	}
 
-	public Long getId() {
-		return id;
+	public Key getKey() {
+		return key;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public String getKeyString() {
+		return KeyFactory.keyToString(key);
 	}
 
 	public String getName() {
@@ -64,5 +66,5 @@ public class Style {
 	public void setSortIndex(Integer sortIndex) {
 		this.sortIndex = sortIndex;
 	}
-	
+
 }

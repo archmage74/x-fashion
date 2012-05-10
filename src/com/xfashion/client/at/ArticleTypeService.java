@@ -26,7 +26,7 @@ public interface ArticleTypeService extends RemoteService {
 	
 	List<CategoryDTO> readCategories() throws IllegalArgumentException;
 	
-	void updateCategory(CategoryDTO category) throws IllegalArgumentException;
+	CategoryDTO updateCategory(CategoryDTO category) throws IllegalArgumentException;
 	
 	void deleteCategory(CategoryDTO category);
 
@@ -34,7 +34,7 @@ public interface ArticleTypeService extends RemoteService {
 	// styles
 	StyleDTO createStyle(StyleDTO style) throws IllegalArgumentException;
 
-	StyleDTO readStyle(Long categoryId) throws IllegalArgumentException;
+	StyleDTO readStyle(String styleKey) throws IllegalArgumentException;
 	
 	List<StyleDTO> readStyles() throws IllegalArgumentException;
 

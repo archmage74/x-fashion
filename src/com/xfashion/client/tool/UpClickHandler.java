@@ -6,7 +6,7 @@ import com.xfashion.client.FilterPanel;
 import com.xfashion.client.ICrud;
 import com.xfashion.shared.FilterCellData;
 
-public class UpClickHandler<T extends FilterCellData> implements ClickHandler {
+public class UpClickHandler<T extends FilterCellData<?>> implements ClickHandler {
 	
 	private T item;
 	private ICrud<T> crud;

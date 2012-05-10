@@ -21,7 +21,7 @@ public interface ArticleTypeServiceAsync {
 	
 	void readCategories(AsyncCallback<List<CategoryDTO>> callback);
 
-	void updateCategory(CategoryDTO category, AsyncCallback<Void> callback);
+	void updateCategory(CategoryDTO category, AsyncCallback<CategoryDTO> callback);
 	
 	void deleteCategory(CategoryDTO category, AsyncCallback<Void> callback);
 
@@ -29,7 +29,7 @@ public interface ArticleTypeServiceAsync {
 	// styles
 	void createStyle(StyleDTO style, AsyncCallback<StyleDTO> callback);
 
-	void readStyle(Long categoryId, AsyncCallback<StyleDTO> callback);
+	void readStyle(String styleKey, AsyncCallback<StyleDTO> callback);
 	
 	void readStyles(AsyncCallback<List<StyleDTO>> callback);
 

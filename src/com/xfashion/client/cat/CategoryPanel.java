@@ -13,7 +13,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.view.client.RowCountChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
-import com.xfashion.client.FilterDataProvider;
 import com.xfashion.client.FilterPanel;
 import com.xfashion.client.ICrud;
 import com.xfashion.client.PanelMediator;
@@ -29,7 +28,7 @@ public class CategoryPanel extends FilterPanel<CategoryDTO> implements ICrud<Cat
 
 	private CategoryCell cell;
 
-	public CategoryPanel(PanelMediator panelMediator, FilterDataProvider<CategoryDTO> dataProvider) {
+	public CategoryPanel(PanelMediator panelMediator, CategoryDataProvider dataProvider) {
 		super(panelMediator, dataProvider);
 		panelMediator.setCategoryPanel(this);
 	}

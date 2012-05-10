@@ -11,13 +11,14 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.view.client.ListDataProvider;
 import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.resources.ImageResources;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.client.tool.Buttons;
 import com.xfashion.shared.FilterCellData;
 
-public abstract class FilterPanel<T extends FilterCellData> implements ICrud<T>, IsMinimizable {
+public abstract class FilterPanel<T extends FilterCellData<?>> implements ICrud<T>, IsMinimizable {
 
 	public static final int PANEL_MAX_WIDTH = 155;
 	public static final int PANEL_MIN_WIDTH = 22;
@@ -28,7 +29,7 @@ public abstract class FilterPanel<T extends FilterCellData> implements ICrud<T>,
 	
 	protected PanelMediator panelMediator;
 	
-	protected FilterDataProvider<T> dataProvider;
+	protected ListDataProvider<T> dataProvider;
 	
 	protected ToolPanel<T> toolPanel;
 	
@@ -43,7 +44,7 @@ public abstract class FilterPanel<T extends FilterCellData> implements ICrud<T>,
 	protected ErrorMessages errorMessages;
 	protected ImageResources images;
 	
-	public FilterPanel(PanelMediator panelMediator, FilterDataProvider<T> dataProvider) {
+	public FilterPanel(PanelMediator panelMediator, ListDataProvider<T> dataProvider) {
 		errorMessages = GWT.create(ErrorMessages.class);
 		textMessages = GWT.create(TextMessages.class);
 		images = GWT.<ImageResources>create(ImageResources.class);
@@ -204,11 +205,11 @@ public abstract class FilterPanel<T extends FilterCellData> implements ICrud<T>,
 		return panelMediator;
 	}
 
-	public FilterDataProvider<T> getDataProvider() {
+	public ListDataProvider<T> getDataProvider() {
 		return dataProvider;
 	}
 
-	public void setDataProvider(FilterDataProvider<T> dataProvider) {
+	public void setDataProvider(ListDataProvider<T> dataProvider) {
 		this.dataProvider = dataProvider;
 	}
 

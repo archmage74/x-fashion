@@ -89,7 +89,7 @@ public class StickerRenderer {
 		return articleTypeService.readCategory(id).getName();
 	}
 	
-	private String readStyleName(Long id) {
+	private String readStyleName(String id) {
 		return articleTypeService.readStyle(id).getName();
 	}
 	

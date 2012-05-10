@@ -2,7 +2,7 @@ package com.xfashion.shared;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class ArticleTypeDTO extends DTO implements IsSerializable {
+public class ArticleTypeDTO extends DTO<Long> implements IsSerializable {
 	
 	private Long productNumber;
 
@@ -10,7 +10,7 @@ public class ArticleTypeDTO extends DTO implements IsSerializable {
 	
 	private Long categoryId;
 	
-	private Long styleId;
+	private String styleId;
 	
 	private Long brandId;
 	
@@ -48,11 +48,11 @@ public class ArticleTypeDTO extends DTO implements IsSerializable {
 		this.categoryId = categoryId;
 	}
 
-	public Long getStyleId() {
+	public String getStyleId() {
 		return styleId;
 	}
 
-	public void setStyleId(Long styleId) {
+	public void setStyleId(String styleId) {
 		this.styleId = styleId;
 	}
 

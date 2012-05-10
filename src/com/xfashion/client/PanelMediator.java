@@ -43,7 +43,7 @@ public class PanelMediator {
 	}
 
 	public CategoryDTO getSelectedCategory() {
-		return articleTypeDatabase.getCategoryFilter();
+		return articleTypeDatabase.getCategoryProvider().getCategoryFilter();
 	}
 	
 	public void setSelectedCategory(CategoryDTO selectedCategory) {
@@ -52,7 +52,7 @@ public class PanelMediator {
 	}
 
 	public void setSelectedStyles(Set<StyleDTO> styles) {
-		Set<Long> styleFilter = articleTypeDatabase.getStyleFilter();
+		Set<String> styleFilter = articleTypeDatabase.getCategoryProvider().getStyleFilter();
 		styleFilter.clear();
 		for (StyleDTO s : styles) {
 			styleFilter.add(s.getId());
@@ -62,7 +62,7 @@ public class PanelMediator {
 	}
 
 	public void setSelectedBrands(Set<BrandDTO> brands) {
-		Set<Long> brandFilter = articleTypeDatabase.getBrandFilter();
+		Set<Long> brandFilter = articleTypeDatabase.getBrandProvider().getFilter();
 		brandFilter.clear();
 		for (BrandDTO s : brands) {
 			brandFilter.add(s.getId());
@@ -72,7 +72,7 @@ public class PanelMediator {
 	}
 	
 	public void setSelectedSizes(Set<SizeDTO> sizes) {
-		Set<Long> sizeFilter = articleTypeDatabase.getSizeFilter();
+		Set<Long> sizeFilter = articleTypeDatabase.getSizeProvider().getFilter();
 		sizeFilter.clear();
 		for (SizeDTO s : sizes) {
 			sizeFilter.add(s.getId());
@@ -82,7 +82,7 @@ public class PanelMediator {
 	}
 
 	public void setSelectedColors(Set<ColorDTO> colors) {
-		Set<Long> colorFilter = articleTypeDatabase.getColorFilter();
+		Set<Long> colorFilter = articleTypeDatabase.getColorProvider().getFilter();
 		colorFilter.clear();
 		for (ColorDTO s : colors) {
 			colorFilter.add(s.getId());
@@ -165,7 +165,7 @@ public class PanelMediator {
 	
 	public List<SizeDTO> getSelectedSizes() {
 		ArrayList<SizeDTO> list = new ArrayList<SizeDTO>();
-		Set<Long> sizes = articleTypeDatabase.getSizeFilter();
+		Set<Long> sizes = articleTypeDatabase.getSizeProvider().getFilter();
 		SizeDataProvider sizeProvider = articleTypeDatabase.getSizeProvider();
 		for (Long id : sizes) {
 			list.add(sizeProvider.resolveData(id));
@@ -176,22 +176,22 @@ public class PanelMediator {
 	public ArticleTypeDTO createArticleTypeFromSelection() {
 		ArticleTypeDTO at = new ArticleTypeDTO();
 
-		CategoryDTO category = articleTypeDatabase.getCategoryFilter();
+		CategoryDTO category = articleTypeDatabase.getCategoryProvider().getCategoryFilter();
 		if (category != null) {
 			at.setCategoryId(category.getId());
 		}
 
-		Set<Long> styles = articleTypeDatabase.getStyleFilter();
+		Set<String> styles = articleTypeDatabase.getCategoryProvider().getStyleFilter();
 		if (styles.size() == 1) {
 			at.setStyleId(styles.iterator().next());
 		}
 		
-		Set<Long> brands = articleTypeDatabase.getBrandFilter();
+		Set<Long> brands = articleTypeDatabase.getBrandProvider().getFilter();
 		if (brands.size() == 1) {
 			at.setBrandId(brands.iterator().next());
 		}
 		
-		Set<Long> colors = articleTypeDatabase.getColorFilter();
+		Set<Long> colors = articleTypeDatabase.getColorProvider().getFilter();
 		if (colors.size() == 1) {
 			at.setColorId(colors.iterator().next());
 		}

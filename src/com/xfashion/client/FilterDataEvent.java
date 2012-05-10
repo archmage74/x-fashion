@@ -3,7 +3,7 @@ package com.xfashion.client;
 import com.google.web.bindery.event.shared.Event;
 import com.xfashion.shared.FilterCellData;
 
-public abstract class FilterDataEvent<H extends FilterDataEventHandler, T extends FilterCellData> extends Event<H> {
+public abstract class FilterDataEvent<H extends FilterDataEventHandler, T extends FilterCellData<?>> extends Event<H> {
 
 	T cellData;
 	

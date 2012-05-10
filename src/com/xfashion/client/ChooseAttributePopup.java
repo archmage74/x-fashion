@@ -19,7 +19,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.shared.FilterCellData;
 
-public abstract class ChooseAttributePopup<T extends FilterCellData> implements HasSelectionHandlers<T>  {
+public abstract class ChooseAttributePopup<T extends FilterCellData<?>> implements HasSelectionHandlers<T>  {
 	
 	private TextMessages textMessages = GWT.create(TextMessages.class);
 	

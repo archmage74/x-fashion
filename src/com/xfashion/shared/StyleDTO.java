@@ -2,7 +2,7 @@ package com.xfashion.shared;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class StyleDTO extends FilterCellData implements IsSerializable {
+public class StyleDTO extends FilterCellData<String> implements IsSerializable {
 	
 	public static String ICON_PREFIX_STYLE = "style";
 	

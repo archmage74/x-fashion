@@ -10,7 +10,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.xfashion.shared.CategoryDTO;
 import com.xfashion.shared.FilterCellData;
 
-public class FilterCell<T extends FilterCellData> extends AbstractCell<T> {
+public class FilterCell<T extends FilterCellData<?>> extends AbstractCell<T> {
 	
 	private PanelMediator panelMediator;
 	

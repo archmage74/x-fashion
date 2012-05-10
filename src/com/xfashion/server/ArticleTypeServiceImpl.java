@@ -7,6 +7,7 @@ import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.xfashion.client.at.ArticleTypeService;
 import com.xfashion.shared.ArticleTypeDTO;
@@ -101,19 +102,21 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 	}
 
 	@Override
-	public void updateCategory(CategoryDTO dto) throws IllegalArgumentException {
+	public CategoryDTO updateCategory(CategoryDTO dto) throws IllegalArgumentException {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
-			updateCategory(pm, dto);
+			Category category = updateCategory(pm, dto);
+			dto = category.createDTO();
 		} finally {
 			pm.close();
 		}
+		return dto;
 	}
 	
-	private void updateCategory(PersistenceManager pm, CategoryDTO dto) {
+	private Category updateCategory(PersistenceManager pm, CategoryDTO dto) {
 		Category category = readCategory(pm, dto.getId());
 		category.updateFromDTO(dto);
-		pm.makePersistent(category);
+		return pm.makePersistent(category);
 	}
 	
 	private void deleteCategories(PersistenceManager pm) {
@@ -145,7 +148,7 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
 			Style style = createStyle(pm, dto);
-			dto.setId(style.getId());
+			dto.setId(style.getKeyString());
 		} finally {
 			pm.close();
 		}
@@ -158,11 +161,11 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 	}
 
 	@Override
-	public StyleDTO readStyle(Long id) {
+	public StyleDTO readStyle(String keyString) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		StyleDTO dto = null;
 		try {
-			Style style = readStyle(pm, id);
+			Style style = readStyle(pm, keyString);
 			dto = style.createDTO();
 		} finally {
 			pm.close();
@@ -170,8 +173,8 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 		return dto;
 	}
 	
-	private Style readStyle(PersistenceManager pm, Long id) {
-		Style item = pm.getObjectById(Style.class, id);
+	private Style readStyle(PersistenceManager pm, String keyString) {
+		Style item = pm.getObjectById(Style.class, KeyFactory.stringToKey(keyString));
 		return item;
 	}
 	

@@ -2,15 +2,15 @@ package com.xfashion.shared;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-public abstract class DTO implements IsSerializable {
+public abstract class DTO<T extends Comparable<T>> implements IsSerializable {
 
-	protected Long id;
+	protected T id;
 	
-	public Long getId() {
+	public T getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(T id) {
 		this.id = id;
 	}
 

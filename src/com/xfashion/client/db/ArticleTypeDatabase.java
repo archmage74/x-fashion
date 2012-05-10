@@ -3,10 +3,8 @@ package com.xfashion.client.db;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -14,7 +12,6 @@ import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ListDataProvider;
 import com.xfashion.client.ErrorEvent;
-import com.xfashion.client.FilterDataProvider;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTypeDataProvider;
 import com.xfashion.client.at.ArticleTypeService;
@@ -55,14 +52,12 @@ import com.xfashion.client.style.CreateStyleEvent;
 import com.xfashion.client.style.CreateStyleHandler;
 import com.xfashion.client.style.DeleteStyleEvent;
 import com.xfashion.client.style.DeleteStyleHandler;
-import com.xfashion.client.style.StyleDataProvider;
 import com.xfashion.client.style.UpdateStyleEvent;
 import com.xfashion.client.style.UpdateStyleHandler;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.BrandDTO;
 import com.xfashion.shared.CategoryDTO;
 import com.xfashion.shared.ColorDTO;
-import com.xfashion.shared.FilterCellData;
 import com.xfashion.shared.SizeDTO;
 import com.xfashion.shared.StyleDTO;
 
@@ -78,7 +73,6 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 	private List<ArticleTypeDTO> filteredArticleTypes;
 
 	private CategoryDataProvider categoryProvider;
-	private StyleDataProvider styleProvider;
 	private BrandDataProvider brandProvider;
 	private ColorDataProvider colorProvider;
 	private SizeDataProvider sizeProvider;
@@ -86,7 +80,6 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 	private MultiWordSuggestOracle nameOracle;
 	private ArticleTypeDataProvider articleTypeProvider;
 
-	private CategoryDTO categoryFilter = null;
 	private String nameFilter = null;
 
 	private ErrorMessages errorMessages;
@@ -100,7 +93,6 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 		errorMessages = GWT.create(ErrorMessages.class);
 
 		categoryProvider = new CategoryDataProvider();
-		styleProvider = new StyleDataProvider();
 		brandProvider = new BrandDataProvider();
 		sizeProvider = new SizeDataProvider();
 		colorProvider = new ColorDataProvider();
@@ -109,7 +101,6 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 		nameOracle = new MultiWordSuggestOracle();
 
 		readCategories();
-		readStyles();
 		readBrands();
 		readSizes();
 		readColors();
@@ -154,7 +145,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 	}
 
 	private void checkAllRead() {
-		if (categoryProvider.isLoaded() && styleProvider.isLoaded() && brandProvider.isLoaded() && sizeProvider.isLoaded()
+		if (categoryProvider.isLoaded() && brandProvider.isLoaded() && sizeProvider.isLoaded()
 				&& colorProvider.isLoaded() && articleTypeProvider.isLoaded()) {
 			updateProviders();
 			Xfashion.eventBus.fireEvent(new ArticlesDatabaseLoadedEvent());
@@ -181,26 +172,6 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 		};
 
 		articleTypeService.readCategories(callback);
-	}
-
-	private void readStyles() {
-		AsyncCallback<List<StyleDTO>> callback = new AsyncCallback<List<StyleDTO>>() {
-			@Override
-			public void onFailure(Throwable caught) {
-			}
-
-			@Override
-			public void onSuccess(List<StyleDTO> result) {
-				Collections.sort(result);
-				List<StyleDTO> list = styleProvider.getList();
-				list.clear();
-				list.addAll(result);
-				styleProvider.refreshResolver();
-				styleProvider.setLoaded(true);
-				checkAllRead();
-			}
-		};
-		articleTypeService.readStyles(callback);
 	}
 
 	private void readBrands() {
@@ -292,67 +263,30 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 	}
 
 	public void updateAvailableArticleNames() {
-		List<ArticleTypeDTO> temp = new ArrayList<ArticleTypeDTO>(articleTypes);
-		temp = applyCategoryFilter(categoryFilter, temp);
-		temp = applyFilter(brandProvider, temp);
-		temp = applyFilter(styleProvider, temp);
-		temp = applyFilter(sizeProvider, temp);
-		temp = applyFilter(colorProvider, temp);
+		List<ArticleTypeDTO> result = new ArrayList<ArticleTypeDTO>(articleTypes);
+		result = categoryProvider.applyFilter(result);
+		result = brandProvider.applyFilter(result);
+		result = sizeProvider.applyFilter(result);
+		result = colorProvider.applyFilter(result);
 
-		List<String> nameList = new ArrayList<String>(getArticleNames(temp));
+		List<String> nameList = new ArrayList<String>(getArticleNames(result));
 		Collections.sort(nameList);
 		nameProvider.setList(nameList);
 		nameOracle.clear();
 		nameOracle.addAll(nameList);
 	}
 
-	private List<ArticleTypeDTO> applyFilter(FilterDataProvider<? extends FilterCellData> provider, List<ArticleTypeDTO> articleTypes) {
-		if (articleTypes == null) {
-			articleTypes = new ArrayList<ArticleTypeDTO>();
-		}
-		ArrayList<ArticleTypeDTO> temp = new ArrayList<ArticleTypeDTO>();
-		Set<Long> filter = provider.getFilter();
-
-		if (filter != null && filter.size() > 0) {
-			temp.clear();
-			for (ArticleTypeDTO at : articleTypes) {
-				if (filter.contains(provider.getAttributeContent(at))) {
-					temp.add(at);
-				}
-			}
-			articleTypes.retainAll(temp);
-		}
-
-		return articleTypes;
-	}
-
 	public void applyFilters() {
 		List<ArticleTypeDTO> result = new ArrayList<ArticleTypeDTO>(articleTypes);
 
-		result = applyCategoryFilter(categoryFilter, result);
-		result = applyFilter(styleProvider, result);
-		result = applyFilter(brandProvider, result);
-		result = applyFilter(sizeProvider, result);
-		result = applyFilter(colorProvider, result);
+		result = categoryProvider.applyFilter(result);
+		result = brandProvider.applyFilter(result);
+		result = sizeProvider.applyFilter(result);
+		result = colorProvider.applyFilter(result);
 		result = applyNameFilter(nameFilter, result);
 
 		filteredArticleTypes = result;
 		articleTypeProvider.setList(filteredArticleTypes);
-	}
-
-	private List<ArticleTypeDTO> applyCategoryFilter(CategoryDTO categoryFilter, List<ArticleTypeDTO> articles) {
-		ArrayList<ArticleTypeDTO> result = new ArrayList<ArticleTypeDTO>(articleTypes);
-		ArrayList<ArticleTypeDTO> temp = new ArrayList<ArticleTypeDTO>();
-
-		if (categoryFilter != null) {
-			for (ArticleTypeDTO at : result) {
-				if (categoryFilter.getId().equals(at.getCategoryId())) {
-					temp.add(at);
-				}
-			}
-			result.retainAll(temp);
-		}
-		return result;
 	}
 
 	private List<ArticleTypeDTO> applyNameFilter(String name, List<ArticleTypeDTO> articles) {
@@ -370,10 +304,6 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 		return result;
 	}
 
-	public CategoryDTO getCategoryFilter() {
-		return categoryFilter;
-	}
-
 	@Override
 	public void onNameFilter(NameFilterEvent event) {
 		nameFilter = event.getName();
@@ -382,103 +312,57 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 	}
 
 	public void setCategoryFilter(CategoryDTO category) {
-		categoryFilter = category;
+		categoryProvider.setCategoryFilter(category);
 		applyFilters();
 		updateProviders();
 	}
 
-	public void updateFilterProvider(FilterDataProvider<? extends FilterCellData> provider, List<ArticleTypeDTO> articleTypes) {
-		HashMap<Long, Integer> articleAmountPerAttribute = new HashMap<Long, Integer>();
-		for (ArticleTypeDTO at : articleTypes) {
-			Long attributeContent = provider.getAttributeContent(at);
-			if (attributeContent != null) {
-				Integer availableArticles = articleAmountPerAttribute.get(attributeContent);
-				if (availableArticles == null) {
-					availableArticles = new Integer(1);
-				} else {
-					availableArticles++;
-				}
-				articleAmountPerAttribute.put(attributeContent, availableArticles);
-			}
-		}
-		List<? extends FilterCellData> cellDataList = provider.getList();
-		for (FilterCellData scd : cellDataList) {
-			Integer availableArticles = articleAmountPerAttribute.get(scd.getId());
-			if (availableArticles == null) {
-				availableArticles = 0;
-			}
-			scd.setArticleAmount(availableArticles);
-			scd.setSelected(provider.getFilter().contains(scd.getId()));
-		}
-		provider.refresh();
-	}
-
 	public void updateProviders() {
-		updateStyleProvider();
 		updateBrandProvider();
+		updateStyleProvider();
 		updateSizeProvider();
 		updateColorProvider();
 		updateAvailableArticleNames();
 	}
 
 	public void updateStyleProvider() {
-		styleProvider.refreshResolver();
+		categoryProvider.refreshResolver();
 		List<ArticleTypeDTO> temp = new ArrayList<ArticleTypeDTO>(articleTypes);
-		temp = applyCategoryFilter(categoryFilter, temp);
-		temp = applyFilter(brandProvider, temp);
-		temp = applyFilter(sizeProvider, temp);
-		temp = applyFilter(colorProvider, temp);
+		temp = categoryProvider.applyCategoryFilter(temp);
+		temp = sizeProvider.applyFilter(temp);
+		temp = colorProvider.applyFilter(temp);
 		temp = applyNameFilter(nameFilter, temp);
-		updateFilterProvider(styleProvider, temp);
+		categoryProvider.updateStyles(temp);
 	}
-
+	
 	public void updateBrandProvider() {
 		brandProvider.refreshResolver();
 		List<ArticleTypeDTO> temp = new ArrayList<ArticleTypeDTO>(articleTypes);
-		temp = applyCategoryFilter(categoryFilter, temp);
-		temp = applyFilter(styleProvider, temp);
-		temp = applyFilter(sizeProvider, temp);
-		temp = applyFilter(colorProvider, temp);
+		temp = categoryProvider.applyFilter(temp);
+		temp = sizeProvider.applyFilter(temp);
+		temp = colorProvider.applyFilter(temp);
 		temp = applyNameFilter(nameFilter, temp);
-		updateFilterProvider(brandProvider, temp);
+		brandProvider.update(temp);
 	}
 
 	public void updateSizeProvider() {
 		sizeProvider.refreshResolver();
 		List<ArticleTypeDTO> temp = new ArrayList<ArticleTypeDTO>(articleTypes);
-		temp = applyCategoryFilter(categoryFilter, temp);
-		temp = applyFilter(styleProvider, temp);
-		temp = applyFilter(brandProvider, temp);
-		temp = applyFilter(colorProvider, temp);
+		temp = categoryProvider.applyFilter(temp);
+		temp = brandProvider.applyFilter(temp);
+		temp = colorProvider.applyFilter(temp);
 		temp = applyNameFilter(nameFilter, temp);
-		updateFilterProvider(sizeProvider, temp);
+		sizeProvider.update(temp);
 	}
 
 	public void updateColorProvider() {
 		colorProvider.refreshResolver();
 		List<ArticleTypeDTO> temp = new ArrayList<ArticleTypeDTO>(articleTypes);
-		temp = applyCategoryFilter(categoryFilter, temp);
-		temp = applyFilter(styleProvider, temp);
-		temp = applyFilter(brandProvider, temp);
-		temp = applyFilter(sizeProvider, temp);
+		temp = categoryProvider.applyFilter(temp);
+		temp = brandProvider.applyFilter(temp);
+		temp = sizeProvider.applyFilter(temp);
 		temp = applyNameFilter(nameFilter, temp);
-		updateFilterProvider(colorProvider, temp);
-	}
-
-	public Set<Long> getStyleFilter() {
-		return styleProvider.getFilter();
-	}
-
-	public Set<Long> getBrandFilter() {
-		return brandProvider.getFilter();
-	}
-
-	public Set<Long> getColorFilter() {
-		return colorProvider.getFilter();
-	}
-
-	public Set<Long> getSizeFilter() {
-		return sizeProvider.getFilter();
+		colorProvider.update(temp);
 	}
 
 	public void addBrandDisplay(HasData<BrandDTO> display) {
@@ -499,10 +383,6 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 
 	public CategoryDataProvider getCategoryProvider() {
 		return categoryProvider;
-	}
-
-	public StyleDataProvider getStyleProvider() {
-		return styleProvider;
 	}
 
 	public BrandDataProvider getBrandProvider() {
@@ -539,14 +419,20 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 
 	public void onUpdateCategory(UpdateCategoryEvent event) {
 		final CategoryDTO category = event.getCellData();
-		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+		updateCategory(category);
+	}
+	
+	protected void updateCategory(final CategoryDTO category) {
+		AsyncCallback<CategoryDTO> callback = new AsyncCallback<CategoryDTO>() {
 			@Override
 			public void onFailure(Throwable caught) {
 			}
 
 			@Override
-			public void onSuccess(Void result) {
+			public void onSuccess(CategoryDTO result) {
+				category.setStyles(result.getStyles());
 				categoryProvider.refresh();
+				updateStyleProvider();
 			}
 		};
 		articleTypeService.updateCategory(category, callback);
@@ -558,7 +444,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 			Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.categoryIsNotEmpty(category.getName())));
 			return;
 		}
-		if (category.equals(getCategoryFilter())) {
+		if (category.equals(getCategoryProvider().getCategoryFilter())) {
 			setCategoryFilter(null);
 		}
 		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
@@ -587,18 +473,13 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 
 	public void onCreateStyle(CreateStyleEvent event) {
 		final StyleDTO style = event.getCellData();
-		AsyncCallback<StyleDTO> callback = new AsyncCallback<StyleDTO>() {
-			@Override
-			public void onFailure(Throwable caught) {
-			}
-
-			@Override
-			public void onSuccess(StyleDTO result) {
-				styleProvider.getList().add(result);
-				updateStyleProvider();
-			}
-		};
-		articleTypeService.createStyle(style, callback);
+		if (categoryProvider.getCategoryFilter() != null) {
+			CategoryDTO category = categoryProvider.getCategoryFilter();
+			category.getStyles().add(style);
+			updateCategory(category);
+		} else {
+			Xfashion.fireError(errorMessages.noCategorySelected());
+		}
 	}
 
 	public void onUpdateStyle(UpdateStyleEvent event) {
@@ -610,8 +491,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 
 			@Override
 			public void onSuccess(Void result) {
-				brandProvider.refresh();
-				updateStyleProvider();
+				categoryProvider.refresh();
 			}
 		};
 		articleTypeService.updateStyle(style, callback);
@@ -619,20 +499,9 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 
 	public void onDeleteStyle(DeleteStyleEvent event) {
 		final StyleDTO style = event.getCellData();
-		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				String msg = caught.getMessage();
-				Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.styleDeleteFailed(msg)));
-			}
-
-			@Override
-			public void onSuccess(Void result) {
-				styleProvider.getList().remove(style);
-				updateStyleProvider();
-			}
-		};
-		articleTypeService.deleteStyle(style, callback);
+		CategoryDTO category = categoryProvider.getCategoryFilter();
+		category.getStyles().remove(style);
+		updateCategory(category);
 	}
 
 	public void onCreateBrand(CreateBrandEvent event) {

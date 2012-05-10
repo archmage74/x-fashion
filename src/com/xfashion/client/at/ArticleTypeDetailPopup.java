@@ -119,7 +119,7 @@ public class ArticleTypeDetailPopup {
 		nameTextBox.setWidth("96px");
 		brand.setText(provider.getBrandProvider().resolveData(updatedArticleType.getBrandId()).getName());
 		category.setText(provider.getCategoryProvider().resolveData(updatedArticleType.getCategoryId()).getName());
-		style.setText(provider.getStyleProvider().resolveData(updatedArticleType.getStyleId()).getName());
+		style.setText(provider.getCategoryProvider().resolveStyle(updatedArticleType.getStyleId()).getName());
 		size.setText(provider.getSizeProvider().resolveData(updatedArticleType.getSizeId()).getName());
 		color.setText(provider.getColorProvider().resolveData(updatedArticleType.getColorId()).getName());
 		buyPrice.setText(formatter.formatCentsToValue(updatedArticleType.getBuyPrice()));

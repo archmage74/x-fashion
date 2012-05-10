@@ -1,7 +1,7 @@
 package com.xfashion.shared;
 
 
-public abstract class FilterCellData extends DTO implements Comparable<FilterCellData>{
+public abstract class FilterCellData<T extends Comparable<T>> extends DTO<T> implements Comparable<FilterCellData<T>>{
 	
 	private String name;
 	
@@ -73,10 +73,10 @@ public abstract class FilterCellData extends DTO implements Comparable<FilterCel
 	}
 
 	@Override
-	public int compareTo(FilterCellData o) {
+	public int compareTo(FilterCellData<T> o) {
 		int cmp = sortIndex - o.getSortIndex();
 		if (cmp == 0) {
-			long cmp2 = id - o.getId();
+			long cmp2 = id.compareTo(o.getId());
 			return (int) (cmp2 / Math.abs(cmp2)); // convert to +1 or -1
 		} else {
 			return cmp;

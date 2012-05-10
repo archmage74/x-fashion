@@ -49,11 +49,13 @@ public class CategoryToolPanel extends ToolPanel<CategoryDTO> {
 
 		createTextBox = new TextBox();
 		createGrid.setWidget(0, 0, createTextBox);
+		createTextBox.setWidth("140px");
 
 		final ListBox createCategoryColorListBox = new ListBox();
 		for (String[] color : CategoryDTO.COLOR_SCHEMAS) {
 			createCategoryColorListBox.addItem(color[0] + " / " + color[1]);
 		}
+		createCategoryColorListBox.setWidth("140px");
 		createGrid.setWidget(1, 0, createCategoryColorListBox);
 
 		Button addCategoryButton = new Button("Anlegen");

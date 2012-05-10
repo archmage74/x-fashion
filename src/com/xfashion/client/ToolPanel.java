@@ -20,7 +20,7 @@ import com.xfashion.client.tool.EditClickHandler;
 import com.xfashion.client.tool.UpClickHandler;
 import com.xfashion.shared.FilterCellData;
 
-public abstract class ToolPanel<T extends FilterCellData> {
+public abstract class ToolPanel<T extends FilterCellData<?>> {
 
 	protected PanelMediator panelMediator;
 

@@ -5,12 +5,12 @@ import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.RowCountChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.xfashion.client.ErrorEvent;
 import com.xfashion.client.FilterCell;
-import com.xfashion.client.FilterDataProvider;
 import com.xfashion.client.FilterPanel;
 import com.xfashion.client.PanelMediator;
 import com.xfashion.client.ToolPanel;
@@ -22,7 +22,7 @@ public class StylePanel extends FilterPanel<StyleDTO> {
 
 	private MultiSelectionModel<StyleDTO> selectionModel;
 	
-	public StylePanel(PanelMediator panelMediator, FilterDataProvider<StyleDTO> dataProvider) {
+	public StylePanel(PanelMediator panelMediator, ListDataProvider<StyleDTO> dataProvider) {
 		super(panelMediator, dataProvider);
 		panelMediator.setStylePanel(this);
 	}

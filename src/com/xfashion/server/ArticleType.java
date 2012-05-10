@@ -5,6 +5,8 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.xfashion.shared.ArticleTypeDTO;
 
@@ -24,7 +26,7 @@ public class ArticleType implements IsSerializable {
 	private Long categoryId;
 	
 	@Persistent
-	private Long styleId;
+	private Key styleId;
 	
 	@Persistent
 	private Long brandId;
@@ -55,7 +57,7 @@ public class ArticleType implements IsSerializable {
 	public void updateFromDTO(ArticleTypeDTO dto) {
 		setName(dto.getName());
 		setCategoryId(dto.getCategoryId());
-		setStyleId(dto.getStyleId());
+		setStyleId(KeyFactory.stringToKey(dto.getStyleId()));
 		setBrandId(dto.getBrandId());
 		setSizeId(dto.getSizeId());
 		setColorId(dto.getColorId());
@@ -69,7 +71,7 @@ public class ArticleType implements IsSerializable {
 		dto.setProductNumber(getProductNumber());
 		dto.setName(getName());
 		dto.setCategoryId(getCategoryId());
-		dto.setStyleId(getStyleId());
+		dto.setStyleId(KeyFactory.keyToString(getStyleId()));
 		dto.setBrandId(getBrandId());
 		dto.setSizeId(getSizeId());
 		dto.setColorId(getColorId());
@@ -103,11 +105,11 @@ public class ArticleType implements IsSerializable {
 		this.categoryId = categoryId;
 	}
 
-	public Long getStyleId() {
+	public Key getStyleId() {
 		return styleId;
 	}
 
-	public void setStyleId(Long styleId) {
+	public void setStyleId(Key styleId) {
 		this.styleId = styleId;
 	}
 

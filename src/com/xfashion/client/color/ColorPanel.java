@@ -10,7 +10,7 @@ import com.google.gwt.view.client.RowCountChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.xfashion.client.ErrorEvent;
 import com.xfashion.client.FilterCell;
-import com.xfashion.client.FilterDataProvider;
+import com.xfashion.client.SimpleFilterDataProvider;
 import com.xfashion.client.FilterPanel;
 import com.xfashion.client.PanelMediator;
 import com.xfashion.client.ToolPanel;
@@ -22,7 +22,7 @@ public class ColorPanel extends FilterPanel<ColorDTO> {
 
 	private MultiSelectionModel<ColorDTO> selectionModel;
 	
-	public ColorPanel(PanelMediator panelMediator, FilterDataProvider<ColorDTO> dataProvider) {
+	public ColorPanel(PanelMediator panelMediator, SimpleFilterDataProvider<ColorDTO> dataProvider) {
 		super(panelMediator, dataProvider);
 		panelMediator.setColorPanel(this);
 	}

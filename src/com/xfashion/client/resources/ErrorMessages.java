@@ -35,4 +35,6 @@ public interface ErrorMessages extends Messages {
 	String createUserNoUserManagement();
 	
 	String noArticlesInNotepad();
+
+	String noCategorySelected();
 }

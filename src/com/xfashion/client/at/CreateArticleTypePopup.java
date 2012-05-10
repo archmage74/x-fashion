@@ -68,7 +68,7 @@ public class CreateArticleTypePopup {
 		currentSizes = sizes;
 		
 		categoryLabel.setText(provider.getCategoryProvider().resolveData(articleType.getCategoryId()).getName());
-		styleLabel.setText(provider.getStyleProvider().resolveData(articleType.getStyleId()).getName());
+		styleLabel.setText(provider.getCategoryProvider().resolveStyle(articleType.getStyleId()).getName());
 		brandLabel.setText(provider.getBrandProvider().resolveData(articleType.getBrandId()).getName());
 		colorLabel.setText(provider.getColorProvider().resolveData(articleType.getColorId()).getName());
 		if (sizes.size() > 1) {

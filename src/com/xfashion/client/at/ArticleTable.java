@@ -90,7 +90,7 @@ public abstract class ArticleTable<T> {
 				html.appendEscaped(at.getName());
 				html.appendHtmlConstant("</div>");
 				html.appendHtmlConstant("<div class=\"articleBoCe\">");
-				html.appendEscaped(provider.getBrandProvider().resolveData(at.getBrandId()).getName());
+				html.appendEscaped(provider.getCategoryProvider().resolveStyle(at.getStyleId()).getName());
 				html.appendHtmlConstant("</div>");
 				return html.toSafeHtml();
 			}

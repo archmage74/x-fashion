@@ -2,7 +2,7 @@ package com.xfashion.shared.img;
 
 import com.xfashion.shared.DTO;
 
-public class ArticleTypeImageDTO extends DTO {
+public class ArticleTypeImageDTO extends DTO<Long> {
 	
 	public static final String IMAGE_OPTIONS_BIG = "=s400-c";
 	
