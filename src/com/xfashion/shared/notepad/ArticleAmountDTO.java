@@ -45,4 +45,8 @@ public class ArticleAmountDTO implements IsSerializable {
 		this.amount --;
 	}
 
+	public void decreaseAmount(Integer amount) {
+		this.amount -= amount;
+	}
+
 }

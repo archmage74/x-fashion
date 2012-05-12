@@ -8,9 +8,15 @@ public class NotepadRemoveArticleEvent extends Event<NotepadRemoveArticleHandler
 	public static Type<NotepadRemoveArticleHandler> TYPE = new Type<NotepadRemoveArticleHandler>();
 	
 	private ArticleTypeDTO articleType;
-	
+	private Integer amount;
+
 	public NotepadRemoveArticleEvent(ArticleTypeDTO articleType) {
-		setArticleType(articleType);
+		this(articleType, 1);
+	}
+
+	public NotepadRemoveArticleEvent(ArticleTypeDTO articleType, Integer amount) {
+		this.articleType = articleType;
+		this.amount = amount;
 	}
 	
 	@Override
@@ -31,4 +37,12 @@ public class NotepadRemoveArticleEvent extends Event<NotepadRemoveArticleHandler
 		return articleType;
 	}
 	
+	
+	public Integer getAmount() {
+		return amount;
+	}
+
+	public void setAmount(Integer amount) {
+		this.amount = amount;
+	}
 }

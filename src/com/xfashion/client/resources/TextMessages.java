@@ -6,8 +6,10 @@ public interface TextMessages extends Messages {
 
 	String deleteArticleTypeButton();
 	String confirmDeleteArticle();
-	String toNotepadButton();
-	String tenToNotepadButton();
+	String addOneToNotepadButton();
+	String addTenToNotepadButton();
+	String removeOneFromNotepadButton();
+	String removeTenFromNotepadButton();
 	
 	String articleCreateMultipleSizes();
 	String articleCreateHeader();
