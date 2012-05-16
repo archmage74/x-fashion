@@ -132,7 +132,8 @@ public class ArticleTypeDetailPopup {
 		sellPriceTextBox.setWidth("96px");
 		productNumber.setText(barcodeHelper.generateEan(updatedArticleType));
 		printStickerLink.setHref(PRINT_STICKER_URL + updatedArticleType.getProductNumber());
-		articleTypeDetailPopup.center();
+		articleTypeDetailPopup.setPopupPosition(500, 50);
+		articleTypeDetailPopup.show();
 		
 		updateImage();
 	}
