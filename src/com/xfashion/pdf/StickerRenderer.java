@@ -52,7 +52,7 @@ public class StickerRenderer {
 		sb.append("<tr style=\"padding: 0px; margin: 0px;\">");
 		sb.append("<td style=\"align: center; padding-top: 0px;\">");
 		sb.append("<img width=\"120\" height=\"46\" src=\"http://intern.spielemarkt.at/spielemarkt_at/barcode.php?num=");
-		sb.append(new BarcodeHelper().generateEan(articleType));
+		sb.append(new BarcodeHelper().generateArticleEan(articleType));
 		sb.append("&type=ean13&imgtype=png\" />");
 		sb.append("</td>");
 		sb.append("<td class=\"articlePrice\">");

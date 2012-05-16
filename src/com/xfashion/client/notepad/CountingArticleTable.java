@@ -30,7 +30,7 @@ public class CountingArticleTable extends ArticleTable<ArticleAmountDTO> {
 		Column<ArticleAmountDTO, String> notepadButton = new Column<ArticleAmountDTO, String>(new ButtonCell()) {
 			@Override
 			public String getValue(ArticleAmountDTO at) {
-				return "-";
+				return textMessages.removeOneFromNotepadButton();
 			}
 		};
 		cellTable.addColumn(notepadButton);
@@ -39,6 +39,21 @@ public class CountingArticleTable extends ArticleTable<ArticleAmountDTO> {
 			public void update(int index, ArticleAmountDTO a, String value) {
 				ArticleTypeDTO at = articleProvider.retrieveArticleType(a);
 				Xfashion.eventBus.fireEvent(new NotepadRemoveArticleEvent(at));
+			}
+		});
+
+		Column<ArticleAmountDTO, String> removeTenFromNotepadButton = new Column<ArticleAmountDTO, String>(new ButtonCell()) {
+			@Override
+			public String getValue(ArticleAmountDTO at) {
+				return textMessages.removeTenFromNotepadButton();
+			}
+		};
+		cellTable.addColumn(removeTenFromNotepadButton);
+		removeTenFromNotepadButton.setFieldUpdater(new FieldUpdater<ArticleAmountDTO, String>() {
+			@Override
+			public void update(int index, ArticleAmountDTO a, String value) {
+				ArticleTypeDTO at = articleProvider.retrieveArticleType(a);
+				Xfashion.eventBus.fireEvent(new NotepadRemoveArticleEvent(at, 10));
 			}
 		});
 

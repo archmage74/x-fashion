@@ -39,7 +39,7 @@ public class ArticleTypeTable extends ArticleTable<ArticleTypeDTO> {
 		tenToNotepadButton.setFieldUpdater(new FieldUpdater<ArticleTypeDTO, String>() {
 			@Override
 			public void update(int index, ArticleTypeDTO at, String value) {
-				Xfashion.eventBus.fireEvent(new NotepadAddArticleEvent(at));
+				Xfashion.eventBus.fireEvent(new NotepadAddArticleEvent(at, 10));
 			}
 		});
 	}

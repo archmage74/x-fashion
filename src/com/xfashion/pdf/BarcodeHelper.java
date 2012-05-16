@@ -4,31 +4,47 @@ import com.xfashion.shared.ArticleTypeDTO;
 
 public class BarcodeHelper {
 
-	public String generateEan(ArticleTypeDTO at) {
-		int type = 1;
-		long categoryId = at.getCategoryId();
-		int buyPrice = at.getBuyPrice() / 100;
-		long productNumber = at.getProductNumber();
-		long parity = calculateParity(at.getProductNumber());
-		if (buyPrice > 999) {
+	public static final long MULT_TYPE = 100000000000L;
+	public static final long MULT_CAT = 1000000000L;
+	public static final long MULT_BUYP = 1000000L;
+	public static final long MULT_PROD = 1L;
+
+	public String generateArticleEan(ArticleTypeDTO at) {
+		if (at.getBuyPrice() > 99999) {
 			throw new RuntimeException("buy price too high");
 		}
-		if (productNumber > 999999) {
+		if (at.getProductNumber() > 999999) {
 			throw new RuntimeException("product number too long");
 		}
-		
-		return String.format("%1d%02d%03d%06d%1d", type, categoryId, buyPrice, productNumber, parity);
+		long type = 1L * MULT_TYPE;
+		long categoryId = at.getCategoryId() * MULT_CAT;
+		long buyPrice = (at.getBuyPrice() / 100) * MULT_BUYP;
+		long productNumber = at.getProductNumber() * MULT_PROD;
+
+		long val = type + categoryId + buyPrice + productNumber;
+
+		return generateEan(val);
+	}
+	
+	public String generateEan(long value) {
+		long checksum = calculateChecksum(value);
+		return String.format("%12d%1d", value, checksum);
 	}
 
-	public long calculateParity(long value) {
+	public long calculateChecksum(long value) {
+		long mult = 3;
 		long sum = 0;
-		sum += value / 100000;
-		sum += (value % 100000) / 10000;
-		sum += (value % 10000) / 1000;
-		sum += (value % 1000) / 100;
-		sum += (value % 100) / 10;
-		sum += (value % 10);
-		return sum % 10;
+		while (value > 0) {
+			sum += mult * (value % 10);
+			if (mult == 3) {
+				mult = 1;
+			} else {
+				mult = 3;
+			}
+			value = value / 10;
+		}
+		long checksum = 10 - (sum % 10);
+		return checksum;
 	}
 
 }

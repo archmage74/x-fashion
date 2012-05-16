@@ -691,6 +691,8 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 			@Override
 			public void onSuccess(ArticleTypeDTO result) {
 				articleTypes.add(result);
+				articleTypeProvider.getList().add(result);
+				articleTypeProvider.refreshResolver();
 				updateAvailableArticleNames();
 				applyFilters();
 			}
