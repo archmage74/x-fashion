@@ -118,7 +118,7 @@ public abstract class ArticleTable<T> {
 			@Override
 			public Number getValue(T a) {
 				ArticleTypeDTO at = ap.retrieveArticleType(a);
-				return at.getBuyPrice() / 100.0;
+				return at.getSellPrice() / 100.0;
 			}
 		};
 		price.setCellStyleNames("articlePrice");

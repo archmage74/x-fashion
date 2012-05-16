@@ -12,20 +12,16 @@ import com.xfashion.shared.FilterCellData;
 public abstract class SimpleFilterDataProvider<T extends FilterCellData<?>> extends FilterDataProvider<T> {
 
 	private Set<Long> filter;
-	
+
 	public SimpleFilterDataProvider() {
 		super();
 		filter = new HashSet<Long>();
 	}
-	
+
 	public Set<Long> getFilter() {
 		return filter;
 	}
 
-	public void setFilter(Set<Long> filter) {
-		this.filter = filter;
-	}
-	
 	@Override
 	public List<ArticleTypeDTO> applyFilter(List<ArticleTypeDTO> articleTypes) {
 		if (articleTypes == null) {
@@ -46,7 +42,7 @@ public abstract class SimpleFilterDataProvider<T extends FilterCellData<?>> exte
 
 		return articleTypes;
 	}
-	
+
 	public void update(List<ArticleTypeDTO> articleTypes) {
 		HashMap<Long, Integer> articleAmountPerAttribute = new HashMap<Long, Integer>();
 		for (ArticleTypeDTO at : articleTypes) {

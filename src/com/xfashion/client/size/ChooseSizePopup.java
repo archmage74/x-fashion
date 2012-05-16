@@ -13,7 +13,8 @@ public class ChooseSizePopup extends ChooseAttributePopup<SizeDTO> {
 
 	@Override
 	public FilterPanel<SizeDTO> getPanel() {
-		return panelMediator.getSizePanel();
+		return null;
+//		return panelMediator.getSizePanel();
 	}
 
 }

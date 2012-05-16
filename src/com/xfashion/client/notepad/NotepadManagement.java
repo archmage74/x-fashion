@@ -193,14 +193,14 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 
 	@Override
 	public void onNotepadAddArticle(NotepadAddArticleEvent event) {
-		currentNotepad.addArticleType(event.getArticleType(), 10);
+		currentNotepad.addArticleType(event.getArticleType(), event.getAmount());
 		articleProvider.setList(currentNotepad.getArticleTypes());
 		refreshListBox();
 	}
 
 	@Override
 	public void onNotepadRemoveArticle(NotepadRemoveArticleEvent event) {
-		currentNotepad.deductArticleType(event.getArticleType());
+		currentNotepad.deductArticleType(event.getArticleType(), event.getAmount());
 		articleProvider.setList(currentNotepad.getArticleTypes());
 		refreshListBox();
 	}

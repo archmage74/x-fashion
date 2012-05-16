@@ -48,10 +48,10 @@ public class StickerRenderer {
 		sb.append("</tr>");
 		sb.append("</table>");
 
-		sb.append("<table class=\"articleCell\" style=\"width: 210px;\">");
+		sb.append("<table class=\"articleCell\" style=\"width: 180px;\">");
 		sb.append("<tr style=\"padding: 0px; margin: 0px;\">");
 		sb.append("<td style=\"align: center; padding-top: 0px;\">");
-		sb.append("<img width=\"142\" height=\"46\" src=\"http://intern.spielemarkt.at/spielemarkt_at/barcode.php?num=");
+		sb.append("<img width=\"120\" height=\"46\" src=\"http://intern.spielemarkt.at/spielemarkt_at/barcode.php?num=");
 		sb.append(new BarcodeHelper().generateEan(articleType));
 		sb.append("&type=ean13&imgtype=png\" />");
 		sb.append("</td>");
@@ -121,21 +121,21 @@ public class StickerRenderer {
 			"	text-align: center;\n" + 
 			"	width: 70px;\n" +
 			"	height: 20px;\n" +
-			"	border-bottom: 1px solid silver;\n" +
+			"	border-bottom: 1px solid black;\n" +
 			"}\n" +
 			".articleUpCe {\n" +
 			"	text-align: center;\n" + 
 			"	width: 70px;\n" +
 			"	height: 20px;\n" +
-			"	border-bottom: 1px solid silver;\n" +
-			"	border-left: 1px solid silver;\n" +
-			"	border-right: 1px solid silver;\n" + 
+			"	border-bottom: 1px solid black;\n" +
+			"	border-left: 1px solid black;\n" +
+			"	border-right: 1px solid black;\n" + 
 			"}\n" +
 			".articleUpRi {\n" +
 			"	text-align: center;\n" +
 			"	width: 70px;\n" +
 			"	height: 20px;\n" +
-			"	border-bottom: 1px solid silver;\n" + 
+			"	border-bottom: 1px solid black;\n" + 
 			"}\n" +
 			".articleBoLe {\n" +
 			"	text-align: center;\n" +
@@ -146,8 +146,8 @@ public class StickerRenderer {
 			"	text-align: center;\n" +
 			"	width: 70px;\n" +
 			"	height: 20px;\n" +
-			"	border-left: 1px solid silver;\n" +
-			"	border-right: 1px solid silver;\n" + 
+			"	border-left: 1px solid black;\n" +
+			"	border-right: 1px solid black;\n" + 
 			"}\n" +
 			".articleBoRi {\n" +
 			"	text-align: center;\n" +

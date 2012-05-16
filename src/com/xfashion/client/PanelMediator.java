@@ -71,16 +71,6 @@ public class PanelMediator {
 		articleTypeDatabase.updateProviders();
 	}
 	
-	public void setSelectedSizes(Set<SizeDTO> sizes) {
-		Set<Long> sizeFilter = articleTypeDatabase.getSizeProvider().getFilter();
-		sizeFilter.clear();
-		for (SizeDTO s : sizes) {
-			sizeFilter.add(s.getId());
-		}
-		articleTypeDatabase.applyFilters();
-		articleTypeDatabase.updateProviders();
-	}
-
 	public void setSelectedColors(Set<ColorDTO> colors) {
 		Set<Long> colorFilter = articleTypeDatabase.getColorProvider().getFilter();
 		colorFilter.clear();

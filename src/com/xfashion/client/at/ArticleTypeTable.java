@@ -18,7 +18,7 @@ public class ArticleTypeTable extends ArticleTable<ArticleTypeDTO> {
 		Column<ArticleTypeDTO, String> notepadButton = new Column<ArticleTypeDTO, String>(new ButtonCell()) {
 			@Override
 			public String getValue(ArticleTypeDTO at) {
-				return textMessages.toNotepadButton();
+				return textMessages.addOneToNotepadButton();
 			}
 		};
 		cellTable.addColumn(notepadButton);
@@ -32,7 +32,7 @@ public class ArticleTypeTable extends ArticleTable<ArticleTypeDTO> {
 		Column<ArticleTypeDTO, String> tenToNotepadButton = new Column<ArticleTypeDTO, String>(new ButtonCell()) {
 			@Override
 			public String getValue(ArticleTypeDTO at) {
-				return textMessages.tenToNotepadButton();
+				return textMessages.addTenToNotepadButton();
 			}
 		};
 		cellTable.addColumn(tenToNotepadButton);

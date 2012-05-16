@@ -36,8 +36,7 @@ public class NotepadDTO implements Serializable, IsSerializable {
 	}
 
 	public void addArticleType(ArticleTypeDTO articleType) {
-		ArticleAmountDTO articleAmount = retrieveArticleAmount(articleType.getProductNumber());
-		articleAmount.increaseAmount();
+		addArticleType(articleType, 1);
 	}
 	
 	public void addArticleType(ArticleTypeDTO articleType, Integer amount) {
@@ -46,9 +45,13 @@ public class NotepadDTO implements Serializable, IsSerializable {
 	}
 	
 	public void deductArticleType(ArticleTypeDTO articleType) {
+		deductArticleType(articleType, 1);
+	}
+	
+	public void deductArticleType(ArticleTypeDTO articleType, Integer amount) {
 		ArticleAmountDTO articleAmount = retrieveArticleAmount(articleType.getProductNumber());
-		if (articleAmount.getAmount() > 1) {
-			articleAmount.decreaseAmount();
+		if (articleAmount.getAmount() > amount) {
+			articleAmount.decreaseAmount(amount);
 		} else {
 			articles.remove(articleAmount);
 		}
