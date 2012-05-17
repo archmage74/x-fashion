@@ -12,10 +12,10 @@ import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
-import com.xfashion.shared.SizeDTO;
+import com.xfashion.shared.ColorDTO;
 
 @PersistenceCapable
-public class Sizes {
+public class Colors {
 	
 	@PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -23,10 +23,10 @@ public class Sizes {
 	
 	@Persistent
 	@Order(extensions = @Extension(vendorName="datanucleus", key="list-ordering", value="sortIndex asc"))
-	private List<Size> sizes;
+	private List<Color> colors;
 	
-	public Sizes() {
-		sizes = new ArrayList<Size>();
+	public Colors() {
+		this.colors = new ArrayList<Color>();
 	}
 	
 	public Key getKey() {
@@ -37,31 +37,23 @@ public class Sizes {
 		this.key = key;
 	}
 
-	public List<Size> getSizes() {
-		return sizes;
-	}
-
-	public List<SizeDTO> getDtos() {
-		List<SizeDTO> dtos = new ArrayList<SizeDTO>(getSizes().size());
-		for (Size o : getSizes()) {
-			SizeDTO dto = o.createDTO();
+	public List<ColorDTO> getDtos() {
+		List<ColorDTO> dtos = new ArrayList<ColorDTO>(getColors().size());
+		for (Color o : getColors()) {
+			ColorDTO dto = o.createDTO();
 			dtos.add(dto);
 		}
 		return dtos;
 	}
 
-	public void setSizes(List<Size> sizes) {
-		this.sizes = sizes;
-	}
-
-	public void update(List<SizeDTO> dtos) {
-		List<Size> toRemove = new ArrayList<Size>(sizes);
-		List<Size> toAdd = new ArrayList<Size>();
+	public void update(List<ColorDTO> dtos) {
+		List<Color> toRemove = new ArrayList<Color>(colors);
+		List<Color> toAdd = new ArrayList<Color>();
 		int idx = 0;
-		for (SizeDTO dto : dtos) {
-			Size item = findItem(sizes, dto);
+		for (ColorDTO dto : dtos) {
+			Color item = findItem(colors, dto);
 			if (item == null) {
-				item = new Size(dto);
+				item = new Color(dto);
 				toAdd.add(item);
 			} else {
 				toRemove.remove(item);
@@ -69,19 +61,27 @@ public class Sizes {
 			}
 			item.setSortIndex(idx++);
 		}
-		for (Size item : toRemove) {
-			sizes.remove(item);
+		for (Color item : toRemove) {
+			colors.remove(item);
 		}
-		this.sizes.addAll(toAdd);
+		this.colors.addAll(toAdd);
 	}
 
-	private Size findItem(List<Size> list, SizeDTO dto) {
-		for (Size item : list) {
+	private Color findItem(List<Color> list, ColorDTO dto) {
+		for (Color item : list) {
 			if (dto.getKey() != null && KeyFactory.stringToKey(dto.getKey()).equals(item.getKey())) {
 				return item;
 			}
 		}
 		return null;
 	}
-	
+
+	public List<Color> getColors() {
+		return colors;
+	}
+
+	public void setColors(List<Color> colors) {
+		this.colors = colors;
+	}
+
 }

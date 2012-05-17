@@ -44,13 +44,13 @@ public interface ArticleTypeService extends RemoteService {
 	
 	
 	// brands
-	BrandDTO createBrand(BrandDTO brand) throws IllegalArgumentException;
-	
-	BrandDTO readBrand(Long categoryId) throws IllegalArgumentException;
+	BrandDTO readBrand(String key) throws IllegalArgumentException;
 	
 	List<BrandDTO> readBrands() throws IllegalArgumentException;
 	
 	void updateBrand(BrandDTO dto) throws IllegalArgumentException;
+	
+	List<BrandDTO> updateBrands(List<BrandDTO> brands) throws IllegalArgumentException;
 	
 	void deleteBrand(BrandDTO brand);
 	
@@ -68,13 +68,13 @@ public interface ArticleTypeService extends RemoteService {
 	
 	
 	// colors
-	ColorDTO createColor(ColorDTO brand) throws IllegalArgumentException;
-	
-	ColorDTO readColor(Long categoryId) throws IllegalArgumentException;
+	ColorDTO readColor(String key) throws IllegalArgumentException;
 	
 	List<ColorDTO> readColors() throws IllegalArgumentException;
 	
 	void updateColor(ColorDTO dto) throws IllegalArgumentException;
+	
+	List<ColorDTO> updateColors(List<ColorDTO> colors) throws IllegalArgumentException;
 	
 	void deleteColor(ColorDTO brand);
 	

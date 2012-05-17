@@ -16,12 +16,6 @@ import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTypeDataProvider;
 import com.xfashion.client.at.ProvidesArticleFilter;
 import com.xfashion.client.brand.BrandDataProvider;
-import com.xfashion.client.brand.CreateBrandEvent;
-import com.xfashion.client.brand.CreateBrandHandler;
-import com.xfashion.client.brand.DeleteBrandEvent;
-import com.xfashion.client.brand.DeleteBrandHandler;
-import com.xfashion.client.brand.UpdateBrandEvent;
-import com.xfashion.client.brand.UpdateBrandHandler;
 import com.xfashion.client.cat.CategoryDataProvider;
 import com.xfashion.client.cat.CreateCategoryEvent;
 import com.xfashion.client.cat.CreateCategoryHandler;
@@ -30,12 +24,6 @@ import com.xfashion.client.cat.DeleteCategoryHandler;
 import com.xfashion.client.cat.UpdateCategoryEvent;
 import com.xfashion.client.cat.UpdateCategoryHandler;
 import com.xfashion.client.color.ColorDataProvider;
-import com.xfashion.client.color.CreateColorEvent;
-import com.xfashion.client.color.CreateColorHandler;
-import com.xfashion.client.color.DeleteColorEvent;
-import com.xfashion.client.color.DeleteColorHandler;
-import com.xfashion.client.color.UpdateColorEvent;
-import com.xfashion.client.color.UpdateColorHandler;
 import com.xfashion.client.name.NameFilterEvent;
 import com.xfashion.client.name.NameFilterHandler;
 import com.xfashion.client.resources.ErrorMessages;
@@ -53,8 +41,7 @@ import com.xfashion.shared.ColorDTO;
 import com.xfashion.shared.SizeDTO;
 import com.xfashion.shared.StyleDTO;
 
-public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHandler, UpdateBrandHandler, DeleteBrandHandler, CreateStyleHandler,
-		UpdateStyleHandler, DeleteStyleHandler, CreateColorHandler, UpdateColorHandler, DeleteColorHandler, CreateCategoryHandler,
+public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateStyleHandler, UpdateStyleHandler, DeleteStyleHandler, CreateCategoryHandler,
 		UpdateCategoryHandler, DeleteCategoryHandler, NameFilterHandler, RefreshFilterHandler {
 
 	private ArticleTypeServiceAsync articleTypeService = (ArticleTypeServiceAsync) GWT.create(ArticleTypeService.class);
@@ -86,9 +73,9 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 
 		articleTypeProvider = new ArticleTypeDataProvider();
 		categoryProvider = new CategoryDataProvider();
-		brandProvider = new BrandDataProvider();
+		brandProvider = new BrandDataProvider(articleTypeProvider);
 		sizeProvider = new SizeDataProvider(articleTypeProvider);
-		colorProvider = new ColorDataProvider();
+		colorProvider = new ColorDataProvider(articleTypeProvider);
 		nameProvider = new ListDataProvider<String>();
 		nameOracle = new MultiWordSuggestOracle();
 
@@ -106,17 +93,9 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 		Xfashion.eventBus.addHandler(UpdateCategoryEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(DeleteCategoryEvent.TYPE, this);
 
-		Xfashion.eventBus.addHandler(CreateBrandEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(UpdateBrandEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(DeleteBrandEvent.TYPE, this);
-
 		Xfashion.eventBus.addHandler(CreateStyleEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(UpdateStyleEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(DeleteStyleEvent.TYPE, this);
-
-		Xfashion.eventBus.addHandler(CreateColorEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(UpdateColorEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(DeleteColorEvent.TYPE, this);
 
 		Xfashion.eventBus.addHandler(NameFilterEvent.TYPE, this);
 	}
@@ -175,7 +154,6 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 
 			@Override
 			public void onSuccess(List<BrandDTO> result) {
-				Collections.sort(result);
 				List<BrandDTO> list = brandProvider.getList();
 				list.clear();
 				list.addAll(result);
@@ -219,7 +197,6 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 
 			@Override
 			public void onSuccess(List<ColorDTO> result) {
-				Collections.sort(result);
 				List<ColorDTO> list = colorProvider.getList();
 				list.clear();
 				list.addAll(result);
@@ -509,109 +486,6 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateBrandHa
 		CategoryDTO category = categoryProvider.getCategoryFilter();
 		category.getStyles().remove(style);
 		updateCategory(category);
-	}
-
-	public void onCreateBrand(CreateBrandEvent event) {
-		final BrandDTO brand = event.getCellData();
-		AsyncCallback<BrandDTO> callback = new AsyncCallback<BrandDTO>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				Xfashion.fireError(caught.getMessage());
-			}
-
-			@Override
-			public void onSuccess(BrandDTO result) {
-				brandProvider.getList().add(result);
-				updateBrandProvider();
-			}
-		};
-		articleTypeService.createBrand(brand, callback);
-	}
-
-	public void onUpdateBrand(UpdateBrandEvent event) {
-		final BrandDTO brand = event.getCellData();
-		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				Xfashion.fireError(caught.getMessage());
-			}
-
-			@Override
-			public void onSuccess(Void result) {
-				brandProvider.refresh();
-				updateBrandProvider();
-			}
-		};
-		articleTypeService.updateBrand(brand, callback);
-	}
-
-	public void onDeleteBrand(DeleteBrandEvent event) {
-		final BrandDTO brand = event.getCellData();
-		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				String msg = caught.getMessage();
-				Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.brandDeleteFailed(msg)));
-			}
-
-			@Override
-			public void onSuccess(Void result) {
-				brandProvider.getList().remove(brand);
-				updateBrandProvider();
-			}
-		};
-		articleTypeService.deleteBrand(brand, callback);
-	}
-
-	public void onCreateColor(CreateColorEvent event) {
-		final ColorDTO color = event.getCellData();
-		AsyncCallback<ColorDTO> callback = new AsyncCallback<ColorDTO>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				Xfashion.fireError(caught.getMessage());
-			}
-
-			@Override
-			public void onSuccess(ColorDTO result) {
-				colorProvider.getList().add(result);
-				updateColorProvider();
-			}
-		};
-		articleTypeService.createColor(color, callback);
-	}
-
-	public void onUpdateColor(UpdateColorEvent event) {
-		final ColorDTO color = event.getCellData();
-		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				Xfashion.fireError(caught.getMessage());
-			}
-
-			@Override
-			public void onSuccess(Void result) {
-				updateColorProvider();
-			}
-		};
-		articleTypeService.updateColor(color, callback);
-	}
-
-	public void onDeleteColor(DeleteColorEvent event) {
-		final ColorDTO color = event.getCellData();
-		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				String msg = caught.getMessage();
-				Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.colorDeleteFailed(msg)));
-			}
-
-			@Override
-			public void onSuccess(Void result) {
-				colorProvider.getList().remove(color);
-				updateColorProvider();
-			}
-		};
-		articleTypeService.deleteColor(color, callback);
 	}
 
 	public void createArticleType(final ArticleTypeDTO articleType) {

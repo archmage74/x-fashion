@@ -15,9 +15,7 @@ import com.xfashion.client.size.SizeDataProvider;
 import com.xfashion.client.size.SizePanel;
 import com.xfashion.client.style.StylePanel;
 import com.xfashion.shared.ArticleTypeDTO;
-import com.xfashion.shared.BrandDTO;
 import com.xfashion.shared.CategoryDTO;
-import com.xfashion.shared.ColorDTO;
 import com.xfashion.shared.SizeDTO;
 import com.xfashion.shared.StyleDTO;
 
@@ -61,26 +59,6 @@ public class PanelMediator {
 		articleTypeDatabase.updateProviders();
 	}
 
-	public void setSelectedBrands(Set<BrandDTO> brands) {
-		Set<Long> brandFilter = articleTypeDatabase.getBrandProvider().getFilter();
-		brandFilter.clear();
-		for (BrandDTO s : brands) {
-			brandFilter.add(s.getId());
-		}
-		articleTypeDatabase.applyFilters();
-		articleTypeDatabase.updateProviders();
-	}
-	
-	public void setSelectedColors(Set<ColorDTO> colors) {
-		Set<Long> colorFilter = articleTypeDatabase.getColorProvider().getFilter();
-		colorFilter.clear();
-		for (ColorDTO s : colors) {
-			colorFilter.add(s.getId());
-		}
-		articleTypeDatabase.applyFilters();
-		articleTypeDatabase.updateProviders();
-	}
-	
 	public ArticleTypeDatabase getArticleTypeDatabase() {
 		return articleTypeDatabase;
 	}
@@ -173,17 +151,17 @@ public class PanelMediator {
 
 		Set<String> styles = articleTypeDatabase.getCategoryProvider().getStyleFilter();
 		if (styles.size() == 1) {
-			at.setStyleId(styles.iterator().next());
+			at.setStyleKey(styles.iterator().next());
 		}
 		
-		Set<Long> brands = articleTypeDatabase.getBrandProvider().getFilter();
+		Set<String> brands = articleTypeDatabase.getBrandProvider().getFilter();
 		if (brands.size() == 1) {
-			at.setBrandId(brands.iterator().next());
+			at.setBrandKey(brands.iterator().next());
 		}
 		
-		Set<Long> colors = articleTypeDatabase.getColorProvider().getFilter();
+		Set<String> colors = articleTypeDatabase.getColorProvider().getFilter();
 		if (colors.size() == 1) {
-			at.setColorId(colors.iterator().next());
+			at.setColorKey(colors.iterator().next());
 		}
 		
 		return at;

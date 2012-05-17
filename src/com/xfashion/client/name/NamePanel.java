@@ -20,6 +20,7 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.xfashion.client.IsMinimizable;
 import com.xfashion.client.PanelWidthAnimation;
 import com.xfashion.client.Xfashion;
+import com.xfashion.client.resources.FilterTableResources;
 import com.xfashion.client.resources.ImageResources;
 import com.xfashion.client.resources.TextMessages;
 
@@ -59,7 +60,7 @@ public class NamePanel implements IsMinimizable {
 		Panel headerPanel = createHeaderPanel();
 		listPanel.add(headerPanel);
 
-		CellTable<String> cellTable = new CellTable<String>(10000);
+		CellTable<String> cellTable = new CellTable<String>(35, GWT.<FilterTableResources> create(FilterTableResources.class));
 
 		Column<String, SafeHtml> price = new Column<String, SafeHtml>(new SafeHtmlCell()) {
 			@Override

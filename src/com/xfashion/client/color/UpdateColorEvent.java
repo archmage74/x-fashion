@@ -1,9 +1,9 @@
 package com.xfashion.client.color;
 
-import com.xfashion.client.FilterDataEvent;
+import com.xfashion.client.FilterDataEvent2;
 import com.xfashion.shared.ColorDTO;
 
-public class UpdateColorEvent extends FilterDataEvent<UpdateColorHandler, ColorDTO> {
+public class UpdateColorEvent extends FilterDataEvent2<UpdateColorHandler, ColorDTO> {
 	
 	public static Type<UpdateColorHandler> TYPE = new Type<UpdateColorHandler>();
 

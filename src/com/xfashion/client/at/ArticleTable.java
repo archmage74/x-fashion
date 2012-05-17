@@ -68,7 +68,7 @@ public abstract class ArticleTable<T> {
 				sb.appendEscaped(provider.getCategoryProvider().resolveData(at.getCategoryId()).getName());
 				sb.appendHtmlConstant("</div>");
 				sb.appendHtmlConstant("<div class=\"articleBoLe\">");
-				sb.appendEscaped(provider.getBrandProvider().resolveData(at.getBrandId()).getName());
+				sb.appendEscaped(provider.getBrandProvider().resolveData(at.getBrandKey()).getName());
 				sb.appendHtmlConstant("</div>");
 				return sb.toSafeHtml();
 			}
@@ -90,7 +90,7 @@ public abstract class ArticleTable<T> {
 				html.appendEscaped(at.getName());
 				html.appendHtmlConstant("</div>");
 				html.appendHtmlConstant("<div class=\"articleBoCe\">");
-				html.appendEscaped(provider.getCategoryProvider().resolveStyle(at.getStyleId()).getName());
+				html.appendEscaped(provider.getCategoryProvider().resolveStyle(at.getStyleKey()).getName());
 				html.appendHtmlConstant("</div>");
 				return html.toSafeHtml();
 			}
@@ -103,7 +103,7 @@ public abstract class ArticleTable<T> {
 				ArticleTypeDTO at = ap.retrieveArticleType(a);
 				SafeHtmlBuilder sb = new SafeHtmlBuilder();
 				sb.appendHtmlConstant("<div class=\"articleUpLe\">");
-				sb.appendEscaped(provider.getColorProvider().resolveData(at.getColorId()).getName());
+				sb.appendEscaped(provider.getColorProvider().resolveData(at.getColorKey()).getName());
 				sb.appendHtmlConstant("</div>");
 				sb.appendHtmlConstant("<div class=\"articleBoLe\">");
 				sb.appendEscaped(provider.getSizeProvider().resolveData(at.getSizeKey()).getName());

@@ -28,6 +28,9 @@
 	width: 110px;
 	padding-left: 4px;
 }
+.simpleFilterTable {
+	width: 160px;
+}
 .filterTable {
 	height: 20px;
 	padding-top: 0px;
@@ -367,6 +370,9 @@
 }
 .editSize * input {
 	width: 40px;
+}
+.editFilter * input {
+	width: 80px;
 }
 .iconToolButton {
 	margin: 0px;

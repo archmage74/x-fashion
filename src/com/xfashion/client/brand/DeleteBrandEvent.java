@@ -1,9 +1,9 @@
 package com.xfashion.client.brand;
 
-import com.xfashion.client.FilterDataEvent;
+import com.xfashion.client.FilterDataEvent2;
 import com.xfashion.shared.BrandDTO;
 
-public class DeleteBrandEvent extends FilterDataEvent<DeleteBrandHandler, BrandDTO> {
+public class DeleteBrandEvent extends FilterDataEvent2<DeleteBrandHandler, BrandDTO> {
 
 	public static Type<DeleteBrandHandler> TYPE = new Type<DeleteBrandHandler>();
 	

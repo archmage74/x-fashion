@@ -39,11 +39,11 @@ public class StickerRenderer {
 		sb.append("<tr>");
 		sb.append(createTd(readCategoryName(articleType.getCategoryId()), "articleUpLe"));
 		sb.append(createTd(articleType.getName(), "articleUpCe"));
-		sb.append(createTd(readColorName(articleType.getColorId()), "articleUpRi"));
+		sb.append(createTd(readColorName(articleType.getColorKey()), "articleUpRi"));
 		sb.append("</tr>");
 		sb.append("<tr>");
-		sb.append(createTd(readStyleName(articleType.getStyleId()), "articleBoLe"));
-		sb.append(createTd(readBrandName(articleType.getBrandId()), "articleBoCe"));
+		sb.append(createTd(readStyleName(articleType.getStyleKey()), "articleBoLe"));
+		sb.append(createTd(readBrandName(articleType.getBrandKey()), "articleBoCe"));
 		sb.append(createTd(readSizeName(articleType.getSizeKey()), "articleBoRi"));
 		sb.append("</tr>");
 		sb.append("</table>");
@@ -93,12 +93,12 @@ public class StickerRenderer {
 		return articleTypeService.readStyle(id).getName();
 	}
 	
-	private String readBrandName(Long id) {
-		return articleTypeService.readBrand(id).getName();
+	private String readBrandName(String key) {
+		return articleTypeService.readBrand(key).getName();
 	}
 	
-	private String readColorName(Long id) {
-		return articleTypeService.readColor(id).getName();
+	private String readColorName(String key) {
+		return articleTypeService.readColor(key).getName();
 	}
 	
 	private String readSizeName(String key) {

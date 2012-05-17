@@ -26,16 +26,16 @@ public class ArticleType implements IsSerializable {
 	private Long categoryId;
 	
 	@Persistent
-	private Key styleId;
+	private Key styleKey;
 	
 	@Persistent
-	private Long brandId;
+	private Key brandKey;
 	
 	@Persistent
 	private Key sizeKey;
 	
 	@Persistent
-	private Long colorId;
+	private Key colorKey;
 	
 	@Persistent
 	private Integer buyPrice;
@@ -57,10 +57,10 @@ public class ArticleType implements IsSerializable {
 	public void updateFromDTO(ArticleTypeDTO dto) {
 		setName(dto.getName());
 		setCategoryId(dto.getCategoryId());
-		setStyleId(KeyFactory.stringToKey(dto.getStyleId()));
-		setBrandId(dto.getBrandId());
+		setStyleId(KeyFactory.stringToKey(dto.getStyleKey()));
+		setBrandKey(KeyFactory.stringToKey(dto.getBrandKey()));
 		setSizeKey(KeyFactory.stringToKey(dto.getSizeKey()));
-		setColorId(dto.getColorId());
+		setColorKey(KeyFactory.stringToKey(dto.getColorKey()));
 		setBuyPrice(dto.getBuyPrice());
 		setSellPrice(dto.getSellPrice());
 		setImageId(dto.getImageId());
@@ -71,10 +71,10 @@ public class ArticleType implements IsSerializable {
 		dto.setProductNumber(getProductNumber());
 		dto.setName(getName());
 		dto.setCategoryId(getCategoryId());
-		dto.setStyleId(KeyFactory.keyToString(getStyleId()));
-		dto.setBrandId(getBrandId());
+		dto.setStyleKey(KeyFactory.keyToString(getStyleKey()));
+		dto.setBrandKey(KeyFactory.keyToString(getBrandKey()));
 		dto.setSizeKey(KeyFactory.keyToString(getSizeKey()));
-		dto.setColorId(getColorId());
+		dto.setColorKey(KeyFactory.keyToString(getColorKey()));
 		dto.setBuyPrice(getBuyPrice());
 		dto.setSellPrice(getSellPrice());
 		dto.setImageId(getImageId());
@@ -105,20 +105,20 @@ public class ArticleType implements IsSerializable {
 		this.categoryId = categoryId;
 	}
 
-	public Key getStyleId() {
-		return styleId;
+	public Key getStyleKey() {
+		return styleKey;
 	}
 
 	public void setStyleId(Key styleId) {
-		this.styleId = styleId;
+		this.styleKey = styleId;
 	}
 
-	public Long getBrandId() {
-		return brandId;
+	public Key getBrandKey() {
+		return brandKey;
 	}
 
-	public void setBrandId(Long brandId) {
-		this.brandId = brandId;
+	public void setBrandKey(Key brandKey) {
+		this.brandKey = brandKey;
 	}
 
 	public Key getSizeKey() {
@@ -129,12 +129,12 @@ public class ArticleType implements IsSerializable {
 		this.sizeKey = sizeKey;
 	}
 
-	public Long getColorId() {
-		return colorId;
+	public Key getColorKey() {
+		return colorKey;
 	}
 
-	public void setColorId(Long colorId) {
-		this.colorId = colorId;
+	public void setColorKey(Key colorKey) {
+		this.colorKey = colorKey;
 	}
 
 	public Integer getBuyPrice() {
@@ -169,10 +169,10 @@ public class ArticleType implements IsSerializable {
 		equal &= attributeEquals(productNumber, s.getProductNumber());
 		equal &= attributeEquals(name, s.getName());
 		equal &= attributeEquals(categoryId, s.getCategoryId());
-		equal &= attributeEquals(styleId, s.getStyleId());
-		equal &= attributeEquals(brandId, s.getBrandId());
+		equal &= attributeEquals(styleKey, s.getStyleKey());
+		equal &= attributeEquals(brandKey, s.getBrandKey());
 		equal &= attributeEquals(sizeKey, s.getSizeKey());
-		equal &= attributeEquals(colorId, s.getColorId());
+		equal &= attributeEquals(colorKey, s.getColorKey());
 		equal &= attributeEquals(buyPrice, s.getBuyPrice());
 		equal &= attributeEquals(sellPrice, s.getSellPrice());
 		equal &= attributeEquals(imageId, s.getImageId());

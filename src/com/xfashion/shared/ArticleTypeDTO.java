@@ -10,13 +10,13 @@ public class ArticleTypeDTO extends DTO<Long> implements IsSerializable {
 	
 	private Long categoryId;
 	
-	private String styleId;
+	private String styleKey;
 	
-	private Long brandId;
+	private String brandKey;
 	
 	private String sizeKey;
 	
-	private Long colorId;
+	private String colorKey;
 
 	private Integer buyPrice;
 	
@@ -48,20 +48,20 @@ public class ArticleTypeDTO extends DTO<Long> implements IsSerializable {
 		this.categoryId = categoryId;
 	}
 
-	public String getStyleId() {
-		return styleId;
+	public String getStyleKey() {
+		return styleKey;
 	}
 
-	public void setStyleId(String styleId) {
-		this.styleId = styleId;
+	public void setStyleKey(String styleKey) {
+		this.styleKey = styleKey;
 	}
 
-	public Long getBrandId() {
-		return brandId;
+	public String getBrandKey() {
+		return brandKey;
 	}
 
-	public void setBrandId(Long brandId) {
-		this.brandId = brandId;
+	public void setBrandKey(String brandKey) {
+		this.brandKey = brandKey;
 	}
 
 	public String getSizeKey() {
@@ -72,12 +72,12 @@ public class ArticleTypeDTO extends DTO<Long> implements IsSerializable {
 		this.sizeKey = sizeKey;
 	}
 
-	public Long getColorId() {
-		return colorId;
+	public String getColorKey() {
+		return colorKey;
 	}
 
-	public void setColorId(Long colorId) {
-		this.colorId = colorId;
+	public void setColorKey(String colorKey) {
+		this.colorKey = colorKey;
 	}
 
 	public Integer getBuyPrice() {
@@ -112,10 +112,10 @@ public class ArticleTypeDTO extends DTO<Long> implements IsSerializable {
 		equal &= attributeEquals(productNumber, s.getProductNumber());
 		equal &= attributeEquals(name, s.getName());
 		equal &= attributeEquals(categoryId, s.getCategoryId());
-		equal &= attributeEquals(styleId, s.getStyleId());
-		equal &= attributeEquals(brandId, s.getBrandId());
+		equal &= attributeEquals(styleKey, s.getStyleKey());
+		equal &= attributeEquals(brandKey, s.getBrandKey());
 		equal &= attributeEquals(sizeKey, s.getSizeKey());
-		equal &= attributeEquals(colorId, s.getColorId());
+		equal &= attributeEquals(colorKey, s.getColorKey());
 		equal &= attributeEquals(buyPrice, s.getBuyPrice());
 		equal &= attributeEquals(sellPrice, s.getSellPrice());
 		return equal;
@@ -126,10 +126,10 @@ public class ArticleTypeDTO extends DTO<Long> implements IsSerializable {
 		clone.setProductNumber(getProductNumber());
 		clone.setName(getName());
 		clone.setCategoryId(getCategoryId());
-		clone.setStyleId(getStyleId());
-		clone.setBrandId(getBrandId());
+		clone.setStyleKey(getStyleKey());
+		clone.setBrandKey(getBrandKey());
 		clone.setSizeKey(getSizeKey());
-		clone.setColorId(getColorId());
+		clone.setColorKey(getColorKey());
 		clone.setBuyPrice(getBuyPrice());
 		clone.setSellPrice(getSellPrice());
 		clone.setImageId(getImageId());

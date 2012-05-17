@@ -5,6 +5,8 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.xfashion.shared.ColorDTO;
 
 @PersistenceCapable
@@ -12,11 +14,11 @@ public class Color {
 	
 	@PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private Long id;
+	private Key key;
 	
 	@Persistent
 	private String name;
-	
+
 	@Persistent
 	private Integer sortIndex;
 	
@@ -30,15 +32,25 @@ public class Color {
 	
 	public void updateFromDTO(ColorDTO dto) {
 		this.name = dto.getName();
-		this.sortIndex = dto.getSortIndex();
 	}
 	
 	public ColorDTO createDTO() {
 		ColorDTO dto = new ColorDTO();
-		dto.setId(id);
+		dto.setKey(getKeyString());
 		dto.setName(name);
-		dto.setSortIndex(sortIndex);
 		return dto;
+	}
+
+	public Key getKey() {
+		return key;
+	}
+
+	public String getKeyString() {
+		return KeyFactory.keyToString(key);
+	}
+
+	public void setKey(Key key) {
+		this.key = key;
 	}
 
 	public String getName() {
@@ -49,14 +61,6 @@ public class Color {
 		this.name = name;
 	}
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public Integer getSortIndex() {
 		return sortIndex;
 	}
@@ -64,5 +68,5 @@ public class Color {
 	public void setSortIndex(Integer sortIndex) {
 		this.sortIndex = sortIndex;
 	}
-	
+
 }

@@ -50,7 +50,7 @@ public class CategoryDataProvider extends FilterDataProvider<CategoryDTO>{
 			styleProvider.setList(new ArrayList<StyleDTO>(categoryFilter.getStyles()));
 			HashMap<String, Integer> articleAmountPerAttribute = new HashMap<String, Integer>();
 			for (ArticleTypeDTO at : articleTypes) {
-				String styleId = at.getStyleId();
+				String styleId = at.getStyleKey();
 				if (styleId != null) {
 					Integer availableArticles = articleAmountPerAttribute.get(styleId);
 					if (availableArticles == null) {
@@ -136,7 +136,7 @@ public class CategoryDataProvider extends FilterDataProvider<CategoryDTO>{
 			if (styleFilter != null && styleFilter.size() > 0) {
 				temp.clear();
 				for (ArticleTypeDTO at : articleTypes) {
-					if (styleFilter.contains(at.getStyleId())) {
+					if (styleFilter.contains(at.getStyleKey())) {
 						temp.add(at);
 					}
 				}

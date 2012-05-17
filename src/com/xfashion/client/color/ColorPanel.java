@@ -1,92 +1,66 @@
 package com.xfashion.client.color;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.cellview.client.CellList;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.view.client.MultiSelectionModel;
-import com.google.gwt.view.client.RowCountChangeEvent;
-import com.google.gwt.view.client.SelectionChangeEvent;
-import com.xfashion.client.ErrorEvent;
-import com.xfashion.client.FilterCell;
-import com.xfashion.client.SimpleFilterDataProvider;
-import com.xfashion.client.FilterPanel;
-import com.xfashion.client.PanelMediator;
-import com.xfashion.client.ToolPanel;
+import com.google.gwt.resources.client.ImageResource;
+import com.xfashion.client.SimpleFilterDataProvider2;
+import com.xfashion.client.SimpleFilterPanel;
 import com.xfashion.client.Xfashion;
-import com.xfashion.client.resources.FilterListResources;
 import com.xfashion.shared.ColorDTO;
 
-public class ColorPanel extends FilterPanel<ColorDTO> {
+public class ColorPanel extends SimpleFilterPanel<ColorDTO> {
 
-	private MultiSelectionModel<ColorDTO> selectionModel;
-	
-	public ColorPanel(PanelMediator panelMediator, SimpleFilterDataProvider<ColorDTO> dataProvider) {
-		super(panelMediator, dataProvider);
-		panelMediator.setColorPanel(this);
+	public ColorPanel(SimpleFilterDataProvider2<ColorDTO> dataProvider) {
+		super(dataProvider);
 	}
 
-	@Override
-	public Panel createListPanel() {
-		listPanel = new VerticalPanel();
-
-		Panel headerPanel = createHeaderPanel(textMessages.color());
-		listPanel.add(headerPanel);
-
-		FilterCell<ColorDTO> filterCell = new FilterCell<ColorDTO>(this, panelMediator);
-		cellList = new CellList<ColorDTO>(filterCell, GWT.<FilterListResources> create(FilterListResources.class));
-		cellList.setPageSize(38);
-		cellList.addRowCountChangeHandler(new RowCountChangeEvent.Handler() {
-			@Override
-			public void onRowCountChange(RowCountChangeEvent event) {
-				if (toolPanel != null) {
-					refreshToolsPanel();
-				}
-			}
-		});
-
-		selectionModel = new MultiSelectionModel<ColorDTO>();
-		cellList.setSelectionModel(selectionModel);
-		selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-			public void onSelectionChange(SelectionChangeEvent event) {
-				panelMediator.setSelectedColors(selectionModel.getSelectedSet());
-			}
-		});
-
-		dataProvider.addDataDisplay(cellList);
-		cellList.addStyleName("styleList");
-		listPanel.add(cellList);
-
-		setCreateAnchor(new SimplePanel());
-		listPanel.add(getCreateAnchor());
-
-		return listPanel;
-	}
-	
 	public void clearSelection() {
-		selectionModel.clear();
+		Xfashion.eventBus.fireEvent(new ClearColorSelectionEvent());
 	}
 
 	@Override
-	protected ToolPanel<ColorDTO> createToolPanel() {
-		ToolPanel<ColorDTO> tp = new ColorToolPanel(this, panelMediator);
-		return tp;
+	public String getPanelTitle() {
+		return textMessages.color();
 	}
 
 	@Override
-	public void delete(ColorDTO color) {
-		if (color.getArticleAmount() != null && color.getArticleAmount() > 0) {
-			Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.colorIsNotEmpty(color.getName())));
-			return;
-		}
-		Xfashion.eventBus.fireEvent(new DeleteColorEvent(color));
+	protected void moveUp(ColorDTO dto, int index) {
+		Xfashion.eventBus.fireEvent(new MoveUpColorEvent(dto, index));
 	}
-	
+
 	@Override
-	public void update(ColorDTO color) {
+	protected void moveDown(ColorDTO dto, int index) {
+		Xfashion.eventBus.fireEvent(new MoveDownColorEvent(dto, index));
+	}
+
+	@Override
+	protected void delete(ColorDTO dto) {
+		Xfashion.eventBus.fireEvent(new DeleteColorEvent(dto));
+	}
+
+	@Override
+	protected void select(ColorDTO dto) {
+		Xfashion.eventBus.fireEvent(new SelectColorEvent(dto));
+	}
+
+	@Override
+	protected void createDTO() {
+		ColorDTO item = new ColorDTO();
+		fillDTOFromPanel(item);
+		Xfashion.eventBus.fireEvent(new CreateColorEvent(item));
+	}
+
+	@Override
+	protected ImageResource getSelectedIcon() {
+		return images.iconColorSelected();
+	}
+
+	@Override
+	protected ImageResource getAvailableIcon() {
+		return images.iconColorUnselected();
+	}
+
+	@Override
+	public void updateDTO(ColorDTO color) {
 		Xfashion.eventBus.fireEvent(new UpdateColorEvent(color));
-		cellList.redraw();
 	}
 
 }

@@ -36,10 +36,13 @@ public class ArticleTypeManagement implements NotepadStartMaximizeHandler, Notep
 			panel = new HorizontalPanel();
 	
 			categoryPanel = new CategoryPanel(panelMediator, articleTypeDatabase.getCategoryProvider());
-			brandPanel = new BrandPanel(panelMediator, articleTypeDatabase.getBrandProvider());
+			brandPanel = new BrandPanel(articleTypeDatabase.getBrandProvider());
+			panelMediator.setBrandPanel(brandPanel);
 			stylePanel = new StylePanel(panelMediator, articleTypeDatabase.getCategoryProvider().getStyleProvider());
-			sizePanel = new SizePanel(panelMediator, articleTypeDatabase.getSizeProvider());
-			colorPanel = new ColorPanel(panelMediator, articleTypeDatabase.getColorProvider());
+			sizePanel = new SizePanel(articleTypeDatabase.getSizeProvider());
+			panelMediator.setSizePanel(sizePanel);
+			colorPanel = new ColorPanel(articleTypeDatabase.getColorProvider());
+			panelMediator.setColorPanel(colorPanel);
 			namePanel = new NamePanel(articleTypeDatabase.getNameProvider());
 			articleTypePanel = new ArticleTypePanel(panelMediator);
 			notepadPanel = new NotepadPanel(panelMediator);

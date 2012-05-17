@@ -133,13 +133,13 @@ public class ArticleTypePanel {
 		List<SizeDTO> sizes = panelMediator.getSelectedSizes();
 		if (articleType.getCategoryId() == null) {
 			Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.articleCreateNoCategory()));
-		} else if (articleType.getBrandId() == null) {
+		} else if (articleType.getBrandKey() == null) {
 			Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.articleCreateNoBrand()));
-		} else if (articleType.getStyleId() == null) {
+		} else if (articleType.getStyleKey() == null) {
 			Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.articleCreateNoStyle()));
 		} else if (sizes.size() == 0) {
 			Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.articleCreateNoSize()));
-		} else if (articleType.getColorId() == null) {
+		} else if (articleType.getColorKey() == null) {
 			Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.articleCreateNoColor()));
 		} else {
 			createArticleTypePopup.showForPrefilledArticleType(articleType, sizes);

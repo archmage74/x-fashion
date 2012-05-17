@@ -19,6 +19,7 @@ public class Size {
 	@Persistent
 	private String name;
 
+	@Persistent
 	private Integer sortIndex;
 	
 	public Size() {
@@ -40,14 +41,6 @@ public class Size {
 		return dto;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	public Key getKey() {
 		return key;
 	}
@@ -58,6 +51,14 @@ public class Size {
 
 	public void setKey(Key key) {
 		this.key = key;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public Integer getSortIndex() {

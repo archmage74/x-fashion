@@ -39,13 +39,13 @@ public interface ArticleTypeServiceAsync {
 
 	
 	// brands
-	void createBrand(BrandDTO brand, AsyncCallback<BrandDTO> callback);
-
-	void readBrand(Long categoryId, AsyncCallback<BrandDTO> callback);
+	void readBrand(String key, AsyncCallback<BrandDTO> callback);
 	
 	void readBrands(AsyncCallback<List<BrandDTO>> callback);
 
 	void updateBrand(BrandDTO dto, AsyncCallback<Void> callback);
+
+	void updateBrands(List<BrandDTO> sizes, AsyncCallback<List<BrandDTO>> callback);
 
 	void deleteBrand(BrandDTO brand, AsyncCallback<Void> callback);
 
@@ -63,13 +63,13 @@ public interface ArticleTypeServiceAsync {
 
 	
 	// colors
-	void createColor(ColorDTO brand, AsyncCallback<ColorDTO> callback);
-
-	void readColor(Long categoryId, AsyncCallback<ColorDTO> callback);
+	void readColor(String key, AsyncCallback<ColorDTO> callback);
 	
 	void readColors(AsyncCallback<List<ColorDTO>> callback);
 
 	void updateColor(ColorDTO dto, AsyncCallback<Void> callback);
+
+	void updateColors(List<ColorDTO> colors, AsyncCallback<List<ColorDTO>> callback);
 
 	void deleteColor(ColorDTO brand, AsyncCallback<Void> callback);
 

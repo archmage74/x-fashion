@@ -3,7 +3,6 @@ package com.xfashion.client.size;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ListDataProvider;
@@ -11,16 +10,11 @@ import com.xfashion.client.ErrorEvent;
 import com.xfashion.client.SimpleFilterDataProvider2;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTypeDataProvider;
-import com.xfashion.client.db.ArticleTypeService;
-import com.xfashion.client.db.ArticleTypeServiceAsync;
-import com.xfashion.client.db.RefreshFilterEvent;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.SizeDTO;
 
 public class SizeDataProvider extends SimpleFilterDataProvider2<SizeDTO> implements SelectSizeHandler, ClearSizeSelectionHandler, DeleteSizeHandler,
 		CreateSizeHandler, UpdateSizeHandler, MoveDownSizeHandler, MoveUpSizeHandler {
-
-	private ArticleTypeServiceAsync articleTypeService = (ArticleTypeServiceAsync) GWT.create(ArticleTypeService.class);
 
 	protected ListDataProvider<SizeDTO> leftProvider;
 	protected ListDataProvider<SizeDTO> rightProvider;
@@ -74,16 +68,16 @@ public class SizeDataProvider extends SimpleFilterDataProvider2<SizeDTO> impleme
 	@Override
 	public void onCreateSize(CreateSizeEvent event) {
 		sizeList.add(event.getCellData());
-		saveSizeList();
+		saveList();
 	}
 
 	@Override
 	public void onUpdateSize(UpdateSizeEvent event) {
 		final SizeDTO size = event.getCellData();
 		if (size == null) {
-			saveSizeList();
+			saveList();
 		} else {
-			saveSize(size);
+			saveItem(size);
 		}
 	}
 	
@@ -108,7 +102,7 @@ public class SizeDataProvider extends SimpleFilterDataProvider2<SizeDTO> impleme
 		}
 		SizeDTO item = sizeList.remove(idx);
 		sizeList.add(idx + 1, item);
-		saveSizeList();
+		saveList();
 	}
 
 	@Override
@@ -121,10 +115,11 @@ public class SizeDataProvider extends SimpleFilterDataProvider2<SizeDTO> impleme
 			}
 		}
 		sizeList.remove(size);
-		saveSizeList();
+		saveList();
 	}
 
-	private void saveSize(SizeDTO dto) {
+	@Override
+	protected void saveItem(SizeDTO dto) {
 		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -138,7 +133,8 @@ public class SizeDataProvider extends SimpleFilterDataProvider2<SizeDTO> impleme
 		articleTypeService.updateSize(dto, callback);
 	}
 
-	private void saveSizeList() {
+	@Override
+	protected void saveList() {
 		AsyncCallback<List<SizeDTO>> callback = new AsyncCallback<List<SizeDTO>>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -152,10 +148,6 @@ public class SizeDataProvider extends SimpleFilterDataProvider2<SizeDTO> impleme
 			}
 		};
 		articleTypeService.updateSizes(new ArrayList<SizeDTO>(sizeList), callback);
-	}
-
-	private void fireRefreshEvent() {
-		Xfashion.eventBus.fireEvent(new RefreshFilterEvent());
 	}
 
 	@Override

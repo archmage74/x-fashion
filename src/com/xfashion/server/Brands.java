@@ -12,10 +12,10 @@ import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
-import com.xfashion.shared.SizeDTO;
+import com.xfashion.shared.BrandDTO;
 
 @PersistenceCapable
-public class Sizes {
+public class Brands {
 	
 	@PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -23,10 +23,10 @@ public class Sizes {
 	
 	@Persistent
 	@Order(extensions = @Extension(vendorName="datanucleus", key="list-ordering", value="sortIndex asc"))
-	private List<Size> sizes;
+	private List<Brand> brands;
 	
-	public Sizes() {
-		sizes = new ArrayList<Size>();
+	public Brands() {
+		this.brands = new ArrayList<Brand>();
 	}
 	
 	public Key getKey() {
@@ -37,31 +37,23 @@ public class Sizes {
 		this.key = key;
 	}
 
-	public List<Size> getSizes() {
-		return sizes;
-	}
-
-	public List<SizeDTO> getDtos() {
-		List<SizeDTO> dtos = new ArrayList<SizeDTO>(getSizes().size());
-		for (Size o : getSizes()) {
-			SizeDTO dto = o.createDTO();
+	public List<BrandDTO> getDtos() {
+		List<BrandDTO> dtos = new ArrayList<BrandDTO>(getBrands().size());
+		for (Brand o : getBrands()) {
+			BrandDTO dto = o.createDTO();
 			dtos.add(dto);
 		}
 		return dtos;
 	}
 
-	public void setSizes(List<Size> sizes) {
-		this.sizes = sizes;
-	}
-
-	public void update(List<SizeDTO> dtos) {
-		List<Size> toRemove = new ArrayList<Size>(sizes);
-		List<Size> toAdd = new ArrayList<Size>();
+	public void update(List<BrandDTO> dtos) {
+		List<Brand> toRemove = new ArrayList<Brand>(brands);
+		List<Brand> toAdd = new ArrayList<Brand>();
 		int idx = 0;
-		for (SizeDTO dto : dtos) {
-			Size item = findItem(sizes, dto);
+		for (BrandDTO dto : dtos) {
+			Brand item = findItem(brands, dto);
 			if (item == null) {
-				item = new Size(dto);
+				item = new Brand(dto);
 				toAdd.add(item);
 			} else {
 				toRemove.remove(item);
@@ -69,19 +61,27 @@ public class Sizes {
 			}
 			item.setSortIndex(idx++);
 		}
-		for (Size item : toRemove) {
-			sizes.remove(item);
+		for (Brand item : toRemove) {
+			brands.remove(item);
 		}
-		this.sizes.addAll(toAdd);
+		this.brands.addAll(toAdd);
 	}
 
-	private Size findItem(List<Size> list, SizeDTO dto) {
-		for (Size item : list) {
+	private Brand findItem(List<Brand> list, BrandDTO dto) {
+		for (Brand item : list) {
 			if (dto.getKey() != null && KeyFactory.stringToKey(dto.getKey()).equals(item.getKey())) {
 				return item;
 			}
 		}
 		return null;
 	}
-	
+
+	public List<Brand> getBrands() {
+		return brands;
+	}
+
+	public void setBrands(List<Brand> brands) {
+		this.brands = brands;
+	}
+
 }

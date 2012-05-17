@@ -3,11 +3,16 @@ package com.xfashion.client;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gwt.cell.client.EditTextCell;
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.ImageResourceCell;
+import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
@@ -19,6 +24,7 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.CellPreviewEvent;
 import com.google.gwt.view.client.ListDataProvider;
 import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.resources.ImageResources;
@@ -35,9 +41,6 @@ public abstract class FilterPanel2<T extends FilterCellData2> implements IsMinim
 	protected Panel scrollPanel;
 	protected Panel tablePanel;
 
-	protected PanelMediator panelMediator;
-	protected ListDataProvider<T> dataProvider;
-
 	protected Panel createAnchor;
 	protected TextBox createTextBox;
 
@@ -50,12 +53,10 @@ public abstract class FilterPanel2<T extends FilterCellData2> implements IsMinim
 	protected ErrorMessages errorMessages;
 	protected ImageResources images;
 
-	public FilterPanel2(PanelMediator panelMediator, ListDataProvider<T> dataProvider) {
+	public FilterPanel2() {
 		errorMessages = GWT.create(ErrorMessages.class);
 		textMessages = GWT.create(TextMessages.class);
 		images = GWT.<ImageResources> create(ImageResources.class);
-		this.panelMediator = panelMediator;
-		this.dataProvider = dataProvider;
 	}
 
 	public abstract Panel createTablePanel();
@@ -65,8 +66,24 @@ public abstract class FilterPanel2<T extends FilterCellData2> implements IsMinim
 	public abstract void hideTools();
 
 	public abstract void showTools();
+	
+	public abstract ListDataProvider<T> getDataProvider();
+	
+	public abstract String getPanelTitle();
 
-	protected abstract void createDTOFromPanel();
+	protected abstract void moveUp(T dto, int index);
+
+	protected abstract void moveDown(T dto, int index);
+	
+	protected abstract void delete(T dto);
+	
+	protected abstract void select(T dto);
+	
+	protected abstract void updateDTO(T dto);
+	
+	protected abstract void createDTO();
+	
+	protected abstract void redrawPanel();
 
 	protected abstract ImageResource getSelectedIcon();
 
@@ -134,6 +151,25 @@ public abstract class FilterPanel2<T extends FilterCellData2> implements IsMinim
 		return headerPanel;
 	}
 
+	protected void handleSelection(CellPreviewEvent<T> event) {
+		if (editMode && event.getColumn() > 0) {
+			switch (event.getColumn()) {
+			case 2:
+				moveUp(event.getValue(), event.getIndex());
+				break;
+			case 3:
+				moveDown(event.getValue(), event.getIndex());
+				break;
+			case 4:
+				delete(event.getValue());
+				break;
+			}
+		} else {
+			event.getIndex();
+			select(event.getValue());
+		}
+	}
+
 	public void toggleTools() {
 		if (editMode) {
 			editMode = false;
@@ -146,11 +182,37 @@ public abstract class FilterPanel2<T extends FilterCellData2> implements IsMinim
 
 	protected List<Column<T, ?>> createToolsColumns() {
 		List<Column<T, ?>> columns = new ArrayList<Column<T, ?>>();
-		// columns.add(createEditColumn());
 		columns.add(createUpColumn());
 		columns.add(createDownColumn());
 		columns.add(createDeleteColumn());
 		return columns;
+	}
+
+	protected Column<T, String> createEditNameColumn() {
+		return createEditNameColumn(null);
+	}
+	
+	protected Column<T, String> createEditNameColumn(String style) {
+		Column<T, String> column = new Column<T, String>(new EditTextCell()) {
+			@Override
+			public String getValue(T dto) {
+				return dto.getName();
+			}
+		};
+		column.setFieldUpdater(new FieldUpdater<T, String>() {
+			@Override
+			public void update(int index, T dto, String value) {
+				dto.setName(value);
+				updateDTO(dto);
+			}
+		});
+		if (style != null) {
+			column.setCellStyleNames(style);
+		} else {
+			column.setCellStyleNames("editFilter");
+		}
+		column.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
+		return column;
 	}
 
 	private Column<T, ImageResource> createUpColumn() {
@@ -206,6 +268,64 @@ public abstract class FilterPanel2<T extends FilterCellData2> implements IsMinim
 		return column;
 	}
 
+	protected Column<T, SafeHtml> createNameColumn() {
+		Column<T, SafeHtml> column = new Column<T, SafeHtml>(new SafeHtmlCell()) {
+			@Override
+			public SafeHtml getValue(T dto) {
+				return renderColumn(dto.getName(), false, dto.isSelected());
+			}
+		};
+		column.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
+		return column;
+	}
+
+	protected Column<T, SafeHtml> createAmountColumn() {
+		Column<T, SafeHtml> column = new Column<T, SafeHtml>(new SafeHtmlCell()) {
+			@Override
+			public SafeHtml getValue(T dto) {
+				return renderColumn("" + dto.getArticleAmount(), true, dto.isSelected());
+			}
+		};
+		column.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		return column;
+	}
+
+	protected CellPreviewEvent.Handler<T> createSelectHandler() {
+		CellPreviewEvent.Handler<T> cellPreviewHandler = new CellPreviewEvent.Handler<T>() {
+			@Override
+			public void onCellPreview(CellPreviewEvent<T> event) {
+				if ("click".equals(event.getNativeEvent().getType())) {
+					handleSelection(event);
+				}
+			}
+		};
+		return cellPreviewHandler;
+	}
+
+	protected SafeHtml renderColumn(String txt, boolean isRight, boolean isSelected) {
+		SafeHtmlBuilder sb = new SafeHtmlBuilder();
+		StringBuffer b = new StringBuffer();
+		b.append("<div style=\"outline:none;\"");
+		if (isSelected) {
+			if (isRight) {
+				b.append(" class=\"filterRowSelected filterRightRowSelected\"");
+			} else {
+				b.append(" class=\"filterRowSelected filterMiddleRowSelected\"");
+			}
+		} else {
+			if (isRight) {
+				b.append(" class=\"filterRowUnselected filterRightRowUnselected\"");
+			} else {
+				b.append(" class=\"filterRowUnselected filterMiddleRowUnselected\"");
+			}
+		}
+		b.append(">");
+		sb.appendHtmlConstant(b.toString());
+		sb.appendEscaped(txt);
+		sb.appendHtmlConstant("</div>");
+		return sb.toSafeHtml();
+	}
+
 	protected ImageResource getNotAvailableIcon() {
 		return images.iconNotAvailable();
 	}
@@ -222,7 +342,7 @@ public abstract class FilterPanel2<T extends FilterCellData2> implements IsMinim
 		createButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				createDTOFromPanel();
+				createDTO();
 			}
 		});
 		createGrid.setWidget(1, 0, createButton);
@@ -266,10 +386,6 @@ public abstract class FilterPanel2<T extends FilterCellData2> implements IsMinim
 		scrollPanel.setWidth(width + "px");
 	}
 
-	public PanelMediator getPanelMediator() {
-		return panelMediator;
-	}
-
 	public Panel getCreateAnchor() {
 		return createAnchor;
 	}
@@ -297,14 +413,6 @@ public abstract class FilterPanel2<T extends FilterCellData2> implements IsMinim
 			}
 		}
 		this.minimized = minimized;
-	}
-
-	public ListDataProvider<T> getDataProvider() {
-		return dataProvider;
-	}
-
-	public void setDataProvider(ListDataProvider<T> dataProvider) {
-		this.dataProvider = dataProvider;
 	}
 
 }

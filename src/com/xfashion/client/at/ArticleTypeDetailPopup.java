@@ -117,11 +117,11 @@ public class ArticleTypeDetailPopup {
 		nameTextBox.setValue(articleType.getName());
 		nameTextBox.setStyleName("baseInput");
 		nameTextBox.setWidth("96px");
-		brand.setText(provider.getBrandProvider().resolveData(updatedArticleType.getBrandId()).getName());
+		brand.setText(provider.getBrandProvider().resolveData(updatedArticleType.getBrandKey()).getName());
 		category.setText(provider.getCategoryProvider().resolveData(updatedArticleType.getCategoryId()).getName());
-		style.setText(provider.getCategoryProvider().resolveStyle(updatedArticleType.getStyleId()).getName());
+		style.setText(provider.getCategoryProvider().resolveStyle(updatedArticleType.getStyleKey()).getName());
 		size.setText(provider.getSizeProvider().resolveData(updatedArticleType.getSizeKey()).getName());
-		color.setText(provider.getColorProvider().resolveData(updatedArticleType.getColorId()).getName());
+		color.setText(provider.getColorProvider().resolveData(updatedArticleType.getColorKey()).getName());
 		buyPrice.setText(formatter.formatCentsToValue(updatedArticleType.getBuyPrice()));
 		buyPriceTextBox.setValue(formatter.formatCentsToValue(updatedArticleType.getBuyPrice()));
 		buyPriceTextBox.setStyleName("baseInput");
@@ -300,7 +300,7 @@ public class ArticleTypeDetailPopup {
 					choosePopup.addSelectionHandler(new SelectionHandler<StyleDTO>() {
 						public void onSelection(SelectionEvent<StyleDTO> event) {
 							StyleDTO selected = event.getSelectedItem();
-							updatedArticleType.setStyleId(selected.getId());
+							updatedArticleType.setStyleKey(selected.getId());
 							label.setText(selected.getName());
 						}
 					});
@@ -323,7 +323,7 @@ public class ArticleTypeDetailPopup {
 					choosePopup.addSelectionHandler(new SelectionHandler<BrandDTO>() {
 						public void onSelection(SelectionEvent<BrandDTO> event) {
 							BrandDTO selected = event.getSelectedItem();
-							updatedArticleType.setBrandId(selected.getId());
+							updatedArticleType.setBrandKey(selected.getKey());
 							label.setText(selected.getName());
 						}
 					});
@@ -369,7 +369,7 @@ public class ArticleTypeDetailPopup {
 					choosePopup.addSelectionHandler(new SelectionHandler<ColorDTO>() {
 						public void onSelection(SelectionEvent<ColorDTO> event) {
 							ColorDTO selected = event.getSelectedItem();
-							updatedArticleType.setColorId(selected.getId());
+							updatedArticleType.setColorKey(selected.getKey());
 							label.setText(selected.getName());
 						}
 					});
@@ -495,10 +495,10 @@ public class ArticleTypeDetailPopup {
 			updatedArticleType.setName(nameTextBox.getText());
 		}
 		articleType.setCategoryId(updatedArticleType.getCategoryId());
-		articleType.setBrandId(updatedArticleType.getBrandId());
-		articleType.setStyleId(updatedArticleType.getStyleId());
+		articleType.setBrandKey(updatedArticleType.getBrandKey());
+		articleType.setStyleKey(updatedArticleType.getStyleKey());
 		articleType.setSizeKey(updatedArticleType.getSizeKey());
-		articleType.setColorId(updatedArticleType.getColorId());
+		articleType.setColorKey(updatedArticleType.getColorKey());
 		articleType.setName(updatedArticleType.getName());
 		articleType.setBuyPrice(updatedArticleType.getBuyPrice());
 		articleType.setSellPrice(updatedArticleType.getSellPrice());

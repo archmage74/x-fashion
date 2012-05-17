@@ -2,16 +2,10 @@ package com.xfashion.client.size;
 
 import java.util.List;
 
-import com.google.gwt.cell.client.EditTextCell;
-import com.google.gwt.cell.client.FieldUpdater;
-import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -20,7 +14,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.CellPreviewEvent;
 import com.xfashion.client.ErrorEvent;
 import com.xfashion.client.FilterPanel2;
-import com.xfashion.client.PanelMediator;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.resources.FilterTableResources;
 import com.xfashion.shared.SizeDTO;
@@ -32,15 +25,15 @@ public class SizePanel extends FilterPanel2<SizeDTO> {
 	protected CellTable<SizeDTO> cellTable1;
 	protected CellTable<SizeDTO> cellTable2;
 
-	public SizePanel(PanelMediator panelMediator, SizeDataProvider dataProvider) {
-		super(panelMediator, dataProvider);
+	public SizePanel(SizeDataProvider dataProvider) {
+		super();
 		this.sizeProvider = dataProvider;
-		panelMediator.setSizePanel(this);
 	}
 
+	@Override
 	public Panel createTablePanel() {
 		VerticalPanel panel = new VerticalPanel();
-		Panel headerPanel = createHeaderPanel(textMessages.size());
+		Panel headerPanel = createHeaderPanel(getPanelTitle());
 		panel.add(headerPanel);
 
 		HorizontalPanel splitSizePanel = new HorizontalPanel();
@@ -71,36 +64,9 @@ public class SizePanel extends FilterPanel2<SizeDTO> {
 
 		return panel;
 	}
-
-	private CellPreviewEvent.Handler<SizeDTO> createSelectHandler() {
-		CellPreviewEvent.Handler<SizeDTO> cellPreviewHandler = new CellPreviewEvent.Handler<SizeDTO>() {
-			@Override
-			public void onCellPreview(CellPreviewEvent<SizeDTO> event) {
-				if ("click".equals(event.getNativeEvent().getType())) {
-					handleSelection(event);
-				}
-			}
-		};
-		return cellPreviewHandler;
-	}
-
-	private void handleSelection(CellPreviewEvent<SizeDTO> event) {
-		if (editMode && event.getColumn() > 0) {
-			switch (event.getColumn()) {
-			case 2:
-				Xfashion.eventBus.fireEvent(new MoveUpSizeEvent(event.getValue(), event.getIndex()));
-				break;
-			case 3:
-				Xfashion.eventBus.fireEvent(new MoveDownSizeEvent(event.getValue(), event.getIndex()));
-				break;
-			case 4:
-				Xfashion.eventBus.fireEvent(new DeleteSizeEvent(event.getValue()));
-				break;
-			}
-		} else {
-			event.getIndex();
-			select(event.getValue());
-		}
+	
+	public String getPanelTitle() {
+		return textMessages.size();
 	}
 
 	protected ImageResource getAvailableIcon() {
@@ -111,75 +77,27 @@ public class SizePanel extends FilterPanel2<SizeDTO> {
 		return images.iconSizeSelected();
 	}
 
-	private Column<SizeDTO, SafeHtml> createNameColumn() {
-		Column<SizeDTO, SafeHtml> column = new Column<SizeDTO, SafeHtml>(new SafeHtmlCell()) {
-			@Override
-			public SafeHtml getValue(SizeDTO dto) {
-				return renderColumn(dto.getName(), false, dto.isSelected());
-			}
-		};
-		column.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
-		return column;
+	@Override
+	protected void moveUp(SizeDTO dto, int index) {
+		Xfashion.eventBus.fireEvent(new MoveUpSizeEvent(dto, index));
 	}
 
-	private Column<SizeDTO, String> createEditNameColumn() {
-		Column<SizeDTO, String> column = new Column<SizeDTO, String>(new EditTextCell()) {
-			@Override
-			public String getValue(SizeDTO dto) {
-				return dto.getName();
-			}
-		};
-		column.setFieldUpdater(new FieldUpdater<SizeDTO, String>() {
-			@Override
-			public void update(int index, SizeDTO dto, String value) {
-				dto.setName(value);
-				Xfashion.eventBus.fireEvent(new UpdateSizeEvent(dto));
-			}
-		});
-		column.setCellStyleNames("editSize");
-		column.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
-		return column;
+	@Override
+	protected void moveDown(SizeDTO dto, int index) {
+		Xfashion.eventBus.fireEvent(new MoveDownSizeEvent(dto, index));
 	}
-
-	private Column<SizeDTO, SafeHtml> createAmountColumn() {
-		Column<SizeDTO, SafeHtml> column = new Column<SizeDTO, SafeHtml>(new SafeHtmlCell()) {
-			@Override
-			public SafeHtml getValue(SizeDTO dto) {
-				return renderColumn("" + dto.getArticleAmount(), true, dto.isSelected());
-			}
-		};
-		column.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-		return column;
+	
+	@Override
+	protected void updateDTO(SizeDTO dto) {
+		Xfashion.eventBus.fireEvent(new UpdateSizeEvent(dto));
 	}
-
-	private SafeHtml renderColumn(String txt, boolean isRight, boolean isSelected) {
-		SafeHtmlBuilder sb = new SafeHtmlBuilder();
-		StringBuffer b = new StringBuffer();
-		b.append("<div style=\"outline:none;\"");
-		if (isSelected) {
-			if (isRight) {
-				b.append(" class=\"filterRowSelected filterRightRowSelected\"");
-			} else {
-				b.append(" class=\"filterRowSelected filterMiddleRowSelected\"");
-			}
-		} else {
-			if (isRight) {
-				b.append(" class=\"filterRowUnselected filterRightRowUnselected\"");
-			} else {
-				b.append(" class=\"filterRowUnselected filterMiddleRowUnselected\"");
-			}
-		}
-		b.append(">");
-		sb.appendHtmlConstant(b.toString());
-		sb.appendEscaped(txt);
-		sb.appendHtmlConstant("</div>");
-		return sb.toSafeHtml();
-	}
-
-	private void select(SizeDTO dto) {
+	
+	@Override
+	protected void select(SizeDTO dto) {
 		Xfashion.eventBus.fireEvent(new SelectSizeEvent(dto));
 	}
 
+	@Override
 	public void clearSelection() {
 		Xfashion.eventBus.fireEvent(new ClearSizeSelectionEvent());
 	}
@@ -191,21 +109,21 @@ public class SizePanel extends FilterPanel2<SizeDTO> {
 		cellTable1.addColumn(createAmountColumn());
 		cellTable2.addColumn(createNameColumn());
 		cellTable2.addColumn(createAmountColumn());
-		redrawTables();
+		redrawPanel();
 		createAnchor.clear();
 	}
 
 	@Override
 	public void showTools() {
 		removeAdditionalColumns();
-		cellTable1.addColumn(createEditNameColumn());
-		cellTable2.addColumn(createEditNameColumn());
+		cellTable1.addColumn(createEditNameColumn("editSize"));
+		cellTable2.addColumn(createEditNameColumn("editSize"));
 		List<Column<SizeDTO, ?>> toolColumns = createToolsColumns();
 		for (Column<SizeDTO, ?> c : toolColumns) {
 			cellTable1.addColumn(c);
 			cellTable2.addColumn(c);
 		}
-		redrawTables();
+		redrawPanel();
 		Widget create = createCreatePanel();
 		createAnchor.add(create);
 	}
@@ -219,11 +137,13 @@ public class SizePanel extends FilterPanel2<SizeDTO> {
 		}
 	}
 
-	private void redrawTables() {
+	@Override
+	protected void redrawPanel() {
 		cellTable1.redraw();
 		cellTable2.redraw();
 	}
 
+	@Override
 	public void delete(SizeDTO size) {
 		if (size.getArticleAmount() != null && size.getArticleAmount() > 0) {
 			Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.sizeIsNotEmpty(size.getName())));
@@ -232,15 +152,15 @@ public class SizePanel extends FilterPanel2<SizeDTO> {
 		}
 	}
 
-	public void update(SizeDTO size) {
-		Xfashion.eventBus.fireEvent(new UpdateSizeEvent(size));
-	}
-
 	@Override
-	protected void createDTOFromPanel() {
+	protected void createDTO() {
 		SizeDTO size = new SizeDTO();
 		fillDTOFromPanel(size);
 		Xfashion.eventBus.fireEvent(new CreateSizeEvent(size));
+	}
+
+	public SizeDataProvider getDataProvider() {
+		return sizeProvider;
 	}
 
 }
