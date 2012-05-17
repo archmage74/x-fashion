@@ -1,4 +1,4 @@
-package com.xfashion.client.at;
+package com.xfashion.client.db;
 
 import java.util.List;
 
@@ -51,13 +51,13 @@ public interface ArticleTypeServiceAsync {
 
 	
 	// sizes
-	void createSize(SizeDTO brand, AsyncCallback<SizeDTO> callback);
-
-	void readSize(Long categoryId, AsyncCallback<SizeDTO> callback);
+	void readSize(String key, AsyncCallback<SizeDTO> callback);
 	
 	void readSizes(AsyncCallback<List<SizeDTO>> callback);
 
 	void updateSize(SizeDTO dto, AsyncCallback<Void> callback);
+
+	void updateSizes(List<SizeDTO> sizes, AsyncCallback<List<SizeDTO>> callback);
 
 	void deleteSize(SizeDTO brand, AsyncCallback<Void> callback);
 

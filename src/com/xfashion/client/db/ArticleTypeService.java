@@ -1,4 +1,4 @@
-package com.xfashion.client.at;
+package com.xfashion.client.db;
 
 import java.util.List;
 
@@ -56,13 +56,13 @@ public interface ArticleTypeService extends RemoteService {
 	
 	
 	// sizes
-	SizeDTO createSize(SizeDTO brand) throws IllegalArgumentException;
-	
-	SizeDTO readSize(Long categoryId) throws IllegalArgumentException;
+	SizeDTO readSize(String key) throws IllegalArgumentException;
 	
 	List<SizeDTO> readSizes() throws IllegalArgumentException;
 	
 	void updateSize(SizeDTO dto) throws IllegalArgumentException;
+	
+	List<SizeDTO> updateSizes(List<SizeDTO> sizes) throws IllegalArgumentException;
 	
 	void deleteSize(SizeDTO brand);
 	

@@ -17,6 +17,17 @@
 	zoom: 1;
 	width: 160px;
 }
+.sizePanel {
+	width: 220px;
+}
+.sizeLeftPanel {
+	width: 110px;
+	padding-right: 4px;
+}
+.sizeRightPanel {
+	width: 110px;
+	padding-left: 4px;
+}
 .filterTable {
 	height: 20px;
 	padding-top: 0px;
@@ -29,8 +40,44 @@
 	margin-right: 0px;
 	border: 0px;
 }
+.filterRowUnselected {
+	border: 0px solid #CCC;
+	margin-top: 2px;
+	margin-bottom: 2px;
+	margin-left: 0px;
+	margin-right: 0px;
+	padding-left: 2px;
+}
+.filterRightRowUnselected {
+	padding-right: 4px;	
+}
+.filterMiddleRowUnselected {
+	
+}
 .filterRowSelected {
-	background-color: #e36928;
+	border-top: 2px;
+	border-bottom: 2px;
+	border-left: 0px;
+	border-right: 0px;
+	border-style: solid;
+	border-color: #8D511F; 
+	background-color: #D68543;
+	padding-left: 2px;
+}
+.filterMiddleRowSelected {
+	border-right: none;
+}
+.filterRightRowSelected {
+	border-right: 2px;
+	border-style: solid;
+	border-color: #8D511F;
+	padding-right: 2px; 
+}
+.filterRowIcon {
+	border: 0px solid #CCC;
+	font-size: 5px;
+	width: 22px;
+	height: 20px;
 }
 .filterLabel {
 	font-size: 20px;
@@ -307,7 +354,7 @@
 .buttonMinMax:hover {
 	border-color: #939393;
 }
-.buttonTool {
+.buttonTool * div {
 	margin: 1px;
 	padding: 0px;
 	border: 1px inset #CCC;
@@ -315,8 +362,11 @@
 	width: 10px;
 	height: 11px;
 }
-.buttonTool:hover {
+.buttonTool:hover * div {
 	border-color: #939393;
+}
+.editSize * input {
+	width: 40px;
 }
 .iconToolButton {
 	margin: 0px;

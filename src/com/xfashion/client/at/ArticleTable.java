@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.view.client.CellPreviewEvent;
 import com.xfashion.client.PanelMediator;
-import com.xfashion.client.resources.ArticleTableResources;
+import com.xfashion.client.resources.FilterTableResources;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.shared.ArticleTypeDTO;
 
@@ -37,7 +37,7 @@ public abstract class ArticleTable<T> {
 		articleProvider = ap; 
 		articleTypeDetailPopup = new ArticleTypeDetailPopup(panelMediator);
 
-		CellTable<T> cellTable = new CellTable<T>(10000, GWT.<ArticleTableResources> create(ArticleTableResources.class));
+		CellTable<T> cellTable = new CellTable<T>(10000, GWT.<FilterTableResources> create(FilterTableResources.class));
 
 		Column<T, SafeHtml> image = new Column<T, SafeHtml>(new SafeHtmlCell()) {
 			@Override
@@ -106,7 +106,7 @@ public abstract class ArticleTable<T> {
 				sb.appendEscaped(provider.getColorProvider().resolveData(at.getColorId()).getName());
 				sb.appendHtmlConstant("</div>");
 				sb.appendHtmlConstant("<div class=\"articleBoLe\">");
-				sb.appendEscaped(provider.getSizeProvider().resolveData(at.getSizeId()).getName());
+				sb.appendEscaped(provider.getSizeProvider().resolveData(at.getSizeKey()).getName());
 				sb.appendHtmlConstant("</div>");
 				return sb.toSafeHtml();
 			}

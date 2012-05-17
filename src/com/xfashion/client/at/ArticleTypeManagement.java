@@ -49,7 +49,7 @@ public class ArticleTypeManagement implements NotepadStartMaximizeHandler, Notep
 			panel.add(stylePanel.createPanel());
 			panel.add(namePanel.createPanel());
 			panel.add(colorPanel.createPanel());
-			panel.add(sizePanel.createPanel());
+			panel.add(sizePanel.createPanel(new String[] {"sizePanel"}));
 			panel.add(articleTypePanel.createPanel(articleTypeDatabase.getArticleTypeProvider(), articleTypeDatabase.getNameOracle()));
 			panel.add(notepadPanel.createPanel(notepadArticleProvider));
 		}

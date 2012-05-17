@@ -2,7 +2,7 @@ package com.xfashion.pdf;
 
 import java.text.NumberFormat;
 
-import com.xfashion.client.at.ArticleTypeService;
+import com.xfashion.client.db.ArticleTypeService;
 import com.xfashion.server.ArticleTypeServiceImpl;
 import com.xfashion.shared.ArticleTypeDTO;
 
@@ -44,7 +44,7 @@ public class StickerRenderer {
 		sb.append("<tr>");
 		sb.append(createTd(readStyleName(articleType.getStyleId()), "articleBoLe"));
 		sb.append(createTd(readBrandName(articleType.getBrandId()), "articleBoCe"));
-		sb.append(createTd(readSizeName(articleType.getSizeId()), "articleBoRi"));
+		sb.append(createTd(readSizeName(articleType.getSizeKey()), "articleBoRi"));
 		sb.append("</tr>");
 		sb.append("</table>");
 
@@ -101,8 +101,8 @@ public class StickerRenderer {
 		return articleTypeService.readColor(id).getName();
 	}
 	
-	private String readSizeName(Long id) {
-		return articleTypeService.readSize(id).getName();
+	private String readSizeName(String key) {
+		return articleTypeService.readSize(key).getName();
 	}
 	
 	private StringBuffer createStyles() {

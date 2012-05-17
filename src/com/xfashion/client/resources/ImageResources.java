@@ -34,4 +34,16 @@ public interface ImageResources extends ClientBundle {
 	@ImageOptions(width=10, height=11)
 	ImageResource iconDown();
 	
+	@Source("pixel-transparent.png")
+	@ImageOptions(width=22, height=20)
+	ImageResource iconNotAvailable();
+	
+	@Source("icon-sizeUnselected.png")
+	@ImageOptions(width=22, height=20)
+	ImageResource iconSizeUnselected();
+	
+	@Source("icon-sizeSelected.png")
+	@ImageOptions(width=22, height=20)
+	ImageResource iconSizeSelected();
+	
 }

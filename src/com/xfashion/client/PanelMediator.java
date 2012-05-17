@@ -155,9 +155,9 @@ public class PanelMediator {
 	
 	public List<SizeDTO> getSelectedSizes() {
 		ArrayList<SizeDTO> list = new ArrayList<SizeDTO>();
-		Set<Long> sizes = articleTypeDatabase.getSizeProvider().getFilter();
+		Set<String> sizes = articleTypeDatabase.getSizeProvider().getFilter();
 		SizeDataProvider sizeProvider = articleTypeDatabase.getSizeProvider();
-		for (Long id : sizes) {
+		for (String id : sizes) {
 			list.add(sizeProvider.resolveData(id));
 		}
 		return list;

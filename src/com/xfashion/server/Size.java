@@ -5,48 +5,39 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.xfashion.shared.SizeDTO;
 
 @PersistenceCapable
 public class Size {
-	
+
 	@PrimaryKey
-    @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-    private Long id;
-    
+	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+	private Key key;
+
 	@Persistent
 	private String name;
-	
-	@Persistent
+
 	private Integer sortIndex;
 	
 	public Size() {
-		
+
 	}
-	
+
 	public Size(SizeDTO dto) {
 		updateFromDTO(dto);
 	}
-	
+
 	public void updateFromDTO(SizeDTO dto) {
 		this.name = dto.getName();
-		this.sortIndex = dto.getSortIndex();
 	}
-	
+
 	public SizeDTO createDTO() {
 		SizeDTO dto = new SizeDTO();
-		dto.setId(id);
+		dto.setKey(getKeyString());
 		dto.setName(name);
-		dto.setSortIndex(sortIndex);
 		return dto;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public String getName() {
@@ -57,6 +48,18 @@ public class Size {
 		this.name = name;
 	}
 
+	public Key getKey() {
+		return key;
+	}
+
+	public String getKeyString() {
+		return KeyFactory.keyToString(key);
+	}
+
+	public void setKey(Key key) {
+		this.key = key;
+	}
+
 	public Integer getSortIndex() {
 		return sortIndex;
 	}
@@ -64,5 +67,5 @@ public class Size {
 	public void setSortIndex(Integer sortIndex) {
 		this.sortIndex = sortIndex;
 	}
-	
+
 }

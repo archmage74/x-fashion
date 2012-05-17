@@ -32,12 +32,11 @@ DONE - bugfix: +1 to notepad adds +10
 DONE - notepad: -1/-10
 DONE - bugfix: multi-sticker printing
 DONE - generate barcode bugfix (barcode reader)
-
-multi-column size-panel
-
-bulk editing of articles (current shown articles or notepad)
+DONE - multi-column size-panel
 
 filter table style like name-filter
+
+bulk editing of articles (current shown articles or notepad)
 
 lieferschein bei auslieferung von zentrale
 

@@ -11,6 +11,7 @@ import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -23,58 +24,71 @@ import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.resources.ImageResources;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.client.tool.Buttons;
-import com.xfashion.shared.FilterCellData;
+import com.xfashion.shared.FilterCellData2;
 
-public abstract class FilterPanel2<T extends FilterCellData<?>> implements ICrud<T>, IsMinimizable {
+public abstract class FilterPanel2<T extends FilterCellData2> implements IsMinimizable {
 
 	public static final int PANEL_MAX_WIDTH = 155;
 	public static final int PANEL_MIN_WIDTH = 22;
-	
-	protected Panel headerPanel;
+
+	protected HorizontalPanel headerPanel;
 	protected Panel scrollPanel;
 	protected Panel tablePanel;
-	
+
 	protected PanelMediator panelMediator;
 	protected ListDataProvider<T> dataProvider;
-	
+
 	protected Panel createAnchor;
 	protected TextBox createTextBox;
-	
+
 	protected boolean minimized = false;
 	protected Image minmaxButton;
-	
+
 	protected boolean editMode = false;
-	
+
 	protected TextMessages textMessages;
 	protected ErrorMessages errorMessages;
 	protected ImageResources images;
-	
+
 	public FilterPanel2(PanelMediator panelMediator, ListDataProvider<T> dataProvider) {
 		errorMessages = GWT.create(ErrorMessages.class);
 		textMessages = GWT.create(TextMessages.class);
-		images = GWT.<ImageResources>create(ImageResources.class);
+		images = GWT.<ImageResources> create(ImageResources.class);
 		this.panelMediator = panelMediator;
 		this.dataProvider = dataProvider;
 	}
-	
+
 	public abstract Panel createTablePanel();
-	
+
 	public abstract void clearSelection();
-	
+
 	public abstract void hideTools();
-	
+
 	public abstract void showTools();
-	
+
 	protected abstract void createDTOFromPanel();
-	
+
+	protected abstract ImageResource getSelectedIcon();
+
+	protected abstract ImageResource getAvailableIcon();
+
 	public Panel createPanel() {
+		return createPanel(null);
+	}
+
+	public Panel createPanel(String[] additionalStyles) {
 		tablePanel = createTablePanel();
 		scrollPanel = new SimplePanel();
 		scrollPanel.setStyleName("filterPanel");
+		if (additionalStyles != null) {
+			for (String style : additionalStyles) {
+				scrollPanel.addStyleName(style);
+			}
+		}
 		scrollPanel.add(tablePanel);
 		return scrollPanel;
 	}
-	
+
 	protected Panel createHeaderPanel(String title) {
 		headerPanel = new HorizontalPanel();
 		headerPanel.addStyleName("filterHeader");
@@ -94,7 +108,7 @@ public abstract class FilterPanel2<T extends FilterCellData<?>> implements ICrud
 		};
 		minmaxButton.addClickHandler(minmaxClickHandler);
 		headerPanel.add(minmaxButton);
-		
+
 		Label label = new Label(title);
 		label.addStyleName("filterLabel attributeFilterLabel");
 		headerPanel.add(label);
@@ -107,6 +121,7 @@ public abstract class FilterPanel2<T extends FilterCellData<?>> implements ICrud
 			}
 		};
 		toolsButton.addClickHandler(toolsButtonClickHandler);
+		headerPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		headerPanel.add(toolsButton);
 
 		label.addClickHandler(new ClickHandler() {
@@ -118,7 +133,7 @@ public abstract class FilterPanel2<T extends FilterCellData<?>> implements ICrud
 
 		return headerPanel;
 	}
-	
+
 	public void toggleTools() {
 		if (editMode) {
 			editMode = false;
@@ -128,25 +143,14 @@ public abstract class FilterPanel2<T extends FilterCellData<?>> implements ICrud
 			editMode = true;
 		}
 	}
-	
+
 	protected List<Column<T, ?>> createToolsColumns() {
-		List<Column<T, ?>> columns = new ArrayList<Column<T,?>>();
-		columns.add(createEditColumn()); 
+		List<Column<T, ?>> columns = new ArrayList<Column<T, ?>>();
+		// columns.add(createEditColumn());
 		columns.add(createUpColumn());
 		columns.add(createDownColumn());
 		columns.add(createDeleteColumn());
 		return columns;
-	}
-
-	private Column<T, ImageResource> createEditColumn() {
-		Column<T, ImageResource> tool = new Column<T, ImageResource>(new ImageResourceCell()) {
-			@Override
-			public ImageResource getValue(T object) {
-				return images.iconEdit();
-			}
-		};
-		tool.setCellStyleNames("buttonTool");
-		return tool;
 	}
 
 	private Column<T, ImageResource> createUpColumn() {
@@ -182,6 +186,30 @@ public abstract class FilterPanel2<T extends FilterCellData<?>> implements ICrud
 		return tool;
 	}
 
+	protected Column<T, ImageResource> createIconColumn() {
+		Column<T, ImageResource> column = new Column<T, ImageResource>(new ImageResourceCell()) {
+			@Override
+			public ImageResource getValue(T dto) {
+				if (dto.getArticleAmount() > 0) {
+					if (dto.isSelected()) {
+						return getSelectedIcon();
+					} else {
+						return getAvailableIcon();
+					}
+
+				} else {
+					return getNotAvailableIcon();
+				}
+			}
+		};
+		column.setCellStyleNames("filterRowIcon");
+		return column;
+	}
+
+	protected ImageResource getNotAvailableIcon() {
+		return images.iconNotAvailable();
+	}
+
 	protected Widget createCreatePanel() {
 		Grid createGrid = new Grid(2, 1);
 
@@ -201,7 +229,7 @@ public abstract class FilterPanel2<T extends FilterCellData<?>> implements ICrud
 
 		return createGrid;
 	}
-	
+
 	protected void fillDTOFromPanel(T dto) {
 		String name = createTextBox.getText();
 		if (name == null || name.length() == 0) {
@@ -209,52 +237,8 @@ public abstract class FilterPanel2<T extends FilterCellData<?>> implements ICrud
 			return;
 		}
 		dto.setName(name);
-		int numCells = this.getDataProvider().getList().size();
-		int idx = 0;
-		if (numCells != 0) {
-			idx = this.getDataProvider().getList().get(numCells - 1).getSortIndex() + 1;
-		}
-		dto.setSortIndex(idx);
 	}
 
-	@Override
-	public void moveUp(T item) {
-		List<T> list = dataProvider.getList();
-		int idx = list.indexOf(item);
-		if (idx < 1) {
-			return;
-		}
-		T first = list.get(idx - 1);
-		T second = list.get(idx);
-		Integer tmp = first.getSortIndex();
-		first.setSortIndex(second.getSortIndex());
-		second.setSortIndex(tmp);
-		list.remove(idx);
-		list.add(idx - 1, second);
-		update(first);
-		update(second);
-	}
-	
-	@Override
-	public void moveDown(T item) {
-		List<T> list = getDataProvider().getList();
-		int idx = list.indexOf(item);
-		if (idx > list.size() - 2) {
-			return;
-		}
-		moveUp(list.get(idx + 1));
-	}
-	
-	@Override
-	public void edit(T item) {
-		if (item.isInEditMode()) {
-			item.setInEditMode(false);
-		} else {
-			item.setInEditMode(true);
-		}
-		getDataProvider().refresh();
-	}
-	
 	public void minmax() {
 		if (isMinimized()) {
 			maximize();
@@ -262,26 +246,26 @@ public abstract class FilterPanel2<T extends FilterCellData<?>> implements ICrud
 			minimize();
 		}
 	}
-	
+
 	public void minimize() {
 		if (!isMinimized()) {
 			PanelWidthAnimation pwa = new PanelWidthAnimation(this, PANEL_MAX_WIDTH, PANEL_MIN_WIDTH);
 			pwa.run(300);
 		}
 	}
-	
+
 	public void maximize() {
 		if (isMinimized()) {
 			PanelWidthAnimation pwa = new PanelWidthAnimation(this, PANEL_MIN_WIDTH, PANEL_MAX_WIDTH);
 			pwa.run(300);
 		}
 	}
-	
+
 	@Override
 	public void setWidth(int width) {
 		scrollPanel.setWidth(width + "px");
 	}
-	
+
 	public PanelMediator getPanelMediator() {
 		return panelMediator;
 	}

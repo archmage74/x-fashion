@@ -177,7 +177,7 @@ public class CreateArticleTypePopup {
 	private void createArticles() throws CreateArticleException {
 		updateArticleType(currentArticleType);
 		for (SizeDTO size : currentSizes) {
-			currentArticleType.setSizeId(size.getId());
+			currentArticleType.setSizeKey(size.getKey());
 			panelMediator.createArticleType(currentArticleType);
 		}
 	}
