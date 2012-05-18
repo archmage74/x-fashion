@@ -6,11 +6,16 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.view.client.ListDataProvider;
 import com.xfashion.client.at.ArticleTypeDataProvider;
+import com.xfashion.client.db.ArticleTypeService;
+import com.xfashion.client.db.ArticleTypeServiceAsync;
+import com.xfashion.client.db.RefreshFilterEvent;
 import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.FilterCellData2;
 
 public abstract class FilterDataProvider2<T extends FilterCellData2> extends ListDataProvider<T> {
+
+	protected ArticleTypeServiceAsync articleTypeService = (ArticleTypeServiceAsync) GWT.create(ArticleTypeService.class);
 
 	protected boolean loaded;
 
@@ -31,6 +36,10 @@ public abstract class FilterDataProvider2<T extends FilterCellData2> extends Lis
 		loaded = false;
 	}
 	
+	protected void fireRefreshEvent() {
+		Xfashion.eventBus.fireEvent(new RefreshFilterEvent());
+	}
+
 	public boolean isLoaded() {
 		return loaded;
 	}

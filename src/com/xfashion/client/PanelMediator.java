@@ -17,7 +17,6 @@ import com.xfashion.client.style.StylePanel;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.CategoryDTO;
 import com.xfashion.shared.SizeDTO;
-import com.xfashion.shared.StyleDTO;
 
 public class PanelMediator {
 	
@@ -36,26 +35,12 @@ public class PanelMediator {
 	public PanelMediator() {
 	}
 	
-	public void createCategories() {
-		articleTypeDatabase.createCategories();
-	}
-
 	public CategoryDTO getSelectedCategory() {
 		return articleTypeDatabase.getCategoryProvider().getCategoryFilter();
 	}
 	
 	public void setSelectedCategory(CategoryDTO selectedCategory) {
 		articleTypeDatabase.setCategoryFilter(selectedCategory);
-		articleTypeDatabase.updateProviders();
-	}
-
-	public void setSelectedStyles(Set<StyleDTO> styles) {
-		Set<String> styleFilter = articleTypeDatabase.getCategoryProvider().getStyleFilter();
-		styleFilter.clear();
-		for (StyleDTO s : styles) {
-			styleFilter.add(s.getId());
-		}
-		articleTypeDatabase.applyFilters();
 		articleTypeDatabase.updateProviders();
 	}
 
@@ -146,7 +131,7 @@ public class PanelMediator {
 
 		CategoryDTO category = articleTypeDatabase.getCategoryProvider().getCategoryFilter();
 		if (category != null) {
-			at.setCategoryId(category.getId());
+			at.setCategoryKey(category.getKey());
 		}
 
 		Set<String> styles = articleTypeDatabase.getCategoryProvider().getStyleFilter();

@@ -71,6 +71,8 @@ public abstract class FilterPanel2<T extends FilterCellData2> implements IsMinim
 	
 	public abstract String getPanelTitle();
 
+	protected abstract void handleSelection(CellPreviewEvent<T> event);
+
 	protected abstract void moveUp(T dto, int index);
 
 	protected abstract void moveDown(T dto, int index);
@@ -84,10 +86,6 @@ public abstract class FilterPanel2<T extends FilterCellData2> implements IsMinim
 	protected abstract void createDTO();
 	
 	protected abstract void redrawPanel();
-
-	protected abstract ImageResource getSelectedIcon();
-
-	protected abstract ImageResource getAvailableIcon();
 
 	public Panel createPanel() {
 		return createPanel(null);
@@ -110,21 +108,12 @@ public abstract class FilterPanel2<T extends FilterCellData2> implements IsMinim
 		headerPanel = new HorizontalPanel();
 		headerPanel.addStyleName("filterHeader");
 
-		minmaxButton = new Image();
-		if (isMinimized()) {
-			minmaxButton.setResource(images.iconMaximize());
-		} else {
-			minmaxButton.setResource(images.iconMinimize());
-		}
-		minmaxButton.setStyleName("buttonMinMax");
-		ClickHandler minmaxClickHandler = new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				minmax();
+		List<Widget> buttons = createLeftHeaderButtons();
+		if (buttons != null) {
+			for (Widget w : buttons) {
+				headerPanel.add(w);
 			}
-		};
-		minmaxButton.addClickHandler(minmaxClickHandler);
-		headerPanel.add(minmaxButton);
+		}
 
 		Label label = new Label(title);
 		label.addStyleName("filterLabel attributeFilterLabel");
@@ -149,25 +138,6 @@ public abstract class FilterPanel2<T extends FilterCellData2> implements IsMinim
 		});
 
 		return headerPanel;
-	}
-
-	protected void handleSelection(CellPreviewEvent<T> event) {
-		if (editMode && event.getColumn() > 0) {
-			switch (event.getColumn()) {
-			case 2:
-				moveUp(event.getValue(), event.getIndex());
-				break;
-			case 3:
-				moveDown(event.getValue(), event.getIndex());
-				break;
-			case 4:
-				delete(event.getValue());
-				break;
-			}
-		} else {
-			event.getIndex();
-			select(event.getValue());
-		}
 	}
 
 	public void toggleTools() {
@@ -246,26 +216,6 @@ public abstract class FilterPanel2<T extends FilterCellData2> implements IsMinim
 		};
 		tool.setCellStyleNames("buttonTool");
 		return tool;
-	}
-
-	protected Column<T, ImageResource> createIconColumn() {
-		Column<T, ImageResource> column = new Column<T, ImageResource>(new ImageResourceCell()) {
-			@Override
-			public ImageResource getValue(T dto) {
-				if (dto.getArticleAmount() > 0) {
-					if (dto.isSelected()) {
-						return getSelectedIcon();
-					} else {
-						return getAvailableIcon();
-					}
-
-				} else {
-					return getNotAvailableIcon();
-				}
-			}
-		};
-		column.setCellStyleNames("filterRowIcon");
-		return column;
 	}
 
 	protected Column<T, SafeHtml> createNameColumn() {
@@ -359,31 +309,13 @@ public abstract class FilterPanel2<T extends FilterCellData2> implements IsMinim
 		dto.setName(name);
 	}
 
-	public void minmax() {
-		if (isMinimized()) {
-			maximize();
-		} else {
-			minimize();
-		}
-	}
-
-	public void minimize() {
-		if (!isMinimized()) {
-			PanelWidthAnimation pwa = new PanelWidthAnimation(this, PANEL_MAX_WIDTH, PANEL_MIN_WIDTH);
-			pwa.run(300);
-		}
-	}
-
-	public void maximize() {
-		if (isMinimized()) {
-			PanelWidthAnimation pwa = new PanelWidthAnimation(this, PANEL_MIN_WIDTH, PANEL_MAX_WIDTH);
-			pwa.run(300);
-		}
-	}
-
 	@Override
 	public void setWidth(int width) {
 		scrollPanel.setWidth(width + "px");
+	}
+	
+	protected List<Widget> createLeftHeaderButtons() {
+		return null;
 	}
 
 	public Panel getCreateAnchor() {

@@ -14,7 +14,7 @@ import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.SizeDTO;
 
 public class SizeDataProvider extends SimpleFilterDataProvider2<SizeDTO> implements SelectSizeHandler, ClearSizeSelectionHandler, DeleteSizeHandler,
-		CreateSizeHandler, UpdateSizeHandler, MoveDownSizeHandler, MoveUpSizeHandler {
+		CreateSizeHandler, UpdateSizeHandler, MoveDownSizeHandler, MoveUpSizeHandler, ShowChooseSizePopupHandler {
 
 	protected ListDataProvider<SizeDTO> leftProvider;
 	protected ListDataProvider<SizeDTO> rightProvider;
@@ -40,6 +40,7 @@ public class SizeDataProvider extends SimpleFilterDataProvider2<SizeDTO> impleme
 		Xfashion.eventBus.addHandler(UpdateSizeEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(MoveUpSizeEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(MoveDownSizeEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(ShowChooseSizePopupEvent.TYPE, this);
 	}
 
 	public String getAttributeContent(ArticleTypeDTO articleType) {
@@ -188,4 +189,10 @@ public class SizeDataProvider extends SimpleFilterDataProvider2<SizeDTO> impleme
 		return rightProvider;
 	}
 
+
+	@Override
+	public void onShowChooseSizePopup(ShowChooseSizePopupEvent event) {
+		ChooseSizePopup sizePopup = new ChooseSizePopup(this);
+		sizePopup.show();
+	}
 }

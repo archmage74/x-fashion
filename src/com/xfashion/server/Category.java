@@ -3,10 +3,14 @@ package com.xfashion.server;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jdo.annotations.Extension;
+import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.Order;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.xfashion.shared.CategoryDTO;
 import com.xfashion.shared.StyleDTO;
@@ -15,22 +19,20 @@ import com.xfashion.shared.StyleDTO;
 public class Category {
 	
 	@PrimaryKey
+	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+    private Key key;
+	
 	@Persistent
-	private Long id;
+	private Integer categoryNumber;
 	
 	@Persistent
 	private String name;
 	
 	@Persistent
-	private String backgroundColor;
-	
-	@Persistent
-	private String borderColor;
-	
-	@Persistent
 	private Integer sortIndex;
 	
 	@Persistent
+	@Order(extensions = @Extension(vendorName="datanucleus", key="list-ordering", value="sortIndex asc"))
 	private List<Style> styles;
 	
 	public Category() {
@@ -43,64 +45,51 @@ public class Category {
 	}
 	
 	public void updateFromDTO(CategoryDTO dto) {
-		this.id = dto.getId();
 		this.name = dto.getName();
-		this.backgroundColor = dto.getBackgroundColor();
-		this.borderColor = dto.getBorderColor();
-		this.sortIndex = dto.getSortIndex();
-		updateStyleList(this.styles, dto.getStyles());
+		updateStyleList(dto.getStyles());
 	}
 	
-	private void updateStyleList(List<Style> styles, List<StyleDTO> dtos) {
-		List<Style> stylesToRemove = new ArrayList<Style>();
-		List<StyleDTO> stylesToAdd = new ArrayList<StyleDTO>(dtos);
-		for (Style s : styles) {
-			StyleDTO dto = findStyle(stylesToAdd, s);
-			if (dto != null) {
-				s.updateFromDTO(dto);
-				stylesToAdd.remove(dto);
-			} else {
-				stylesToRemove.add(s);
-			}
-		}
-		styles.removeAll(stylesToRemove);
-		for (StyleDTO dto : stylesToAdd) {
-			int index = dtos.indexOf(dto);
-			Style style = new Style(dto);
-			styles.add(index, style);
-		}
-	}
-	
-	private StyleDTO findStyle(List<StyleDTO> dtos, Style style) {
+	public void updateStyleList(List<StyleDTO> dtos) {
+		List<Style> toRemove = new ArrayList<Style>(styles);
+		List<Style> toAdd = new ArrayList<Style>();
+		int idx = 0;
 		for (StyleDTO dto : dtos) {
-			if (dto.getId() != null && KeyFactory.stringToKey(dto.getId()).equals(style.getKey())) {
-				return dto;
+			Style item = findStyle(styles, dto);
+			if (item == null) {
+				item = new Style(dto);
+				toAdd.add(item);
+			} else {
+				toRemove.remove(item);
+				item.updateFromDTO(dto);
+			}
+			item.setSortIndex(idx++);
+		}
+		for (Style item : toRemove) {
+			styles.remove(item);
+		}
+		this.styles.addAll(toAdd);
+	}
+	
+	private Style findStyle(List<Style> list, StyleDTO dto) {
+		for (Style item : list) {
+			if (dto.getKey() != null && KeyFactory.stringToKey(dto.getKey()).equals(item.getKey())) {
+				return item;
 			}
 		}
 		return null;
 	}
+
 	
 	public CategoryDTO createDTO() {
 		CategoryDTO dto = new CategoryDTO();
-		dto.setId(id);
-		dto.setName(name);
-		dto.setBackgroundColor(backgroundColor);
-		dto.setBorderColor(borderColor);
-		dto.setSortIndex(sortIndex);
+		dto.setKey(getKeyString());
+		dto.setName(getName());
 		for (Style style : styles) {
 			dto.getStyles().add(style.createDTO());
 		}
 		return dto;
 	}
 	
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public String getName() {
 		return name;
 	}
@@ -109,22 +98,6 @@ public class Category {
 		this.name = name;
 	}
 	
-	public String getBackgroundColor() {
-		return backgroundColor;
-	}
-
-	public void setBackgroundColor(String backgroundColor) {
-		this.backgroundColor = backgroundColor;
-	}
-
-	public String getBorderColor() {
-		return borderColor;
-	}
-
-	public void setBorderColor(String borderColor) {
-		this.borderColor = borderColor;
-	}
-
 	public Integer getSortIndex() {
 		return sortIndex;
 	}
@@ -139,6 +112,26 @@ public class Category {
 
 	public void setStyles(List<Style> styles) {
 		this.styles = styles;
+	}
+
+	public Key getKey() {
+		return key;
+	}
+	
+	public String getKeyString() {
+		return KeyFactory.keyToString(key);
+	}
+
+	public void setKey(Key key) {
+		this.key = key;
+	}
+
+	public Integer getCategoryNumber() {
+		return categoryNumber;
+	}
+
+	public void setCategoryNumber(Integer categoryNumber) {
+		this.categoryNumber = categoryNumber;
 	}
 
 }

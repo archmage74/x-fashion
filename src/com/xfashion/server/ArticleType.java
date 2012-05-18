@@ -23,7 +23,7 @@ public class ArticleType implements IsSerializable {
 	private String name;
 	
 	@Persistent
-	private Long categoryId;
+	private String categoryKey;
 	
 	@Persistent
 	private Key styleKey;
@@ -56,7 +56,7 @@ public class ArticleType implements IsSerializable {
 	
 	public void updateFromDTO(ArticleTypeDTO dto) {
 		setName(dto.getName());
-		setCategoryId(dto.getCategoryId());
+		setCategoryKey(dto.getCategoryKey());
 		setStyleId(KeyFactory.stringToKey(dto.getStyleKey()));
 		setBrandKey(KeyFactory.stringToKey(dto.getBrandKey()));
 		setSizeKey(KeyFactory.stringToKey(dto.getSizeKey()));
@@ -70,7 +70,7 @@ public class ArticleType implements IsSerializable {
 		ArticleTypeDTO dto = new ArticleTypeDTO();
 		dto.setProductNumber(getProductNumber());
 		dto.setName(getName());
-		dto.setCategoryId(getCategoryId());
+		dto.setCategoryKey(getCategoryKey());
 		dto.setStyleKey(KeyFactory.keyToString(getStyleKey()));
 		dto.setBrandKey(KeyFactory.keyToString(getBrandKey()));
 		dto.setSizeKey(KeyFactory.keyToString(getSizeKey()));
@@ -97,12 +97,12 @@ public class ArticleType implements IsSerializable {
 		this.productNumber = productNumber;
 	}
 
-	public Long getCategoryId() {
-		return categoryId;
+	public String getCategoryKey() {
+		return categoryKey;
 	}
 
-	public void setCategoryId(Long categoryId) {
-		this.categoryId = categoryId;
+	public void setCategoryKey(String categoryKey) {
+		this.categoryKey = categoryKey;
 	}
 
 	public Key getStyleKey() {
@@ -168,7 +168,7 @@ public class ArticleType implements IsSerializable {
 		boolean equal = true;
 		equal &= attributeEquals(productNumber, s.getProductNumber());
 		equal &= attributeEquals(name, s.getName());
-		equal &= attributeEquals(categoryId, s.getCategoryId());
+		equal &= attributeEquals(categoryKey, s.getCategoryKey());
 		equal &= attributeEquals(styleKey, s.getStyleKey());
 		equal &= attributeEquals(brandKey, s.getBrandKey());
 		equal &= attributeEquals(sizeKey, s.getSizeKey());

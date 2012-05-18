@@ -2,28 +2,15 @@ package com.xfashion.shared;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class StyleDTO extends FilterCellData<String> implements IsSerializable {
-	
-	public static String ICON_PREFIX_STYLE = "style";
-	
+public class StyleDTO extends FilterCellData2 implements IsSerializable {
+
 	public StyleDTO() {
-		setIconPrefix(ICON_PREFIX_STYLE);
+		super();
 	}
-	
-	public StyleDTO(String name, int sortIndex) {
+
+	public StyleDTO(String name) {
+		super();
 		setName(name);
-		setSortIndex(sortIndex);
-		setIconPrefix(ICON_PREFIX_STYLE);
-	}
-	
-	public boolean equals(Object o) {
-		if (o == null) return false;
-		if (!(o instanceof StyleDTO)) return false;
-		StyleDTO s = (StyleDTO) o;
-		boolean equal = true;
-		equal &= attributeEquals(getName(), s.getName());
-		equal &= attributeEquals(getSortIndex(), s.getSortIndex());
-		return equal;
 	}
 
 }

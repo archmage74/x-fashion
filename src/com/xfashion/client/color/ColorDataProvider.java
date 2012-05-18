@@ -12,7 +12,7 @@ import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.ColorDTO;
 
 public class ColorDataProvider extends SimpleFilterDataProvider2<ColorDTO> implements CreateColorHandler, UpdateColorHandler, DeleteColorHandler,
-		MoveUpColorHandler, MoveDownColorHandler, SelectColorHandler, ClearColorSelectionHandler {
+		MoveUpColorHandler, MoveDownColorHandler, SelectColorHandler, ClearColorSelectionHandler, ShowChooseColorPopupHandler {
 
 	public ColorDataProvider(ArticleTypeDataProvider articleProvider) {
 		super(articleProvider);
@@ -31,6 +31,7 @@ public class ColorDataProvider extends SimpleFilterDataProvider2<ColorDTO> imple
 		Xfashion.eventBus.addHandler(UpdateColorEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(MoveUpColorEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(MoveDownColorEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(ShowChooseColorPopupEvent.TYPE, this);
 	}
 
 	@Override
@@ -138,4 +139,10 @@ public class ColorDataProvider extends SimpleFilterDataProvider2<ColorDTO> imple
 		articleTypeService.updateColors(new ArrayList<ColorDTO>(getList()), callback);
 	}
 
+
+	@Override
+	public void onShowChooseColorPopup(ShowChooseColorPopupEvent event) {
+		ChooseColorPopup colorPopup = new ChooseColorPopup(this);
+		colorPopup.show();
+	}
 }

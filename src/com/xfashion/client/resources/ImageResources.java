@@ -62,4 +62,12 @@ public interface ImageResources extends ClientBundle {
 	@ImageOptions(width=22, height=20)
 	ImageResource iconBrandSelected();
 	
+	@Source("icon-styleUnselected.png")
+	@ImageOptions(width=22, height=20)
+	ImageResource iconStyleUnselected();
+	
+	@Source("icon-styleSelected.png")
+	@ImageOptions(width=22, height=20)
+	ImageResource iconStyleSelected();
+	
 }

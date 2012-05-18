@@ -12,7 +12,7 @@ import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.BrandDTO;
 
 public class BrandDataProvider extends SimpleFilterDataProvider2<BrandDTO> implements CreateBrandHandler, UpdateBrandHandler, DeleteBrandHandler,
-MoveUpBrandHandler, MoveDownBrandHandler, SelectBrandHandler, ClearBrandSelectionHandler {
+MoveUpBrandHandler, MoveDownBrandHandler, SelectBrandHandler, ClearBrandSelectionHandler, ShowChooseBrandPopupHandler {
 	
 	public BrandDataProvider(ArticleTypeDataProvider articleProvider) {
 		super(articleProvider);
@@ -31,6 +31,7 @@ MoveUpBrandHandler, MoveDownBrandHandler, SelectBrandHandler, ClearBrandSelectio
 		Xfashion.eventBus.addHandler(UpdateBrandEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(MoveUpBrandEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(MoveDownBrandEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(ShowChooseBrandPopupEvent.TYPE, this);
 	}
 
 	@Override
@@ -79,7 +80,6 @@ MoveUpBrandHandler, MoveDownBrandHandler, SelectBrandHandler, ClearBrandSelectio
 	public void onCreateBrand(CreateBrandEvent event) {
 		getList().add(event.getCellData());
 		saveList();
-
 	}
 
 	@Override
@@ -99,7 +99,6 @@ MoveUpBrandHandler, MoveDownBrandHandler, SelectBrandHandler, ClearBrandSelectio
 			public void onFailure(Throwable caught) {
 				Xfashion.fireError(caught.getMessage());
 			}
-
 			@Override
 			public void onSuccess(Void result) {
 				fireRefreshEvent();
@@ -115,7 +114,6 @@ MoveUpBrandHandler, MoveDownBrandHandler, SelectBrandHandler, ClearBrandSelectio
 			public void onFailure(Throwable caught) {
 				Xfashion.fireError("Could not save colors: " + caught.getMessage());
 			}
-
 			@Override
 			public void onSuccess(List<BrandDTO> result) {
 				getList().clear();
@@ -126,4 +124,10 @@ MoveUpBrandHandler, MoveDownBrandHandler, SelectBrandHandler, ClearBrandSelectio
 		articleTypeService.updateBrands(new ArrayList<BrandDTO>(getList()), callback);
 	}
 
+	@Override
+	public void onShowChooseBrandPopup(ShowChooseBrandPopupEvent event) {
+		ChooseBrandPopup brandPopup = new ChooseBrandPopup(this);
+		brandPopup.show();
+	}
+	
 }

@@ -1,41 +1,32 @@
 package com.xfashion.client;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.HasSelectionHandlers;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.gwt.event.shared.GwtEvent;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.view.client.ListDataProvider;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.shared.FilterCellData2;
 
-public abstract class ChooseAttributePopup2<T extends FilterCellData2> implements HasSelectionHandlers<T>  {
+public abstract class ChooseAttributePopup2<T extends FilterCellData2> {
 	
 	private TextMessages textMessages = GWT.create(TextMessages.class);
-	
-	private List<SelectionHandler<T>> selectionHandlers = null;
 	
 	private ListBox itemListBox;
 
 	private DialogBox popup;
 	
-	protected PanelMediator panelMediator;
+	ListDataProvider<T> dataProvider;
 	
-	public ChooseAttributePopup2(PanelMediator panelMediator) {
-		this.panelMediator = panelMediator;
+	public ChooseAttributePopup2(ListDataProvider<T> dataProvider) {
+		this.dataProvider = dataProvider;
 	}
-	
-	public abstract FilterPanel2<T> getPanel();
+
+	protected abstract void select(T item);
 	
 	public void show() {
 		if (popup == null) {
@@ -58,8 +49,8 @@ public abstract class ChooseAttributePopup2<T extends FilterCellData2> implement
 		itemListBox = new ListBox();
 		itemListBox.setWidth("120px");
 		itemListBox.setVisibleItemCount(14);
-		for (T item : getPanel().getDataProvider().getList()) {
-			itemListBox.addItem(item.getName());
+		for (T item : dataProvider.getList()) {
+			itemListBox.addItem(item.getName(), item.getKey());
 		}
 		itemListBox.addClickHandler(new ClickHandler() {
 			@Override
@@ -84,39 +75,11 @@ public abstract class ChooseAttributePopup2<T extends FilterCellData2> implement
 	}
 	
 	private void itemSelected() {
-		int selectedIndex = itemListBox.getSelectedIndex(); 
+		int selectedIndex = itemListBox.getSelectedIndex();
 		if (selectedIndex != -1) {
-			T item = getPanel().getDataProvider().getList().get(selectedIndex);
-			SelectionEvent.fire(this, item);
+			select(dataProvider.getList().get(selectedIndex));
 			hide();
 		}
 	}
 
-	@Override
-	public void fireEvent(GwtEvent<?> event) {
-		if (event instanceof SelectionEvent<?>) {
-			@SuppressWarnings("unchecked")
-			SelectionEvent<T> e = (SelectionEvent<T>) event;
-			if (selectionHandlers != null) {
-				for (SelectionHandler<T> h : selectionHandlers) {
-					h.onSelection(e);
-				}
-			}
-		}
-	}
-
-	@Override
-	public HandlerRegistration addSelectionHandler(final SelectionHandler<T> handler) {
-		if (selectionHandlers == null) {
-			selectionHandlers = new ArrayList<SelectionHandler<T>>();
-		}
-		selectionHandlers.add(handler);
-		return new HandlerRegistration() {
-			@Override
-			public void removeHandler() {
-				selectionHandlers.remove(handler);
-			}
-		};
-	}
-	
 }

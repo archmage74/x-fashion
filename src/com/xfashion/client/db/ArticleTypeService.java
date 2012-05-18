@@ -18,22 +18,18 @@ import com.xfashion.shared.StyleDTO;
 public interface ArticleTypeService extends RemoteService {
 	
 	// categories
-	void createCategories() throws IllegalArgumentException;
-	
-	CategoryDTO createCategory(CategoryDTO category);
-	
-	CategoryDTO readCategory(Long categoryId) throws IllegalArgumentException;
+	CategoryDTO readCategory(String categoryKey) throws IllegalArgumentException;
 	
 	List<CategoryDTO> readCategories() throws IllegalArgumentException;
 	
 	CategoryDTO updateCategory(CategoryDTO category) throws IllegalArgumentException;
 	
+	List<CategoryDTO> updateCategories(List<CategoryDTO> categories) throws IllegalArgumentException;
+	
 	void deleteCategory(CategoryDTO category);
 
 	
 	// styles
-	StyleDTO createStyle(StyleDTO style) throws IllegalArgumentException;
-
 	StyleDTO readStyle(String styleKey) throws IllegalArgumentException;
 	
 	List<StyleDTO> readStyles() throws IllegalArgumentException;

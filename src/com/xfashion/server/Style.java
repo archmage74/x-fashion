@@ -32,14 +32,12 @@ public class Style {
 	
 	public void updateFromDTO(StyleDTO dto) {
 		this.name = dto.getName();
-		this.sortIndex = dto.getSortIndex();
 	}
 	
 	public StyleDTO createDTO() {
 		StyleDTO dto = new StyleDTO();
-		dto.setId(getKeyString());
+		dto.setKey(getKeyString());
 		dto.setName(name);
-		dto.setSortIndex(sortIndex);
 		return dto;
 	}
 
@@ -49,6 +47,10 @@ public class Style {
 
 	public String getKeyString() {
 		return KeyFactory.keyToString(key);
+	}
+
+	public void setKey(Key key) {
+		this.key = key;
 	}
 
 	public String getName() {

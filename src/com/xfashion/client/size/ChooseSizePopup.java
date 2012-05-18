@@ -1,20 +1,18 @@
 package com.xfashion.client.size;
 
+import com.google.gwt.view.client.ListDataProvider;
 import com.xfashion.client.ChooseAttributePopup2;
-import com.xfashion.client.FilterPanel2;
-import com.xfashion.client.PanelMediator;
+import com.xfashion.client.Xfashion;
 import com.xfashion.shared.SizeDTO;
 
 public class ChooseSizePopup extends ChooseAttributePopup2<SizeDTO> {
 
-	public ChooseSizePopup(PanelMediator panelMediator) {
-		super(panelMediator);
+	public ChooseSizePopup(ListDataProvider<SizeDTO> dataProvider) {
+		super(dataProvider);
 	}
 
 	@Override
-	public FilterPanel2<SizeDTO> getPanel() {
-		return null;
-//		return panelMediator.getSizePanel();
+	protected void select(SizeDTO item) {
+		Xfashion.eventBus.fireEvent(new ChooseSizeEvent(item));
 	}
-
 }

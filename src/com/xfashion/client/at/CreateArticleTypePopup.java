@@ -67,7 +67,7 @@ public class CreateArticleTypePopup {
 		currentArticleType = articleType;
 		currentSizes = sizes;
 		
-		categoryLabel.setText(provider.getCategoryProvider().resolveData(articleType.getCategoryId()).getName());
+		categoryLabel.setText(provider.getCategoryProvider().resolveData(articleType.getCategoryKey()).getName());
 		styleLabel.setText(provider.getCategoryProvider().resolveStyle(articleType.getStyleKey()).getName());
 		brandLabel.setText(provider.getBrandProvider().resolveData(articleType.getBrandKey()).getName());
 		colorLabel.setText(provider.getColorProvider().resolveData(articleType.getColorKey()).getName());

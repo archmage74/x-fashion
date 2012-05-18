@@ -4,7 +4,6 @@ war/WEB-INF/appengine-generated
 war/WEB-INF/classes
 gwt-unitCache
 test-classes
-test
 *.class
 .git
 .gwt

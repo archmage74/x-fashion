@@ -65,7 +65,7 @@ public abstract class ArticleTable<T> {
 				ArticleTypeDTO at = ap.retrieveArticleType(a);
 				SafeHtmlBuilder sb = new SafeHtmlBuilder();
 				sb.appendHtmlConstant("<div class=\"articleUpLe\">");
-				sb.appendEscaped(provider.getCategoryProvider().resolveData(at.getCategoryId()).getName());
+				sb.appendEscaped(provider.getCategoryProvider().resolveData(at.getCategoryKey()).getName());
 				sb.appendHtmlConstant("</div>");
 				sb.appendHtmlConstant("<div class=\"articleBoLe\">");
 				sb.appendEscaped(provider.getBrandProvider().resolveData(at.getBrandKey()).getName());

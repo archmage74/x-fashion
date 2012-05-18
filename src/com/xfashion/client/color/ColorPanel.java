@@ -1,17 +1,18 @@
 package com.xfashion.client.color;
 
 import com.google.gwt.resources.client.ImageResource;
+import com.xfashion.client.ResizeableIconFilterPanel;
 import com.xfashion.client.SimpleFilterDataProvider2;
-import com.xfashion.client.SimpleFilterPanel;
 import com.xfashion.client.Xfashion;
 import com.xfashion.shared.ColorDTO;
 
-public class ColorPanel extends SimpleFilterPanel<ColorDTO> {
+public class ColorPanel extends ResizeableIconFilterPanel<ColorDTO> {
 
 	public ColorPanel(SimpleFilterDataProvider2<ColorDTO> dataProvider) {
 		super(dataProvider);
 	}
 
+	@Override
 	public void clearSelection() {
 		Xfashion.eventBus.fireEvent(new ClearColorSelectionEvent());
 	}

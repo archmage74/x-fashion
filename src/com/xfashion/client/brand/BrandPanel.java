@@ -1,12 +1,12 @@
 package com.xfashion.client.brand;
 
 import com.google.gwt.resources.client.ImageResource;
+import com.xfashion.client.ResizeableIconFilterPanel;
 import com.xfashion.client.SimpleFilterDataProvider2;
-import com.xfashion.client.SimpleFilterPanel;
 import com.xfashion.client.Xfashion;
 import com.xfashion.shared.BrandDTO;
 
-public class BrandPanel extends SimpleFilterPanel<BrandDTO> {
+public class BrandPanel extends ResizeableIconFilterPanel<BrandDTO> {
 
 	public BrandPanel(SimpleFilterDataProvider2<BrandDTO> dataProvider) {
 		super(dataProvider);

@@ -13,22 +13,18 @@ import com.xfashion.shared.StyleDTO;
 public interface ArticleTypeServiceAsync {
 
 	// categories
-	void createCategories(AsyncCallback<Void> callback);
-	
-	void createCategory(CategoryDTO category, AsyncCallback<CategoryDTO> callback);
-
-	void readCategory(Long categoryId, AsyncCallback<CategoryDTO> callback);
+	void readCategory(String categoryKey, AsyncCallback<CategoryDTO> callback);
 	
 	void readCategories(AsyncCallback<List<CategoryDTO>> callback);
 
 	void updateCategory(CategoryDTO category, AsyncCallback<CategoryDTO> callback);
 	
+	void updateCategories(List<CategoryDTO> categories, AsyncCallback<List<CategoryDTO>> callback);
+	
 	void deleteCategory(CategoryDTO category, AsyncCallback<Void> callback);
 
 
 	// styles
-	void createStyle(StyleDTO style, AsyncCallback<StyleDTO> callback);
-
 	void readStyle(String styleKey, AsyncCallback<StyleDTO> callback);
 	
 	void readStyles(AsyncCallback<List<StyleDTO>> callback);

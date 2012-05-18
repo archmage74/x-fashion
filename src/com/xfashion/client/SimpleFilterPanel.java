@@ -2,48 +2,41 @@ package com.xfashion.client;
 
 import java.util.List;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.CellPreviewEvent;
-import com.xfashion.client.resources.FilterTableResources;
+import com.google.gwt.view.client.ListDataProvider;
 import com.xfashion.shared.FilterCellData2;
 
 public abstract class SimpleFilterPanel<T extends FilterCellData2> extends FilterPanel2<T> {
 
-	protected SimpleFilterDataProvider2<T> dataProvider;
+	protected ListDataProvider<T> dataProvider;
 	protected CellTable<T> cellTable;
 
-	public SimpleFilterPanel(SimpleFilterDataProvider2<T> dataProvider) {
+	public SimpleFilterPanel(ListDataProvider<T> dataProvider) {
 		super();
 		this.dataProvider = dataProvider;
 	}
 	
 	@Override
-	public Panel createTablePanel() {
-		VerticalPanel panel = new VerticalPanel();
-		Panel headerPanel = createHeaderPanel(getPanelTitle());
-		panel.add(headerPanel);
-
-		cellTable = new CellTable<T>(35, GWT.<FilterTableResources> create(FilterTableResources.class));
-
-		cellTable.addColumn(createIconColumn());
-		cellTable.addColumn(createNameColumn());
-		cellTable.addColumn(createAmountColumn());
-		cellTable.addHandler(createSelectHandler(), CellPreviewEvent.getType());
-		cellTable.setStyleName("simpleFilterTable");
-		dataProvider.addDataDisplay(cellTable);
-
-		panel.add(cellTable);
-
-		setCreateAnchor(new SimplePanel());
-		panel.add(getCreateAnchor());
-
-		return panel;
+	protected void handleSelection(CellPreviewEvent<T> event) {
+		if (editMode && event.getColumn() > 0) {
+			switch (event.getColumn()) {
+			case 2:
+				moveUp(event.getValue(), event.getIndex());
+				break;
+			case 3:
+				moveDown(event.getValue(), event.getIndex());
+				break;
+			case 4:
+				delete(event.getValue());
+				break;
+			}
+		} else {
+			event.getIndex();
+			select(event.getValue());
+		}
 	}
 
 	@Override
@@ -78,7 +71,7 @@ public abstract class SimpleFilterPanel<T extends FilterCellData2> extends Filte
 		cellTable.redraw();
 	}
 
-	public SimpleFilterDataProvider2<T> getDataProvider() {
+	public ListDataProvider<T> getDataProvider() {
 		return dataProvider;
 	}
 

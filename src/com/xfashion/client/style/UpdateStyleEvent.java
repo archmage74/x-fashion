@@ -1,9 +1,9 @@
 package com.xfashion.client.style;
 
-import com.xfashion.client.FilterDataEvent;
+import com.xfashion.client.FilterDataEvent2;
 import com.xfashion.shared.StyleDTO;
 
-public class UpdateStyleEvent extends FilterDataEvent<UpdateStyleHandler, StyleDTO> {
+public class UpdateStyleEvent extends FilterDataEvent2<UpdateStyleHandler, StyleDTO> {
 	
 	public static Type<UpdateStyleHandler> TYPE = new Type<UpdateStyleHandler>();
 

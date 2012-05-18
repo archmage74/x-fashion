@@ -11,29 +11,16 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ListDataProvider;
-import com.xfashion.client.ErrorEvent;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTypeDataProvider;
 import com.xfashion.client.at.ProvidesArticleFilter;
 import com.xfashion.client.brand.BrandDataProvider;
 import com.xfashion.client.cat.CategoryDataProvider;
-import com.xfashion.client.cat.CreateCategoryEvent;
-import com.xfashion.client.cat.CreateCategoryHandler;
-import com.xfashion.client.cat.DeleteCategoryEvent;
-import com.xfashion.client.cat.DeleteCategoryHandler;
-import com.xfashion.client.cat.UpdateCategoryEvent;
-import com.xfashion.client.cat.UpdateCategoryHandler;
 import com.xfashion.client.color.ColorDataProvider;
 import com.xfashion.client.name.NameFilterEvent;
 import com.xfashion.client.name.NameFilterHandler;
-import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.size.SizeDataProvider;
-import com.xfashion.client.style.CreateStyleEvent;
-import com.xfashion.client.style.CreateStyleHandler;
-import com.xfashion.client.style.DeleteStyleEvent;
-import com.xfashion.client.style.DeleteStyleHandler;
 import com.xfashion.client.style.UpdateStyleEvent;
-import com.xfashion.client.style.UpdateStyleHandler;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.BrandDTO;
 import com.xfashion.shared.CategoryDTO;
@@ -41,8 +28,7 @@ import com.xfashion.shared.ColorDTO;
 import com.xfashion.shared.SizeDTO;
 import com.xfashion.shared.StyleDTO;
 
-public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateStyleHandler, UpdateStyleHandler, DeleteStyleHandler, CreateCategoryHandler,
-		UpdateCategoryHandler, DeleteCategoryHandler, NameFilterHandler, RefreshFilterHandler {
+public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHandler, RefreshFilterHandler {
 
 	private ArticleTypeServiceAsync articleTypeService = (ArticleTypeServiceAsync) GWT.create(ArticleTypeService.class);
 
@@ -61,18 +47,15 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateStyleHa
 
 	private String nameFilter = null;
 
-	private ErrorMessages errorMessages;
-
 	public ArticleTypeDatabase() {
 
 	}
 
 	public void init() {
 		registerForEvents();
-		errorMessages = GWT.create(ErrorMessages.class);
 
 		articleTypeProvider = new ArticleTypeDataProvider();
-		categoryProvider = new CategoryDataProvider();
+		categoryProvider = new CategoryDataProvider(articleTypeProvider);
 		brandProvider = new BrandDataProvider(articleTypeProvider);
 		sizeProvider = new SizeDataProvider(articleTypeProvider);
 		colorProvider = new ColorDataProvider(articleTypeProvider);
@@ -88,30 +71,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateStyleHa
 
 	private void registerForEvents() {
 		Xfashion.eventBus.addHandler(RefreshFilterEvent.TYPE, this);
-
-		Xfashion.eventBus.addHandler(CreateCategoryEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(UpdateCategoryEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(DeleteCategoryEvent.TYPE, this);
-
-		Xfashion.eventBus.addHandler(CreateStyleEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(UpdateStyleEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(DeleteStyleEvent.TYPE, this);
-
 		Xfashion.eventBus.addHandler(NameFilterEvent.TYPE, this);
-	}
-
-	public void createCategories() {
-		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				Xfashion.fireError(caught.getMessage());
-			}
-
-			@Override
-			public void onSuccess(Void result) {
-			}
-		};
-		articleTypeService.createCategories(callback);
 	}
 
 	private void checkAllRead() {
@@ -132,7 +92,6 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateStyleHa
 
 			@Override
 			public void onSuccess(List<CategoryDTO> result) {
-				Collections.sort(result);
 				List<CategoryDTO> list = categoryProvider.getList();
 				list.clear();
 				list.addAll(result);
@@ -299,6 +258,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateStyleHa
 	}
 
 	public void updateProviders() {
+		categoryProvider.refresh();
 		updateBrandProvider();
 		updateStyleProvider();
 		updateSizeProvider();
@@ -382,89 +342,6 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateStyleHa
 		return articleTypeProvider;
 	}
 
-	public void onCreateCategory(CreateCategoryEvent event) {
-		final CategoryDTO category = event.getCellData();
-		AsyncCallback<CategoryDTO> callback = new AsyncCallback<CategoryDTO>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				Xfashion.fireError(caught.getMessage());
-			}
-
-			@Override
-			public void onSuccess(CategoryDTO result) {
-				categoryProvider.getList().add(result);
-			}
-		};
-		category.setId(categoryProvider.freeCatgegoryId());
-		articleTypeService.createCategory(category, callback);
-	}
-
-	public void onUpdateCategory(UpdateCategoryEvent event) {
-		final CategoryDTO category = event.getCellData();
-		updateCategory(category);
-	}
-
-	protected void updateCategory(final CategoryDTO category) {
-		AsyncCallback<CategoryDTO> callback = new AsyncCallback<CategoryDTO>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				Xfashion.fireError(caught.getMessage());
-			}
-
-			@Override
-			public void onSuccess(CategoryDTO result) {
-				category.setStyles(result.getStyles());
-				categoryProvider.refresh();
-				updateStyleProvider();
-			}
-		};
-		articleTypeService.updateCategory(category, callback);
-	}
-
-	public void onDeleteCategory(DeleteCategoryEvent event) {
-		final CategoryDTO category = event.getCellData();
-		if (doesCategoryHaveArticles(category)) {
-			Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.categoryIsNotEmpty(category.getName())));
-			return;
-		}
-		if (category.equals(getCategoryProvider().getCategoryFilter())) {
-			setCategoryFilter(null);
-		}
-		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				String msg = caught.getMessage();
-				Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.categoryDeleteFailed(msg)));
-			}
-
-			@Override
-			public void onSuccess(Void result) {
-				categoryProvider.getList().remove(category);
-			}
-		};
-		articleTypeService.deleteCategory(category, callback);
-	}
-
-	public boolean doesCategoryHaveArticles(CategoryDTO category) {
-		for (ArticleTypeDTO at : articleTypes) {
-			if (at.getCategoryId().equals(category.getId())) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public void onCreateStyle(CreateStyleEvent event) {
-		final StyleDTO style = event.getCellData();
-		if (categoryProvider.getCategoryFilter() != null) {
-			CategoryDTO category = categoryProvider.getCategoryFilter();
-			category.getStyles().add(style);
-			updateCategory(category);
-		} else {
-			Xfashion.fireError(errorMessages.noCategorySelected());
-		}
-	}
-
 	public void onUpdateStyle(UpdateStyleEvent event) {
 		final StyleDTO style = event.getCellData();
 		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
@@ -479,13 +356,6 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, CreateStyleHa
 			}
 		};
 		articleTypeService.updateStyle(style, callback);
-	}
-
-	public void onDeleteStyle(DeleteStyleEvent event) {
-		final StyleDTO style = event.getCellData();
-		CategoryDTO category = categoryProvider.getCategoryFilter();
-		category.getStyles().remove(style);
-		updateCategory(category);
 	}
 
 	public void createArticleType(final ArticleTypeDTO articleType) {

@@ -5,6 +5,7 @@ import java.text.NumberFormat;
 import com.xfashion.client.db.ArticleTypeService;
 import com.xfashion.server.ArticleTypeServiceImpl;
 import com.xfashion.shared.ArticleTypeDTO;
+import com.xfashion.shared.BarcodeHelper;
 
 public class StickerRenderer {
 
@@ -37,7 +38,7 @@ public class StickerRenderer {
 		}
 		sb.append("<table class=\"articleCell\" " + pagebreak + ">");
 		sb.append("<tr>");
-		sb.append(createTd(readCategoryName(articleType.getCategoryId()), "articleUpLe"));
+		sb.append(createTd(readCategoryName(articleType.getCategoryKey()), "articleUpLe"));
 		sb.append(createTd(articleType.getName(), "articleUpCe"));
 		sb.append(createTd(readColorName(articleType.getColorKey()), "articleUpRi"));
 		sb.append("</tr>");
@@ -85,7 +86,7 @@ public class StickerRenderer {
 		return articleTypeService.readArticleType(productNumber);
 	}
 	
-	private String readCategoryName(Long id) {
+	private String readCategoryName(String id) {
 		return articleTypeService.readCategory(id).getName();
 	}
 	

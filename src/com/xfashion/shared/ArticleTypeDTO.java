@@ -8,7 +8,7 @@ public class ArticleTypeDTO extends DTO<Long> implements IsSerializable {
 
 	private String name;
 	
-	private Long categoryId;
+	private String categoryKey;
 	
 	private String styleKey;
 	
@@ -40,12 +40,12 @@ public class ArticleTypeDTO extends DTO<Long> implements IsSerializable {
 		this.name = name;
 	}
 
-	public Long getCategoryId() {
-		return categoryId;
+	public String getCategoryKey() {
+		return categoryKey;
 	}
 
-	public void setCategoryId(Long categoryId) {
-		this.categoryId = categoryId;
+	public void setCategoryKey(String categoryKey) {
+		this.categoryKey = categoryKey;
 	}
 
 	public String getStyleKey() {
@@ -111,7 +111,7 @@ public class ArticleTypeDTO extends DTO<Long> implements IsSerializable {
 		boolean equal = true;
 		equal &= attributeEquals(productNumber, s.getProductNumber());
 		equal &= attributeEquals(name, s.getName());
-		equal &= attributeEquals(categoryId, s.getCategoryId());
+		equal &= attributeEquals(categoryKey, s.getCategoryKey());
 		equal &= attributeEquals(styleKey, s.getStyleKey());
 		equal &= attributeEquals(brandKey, s.getBrandKey());
 		equal &= attributeEquals(sizeKey, s.getSizeKey());
@@ -125,7 +125,7 @@ public class ArticleTypeDTO extends DTO<Long> implements IsSerializable {
 		ArticleTypeDTO clone = new ArticleTypeDTO();
 		clone.setProductNumber(getProductNumber());
 		clone.setName(getName());
-		clone.setCategoryId(getCategoryId());
+		clone.setCategoryKey(getCategoryKey());
 		clone.setStyleKey(getStyleKey());
 		clone.setBrandKey(getBrandKey());
 		clone.setSizeKey(getSizeKey());

@@ -1,20 +1,18 @@
 package com.xfashion.client.brand;
 
+import com.google.gwt.view.client.ListDataProvider;
 import com.xfashion.client.ChooseAttributePopup2;
-import com.xfashion.client.FilterPanel2;
-import com.xfashion.client.PanelMediator;
+import com.xfashion.client.Xfashion;
 import com.xfashion.shared.BrandDTO;
 
 public class ChooseBrandPopup extends ChooseAttributePopup2<BrandDTO> {
 
-	public ChooseBrandPopup(PanelMediator panelMediator) {
-		super(panelMediator);
+	public ChooseBrandPopup(ListDataProvider<BrandDTO> dataProvider) {
+		super(dataProvider);
 	}
 
 	@Override
-	public FilterPanel2<BrandDTO> getPanel() {
-		return null;
-//		return panelMediator.getBrandPanel();
+	protected void select(BrandDTO item) {
+		Xfashion.eventBus.fireEvent(new ChooseBrandEvent(item));
 	}
-
 }

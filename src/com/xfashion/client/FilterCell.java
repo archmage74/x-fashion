@@ -32,13 +32,12 @@ public class FilterCell<T extends FilterCellData<?>> extends AbstractCell<T> {
 
 	private void render(T cellData, SafeHtmlBuilder sb, CategoryDTO selectedCategory) {
 		if (cellData.isSelected()) {
-			String style = createSelectedStyle(selectedCategory);
 			if (cellData.getArticleAmount() != null && cellData.getArticleAmount() > 0) {
 				sb.appendHtmlConstant("<img class=\"filterIconEnabled\" src=\"" + cellData.getIconPrefix() + "IconSelected.png\" width=\"22\" height=\"20\"></img>");
 			} else {
 				sb.appendHtmlConstant("<img class=\"filterIconDisabled\" src=\"whitePixel.png\" width=\"22\" height=\"20\"></img>");
 			}
-			sb.appendHtmlConstant("<table cellspacing=\"0\" cellpadding=\"0\" class=\"filterTable\" style=\"" + style + "\">");
+			sb.appendHtmlConstant("<table cellspacing=\"0\" cellpadding=\"0\" class=\"filterTable\" >");
 			sb.appendHtmlConstant("<tr><td class=\"filterText filterLabelSelected\">");
 		} else {
 			if (cellData.getArticleAmount() != null && cellData.getArticleAmount() > 0) {
@@ -67,24 +66,6 @@ public class FilterCell<T extends FilterCellData<?>> extends AbstractCell<T> {
 		sb.appendHtmlConstant("</td></tr></table>");
 	}
 	
-	private String createSelectedStyle(CategoryDTO selectedCategory) {
-		String style;
-		String borderColor;
-		String backgroundColor;
-		if (selectedCategory != null) {
-			borderColor = selectedCategory.getBorderColor();
-			backgroundColor = selectedCategory.getBackgroundColor();
-		} else {
-			borderColor = "#777;";
-			backgroundColor = "#aaa";
-		}
-		style = "background-color: " + backgroundColor + "; " +
-			"border-top: 2px solid " + borderColor + "; " +
-			"border-right: 2px solid " + borderColor + "; " +
-			"border-bottom: 2px solid " + borderColor + "; ";
-		return style;
-	}
-
 	@Override
 	public void onBrowserEvent(Context context, Element parent, T value, NativeEvent event, ValueUpdater<T> valueUpdater) {
 		if (value == null) {

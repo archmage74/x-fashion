@@ -13,12 +13,13 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.CellPreviewEvent;
 import com.xfashion.client.ErrorEvent;
-import com.xfashion.client.FilterPanel2;
+import com.xfashion.client.PanelWidthAnimation;
+import com.xfashion.client.ResizeableIconFilterPanel;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.resources.FilterTableResources;
 import com.xfashion.shared.SizeDTO;
 
-public class SizePanel extends FilterPanel2<SizeDTO> {
+public class SizePanel extends ResizeableIconFilterPanel<SizeDTO> {
 
 	protected SizeDataProvider sizeProvider;
 
@@ -26,7 +27,7 @@ public class SizePanel extends FilterPanel2<SizeDTO> {
 	protected CellTable<SizeDTO> cellTable2;
 
 	public SizePanel(SizeDataProvider dataProvider) {
-		super();
+		super(dataProvider);
 		this.sizeProvider = dataProvider;
 	}
 
@@ -134,6 +135,28 @@ public class SizePanel extends FilterPanel2<SizeDTO> {
 		}
 		while (cellTable2.getColumnCount() > 1) {
 			cellTable2.removeColumn(1);
+		}
+	}
+
+	public void minmax() {
+		if (isMinimized()) {
+			maximize();
+		} else {
+			minimize();
+		}
+	}
+
+	public void minimize() {
+		if (!isMinimized()) {
+			PanelWidthAnimation pwa = new PanelWidthAnimation(this, PANEL_MAX_WIDTH, PANEL_MIN_WIDTH);
+			pwa.run(300);
+		}
+	}
+
+	public void maximize() {
+		if (isMinimized()) {
+			PanelWidthAnimation pwa = new PanelWidthAnimation(this, PANEL_MIN_WIDTH, PANEL_MAX_WIDTH);
+			pwa.run(300);
 		}
 	}
 

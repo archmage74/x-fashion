@@ -1,127 +1,149 @@
 package com.xfashion.client.cat;
 
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.cellview.client.CellList;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.view.client.RowCountChangeEvent;
-import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SingleSelectionModel;
-import com.xfashion.client.FilterPanel;
-import com.xfashion.client.ICrud;
-import com.xfashion.client.PanelMediator;
-import com.xfashion.client.ToolPanel;
+import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.CellPreviewEvent;
+import com.google.gwt.view.client.ListDataProvider;
+import com.xfashion.client.SimpleFilterPanel;
 import com.xfashion.client.Xfashion;
-import com.xfashion.client.resources.FilterListResources;
-import com.xfashion.client.tool.Buttons;
+import com.xfashion.client.resources.FilterTableResources;
 import com.xfashion.shared.CategoryDTO;
 
-public class CategoryPanel extends FilterPanel<CategoryDTO> implements ICrud<CategoryDTO> {
+public class CategoryPanel extends SimpleFilterPanel<CategoryDTO> {
 
-	private CategoryDTO selectedCategory;
+	private CategoryDataProvider dataProvider;
+	protected CellTable<CategoryDTO> cellTable;
 
-	private CategoryCell cell;
-
-	public CategoryPanel(PanelMediator panelMediator, CategoryDataProvider dataProvider) {
-		super(panelMediator, dataProvider);
-		panelMediator.setCategoryPanel(this);
+	public CategoryPanel(CategoryDataProvider dataProvider) {
+		super(dataProvider);
+		this.dataProvider = dataProvider; 
 	}
 
-	public Panel createListPanel() {
-		listPanel = new VerticalPanel();
+	@Override
+	public Panel createTablePanel() {
+		VerticalPanel panel = new VerticalPanel();
+		Panel headerPanel = createHeaderPanel(getPanelTitle());
+		panel.add(headerPanel);
 
-		headerPanel = new HorizontalPanel();
-		headerPanel.addStyleName("filterHeader");
-		Label categoryLabel = new Label(textMessages.category());
-		categoryLabel.addStyleName("filterLabel categoryFilterLabel");
-		headerPanel.add(categoryLabel);
-		Image toolsButton = Buttons.showTools();
-		ClickHandler toolsButtonClickHandler = new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				toggleTools();
-			}
-		};
-		toolsButton.addClickHandler(toolsButtonClickHandler);
-		headerPanel.add(toolsButton);
+		cellTable = new CellTable<CategoryDTO>(20, GWT.<FilterTableResources> create(FilterTableResources.class));
 
-		listPanel.add(headerPanel);
+		cellTable.addColumn(createNameColumn());
+		cellTable.addHandler(createSelectHandler(), CellPreviewEvent.getType());
+		cellTable.setStyleName("simpleFilterTable");
+		dataProvider.addDataDisplay(cellTable);
 
-		cell = new CategoryCell(this, panelMediator);
-		cellList = new CellList<CategoryDTO>(cell, GWT.<FilterListResources> create(FilterListResources.class));
-		cellList.setPageSize(20);
-		cellList.addRowCountChangeHandler(new RowCountChangeEvent.Handler() {
-			@Override
-			public void onRowCountChange(RowCountChangeEvent event) {
-				if (toolPanel != null) {
-					refreshToolsPanel();
-				}
-			}
-		});
-
-		final SingleSelectionModel<CategoryDTO> selectionModel = new SingleSelectionModel<CategoryDTO>();
-		cellList.setSelectionModel(selectionModel);
-		selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-			public void onSelectionChange(SelectionChangeEvent event) {
-				if (selectedCategory != null) {
-					selectedCategory.setSelected(false);
-				}
-				selectedCategory = selectionModel.getSelectedObject();
-				if (selectionModel.getSelectedObject() != null) {
-					selectedCategory.setSelected(true);
-					panelMediator.setSelectedCategory(selectedCategory);
-				} else {
-					selectedCategory = null;
-					panelMediator.setSelectedCategory(null);
-				}
-			}
-		});
-		getDataProvider().addDataDisplay(cellList);
-
-		cellList.addStyleName("categoryList");
-		listPanel.add(cellList);
+		panel.add(cellTable);
 
 		setCreateAnchor(new SimplePanel());
-		listPanel.add(getCreateAnchor());
-		
-		return listPanel;
+		panel.add(getCreateAnchor());
+
+		return panel;
 	}
-	
+
 	@Override
-	protected ToolPanel<CategoryDTO> createToolPanel() {
-		ToolPanel<CategoryDTO> tp = new CategoryToolPanel(this, panelMediator);
-		return tp;
+	protected void handleSelection(CellPreviewEvent<CategoryDTO> event) {
+		if (editMode && event.getColumn() > 0) {
+			switch (event.getColumn()) {
+			case 1:
+				moveUp(event.getValue(), event.getIndex());
+				break;
+			case 2:
+				moveDown(event.getValue(), event.getIndex());
+				break;
+			case 3:
+				delete(event.getValue());
+				break;
+			}
+		} else {
+			event.getIndex();
+			select(event.getValue());
+		}
 	}
-	
+
+	@Override
 	public void delete(CategoryDTO category) {
 		Xfashion.eventBus.fireEvent(new DeleteCategoryEvent(category));
 	}
 
-	public void update(CategoryDTO category) {
-		Xfashion.eventBus.fireEvent(new UpdateCategoryEvent(category));
-		cellList.redraw();
-	}
-
-	public CategoryDTO getSelectedCategory() {
-		return selectedCategory;
-	}
-
-	public PanelMediator getPanelMediator() {
-		return panelMediator;
-	}
-
-	public void showCreatePopup() {
-
-	}
-
+	@Override
 	public void clearSelection() {
-
+		Xfashion.eventBus.fireEvent(new SelectCategoryEvent(null));
 	}
 
+	@Override
+	public void hideTools() {
+		removeAdditionalColumns();
+		cellTable.addColumn(createNameColumn());
+		redrawPanel();
+		createAnchor.clear();
+	}
+
+	@Override
+	public void showTools() {
+		removeAdditionalColumns();
+		cellTable.addColumn(createEditNameColumn());
+		List<Column<CategoryDTO, ?>> toolColumns = createToolsColumns();
+		for (Column<CategoryDTO, ?> c : toolColumns) {
+			cellTable.addColumn(c);
+		}
+		redrawPanel();
+		Widget create = createCreatePanel();
+		createAnchor.add(create);
+	}
+
+	private void removeAdditionalColumns() {
+		while (cellTable.getColumnCount() > 0) {
+			cellTable.removeColumn(0);
+		}
+	}
+
+	@Override
+	public ListDataProvider<CategoryDTO> getDataProvider() {
+		return dataProvider;
+	}
+
+	@Override
+	public String getPanelTitle() {
+		return textMessages.category();
+	}
+
+	@Override
+	protected void moveUp(CategoryDTO dto, int index) {
+		Xfashion.eventBus.fireEvent(new MoveUpCategoryEvent(dto, index));
+	}
+
+	@Override
+	protected void moveDown(CategoryDTO dto, int index) {
+		Xfashion.eventBus.fireEvent(new MoveDownCategoryEvent(dto, index));
+	}
+
+	@Override
+	protected void select(CategoryDTO dto) {
+		Xfashion.eventBus.fireEvent(new SelectCategoryEvent(dto));
+	}
+
+	@Override
+	protected void updateDTO(CategoryDTO dto) {
+		Xfashion.eventBus.fireEvent(new UpdateCategoryEvent(dto));
+	}
+
+	@Override
+	protected void createDTO() {
+		CategoryDTO size = new CategoryDTO();
+		fillDTOFromPanel(size);
+		Xfashion.eventBus.fireEvent(new CreateCategoryEvent(size));
+	}
+
+	@Override
+	protected void redrawPanel() {
+		cellTable.redraw();
+	}
+	
 }

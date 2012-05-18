@@ -1,91 +1,67 @@
 package com.xfashion.client.style;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.cellview.client.CellList;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.view.client.ListDataProvider;
-import com.google.gwt.view.client.MultiSelectionModel;
-import com.google.gwt.view.client.RowCountChangeEvent;
-import com.google.gwt.view.client.SelectionChangeEvent;
-import com.xfashion.client.ErrorEvent;
-import com.xfashion.client.FilterCell;
-import com.xfashion.client.FilterPanel;
-import com.xfashion.client.PanelMediator;
-import com.xfashion.client.ToolPanel;
+import com.xfashion.client.ResizeableIconFilterPanel;
 import com.xfashion.client.Xfashion;
-import com.xfashion.client.resources.FilterListResources;
 import com.xfashion.shared.StyleDTO;
 
-public class StylePanel extends FilterPanel<StyleDTO> {
+public class StylePanel extends ResizeableIconFilterPanel<StyleDTO> {
 
-	private MultiSelectionModel<StyleDTO> selectionModel;
-	
-	public StylePanel(PanelMediator panelMediator, ListDataProvider<StyleDTO> dataProvider) {
-		super(panelMediator, dataProvider);
-		panelMediator.setStylePanel(this);
-	}
-	
-	public Panel createListPanel() {
-		listPanel = new VerticalPanel();
-
-		headerPanel = createHeaderPanel(textMessages.style());
-		listPanel.add(headerPanel);
-
-		FilterCell<StyleDTO> filterCell = new FilterCell<StyleDTO>(this, panelMediator);
-		cellList = new CellList<StyleDTO>(filterCell, GWT.<FilterListResources> create(FilterListResources.class));
-		cellList.setPageSize(38);
-		cellList.addRowCountChangeHandler(new RowCountChangeEvent.Handler() {
-			@Override
-			public void onRowCountChange(RowCountChangeEvent event) {
-				if (toolPanel != null) {
-					refreshToolsPanel();
-				}
-			}
-		});
-
-		selectionModel = new MultiSelectionModel<StyleDTO>();
-		cellList.setSelectionModel(selectionModel);
-		selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-			public void onSelectionChange(SelectionChangeEvent event) {
-				panelMediator.setSelectedStyles(selectionModel.getSelectedSet());
-			}
-		});
-
-		dataProvider.addDataDisplay(cellList);
-		cellList.addStyleName("styleList");
-		listPanel.add(cellList);
-
-		setCreateAnchor(new SimplePanel());
-		listPanel.add(getCreateAnchor());
-
-		return listPanel;
-	}
-	
-	public void clearSelection() {
-		selectionModel.clear();
+	public StylePanel(ListDataProvider<StyleDTO> dataProvider) {
+		super(dataProvider);
 	}
 
 	@Override
-	protected ToolPanel<StyleDTO> createToolPanel() {
-		ToolPanel<StyleDTO> tp = new StyleToolPanel(this, panelMediator);
-		return tp;
+	public void clearSelection() {
+		Xfashion.eventBus.fireEvent(new ClearStyleSelectionEvent());
+	}
+
+	@Override
+	public String getPanelTitle() {
+		return textMessages.style();
+	}
+
+	@Override
+	protected void moveUp(StyleDTO dto, int index) {
+		Xfashion.eventBus.fireEvent(new MoveUpStyleEvent(dto, index));
+	}
+
+	@Override
+	protected void moveDown(StyleDTO dto, int index) {
+		Xfashion.eventBus.fireEvent(new MoveDownStyleEvent(dto, index));
 	}
 
 	@Override
 	public void delete(StyleDTO item) {
-		if (item.getArticleAmount() != null && item.getArticleAmount() > 0) {
-			Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.styleIsNotEmpty(item.getName())));
-			return;
-		}
 		Xfashion.eventBus.fireEvent(new DeleteStyleEvent(item));
 	}
 
 	@Override
-	public void update(StyleDTO item) {
+	protected void select(StyleDTO dto) {
+		Xfashion.eventBus.fireEvent(new SelectStyleEvent(dto));
+	}
+
+	@Override
+	protected void createDTO() {
+		StyleDTO item = new StyleDTO();
+		fillDTOFromPanel(item);
+		Xfashion.eventBus.fireEvent(new CreateStyleEvent(item));
+	}
+
+	@Override
+	protected ImageResource getSelectedIcon() {
+		return images.iconStyleSelected();
+	}
+
+	@Override
+	protected ImageResource getAvailableIcon() {
+		return images.iconStyleUnselected();
+	}
+
+	@Override
+	public void updateDTO(StyleDTO item) {
 		Xfashion.eventBus.fireEvent(new UpdateStyleEvent(item));
-		getDataProvider().refresh();
 	}
 
 }

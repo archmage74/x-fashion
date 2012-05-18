@@ -1,19 +1,18 @@
 package com.xfashion.client.style;
 
-import com.xfashion.client.ChooseAttributePopup;
-import com.xfashion.client.FilterPanel;
-import com.xfashion.client.PanelMediator;
+import com.google.gwt.view.client.ListDataProvider;
+import com.xfashion.client.ChooseAttributePopup2;
 import com.xfashion.shared.StyleDTO;
 
-public class ChooseStylePopup extends ChooseAttributePopup<StyleDTO> {
+public class ChooseStylePopup extends ChooseAttributePopup2<StyleDTO> {
 
-	public ChooseStylePopup(PanelMediator panelMediator) {
-		super(panelMediator);
+	public ChooseStylePopup(ListDataProvider<StyleDTO> dataProvider) {
+		super(dataProvider);
 	}
 
 	@Override
-	public FilterPanel<StyleDTO> getPanel() {
-		return panelMediator.getStylePanel();
+	protected void select(StyleDTO item) {
+		// TODO Auto-generated method stub
+		
 	}
-
 }

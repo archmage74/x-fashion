@@ -21,51 +21,19 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 
 	private static final long serialVersionUID = 1L;
 
+	public static final long MULT_TYPE = 100000000000L;
+	public static final long MULT_CAT = 1000000000L;
+	public static final long MULT_BUYP = 1000000L;
+
 	// *************
 	// categories
 	// *************
 	@Override
-	public void createCategories() throws IllegalArgumentException {
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		try {
-			deleteCategories(pm);
-			createCategory(pm, new CategoryDTO(1L, "Damenhose", 0, "#76A573", "#466944"));
-			createCategory(pm, new CategoryDTO(2L, "Herrenhose", 1, "#6F77AA", "#2B3781"));
-			createCategory(pm, new CategoryDTO(3L, "Damenoberteil", 2, "#9EC1AA", "#74A886"));
-			createCategory(pm, new CategoryDTO(4L, "Herrenoberteil", 3, "#B2B7D9", "#919BCA"));
-			createCategory(pm, new CategoryDTO(5L, "Kleider", 4, "#CEAFD0", "#B98DBC"));
-			createCategory(pm, new CategoryDTO(6L, "Strumpfwaren", 5, "#C1AEA5", "#A78C7E"));
-			createCategory(pm, new CategoryDTO(7L, "Gürtel", 6, "#9F7F79", "#71433A"));
-			createCategory(pm, new CategoryDTO(8L, "Bademode", 7, "#8AADB8", "#578C9B"));
-			createCategory(pm, new CategoryDTO(9L, "Accessoirs", 8, "#A26E7B", "#7C3044"));
-		} finally {
-			pm.close();
-		}
-	}
-
-	@Override
-	public CategoryDTO createCategory(CategoryDTO dto) throws IllegalArgumentException {
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		try {
-			Category category = createCategory(pm, dto);
-			dto.setId(category.getId());
-		} finally {
-			pm.close();
-		}
-		return dto;
-	}
-
-	private Category createCategory(PersistenceManager pm, CategoryDTO dto) {
-		Category c = new Category(dto);
-		return pm.makePersistent(c);
-	}
-
-	@Override
-	public CategoryDTO readCategory(Long id) {
+	public CategoryDTO readCategory(String key) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		CategoryDTO dto = null;
 		try {
-			Category category = readCategory(pm, id);
+			Category category = readCategory(pm, key);
 			dto = category.createDTO();
 		} finally {
 			pm.close();
@@ -73,56 +41,70 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 		return dto;
 	}
 
-	private Category readCategory(PersistenceManager pm, Long id) {
-		Category category = pm.getObjectById(Category.class, id);
+	private Category readCategory(PersistenceManager pm, String keyString) {
+		Category category = pm.getObjectById(Category.class, KeyFactory.stringToKey(keyString));
 		return category;
 	}
 
 	@Override
 	public List<CategoryDTO> readCategories() throws IllegalArgumentException {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
-		List<CategoryDTO> categories = new ArrayList<CategoryDTO>();
+		List<CategoryDTO> dtos;
 		try {
-			List<Category> cats = readCategories(pm);
-			for (Category c : cats) {
-				CategoryDTO dto = c.createDTO();
-				categories.add(dto);
-			}
+			Categories items = readCategories(pm);
+			dtos = items.getDtos();
 		} finally {
 			pm.close();
 		}
-		return categories;
+		return dtos;
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<Category> readCategories(PersistenceManager pm) {
-		Query query = pm.newQuery(Category.class);
-		List<Category> categories = (List<Category>) query.execute();
-		return categories;
+	private Categories readCategories(PersistenceManager pm) {
+		Query query = pm.newQuery(Categories.class);
+		Categories item;
+		List<Categories> items = (List<Categories>) query.execute();
+		if (items.size() == 0) {
+			item = new Categories();
+			item = pm.makePersistent(item);
+		} else {
+			item = items.get(0);
+		}
+		return item;
 	}
 
 	@Override
 	public CategoryDTO updateCategory(CategoryDTO dto) throws IllegalArgumentException {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
-			Category category = updateCategory(pm, dto);
-			dto = category.createDTO();
+			updateCategory(pm, dto);
 		} finally {
 			pm.close();
 		}
-		return dto;
+		return readCategory(dto.getKey());
 	}
 
 	private Category updateCategory(PersistenceManager pm, CategoryDTO dto) {
-		Category category = readCategory(pm, dto.getId());
+		Category category = readCategory(pm, dto.getKey());
 		category.updateFromDTO(dto);
 		return pm.makePersistent(category);
 	}
 
-	private void deleteCategories(PersistenceManager pm) {
-		List<Category> all = readCategories(pm);
-		pm.deletePersistentAll(all);
-		pm.flush();
+	@Override
+	public List<CategoryDTO> updateCategories(List<CategoryDTO> dtos) throws IllegalArgumentException {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			updateCategories(pm, dtos);
+		} finally {
+			pm.close();
+		}
+		return readCategories();
+	}
+
+	public void updateCategories(PersistenceManager pm, List<CategoryDTO> dtos) {
+		Categories categories = readCategories(pm);
+		categories.update(dtos);
+		pm.makePersistent(categories);
 	}
 
 	@Override
@@ -136,30 +118,13 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 	}
 
 	private void deleteCategory(PersistenceManager pm, CategoryDTO dto) {
-		Category category = readCategory(pm, dto.getId());
+		Category category = readCategory(pm, dto.getKey());
 		pm.deletePersistent(category);
 	}
 
 	// *************
 	// styles
 	// *************
-	@Override
-	public StyleDTO createStyle(StyleDTO dto) throws IllegalArgumentException {
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		try {
-			Style style = createStyle(pm, dto);
-			dto.setId(style.getKeyString());
-		} finally {
-			pm.close();
-		}
-		return dto;
-	}
-
-	private Style createStyle(PersistenceManager pm, StyleDTO dto) {
-		Style style = new Style(dto);
-		return pm.makePersistent(style);
-	}
-
 	@Override
 	public StyleDTO readStyle(String keyString) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
@@ -212,7 +177,7 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 	}
 
 	private void updateStyle(PersistenceManager pm, StyleDTO dto) {
-		Style item = readStyle(pm, dto.getId());
+		Style item = readStyle(pm, dto.getKey());
 		item.updateFromDTO(dto);
 		pm.makePersistent(item);
 	}
@@ -228,7 +193,7 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 	}
 
 	private void deleteStyle(PersistenceManager pm, StyleDTO dto) {
-		Style item = readStyle(pm, dto.getId());
+		Style item = readStyle(pm, dto.getKey());
 		pm.deletePersistent(item);
 	}
 
@@ -537,7 +502,10 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 
 	private ArticleType createArticleType(PersistenceManager pm, ArticleTypeDTO dto) {
 		ArticleType at = new ArticleType(dto);
-		at.setProductNumber(generateArticleId(pm));
+		Long id = generateArticleId(pm);
+		Category category = readCategory(pm, dto.getCategoryKey());
+		Long pn = 1 * MULT_TYPE + dto.getBuyPrice() / 100 * MULT_BUYP + category.getCategoryNumber() * MULT_CAT + id;
+		at.setProductNumber(pn);
 		return pm.makePersistent(at);
 	}
 

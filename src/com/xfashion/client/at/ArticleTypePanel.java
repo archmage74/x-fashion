@@ -131,7 +131,7 @@ public class ArticleTypePanel {
 	private void addArticle() {
 		ArticleTypeDTO articleType = panelMediator.createArticleTypeFromSelection();
 		List<SizeDTO> sizes = panelMediator.getSelectedSizes();
-		if (articleType.getCategoryId() == null) {
+		if (articleType.getCategoryKey() == null) {
 			Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.articleCreateNoCategory()));
 		} else if (articleType.getBrandKey() == null) {
 			Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.articleCreateNoBrand()));
