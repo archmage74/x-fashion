@@ -33,10 +33,11 @@ DONE - notepad: -1/-10
 DONE - bugfix: multi-sticker printing
 DONE - generate barcode bugfix (barcode reader)
 DONE - multi-column size-panel
-
-filter table style like name-filter
+DONE - filter table style like name-filter
 
 bulk editing of articles (current shown articles or notepad)
+
+solve edit category+style problem
 
 lieferschein bei auslieferung von zentrale
 
