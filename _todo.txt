@@ -34,22 +34,23 @@ DONE - bugfix: multi-sticker printing
 DONE - generate barcode bugfix (barcode reader)
 DONE - multi-column size-panel
 DONE - filter table style like name-filter
+DONE - solve edit category+style problem
 
 bulk editing of articles (current shown articles or notepad)
 
-solve edit category+style problem
-
-lieferschein bei auslieferung von zentrale
+delivery-note for delivery from headquarter
 
 define user-roles (admin, shop, ?)
 
-bestand pro user
+article-stock per user
 
-einscannen von jedem artikel fuer merkliste
+scanning of article and add immediately to notepad
 
-verkauf (austragen aus dem bestand)
+sell article (remove article from article-stock))
 
-verkaufsstatistik (liste aller einzelverkaeufe)
+sell-statistics (list of all single sells)
+
+NEW - 1-pixel difference problem between filter-icons and filter-border 
 
 --------------------
 
@@ -57,11 +58,11 @@ differenz anzeige - lieferschein vs bestandsaufnahme
 
 prevent application from sleeping (needed any more?)
 
-NEU - lazy loading of images in image management
+NEW - lazy loading of images in image management
 
-NEU - favicon (format an roman)
+NEW - favicon (format an roman 32x32 or 16x16 pixel, for IE only win-icon-format)
 
-NEU - remove expired reset-password-tokens
+NEW - remove expired reset-password-tokens
 
 colored color-filter-attributes
 
