@@ -6,6 +6,8 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.blobstore.BlobKey;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.utils.SystemProperty;
 import com.google.gwt.user.client.rpc.IsSerializable;
@@ -18,11 +20,12 @@ public class ArticleTypeImage implements IsSerializable {
 
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private Long id;
+	private Key key;
 
 	@Persistent
 	private String name;
 
+	@Persistent
 	private String blobKey;
 
 	public ArticleTypeImage() {
@@ -31,8 +34,6 @@ public class ArticleTypeImage implements IsSerializable {
 
 	public ArticleTypeImage(ArticleTypeImageDTO dto) {
 		updateFromDTO(dto);
-		setId(dto.getId());
-
 	}
 
 	public void updateFromDTO(ArticleTypeImageDTO dto) {
@@ -42,7 +43,7 @@ public class ArticleTypeImage implements IsSerializable {
 
 	public ArticleTypeImageDTO createDTO(ImagesService imagesService) {
 		ArticleTypeImageDTO dto = new ArticleTypeImageDTO();
-		dto.setId(getId());
+		dto.setKey(getKeyString());
 		dto.setName(getName());
 		dto.setBlobKey(getBlobKey());
 		if (imagesService != null) {
@@ -56,14 +57,18 @@ public class ArticleTypeImage implements IsSerializable {
 		return dto;
 	}
 
-	public Long getId() {
-		return id;
+	public Key getKey() {
+		return key;
 	}
-
-	public void setId(Long id) {
-		this.id = id;
+	
+	public String getKeyString() {
+		return KeyFactory.keyToString(key);
 	}
-
+	
+	public void setKey(Key key) {
+		this.key = key;
+	}
+	
 	public String getName() {
 		return name;
 	}

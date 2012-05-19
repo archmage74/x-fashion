@@ -20,11 +20,9 @@ public class ShowImage extends HttpServlet {
 	private ImageUploadServiceImpl imageUploadService = new ImageUploadServiceImpl();
 
 	public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
-		String id = req.getParameter("id");
-		if (id != null && id.length() > 0) {
-			Long imageId = Long.parseLong(id);
+		String imageId = req.getParameter("id");
+		if (imageId != null && imageId.length() > 0) {
 			ArticleTypeImageDTO ati = imageUploadService.readArticleTypeImage(imageId);
-			
 			BlobKey blobKey = new BlobKey(ati.getBlobKey());
 			blobstoreService.serve(blobKey, res);
 		}

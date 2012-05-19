@@ -8,9 +8,9 @@ import java.util.Set;
 
 import com.xfashion.client.at.ArticleTypeDataProvider;
 import com.xfashion.shared.ArticleTypeDTO;
-import com.xfashion.shared.FilterCellData2;
+import com.xfashion.shared.FilterCellData;
 
-public abstract class SimpleFilterDataProvider2<T extends FilterCellData2> extends FilterDataProvider2<T> {
+public abstract class SimpleFilterDataProvider2<T extends FilterCellData> extends FilterDataProvider<T> {
 
 	private Set<String> filter;
 
@@ -74,8 +74,8 @@ public abstract class SimpleFilterDataProvider2<T extends FilterCellData2> exten
 				articleAmountPerAttribute.put(attributeContent, availableArticles);
 			}
 		}
-		List<? extends FilterCellData2> cellDataList = getList();
-		for (FilterCellData2 fcd : cellDataList) {
+		List<? extends FilterCellData> cellDataList = getList();
+		for (FilterCellData fcd : cellDataList) {
 			Integer availableArticles = articleAmountPerAttribute.get(fcd.getKey());
 			if (availableArticles == null) {
 				availableArticles = 0;

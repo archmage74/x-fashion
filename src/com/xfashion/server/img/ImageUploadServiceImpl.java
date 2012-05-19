@@ -1,6 +1,5 @@
 package com.xfashion.server.img;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.jdo.PersistenceManager;
@@ -8,6 +7,7 @@ import javax.jdo.Query;
 
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -43,16 +43,18 @@ public class ImageUploadServiceImpl extends RemoteServiceServlet implements Imag
 	}
 	
 	private ArticleTypeImage createArticleTypeImage(PersistenceManager pm, ArticleTypeImageDTO dto) {
-		ArticleTypeImage ati = new ArticleTypeImage(dto);
-		return pm.makePersistent(ati);
+		Images images = readArticleTypeImages(pm);
+		ArticleTypeImage articleTypeImage = new ArticleTypeImage(dto);
+		images.getArticleTypeImages().add(articleTypeImage);
+		return pm.makePersistent(articleTypeImage);
 	}
 	
 	@Override
-	public ArticleTypeImageDTO readArticleTypeImage(Long id) throws IllegalArgumentException {
+	public ArticleTypeImageDTO readArticleTypeImage(String key) throws IllegalArgumentException {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		ArticleTypeImageDTO dto = null;
 		try {
-			ArticleTypeImage ati = readArticleTypeImage(pm, id);
+			ArticleTypeImage ati = readArticleTypeImage(pm, key);
 			if (ati != null) {
 				dto = ati.createDTO(imagesService);
 			}
@@ -62,19 +64,17 @@ public class ImageUploadServiceImpl extends RemoteServiceServlet implements Imag
 		return dto;
 	}
 	
-	private ArticleTypeImage readArticleTypeImage(PersistenceManager pm, Long id) {
-		return pm.getObjectById(ArticleTypeImage.class, id);
+	private ArticleTypeImage readArticleTypeImage(PersistenceManager pm, String key) {
+		return pm.getObjectById(ArticleTypeImage.class, KeyFactory.stringToKey(key));
 	}
 	
 	@Override
 	public List<ArticleTypeImageDTO> readArticleTypeImages() throws IllegalArgumentException {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
-		List<ArticleTypeImageDTO> dtos = new ArrayList<ArticleTypeImageDTO>();
+		List<ArticleTypeImageDTO> dtos = null;
 		try {
-			List<ArticleTypeImage> atis = readArticleTypeImages(pm);
-			for (ArticleTypeImage ati : atis) {
-				dtos.add(ati.createDTO(imagesService));
-			}
+			Images images = readArticleTypeImages(pm);
+			dtos = images.getArticleTypeImageDtos(imagesService);
 		} finally {
 			pm.close();
 		}
@@ -82,9 +82,17 @@ public class ImageUploadServiceImpl extends RemoteServiceServlet implements Imag
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<ArticleTypeImage> readArticleTypeImages(PersistenceManager pm) {
-		Query query = pm.newQuery(ArticleTypeImage.class);
-		List<ArticleTypeImage> images = (List<ArticleTypeImage>) query.execute();
-		return images;
+	private Images readArticleTypeImages(PersistenceManager pm) {
+		Query query = pm.newQuery(Images.class);
+		Images item;
+		List<Images> items = (List<Images>) query.execute();
+		if (items.size() == 0) {
+			item = new Images();
+			item = pm.makePersistent(item);
+		} else {
+			item = items.get(0);
+		}
+		return item;
 	}
+
 }

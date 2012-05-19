@@ -47,7 +47,7 @@ public class ArticleType implements IsSerializable {
 	private Integer sellPrice;
 	
 	@Persistent
-	private Long imageId;
+	private Key imageKey;
 
 	public ArticleType() {
 		
@@ -66,7 +66,7 @@ public class ArticleType implements IsSerializable {
 		setColorKey(KeyFactory.stringToKey(dto.getColorKey()));
 		setBuyPrice(dto.getBuyPrice());
 		setSellPrice(dto.getSellPrice());
-		setImageId(dto.getImageId());
+		setImageKey(KeyFactory.stringToKey(dto.getImageKey()));
 	}
 	
 	public ArticleTypeDTO createDTO() {
@@ -81,7 +81,7 @@ public class ArticleType implements IsSerializable {
 		dto.setColorKey(KeyFactory.keyToString(getColorKey()));
 		dto.setBuyPrice(getBuyPrice());
 		dto.setSellPrice(getSellPrice());
-		dto.setImageId(getImageId());
+		dto.setImageKey(KeyFactory.keyToString(getImageKey()));
 		return dto;
 	}
 
@@ -169,12 +169,12 @@ public class ArticleType implements IsSerializable {
 		this.sellPrice = sellPrice;
 	}
 	
-	public Long getImageId() {
-		return imageId;
+	public Key getImageKey() {
+		return imageKey;
 	}
 	
-	public void setImageId(Long imageId) {
-		this.imageId = imageId;
+	public void setImageKey(Key imageKey) {
+		this.imageKey = imageKey;
 	}
 
 	public boolean equals(Object o) {
@@ -191,7 +191,7 @@ public class ArticleType implements IsSerializable {
 		equal &= attributeEquals(colorKey, s.getColorKey());
 		equal &= attributeEquals(buyPrice, s.getBuyPrice());
 		equal &= attributeEquals(sellPrice, s.getSellPrice());
-		equal &= attributeEquals(imageId, s.getImageId());
+		equal &= attributeEquals(imageKey, s.getImageKey());
 		return equal;
 	}
 	

@@ -7,9 +7,9 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.CellPreviewEvent;
 import com.google.gwt.view.client.ListDataProvider;
-import com.xfashion.shared.FilterCellData2;
+import com.xfashion.shared.FilterCellData;
 
-public abstract class SimpleFilterPanel<T extends FilterCellData2> extends FilterPanel2<T> {
+public abstract class SimpleFilterPanel<T extends FilterCellData> extends FilterPanel<T> {
 
 	protected ListDataProvider<T> dataProvider;
 	protected CellTable<T> cellTable;

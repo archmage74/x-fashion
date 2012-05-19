@@ -1,16 +1,30 @@
 package com.xfashion.client;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gwt.cell.client.EditTextCell;
+import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.cell.client.ImageResourceCell;
+import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.cellview.client.CellList;
+import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.CellPreviewEvent;
 import com.google.gwt.view.client.ListDataProvider;
 import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.resources.ImageResources;
@@ -18,74 +32,86 @@ import com.xfashion.client.resources.TextMessages;
 import com.xfashion.client.tool.Buttons;
 import com.xfashion.shared.FilterCellData;
 
-public abstract class FilterPanel<T extends FilterCellData<?>> implements ICrud<T>, IsMinimizable {
+public abstract class FilterPanel<T extends FilterCellData> implements IsMinimizable {
 
-	public static final int PANEL_MAX_WIDTH = 155;
-	public static final int PANEL_MIN_WIDTH = 22;
-	
-	protected Panel headerPanel;
+	protected HorizontalPanel headerPanel;
 	protected Panel scrollPanel;
-	protected Panel listPanel;
-	
-	protected PanelMediator panelMediator;
-	
-	protected ListDataProvider<T> dataProvider;
-	
-	protected ToolPanel<T> toolPanel;
-	
+	protected Panel tablePanel;
+
 	protected Panel createAnchor;
-	
-	protected CellList<T> cellList;
-	
+	protected TextBox createTextBox;
+
 	protected boolean minimized = false;
 	protected Image minmaxButton;
-	
+
+	protected boolean editMode = false;
+
 	protected TextMessages textMessages;
 	protected ErrorMessages errorMessages;
 	protected ImageResources images;
-	
-	public FilterPanel(PanelMediator panelMediator, ListDataProvider<T> dataProvider) {
+
+	public FilterPanel() {
 		errorMessages = GWT.create(ErrorMessages.class);
 		textMessages = GWT.create(TextMessages.class);
-		images = GWT.<ImageResources>create(ImageResources.class);
-		this.panelMediator = panelMediator;
-		this.dataProvider = dataProvider;
+		images = GWT.<ImageResources> create(ImageResources.class);
 	}
-	
-	public abstract Panel createListPanel();
-	
+
+	public abstract Panel createTablePanel();
+
 	public abstract void clearSelection();
+
+	public abstract void hideTools();
+
+	public abstract void showTools();
 	
-	protected abstract ToolPanel<T> createToolPanel();
+	public abstract ListDataProvider<T> getDataProvider();
 	
+	public abstract String getPanelTitle();
+
+	protected abstract void handleSelection(CellPreviewEvent<T> event);
+
+	protected abstract void moveUp(T dto, int index);
+
+	protected abstract void moveDown(T dto, int index);
+	
+	protected abstract void delete(T dto);
+	
+	protected abstract void select(T dto);
+	
+	protected abstract void updateDTO(T dto);
+	
+	protected abstract void createDTO();
+	
+	protected abstract void redrawPanel();
+
 	public Panel createPanel() {
-		createListPanel();
+		return createPanel(null);
+	}
+
+	public Panel createPanel(String[] additionalStyles) {
+		tablePanel = createTablePanel();
 		scrollPanel = new SimplePanel();
 		scrollPanel.setStyleName("filterPanel");
-		scrollPanel.add(listPanel);
+		if (additionalStyles != null) {
+			for (String style : additionalStyles) {
+				scrollPanel.addStyleName(style);
+			}
+		}
+		scrollPanel.add(tablePanel);
 		return scrollPanel;
 	}
-	
+
 	protected Panel createHeaderPanel(String title) {
 		headerPanel = new HorizontalPanel();
 		headerPanel.addStyleName("filterHeader");
 
-		minmaxButton = new Image();
-		if (isMinimized()) {
-			minmaxButton.setResource(images.iconMaximize());
-		} else {
-			minmaxButton.setResource(images.iconMinimize());
-		}
-		minmaxButton.setStyleName("buttonMinMax");
-		ClickHandler minmaxClickHandler = new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				minmax();
+		List<Widget> buttons = createLeftHeaderButtons();
+		if (buttons != null) {
+			for (Widget w : buttons) {
+				headerPanel.add(w);
 			}
-		};
-		minmaxButton.addClickHandler(minmaxClickHandler);
-		headerPanel.add(minmaxButton);
-		
+		}
+
 		Label label = new Label(title);
 		label.addStyleName("filterLabel attributeFilterLabel");
 		headerPanel.add(label);
@@ -98,6 +124,7 @@ public abstract class FilterPanel<T extends FilterCellData<?>> implements ICrud<
 			}
 		};
 		toolsButton.addClickHandler(toolsButtonClickHandler);
+		headerPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		headerPanel.add(toolsButton);
 
 		label.addClickHandler(new ClickHandler() {
@@ -109,108 +136,183 @@ public abstract class FilterPanel<T extends FilterCellData<?>> implements ICrud<
 
 		return headerPanel;
 	}
-	
+
 	public void toggleTools() {
-		if (toolPanel != null) {
+		if (editMode) {
+			editMode = false;
 			hideTools();
 		} else {
 			showTools();
+			editMode = true;
 		}
 	}
 
-	public void refreshToolsPanel() {
-		hideTools();
-		showTools();
+	protected List<Column<T, ?>> createToolsColumns() {
+		List<Column<T, ?>> columns = new ArrayList<Column<T, ?>>();
+		columns.add(createUpColumn());
+		columns.add(createDownColumn());
+		columns.add(createDeleteColumn());
+		return columns;
 	}
 
-	public void hideTools() {
-		toolPanel.hide();
-		toolPanel = null;
-	}
-
-	public void showTools() {
-		toolPanel = createToolPanel();
-		int right = cellList.getAbsoluteLeft() + cellList.getOffsetWidth() - 1;
-		int top = cellList.getAbsoluteTop() + 1;
-		toolPanel.show(right, top, getCreateAnchor());
+	protected Column<T, String> createEditNameColumn() {
+		return createEditNameColumn(null);
 	}
 	
-	@Override
-	public void moveUp(T item) {
-		List<T> list = dataProvider.getList();
-		int idx = list.indexOf(item);
-		if (idx < 1) {
+	protected Column<T, String> createEditNameColumn(String style) {
+		Column<T, String> column = new Column<T, String>(new EditTextCell()) {
+			@Override
+			public String getValue(T dto) {
+				return dto.getName();
+			}
+		};
+		column.setFieldUpdater(new FieldUpdater<T, String>() {
+			@Override
+			public void update(int index, T dto, String value) {
+				dto.setName(value);
+				updateDTO(dto);
+			}
+		});
+		if (style != null) {
+			column.setCellStyleNames(style);
+		} else {
+			column.setCellStyleNames("editFilter");
+		}
+		column.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
+		return column;
+	}
+
+	private Column<T, ImageResource> createUpColumn() {
+		Column<T, ImageResource> tool = new Column<T, ImageResource>(new ImageResourceCell()) {
+			@Override
+			public ImageResource getValue(T object) {
+				return images.iconUp();
+			}
+		};
+		tool.setCellStyleNames("buttonTool");
+		return tool;
+	}
+
+	private Column<T, ImageResource> createDownColumn() {
+		Column<T, ImageResource> tool = new Column<T, ImageResource>(new ImageResourceCell()) {
+			@Override
+			public ImageResource getValue(T object) {
+				return images.iconDown();
+			}
+		};
+		tool.setCellStyleNames("buttonTool");
+		return tool;
+	}
+
+	private Column<T, ImageResource> createDeleteColumn() {
+		Column<T, ImageResource> tool = new Column<T, ImageResource>(new ImageResourceCell()) {
+			@Override
+			public ImageResource getValue(T object) {
+				return images.iconDelete();
+			}
+		};
+		tool.setCellStyleNames("buttonTool");
+		return tool;
+	}
+
+	protected Column<T, SafeHtml> createNameColumn() {
+		Column<T, SafeHtml> column = new Column<T, SafeHtml>(new SafeHtmlCell()) {
+			@Override
+			public SafeHtml getValue(T dto) {
+				return renderColumn(dto.getName(), false, dto.isSelected());
+			}
+		};
+		column.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
+		return column;
+	}
+
+	protected Column<T, SafeHtml> createAmountColumn() {
+		Column<T, SafeHtml> column = new Column<T, SafeHtml>(new SafeHtmlCell()) {
+			@Override
+			public SafeHtml getValue(T dto) {
+				return renderColumn("" + dto.getArticleAmount(), true, dto.isSelected());
+			}
+		};
+		column.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		return column;
+	}
+
+	protected CellPreviewEvent.Handler<T> createSelectHandler() {
+		CellPreviewEvent.Handler<T> cellPreviewHandler = new CellPreviewEvent.Handler<T>() {
+			@Override
+			public void onCellPreview(CellPreviewEvent<T> event) {
+				if ("click".equals(event.getNativeEvent().getType())) {
+					handleSelection(event);
+				}
+			}
+		};
+		return cellPreviewHandler;
+	}
+
+	protected SafeHtml renderColumn(String txt, boolean isRight, boolean isSelected) {
+		SafeHtmlBuilder sb = new SafeHtmlBuilder();
+		StringBuffer b = new StringBuffer();
+		b.append("<div style=\"outline:none;\"");
+		if (isSelected) {
+			if (isRight) {
+				b.append(" class=\"filterRowSelected filterRightRowSelected\"");
+			} else {
+				b.append(" class=\"filterRowSelected filterMiddleRowSelected\"");
+			}
+		} else {
+			if (isRight) {
+				b.append(" class=\"filterRowUnselected filterRightRowUnselected\"");
+			} else {
+				b.append(" class=\"filterRowUnselected filterMiddleRowUnselected\"");
+			}
+		}
+		b.append(">");
+		sb.appendHtmlConstant(b.toString());
+		sb.appendEscaped(txt);
+		sb.appendHtmlConstant("</div>");
+		return sb.toSafeHtml();
+	}
+
+	protected ImageResource getNotAvailableIcon() {
+		return images.iconNotAvailable();
+	}
+
+	protected Widget createCreatePanel() {
+		Grid createGrid = new Grid(2, 1);
+
+		createTextBox = new TextBox();
+		createTextBox.setMaxLength(12);
+		createTextBox.setWidth("140px");
+		createGrid.setWidget(0, 0, createTextBox);
+
+		Button createButton = new Button("Anlegen");
+		createButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				createDTO();
+			}
+		});
+		createGrid.setWidget(1, 0, createButton);
+
+		return createGrid;
+	}
+
+	protected void fillDTOFromPanel(T dto) {
+		String name = createTextBox.getText();
+		if (name == null || name.length() == 0) {
+			Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.createAttributeNoName()));
 			return;
 		}
-		T first = list.get(idx - 1);
-		T second = list.get(idx);
-		Integer tmp = first.getSortIndex();
-		first.setSortIndex(second.getSortIndex());
-		second.setSortIndex(tmp);
-		list.remove(idx);
-		list.add(idx - 1, second);
-		update(first);
-		update(second);
-		refreshToolsPanel();
+		dto.setName(name);
 	}
-	
-	@Override
-	public void moveDown(T item) {
-		List<T> list = getDataProvider().getList();
-		int idx = list.indexOf(item);
-		if (idx > list.size() - 2) {
-			return;
-		}
-		moveUp(list.get(idx + 1));
-	}
-	
-	@Override
-	public void edit(T item) {
-		if (item.isInEditMode()) {
-			item.setInEditMode(false);
-		} else {
-			item.setInEditMode(true);
-		}
-		getDataProvider().refresh();
-	}
-	
-	public void minmax() {
-		if (isMinimized()) {
-			maximize();
-		} else {
-			minimize();
-		}
-	}
-	
-	public void minimize() {
-		if (!isMinimized()) {
-			PanelWidthAnimation pwa = new PanelWidthAnimation(this, PANEL_MAX_WIDTH, PANEL_MIN_WIDTH);
-			pwa.run(300);
-		}
-	}
-	
-	public void maximize() {
-		if (isMinimized()) {
-			PanelWidthAnimation pwa = new PanelWidthAnimation(this, PANEL_MIN_WIDTH, PANEL_MAX_WIDTH);
-			pwa.run(300);
-		}
-	}
-	
+
 	@Override
 	public void setWidth(int width) {
 		scrollPanel.setWidth(width + "px");
 	}
 	
-	public PanelMediator getPanelMediator() {
-		return panelMediator;
-	}
-
-	public ListDataProvider<T> getDataProvider() {
-		return dataProvider;
-	}
-
-	public void setDataProvider(ListDataProvider<T> dataProvider) {
-		this.dataProvider = dataProvider;
+	protected List<Widget> createLeftHeaderButtons() {
+		return null;
 	}
 
 	public Panel getCreateAnchor() {
@@ -221,12 +323,8 @@ public abstract class FilterPanel<T extends FilterCellData<?>> implements ICrud<
 		this.createAnchor = createAnchor;
 	}
 
-	public Panel getListPanel() {
-		return listPanel;
-	}
-
-	public void setListPanel(Panel listPanel) {
-		this.listPanel = listPanel;
+	public Panel getTablePanel() {
+		return tablePanel;
 	}
 
 	public boolean isMinimized() {

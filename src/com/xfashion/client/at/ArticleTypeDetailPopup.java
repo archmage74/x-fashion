@@ -172,7 +172,7 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 	}
 
 	private void updateImage() {
-		if (updatedArticleType.getImageId() != null && updatedArticleType.getImageId() > 0) {
+		if (updatedArticleType.getImageKey() != null) {
 			AsyncCallback<ArticleTypeImageDTO> callback = new AsyncCallback<ArticleTypeImageDTO>() {
 				@Override
 				public void onSuccess(ArticleTypeImageDTO result) {
@@ -183,7 +183,7 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 				public void onFailure(Throwable caught) {
 				}
 			};
-			imageUploadService.readArticleTypeImage(updatedArticleType.getImageId(), callback);
+			imageUploadService.readArticleTypeImage(updatedArticleType.getImageKey(), callback);
 		}
 	}
 
@@ -264,7 +264,7 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 					imagePopup.addSelectionHandler(new SelectionHandler<ArticleTypeImageDTO>() {
 						public void onSelection(SelectionEvent<ArticleTypeImageDTO> event) {
 							ArticleTypeImageDTO selected = event.getSelectedItem();
-							updatedArticleType.setImageId(selected.getId());
+							updatedArticleType.setImageKey(selected.getKey());
 							updateImage();
 						}
 					});
@@ -535,7 +535,7 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 		articleType.setName(updatedArticleType.getName());
 		articleType.setBuyPrice(updatedArticleType.getBuyPrice());
 		articleType.setSellPrice(updatedArticleType.getSellPrice());
-		articleType.setImageId(updatedArticleType.getImageId());
+		articleType.setImageKey(updatedArticleType.getImageKey());
 	}
 
 	private void resetEditArticleType() {

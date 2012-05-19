@@ -16,7 +16,7 @@ public interface ImageUploadService extends RemoteService {
 	
 	ArticleTypeImageDTO createArticleTypeImage(ArticleTypeImageDTO dto) throws IllegalArgumentException;
 	
-	ArticleTypeImageDTO readArticleTypeImage(Long id) throws IllegalArgumentException;
+	ArticleTypeImageDTO readArticleTypeImage(String key) throws IllegalArgumentException;
 
 	List<ArticleTypeImageDTO> readArticleTypeImages() throws IllegalArgumentException;
 

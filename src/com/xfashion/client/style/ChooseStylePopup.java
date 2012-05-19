@@ -1,10 +1,10 @@
 package com.xfashion.client.style;
 
 import com.google.gwt.view.client.ListDataProvider;
-import com.xfashion.client.ChooseAttributePopup2;
+import com.xfashion.client.ChooseAttributePopup;
 import com.xfashion.shared.StyleDTO;
 
-public class ChooseStylePopup extends ChooseAttributePopup2<StyleDTO> {
+public class ChooseStylePopup extends ChooseAttributePopup<StyleDTO> {
 
 	public ChooseStylePopup(ListDataProvider<StyleDTO> dataProvider) {
 		super(dataProvider);

@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class CategoryDTO extends FilterCellData2 implements IsSerializable {
+public class CategoryDTO extends FilterCellData implements IsSerializable {
 
 	private List<StyleDTO> styles;
 	

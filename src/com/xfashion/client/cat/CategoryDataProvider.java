@@ -10,7 +10,7 @@ import java.util.Set;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.view.client.ListDataProvider;
 import com.xfashion.client.ErrorEvent;
-import com.xfashion.client.FilterDataProvider2;
+import com.xfashion.client.FilterDataProvider;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTypeDataProvider;
 import com.xfashion.client.style.ClearStyleSelectionEvent;
@@ -29,10 +29,10 @@ import com.xfashion.client.style.UpdateStyleEvent;
 import com.xfashion.client.style.UpdateStyleHandler;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.CategoryDTO;
-import com.xfashion.shared.FilterCellData2;
+import com.xfashion.shared.FilterCellData;
 import com.xfashion.shared.StyleDTO;
 
-public class CategoryDataProvider extends FilterDataProvider2<CategoryDTO> implements CreateStyleHandler, UpdateStyleHandler, DeleteStyleHandler,
+public class CategoryDataProvider extends FilterDataProvider<CategoryDTO> implements CreateStyleHandler, UpdateStyleHandler, DeleteStyleHandler,
 		MoveDownStyleHandler, MoveUpStyleHandler, SelectStyleHandler, ClearStyleSelectionHandler, CreateCategoryHandler, UpdateCategoryHandler,
 		DeleteCategoryHandler, SelectCategoryHandler, MoveUpCategoryHandler, MoveDownCategoryHandler, ShowChooseCategoryAndStylePopupHandler {
 
@@ -99,8 +99,8 @@ public class CategoryDataProvider extends FilterDataProvider2<CategoryDTO> imple
 					articleAmountPerAttribute.put(styleId, availableArticles);
 				}
 			}
-			List<? extends FilterCellData2> cellDataList = categoryFilter.getStyles();
-			for (FilterCellData2 scd : cellDataList) {
+			List<? extends FilterCellData> cellDataList = categoryFilter.getStyles();
+			for (FilterCellData scd : cellDataList) {
 				Integer availableArticles = articleAmountPerAttribute.get(scd.getKey());
 				if (availableArticles == null) {
 					availableArticles = 0;

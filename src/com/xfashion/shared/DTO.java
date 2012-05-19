@@ -2,26 +2,41 @@ package com.xfashion.shared;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-public abstract class DTO<T extends Comparable<T>> implements IsSerializable {
+public abstract class DTO implements IsSerializable {
 
-	protected T id;
-	
-	public T getId() {
-		return id;
+	protected String key;
+
+	public String getKey() {
+		return key;
 	}
 
-	public void setId(T id) {
-		this.id = id;
+	public void setKey(String key) {
+		this.key = key;
 	}
 
-	protected boolean attributeEquals(Object o1, Object o2) {
-		if (o1 == o2) {
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((key == null) ? 0 : key.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
 			return true;
-		}
-		if (o1 == null) {
+		if (obj == null)
 			return false;
-		}
-		return o1.equals(o2);
+		if (getClass() != obj.getClass())
+			return false;
+		DTO other = (DTO) obj;
+		if (key == null) {
+			if (other.key != null)
+				return false;
+		} else if (!key.equals(other.key))
+			return false;
+		return true;
 	}
-
+	
 }

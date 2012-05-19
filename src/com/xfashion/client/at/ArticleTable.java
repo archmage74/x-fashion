@@ -50,9 +50,9 @@ public abstract class ArticleTable<T> {
 				ArticleTypeDTO at = ap.retrieveArticleType(a);
 				StringBuffer imageHtml = new StringBuffer();
 				imageHtml.append("<img class=\"articleIconImage\" ");
-				if (at.getImageId() != null) {
+				if (at.getImageKey() != null) {
 					imageHtml.append("src=\"/img/showimage?id=");
-					imageHtml.append("" + at.getImageId());
+					imageHtml.append("" + at.getImageKey());
 					imageHtml.append("&options=s48-c");
 					imageHtml.append("\"");
 				}

@@ -3,34 +3,41 @@ package com.xfashion.client;
 import java.util.HashMap;
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.view.client.ListDataProvider;
+import com.xfashion.client.at.ArticleTypeDataProvider;
+import com.xfashion.client.db.ArticleTypeService;
+import com.xfashion.client.db.ArticleTypeServiceAsync;
+import com.xfashion.client.db.RefreshFilterEvent;
+import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.FilterCellData;
 
-public abstract class FilterDataProvider<T extends FilterCellData<?>> extends ListDataProvider<T> {
+public abstract class FilterDataProvider<T extends FilterCellData> extends ListDataProvider<T> {
 
-	protected boolean loaded;
+	protected ArticleTypeServiceAsync articleTypeService = (ArticleTypeServiceAsync) GWT.create(ArticleTypeService.class);
 
-	protected HashMap<Object, T> idToItem;
+	protected HashMap<String, T> idToItem;
 	
-	protected abstract Long getAttributeContent(ArticleTypeDTO articleType);
+	protected ArticleTypeDataProvider articleTypeProvider;
+	
+	protected ErrorMessages errorMessages;
+	
+	protected abstract String getAttributeContent(ArticleTypeDTO articleType);
 
 	public abstract List<ArticleTypeDTO> applyFilter(List<ArticleTypeDTO> articleTypes);
 	
-	public FilterDataProvider() {
-		idToItem = new HashMap<Object, T>();
-		loaded = false;
+	public FilterDataProvider(ArticleTypeDataProvider articleTypeProvider) {
+		this.articleTypeProvider = articleTypeProvider;
+		errorMessages = GWT.create(ErrorMessages.class);
+		idToItem = new HashMap<String, T>();
 	}
 	
-	public boolean isLoaded() {
-		return loaded;
+	protected void fireRefreshEvent() {
+		Xfashion.eventBus.fireEvent(new RefreshFilterEvent());
 	}
 
-	public void setLoaded(boolean loaded) {
-		this.loaded = loaded;
-	}
-
-	public T resolveData(Long id) {
+	public T resolveData(String id) {
 		return idToItem.get(id);
 	}
 	
@@ -41,7 +48,7 @@ public abstract class FilterDataProvider<T extends FilterCellData<?>> extends Li
 	protected void refreshResolver(List<T> list) {
 		idToItem.clear();
 		for (T item : list) {
-			idToItem.put(item.getId(), item);
+			idToItem.put(item.getKey(), item);
 		}
 	}
 	

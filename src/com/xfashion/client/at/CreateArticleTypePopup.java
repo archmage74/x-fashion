@@ -129,7 +129,7 @@ public class CreateArticleTypePopup {
 						@Override
 						public void onSelection(SelectionEvent<ArticleTypeImageDTO> event) {
 							imageLabel.setText(event.getSelectedItem().getName());
-							currentArticleType.setImageId(event.getSelectedItem().getId());
+							currentArticleType.setImageKey(event.getSelectedItem().getKey());
 						}
 					});
 				}

@@ -11,7 +11,7 @@ public interface ImageUploadServiceAsync {
 
 	void createArticleTypeImage(ArticleTypeImageDTO dto, AsyncCallback<ArticleTypeImageDTO> callback);
 
-	void readArticleTypeImage(Long id, AsyncCallback<ArticleTypeImageDTO> callback);
+	void readArticleTypeImage(String key, AsyncCallback<ArticleTypeImageDTO> callback);
 
 	void readArticleTypeImages(AsyncCallback<List<ArticleTypeImageDTO>> callback);
 
