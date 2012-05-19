@@ -16,6 +16,9 @@ public class ArticleType implements IsSerializable {
 	public static final String ID_COUNTER_NAME = "ArticleType";
 	
 	@PrimaryKey
+    @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+    private Key key;
+	
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Long productNumber;
 
@@ -68,6 +71,7 @@ public class ArticleType implements IsSerializable {
 	
 	public ArticleTypeDTO createDTO() {
 		ArticleTypeDTO dto = new ArticleTypeDTO();
+		dto.setKey(getKeyString());
 		dto.setProductNumber(getProductNumber());
 		dto.setName(getName());
 		dto.setCategoryKey(getCategoryKey());
@@ -81,20 +85,32 @@ public class ArticleType implements IsSerializable {
 		return dto;
 	}
 
+	public Key getKey() {
+		return key;
+	}
+	
+	public String getKeyString() {
+		return KeyFactory.keyToString(key);
+	}
+
+	public void setKey(Key key) {
+		this.key = key;
+	}
+	
+	public Long getProductNumber() {
+		return productNumber;
+	}
+	
+	public void setProductNumber(Long productNumber) {
+		this.productNumber = productNumber;
+	}
+
 	public String getName() {
 		return name;
 	}
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public Long getProductNumber() {
-		return productNumber;
-	}
-
-	public void setProductNumber(Long productNumber) {
-		this.productNumber = productNumber;
 	}
 
 	public String getCategoryKey() {

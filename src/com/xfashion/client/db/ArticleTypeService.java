@@ -1,6 +1,7 @@
 package com.xfashion.client.db;
 
 import java.util.List;
+import java.util.Set;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -78,12 +79,15 @@ public interface ArticleTypeService extends RemoteService {
 	// article-types
 	ArticleTypeDTO createArticleType(ArticleTypeDTO articleType) throws IllegalArgumentException;
 	
-	List<ArticleTypeDTO> readArticleTypes() throws IllegalArgumentException;
+	Set<ArticleTypeDTO> readArticleTypes() throws IllegalArgumentException;
+	
+	ArticleTypeDTO readArticleType(String key) throws IllegalArgumentException;
 	
 	ArticleTypeDTO readArticleType(Long productNumber) throws IllegalArgumentException;
 	
 	void updateArticleType(ArticleTypeDTO articleType) throws IllegalArgumentException;
 	
 	void deleteArticleType(ArticleTypeDTO articleType) throws IllegalArgumentException;
+
 
 }

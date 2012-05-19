@@ -2,10 +2,11 @@ package com.xfashion.server;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
-import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
+import javax.jdo.Transaction;
 
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -491,49 +492,54 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 	@Override
 	synchronized public ArticleTypeDTO createArticleType(ArticleTypeDTO dto) throws IllegalArgumentException {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
+		Category category = readCategory(pm, dto.getCategoryKey());
+		pm.close();
+
+		pm = PMF.get().getPersistenceManager();
 		try {
-			ArticleType articleType = createArticleType(pm, dto);
-			dto.setProductNumber(articleType.getProductNumber());
+			ArticleType articleType = createArticleType(pm, dto, category);
+			dto = articleType.createDTO();
 		} finally {
 			pm.close();
 		}
 		return dto;
 	}
 
-	private ArticleType createArticleType(PersistenceManager pm, ArticleTypeDTO dto) {
-		ArticleType at = new ArticleType(dto);
-		Long id = generateArticleId(pm);
-		Category category = readCategory(pm, dto.getCategoryKey());
-		Long pn = 1 * MULT_TYPE + dto.getBuyPrice() / 100 * MULT_BUYP + category.getCategoryNumber() * MULT_CAT + id;
-		at.setProductNumber(pn);
-		return pm.makePersistent(at);
+	private ArticleType createArticleType(PersistenceManager pm, ArticleTypeDTO dto, Category category) {
+		Transaction tx = pm.currentTransaction();
+		ArticleType at = null;
+		try {
+			tx.begin();
+			ArticleTypes articleTypes = readArticleTypes(pm);
+			at = new ArticleType(dto);
+			Long id = generateArticleId(articleTypes);
+			Long productNumber = 1 * MULT_TYPE + dto.getBuyPrice() / 100 * MULT_BUYP + category.getCategoryNumber() * MULT_CAT + id;
+			at.setProductNumber(productNumber);
+			articleTypes.getArticleTypes().add(at);
+			pm.makePersistent(articleTypes);
+			tx.commit();
+		} finally {
+			if (tx.isActive()) {
+				tx.rollback();
+			}
+		}
+
+		return at;
 	}
 
-	private Long generateArticleId(PersistenceManager pm) {
-		IdCounter idCounter;
-		try {
-			idCounter = pm.getObjectById(IdCounter.class, ArticleType.ID_COUNTER_NAME);
-		} catch (JDOObjectNotFoundException e) {
-			idCounter = new IdCounter();
-			idCounter.setId(ArticleType.ID_COUNTER_NAME);
-			idCounter.setIdCounter(0L);
-		}
-		Long newId = (idCounter.getIdCounter() + 1L);
-		idCounter.setIdCounter(newId);
-		pm.makePersistent(idCounter);
+	private Long generateArticleId(ArticleTypes articleTypes) {
+		Long newId = (articleTypes.getIdCounter() + 1L);
+		articleTypes.setIdCounter(newId);
 		return new Long(newId);
 	}
 
 	@Override
-	public List<ArticleTypeDTO> readArticleTypes() throws IllegalArgumentException {
+	public Set<ArticleTypeDTO> readArticleTypes() throws IllegalArgumentException {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
-		List<ArticleTypeDTO> dtos = new ArrayList<ArticleTypeDTO>();
+		Set<ArticleTypeDTO> dtos = null;
 		try {
-			List<ArticleType> ats = readArticleTypes(pm);
-			for (ArticleType at : ats) {
-				ArticleTypeDTO dto = at.createDTO();
-				dtos.add(dto);
-			}
+			ArticleTypes articleTypes = readArticleTypes(pm);
+			dtos = articleTypes.getDtos();
 		} finally {
 			pm.close();
 		}
@@ -541,10 +547,17 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<ArticleType> readArticleTypes(PersistenceManager pm) {
-		Query query = pm.newQuery(ArticleType.class);
-		List<ArticleType> articleTypes = (List<ArticleType>) query.execute();
-		return articleTypes;
+	private ArticleTypes readArticleTypes(PersistenceManager pm) {
+		Query query = pm.newQuery(ArticleTypes.class);
+		ArticleTypes item;
+		List<ArticleTypes> items = (List<ArticleTypes>) query.execute();
+		if (items.size() == 0) {
+			item = new ArticleTypes();
+			item = pm.makePersistent(item);
+		} else {
+			item = items.get(0);
+		}
+		return item;
 	}
 
 	@Override
@@ -561,8 +574,29 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 	}
 
 	private ArticleType readArticleType(PersistenceManager pm, Long id) {
-		ArticleType item = pm.getObjectById(ArticleType.class, id);
-		return item;
+		Query query = pm.newQuery(ArticleType.class);
+		query.setFilter("productNumber == productNumberParam");
+		query.declareParameters("Long productNumberParam");
+		ArticleType articleType = (ArticleType) query.execute(id);
+		return articleType;
+	}
+
+	@Override
+	public ArticleTypeDTO readArticleType(String key) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		ArticleTypeDTO dto = null;
+		try {
+			ArticleType articleType = readArticleType(pm, key);
+			dto = articleType.createDTO();
+		} finally {
+			pm.close();
+		}
+		return dto;
+	}
+
+	private ArticleType readArticleType(PersistenceManager pm, String key) {
+		ArticleType articleType = pm.getObjectById(ArticleType.class, key);
+		return articleType;
 	}
 
 	@Override
@@ -576,7 +610,7 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 	}
 
 	private void updateArticleType(PersistenceManager pm, ArticleTypeDTO dto) {
-		ArticleType item = readArticleType(pm, dto.getProductNumber());
+		ArticleType item = readArticleType(pm, dto.getKey());
 		item.updateFromDTO(dto);
 		pm.makePersistent(item);
 	}
@@ -592,7 +626,7 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 	}
 
 	private void deleteArticleType(PersistenceManager pm, ArticleTypeDTO dto) {
-		ArticleType item = readArticleType(pm, dto.getProductNumber());
+		ArticleType item = readArticleType(pm, dto.getKey());
 		pm.deletePersistent(item);
 	}
 }

@@ -1,6 +1,7 @@
 package com.xfashion.client.db;
 
 import java.util.List;
+import java.util.Set;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.xfashion.shared.ArticleTypeDTO;
@@ -73,7 +74,9 @@ public interface ArticleTypeServiceAsync {
 	// article-types
 	void createArticleType(ArticleTypeDTO articleType, AsyncCallback<ArticleTypeDTO> callback);
 
-	void readArticleTypes(AsyncCallback<List<ArticleTypeDTO>> callback);
+	void readArticleTypes(AsyncCallback<Set<ArticleTypeDTO>> callback);
+	
+	void readArticleType(String key, AsyncCallback<ArticleTypeDTO> callback);
 	
 	void readArticleType(Long productNumber, AsyncCallback<ArticleTypeDTO> callback);
 

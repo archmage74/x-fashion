@@ -2,7 +2,7 @@ package com.xfashion.shared;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class ArticleTypeDTO extends DTO<Long> implements IsSerializable {
+public class ArticleTypeDTO extends DTO2 implements IsSerializable {
 	
 	private Long productNumber;
 
@@ -104,23 +104,6 @@ public class ArticleTypeDTO extends DTO<Long> implements IsSerializable {
 		this.imageId = imageId;
 	}
 
-	public boolean equals(Object o) {
-		if (o == null) return false;
-		if (!(o instanceof ArticleTypeDTO)) return false;
-		ArticleTypeDTO s = (ArticleTypeDTO) o;
-		boolean equal = true;
-		equal &= attributeEquals(productNumber, s.getProductNumber());
-		equal &= attributeEquals(name, s.getName());
-		equal &= attributeEquals(categoryKey, s.getCategoryKey());
-		equal &= attributeEquals(styleKey, s.getStyleKey());
-		equal &= attributeEquals(brandKey, s.getBrandKey());
-		equal &= attributeEquals(sizeKey, s.getSizeKey());
-		equal &= attributeEquals(colorKey, s.getColorKey());
-		equal &= attributeEquals(buyPrice, s.getBuyPrice());
-		equal &= attributeEquals(sellPrice, s.getSellPrice());
-		return equal;
-	}
-	
 	public ArticleTypeDTO clone() {
 		ArticleTypeDTO clone = new ArticleTypeDTO();
 		clone.setProductNumber(getProductNumber());
@@ -135,4 +118,5 @@ public class ArticleTypeDTO extends DTO<Long> implements IsSerializable {
 		clone.setImageId(getImageId());
 		return clone;
 	}
+
 }

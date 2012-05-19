@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -74,14 +75,14 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 	}
 
 	private void readArticleTypes() {
-		AsyncCallback<List<ArticleTypeDTO>> callback = new AsyncCallback<List<ArticleTypeDTO>>() {
+		AsyncCallback<Set<ArticleTypeDTO>> callback = new AsyncCallback<Set<ArticleTypeDTO>>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				Xfashion.fireError(caught.getMessage());
 			}
 
 			@Override
-			public void onSuccess(List<ArticleTypeDTO> result) {
+			public void onSuccess(Set<ArticleTypeDTO> result) {
 				articleTypeProvider.getList().clear();
 				articleTypes = new ArrayList<ArticleTypeDTO>(result);
 				articleTypeProvider.getList().addAll(result);
