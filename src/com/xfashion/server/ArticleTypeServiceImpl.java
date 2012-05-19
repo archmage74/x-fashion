@@ -573,12 +573,17 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 		return dto;
 	}
 
+	@SuppressWarnings("unchecked")
 	private ArticleType readArticleType(PersistenceManager pm, Long id) {
 		Query query = pm.newQuery(ArticleType.class);
 		query.setFilter("productNumber == productNumberParam");
 		query.declareParameters("Long productNumberParam");
-		ArticleType articleType = (ArticleType) query.execute(id);
-		return articleType;
+		List<ArticleType> list = (List<ArticleType>) query.execute(id);
+		if (list.size() > 0) {
+			return list.get(0);
+		} else {
+			return null;
+		}
 	}
 
 	@Override
