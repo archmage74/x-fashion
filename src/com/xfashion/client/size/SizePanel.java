@@ -13,7 +13,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.CellPreviewEvent;
 import com.xfashion.client.ErrorEvent;
-import com.xfashion.client.PanelWidthAnimation;
 import com.xfashion.client.ResizeableIconFilterPanel;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.resources.FilterTableResources;
@@ -138,28 +137,6 @@ public class SizePanel extends ResizeableIconFilterPanel<SizeDTO> {
 		}
 	}
 
-	public void minmax() {
-		if (isMinimized()) {
-			maximize();
-		} else {
-			minimize();
-		}
-	}
-
-	public void minimize() {
-		if (!isMinimized()) {
-			PanelWidthAnimation pwa = new PanelWidthAnimation(this, PANEL_MAX_WIDTH, PANEL_MIN_WIDTH);
-			pwa.run(300);
-		}
-	}
-
-	public void maximize() {
-		if (isMinimized()) {
-			PanelWidthAnimation pwa = new PanelWidthAnimation(this, PANEL_MIN_WIDTH, PANEL_MAX_WIDTH);
-			pwa.run(300);
-		}
-	}
-
 	@Override
 	protected void redrawPanel() {
 		cellTable1.redraw();
@@ -182,6 +159,11 @@ public class SizePanel extends ResizeableIconFilterPanel<SizeDTO> {
 		Xfashion.eventBus.fireEvent(new CreateSizeEvent(size));
 	}
 
+	@Override
+	protected int getMaxWidth() {
+		return 220;		
+	}
+	
 	public SizeDataProvider getDataProvider() {
 		return sizeProvider;
 	}

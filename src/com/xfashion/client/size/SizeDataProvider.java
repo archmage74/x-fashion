@@ -195,4 +195,27 @@ public class SizeDataProvider extends SimpleFilterDataProvider2<SizeDTO> impleme
 		ChooseSizePopup sizePopup = new ChooseSizePopup(this);
 		sizePopup.show();
 	}
+
+	public void readSizes() {
+		AsyncCallback<List<SizeDTO>> callback = new AsyncCallback<List<SizeDTO>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(List<SizeDTO> result) {
+				if (result == null) {
+					result = new ArrayList<SizeDTO>();
+				}
+				List<SizeDTO> list = getList();
+				list.clear();
+				list.addAll(result);
+				refreshResolver();
+				fireRefreshEvent();
+			}
+		};
+		articleTypeService.readSizes(callback);
+	}
+
 }

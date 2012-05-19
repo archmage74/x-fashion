@@ -145,4 +145,23 @@ public class ColorDataProvider extends SimpleFilterDataProvider2<ColorDTO> imple
 		ChooseColorPopup colorPopup = new ChooseColorPopup(this);
 		colorPopup.show();
 	}
+
+	public void readColors() {
+		AsyncCallback<List<ColorDTO>> callback = new AsyncCallback<List<ColorDTO>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
+			}
+			@Override
+			public void onSuccess(List<ColorDTO> result) {
+				List<ColorDTO> list = getList();
+				list.clear();
+				list.addAll(result);
+				refreshResolver();
+				fireRefreshEvent();
+			}
+		};
+		articleTypeService.readColors(callback);
+	}
+
 }

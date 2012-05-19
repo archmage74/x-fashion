@@ -130,4 +130,22 @@ MoveUpBrandHandler, MoveDownBrandHandler, SelectBrandHandler, ClearBrandSelectio
 		brandPopup.show();
 	}
 	
+	public void readBrands() {
+		AsyncCallback<List<BrandDTO>> callback = new AsyncCallback<List<BrandDTO>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(List<BrandDTO> result) {
+				List<BrandDTO> list = getList();
+				list.clear();
+				list.addAll(result);
+				refreshResolver();
+				fireRefreshEvent();
+			}
+		};
+		articleTypeService.readBrands(callback);
+	}
 }

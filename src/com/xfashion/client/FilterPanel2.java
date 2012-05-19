@@ -34,9 +34,6 @@ import com.xfashion.shared.FilterCellData2;
 
 public abstract class FilterPanel2<T extends FilterCellData2> implements IsMinimizable {
 
-	public static final int PANEL_MAX_WIDTH = 155;
-	public static final int PANEL_MIN_WIDTH = 22;
-
 	protected HorizontalPanel headerPanel;
 	protected Panel scrollPanel;
 	protected Panel tablePanel;

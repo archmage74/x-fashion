@@ -17,8 +17,6 @@ public abstract class FilterDataProvider2<T extends FilterCellData2> extends Lis
 
 	protected ArticleTypeServiceAsync articleTypeService = (ArticleTypeServiceAsync) GWT.create(ArticleTypeService.class);
 
-	protected boolean loaded;
-
 	protected HashMap<String, T> idToItem;
 	
 	protected ArticleTypeDataProvider articleTypeProvider;
@@ -33,19 +31,10 @@ public abstract class FilterDataProvider2<T extends FilterCellData2> extends Lis
 		this.articleTypeProvider = articleTypeProvider;
 		errorMessages = GWT.create(ErrorMessages.class);
 		idToItem = new HashMap<String, T>();
-		loaded = false;
 	}
 	
 	protected void fireRefreshEvent() {
 		Xfashion.eventBus.fireEvent(new RefreshFilterEvent());
-	}
-
-	public boolean isLoaded() {
-		return loaded;
-	}
-
-	public void setLoaded(boolean loaded) {
-		this.loaded = loaded;
 	}
 
 	public T resolveData(String id) {

@@ -20,13 +20,11 @@ import com.xfashion.client.color.ColorDataProvider;
 import com.xfashion.client.name.NameFilterEvent;
 import com.xfashion.client.name.NameFilterHandler;
 import com.xfashion.client.size.SizeDataProvider;
-import com.xfashion.client.style.UpdateStyleEvent;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.BrandDTO;
 import com.xfashion.shared.CategoryDTO;
 import com.xfashion.shared.ColorDTO;
 import com.xfashion.shared.SizeDTO;
-import com.xfashion.shared.StyleDTO;
 
 public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHandler, RefreshFilterHandler {
 
@@ -55,6 +53,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 		registerForEvents();
 
 		articleTypeProvider = new ArticleTypeDataProvider();
+
 		categoryProvider = new CategoryDataProvider(articleTypeProvider);
 		brandProvider = new BrandDataProvider(articleTypeProvider);
 		sizeProvider = new SizeDataProvider(articleTypeProvider);
@@ -62,109 +61,16 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 		nameProvider = new ListDataProvider<String>();
 		nameOracle = new MultiWordSuggestOracle();
 
-		readCategories();
-		readBrands();
-		readSizes();
-		readColors();
+		categoryProvider.readCategories();
+		brandProvider.readBrands();
+		sizeProvider.readSizes();
+		colorProvider.readColors();
 		readArticleTypes();
 	}
 
 	private void registerForEvents() {
 		Xfashion.eventBus.addHandler(RefreshFilterEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(NameFilterEvent.TYPE, this);
-	}
-
-	private void checkAllRead() {
-		if (categoryProvider.isLoaded() && brandProvider.isLoaded() && sizeProvider.isLoaded() && colorProvider.isLoaded()
-				&& articleTypeProvider.isLoaded()) {
-			updateProviders();
-			Xfashion.eventBus.fireEvent(new ArticlesDatabaseLoadedEvent());
-		}
-
-	}
-
-	private void readCategories() {
-		AsyncCallback<List<CategoryDTO>> callback = new AsyncCallback<List<CategoryDTO>>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				Xfashion.fireError(caught.getMessage());
-			}
-
-			@Override
-			public void onSuccess(List<CategoryDTO> result) {
-				List<CategoryDTO> list = categoryProvider.getList();
-				list.clear();
-				list.addAll(result);
-				categoryProvider.refreshResolver();
-				categoryProvider.setLoaded(true);
-				checkAllRead();
-			}
-		};
-
-		articleTypeService.readCategories(callback);
-	}
-
-	private void readBrands() {
-		AsyncCallback<List<BrandDTO>> callback = new AsyncCallback<List<BrandDTO>>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				Xfashion.fireError(caught.getMessage());
-			}
-
-			@Override
-			public void onSuccess(List<BrandDTO> result) {
-				List<BrandDTO> list = brandProvider.getList();
-				list.clear();
-				list.addAll(result);
-				brandProvider.refreshResolver();
-				brandProvider.setLoaded(true);
-				checkAllRead();
-			}
-		};
-		articleTypeService.readBrands(callback);
-	}
-
-	private void readSizes() {
-		AsyncCallback<List<SizeDTO>> callback = new AsyncCallback<List<SizeDTO>>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				Xfashion.fireError(caught.getMessage());
-			}
-
-			@Override
-			public void onSuccess(List<SizeDTO> result) {
-				if (result == null) {
-					result = new ArrayList<SizeDTO>();
-				}
-				List<SizeDTO> list = sizeProvider.getList();
-				list.clear();
-				list.addAll(result);
-				sizeProvider.refreshResolver();
-				sizeProvider.setLoaded(true);
-				checkAllRead();
-			}
-		};
-		articleTypeService.readSizes(callback);
-	}
-
-	private void readColors() {
-		AsyncCallback<List<ColorDTO>> callback = new AsyncCallback<List<ColorDTO>>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				Xfashion.fireError(caught.getMessage());
-			}
-
-			@Override
-			public void onSuccess(List<ColorDTO> result) {
-				List<ColorDTO> list = colorProvider.getList();
-				list.clear();
-				list.addAll(result);
-				colorProvider.refreshResolver();
-				colorProvider.setLoaded(true);
-				checkAllRead();
-			}
-		};
-		articleTypeService.readColors(callback);
 	}
 
 	private void readArticleTypes() {
@@ -182,7 +88,6 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 				articleTypeProvider.refreshResolver();
 				updateAvailableArticleNames();
 				articleTypeProvider.setLoaded(true);
-				checkAllRead();
 			}
 		};
 		articleTypeService.readArticleTypes(callback);
@@ -342,22 +247,6 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 		return articleTypeProvider;
 	}
 
-	public void onUpdateStyle(UpdateStyleEvent event) {
-		final StyleDTO style = event.getCellData();
-		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				Xfashion.fireError(caught.getMessage());
-			}
-
-			@Override
-			public void onSuccess(Void result) {
-				categoryProvider.refresh();
-			}
-		};
-		articleTypeService.updateStyle(style, callback);
-	}
-
 	public void createArticleType(final ArticleTypeDTO articleType) {
 		AsyncCallback<ArticleTypeDTO> callback = new AsyncCallback<ArticleTypeDTO>() {
 			@Override
@@ -409,11 +298,6 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 			}
 		};
 		articleTypeService.deleteArticleType(articleType, callback);
-	}
-
-	public class StyleCell {
-		public String name;
-		public boolean available;
 	}
 
 	public MultiWordSuggestOracle getNameOracle() {

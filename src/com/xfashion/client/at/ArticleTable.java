@@ -15,6 +15,11 @@ import com.xfashion.client.PanelMediator;
 import com.xfashion.client.resources.FilterTableResources;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.shared.ArticleTypeDTO;
+import com.xfashion.shared.BrandDTO;
+import com.xfashion.shared.CategoryDTO;
+import com.xfashion.shared.ColorDTO;
+import com.xfashion.shared.SizeDTO;
+import com.xfashion.shared.StyleDTO;
 
 public abstract class ArticleTable<T> {
 
@@ -65,10 +70,20 @@ public abstract class ArticleTable<T> {
 				ArticleTypeDTO at = ap.retrieveArticleType(a);
 				SafeHtmlBuilder sb = new SafeHtmlBuilder();
 				sb.appendHtmlConstant("<div class=\"articleUpLe\">");
-				sb.appendEscaped(provider.getCategoryProvider().resolveData(at.getCategoryKey()).getName());
+				CategoryDTO category = provider.getCategoryProvider().resolveData(at.getCategoryKey());
+				String name = "...";
+				if (category != null) {
+					name = category.getName();
+				}
+				sb.appendEscaped(name);
 				sb.appendHtmlConstant("</div>");
 				sb.appendHtmlConstant("<div class=\"articleBoLe\">");
-				sb.appendEscaped(provider.getBrandProvider().resolveData(at.getBrandKey()).getName());
+				BrandDTO brand = provider.getBrandProvider().resolveData(at.getBrandKey());
+				name = "...";
+				if (brand != null) {
+					name = brand.getName();
+				}
+				sb.appendEscaped(name);
 				sb.appendHtmlConstant("</div>");
 				return sb.toSafeHtml();
 			}
@@ -90,7 +105,12 @@ public abstract class ArticleTable<T> {
 				html.appendEscaped(at.getName());
 				html.appendHtmlConstant("</div>");
 				html.appendHtmlConstant("<div class=\"articleBoCe\">");
-				html.appendEscaped(provider.getCategoryProvider().resolveStyle(at.getStyleKey()).getName());
+				StyleDTO dto = provider.getCategoryProvider().resolveStyle(at.getStyleKey());
+				String name = "...";
+				if (dto != null) {
+					name = dto.getName();
+				}
+				html.appendEscaped(name);
 				html.appendHtmlConstant("</div>");
 				return html.toSafeHtml();
 			}
@@ -103,10 +123,20 @@ public abstract class ArticleTable<T> {
 				ArticleTypeDTO at = ap.retrieveArticleType(a);
 				SafeHtmlBuilder sb = new SafeHtmlBuilder();
 				sb.appendHtmlConstant("<div class=\"articleUpLe\">");
-				sb.appendEscaped(provider.getColorProvider().resolveData(at.getColorKey()).getName());
+				ColorDTO color = provider.getColorProvider().resolveData(at.getColorKey());
+				String name = "...";
+				if (color != null) {
+					name = color.getName();
+				}
+				sb.appendEscaped(name);
 				sb.appendHtmlConstant("</div>");
 				sb.appendHtmlConstant("<div class=\"articleBoLe\">");
-				sb.appendEscaped(provider.getSizeProvider().resolveData(at.getSizeKey()).getName());
+				SizeDTO size = provider.getSizeProvider().resolveData(at.getSizeKey());
+				name = "...";
+				if (size != null) {
+					name = size.getName();
+				}
+				sb.appendEscaped(name);
 				sb.appendHtmlConstant("</div>");
 				return sb.toSafeHtml();
 			}

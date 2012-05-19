@@ -22,6 +22,9 @@ import com.xfashion.shared.FilterCellData2;
 
 public abstract class ResizeableIconFilterPanel<T extends FilterCellData2> extends SimpleFilterPanel<T> {
 
+	public static final int PANEL_MAX_WIDTH = 160;
+	public static final int PANEL_MIN_WIDTH = 22;
+
 	public ResizeableIconFilterPanel(ListDataProvider<T> dataProvider) {
 		super(dataProvider);
 	}
@@ -105,16 +108,24 @@ public abstract class ResizeableIconFilterPanel<T extends FilterCellData2> exten
 
 	public void minimize() {
 		if (!isMinimized()) {
-			PanelWidthAnimation pwa = new PanelWidthAnimation(this, PANEL_MAX_WIDTH, PANEL_MIN_WIDTH);
+			PanelWidthAnimation pwa = new PanelWidthAnimation(this, getMaxWidth(), getMinWidth());
 			pwa.run(300);
 		}
 	}
 
 	public void maximize() {
 		if (isMinimized()) {
-			PanelWidthAnimation pwa = new PanelWidthAnimation(this, PANEL_MIN_WIDTH, PANEL_MAX_WIDTH);
+			PanelWidthAnimation pwa = new PanelWidthAnimation(this, getMinWidth(), getMaxWidth());
 			pwa.run(300);
 		}
 	}
 
+	protected int getMinWidth() {
+		return PANEL_MIN_WIDTH;		
+	}
+	
+	protected int getMaxWidth() {
+		return PANEL_MAX_WIDTH;
+	}
+	
 }

@@ -276,7 +276,7 @@ public class CategoryDataProvider extends FilterDataProvider2<CategoryDTO> imple
 	@Override
 	public void onSelectCategory(SelectCategoryEvent event) {
 		if (getCategoryFilter() != null) {
-			getCategoryFilter().setSelected(false); 
+			getCategoryFilter().setSelected(false);
 		}
 		CategoryDTO dto = event.getCellData();
 		setCategoryFilter(dto);
@@ -290,12 +290,12 @@ public class CategoryDataProvider extends FilterDataProvider2<CategoryDTO> imple
 	public void onMoveDownCategory(MoveDownCategoryEvent event) {
 		moveDownCategory(event.getIndex());
 	}
-	
+
 	@Override
 	public void onMoveUpCategory(MoveUpCategoryEvent event) {
 		moveDownCategory(event.getIndex() - 1);
 	}
-	
+
 	public void moveDownCategory(int idx) {
 		if (idx < 0) {
 			return;
@@ -336,12 +336,12 @@ public class CategoryDataProvider extends FilterDataProvider2<CategoryDTO> imple
 	public void onMoveDownStyle(MoveDownStyleEvent event) {
 		moveDownStyle(event.getIndex());
 	}
-	
+
 	@Override
 	public void onMoveUpStyle(MoveUpStyleEvent event) {
 		moveDownStyle(event.getIndex() - 1);
 	}
-	
+
 	public void moveDownStyle(int idx) {
 		List<StyleDTO> styleList = getCategoryFilter().getStyles();
 		if (idx < 0) {
@@ -373,5 +373,23 @@ public class CategoryDataProvider extends FilterDataProvider2<CategoryDTO> imple
 		} else {
 			Xfashion.fireError(errorMessages.noCategorySelected());
 		}
+	}
+
+	public void readCategories() {
+		AsyncCallback<List<CategoryDTO>> callback = new AsyncCallback<List<CategoryDTO>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
+			}
+			@Override
+			public void onSuccess(List<CategoryDTO> result) {
+				List<CategoryDTO> list = getList();
+				list.clear();
+				list.addAll(result);
+				refreshResolver();
+				fireRefreshEvent();
+			}
+		};
+		articleTypeService.readCategories(callback);
 	}
 }
