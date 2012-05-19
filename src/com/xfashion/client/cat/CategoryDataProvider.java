@@ -34,7 +34,7 @@ import com.xfashion.shared.StyleDTO;
 
 public class CategoryDataProvider extends FilterDataProvider2<CategoryDTO> implements CreateStyleHandler, UpdateStyleHandler, DeleteStyleHandler,
 		MoveDownStyleHandler, MoveUpStyleHandler, SelectStyleHandler, ClearStyleSelectionHandler, CreateCategoryHandler, UpdateCategoryHandler,
-		DeleteCategoryHandler, SelectCategoryHandler, MoveUpCategoryHandler, MoveDownCategoryHandler {
+		DeleteCategoryHandler, SelectCategoryHandler, MoveUpCategoryHandler, MoveDownCategoryHandler, ShowChooseCategoryAndStylePopupHandler {
 
 	protected CategoryDTO categoryFilter = null;
 
@@ -66,6 +66,7 @@ public class CategoryDataProvider extends FilterDataProvider2<CategoryDTO> imple
 		Xfashion.eventBus.addHandler(ClearStyleSelectionEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(MoveUpStyleEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(MoveDownStyleEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(ShowChooseCategoryAndStylePopupEvent.TYPE, this);
 	}
 
 	@Override
@@ -392,4 +393,11 @@ public class CategoryDataProvider extends FilterDataProvider2<CategoryDTO> imple
 		};
 		articleTypeService.readCategories(callback);
 	}
+
+	@Override
+	public void onShowChooseCategoryAndStylePopup(ShowChooseCategoryAndStylePopupEvent event) {
+		ChooseCategoryAndStylePopup popup = new ChooseCategoryAndStylePopup(this);
+		popup.show();
+	}
+
 }

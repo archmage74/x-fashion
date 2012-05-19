@@ -51,9 +51,9 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 
 	public void init() {
 		registerForEvents();
+		articleTypes = new ArrayList<ArticleTypeDTO>();
 
 		articleTypeProvider = new ArticleTypeDataProvider();
-
 		categoryProvider = new CategoryDataProvider(articleTypeProvider);
 		brandProvider = new BrandDataProvider(articleTypeProvider);
 		sizeProvider = new SizeDataProvider(articleTypeProvider);

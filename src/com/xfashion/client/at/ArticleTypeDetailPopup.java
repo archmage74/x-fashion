@@ -33,6 +33,9 @@ import com.xfashion.client.Xfashion;
 import com.xfashion.client.brand.ChooseBrandEvent;
 import com.xfashion.client.brand.ChooseBrandHandler;
 import com.xfashion.client.brand.ShowChooseBrandPopupEvent;
+import com.xfashion.client.cat.ChooseCategoryAndStyleEvent;
+import com.xfashion.client.cat.ChooseCategoryAndStyleHandler;
+import com.xfashion.client.cat.ShowChooseCategoryAndStylePopupEvent;
 import com.xfashion.client.color.ChooseColorEvent;
 import com.xfashion.client.color.ChooseColorHandler;
 import com.xfashion.client.color.ShowChooseColorPopupEvent;
@@ -48,38 +51,41 @@ import com.xfashion.client.size.ShowChooseSizePopupEvent;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.BarcodeHelper;
 import com.xfashion.shared.BrandDTO;
+import com.xfashion.shared.CategoryDTO;
 import com.xfashion.shared.ColorDTO;
 import com.xfashion.shared.SizeDTO;
+import com.xfashion.shared.StyleDTO;
 import com.xfashion.shared.img.ArticleTypeImageDTO;
 
-public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseBrandHandler, ChooseSizeHandler, ChooseColorHandler {
+public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseBrandHandler, ChooseSizeHandler, ChooseColorHandler,
+		ChooseCategoryAndStyleHandler {
 
 	public static final String PRINT_STICKER_URL = "/pdf/sticker?productNumber=";
-	
+
 	private ImageUploadServiceAsync imageUploadService = (ImageUploadServiceAsync) GWT.create(ImageUploadService.class);
-	
-	private BarcodeHelper barcodeHelper = new BarcodeHelper(); 
-	
+
+	private BarcodeHelper barcodeHelper = new BarcodeHelper();
+
 	private PanelMediator panelMediator;
-	
+
 	private DecoratedPopupPanel articleTypeDetailPopup;
-	
+
 	private ArticleTypeDTO articleType;
 	private ArticleTypeDTO updatedArticleType;
-	
+
 	private boolean editMode = false;
 
 	private Grid productMatrix;
 	private Label headerLabel;
 	private Image image;
 	private Grid detailsGrid;
-	private Label name;
+	private Label nameLabel;
 	private TextBox nameTextBox;
-	private Label brand;
-	private Label category;
-	private Label style;
-	private Label size;
-	private Label color;
+	private Label brandLabel;
+	private Label categoryLabel;
+	private Label styleLabel;
+	private Label sizeLabel;
+	private Label colorLabel;
 	private Grid buyPriceGrid;
 	private Label buyPrice;
 	private TextBox buyPriceTextBox;
@@ -87,22 +93,22 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 	private Label sellPrice;
 	private TextBox sellPriceTextBox;
 	private Label productNumber;
-	
+
 	private Label errorLabel;
-	
+
 	private Anchor printStickerLink;
 	private Button editArticleButton;
 	private Button cancelButton;
-	
+
 	private ProvidesArticleFilter provider;
-	
+
 	private Formatter formatter = Formatter.getInstance();
-	
+
 	private TextMessages textMessages;
 	private ErrorMessages errorMessages;
-	
+
 	protected List<HandlerRegistration> handlerRegistrations = new ArrayList<HandlerRegistration>();
-	
+
 	public ArticleTypeDetailPopup(PanelMediator panelMediator) {
 		this.panelMediator = panelMediator;
 		provider = panelMediator.getArticleTypeDatabase();
@@ -110,44 +116,45 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 		textMessages = GWT.create(TextMessages.class);
 		registerForEvents();
 	}
-	
+
 	private void registerForEvents() {
 		handlerRegistrations.add(Xfashion.eventBus.addHandler(ChooseBrandEvent.TYPE, this));
 		handlerRegistrations.add(Xfashion.eventBus.addHandler(ChooseColorEvent.TYPE, this));
 		handlerRegistrations.add(Xfashion.eventBus.addHandler(ChooseSizeEvent.TYPE, this));
+		handlerRegistrations.add(Xfashion.eventBus.addHandler(ChooseCategoryAndStyleEvent.TYPE, this));
 	}
-	
+
 	@SuppressWarnings("unused")
 	private void unregisterForEvents() {
 		for (HandlerRegistration reg : handlerRegistrations) {
 			reg.removeHandler();
 		}
 	}
-	
+
 	public void showPopup(ArticleTypeDTO articleType) {
 		if (articleType == null) {
 			return;
 		}
 		this.articleType = articleType;
 		this.updatedArticleType = articleType.clone();
-		
+
 		if (articleTypeDetailPopup == null) {
 			articleTypeDetailPopup = createPopup();
 		}
 		image.setUrl("");
 		image.setWidth(400 + "px");
 		image.setHeight(400 + "px");
-		
+
 		headerLabel.setText(articleType.getName());
-		name.setText(articleType.getName());
+		nameLabel.setText(articleType.getName());
 		nameTextBox.setValue(articleType.getName());
 		nameTextBox.setStyleName("baseInput");
 		nameTextBox.setWidth("96px");
-		brand.setText(provider.getBrandProvider().resolveData(updatedArticleType.getBrandKey()).getName());
-		category.setText(provider.getCategoryProvider().resolveData(updatedArticleType.getCategoryKey()).getName());
-		style.setText(provider.getCategoryProvider().resolveStyle(updatedArticleType.getStyleKey()).getName());
-		size.setText(provider.getSizeProvider().resolveData(updatedArticleType.getSizeKey()).getName());
-		color.setText(provider.getColorProvider().resolveData(updatedArticleType.getColorKey()).getName());
+		brandLabel.setText(provider.getBrandProvider().resolveData(updatedArticleType.getBrandKey()).getName());
+		categoryLabel.setText(provider.getCategoryProvider().resolveData(updatedArticleType.getCategoryKey()).getName());
+		styleLabel.setText(provider.getCategoryProvider().resolveStyle(updatedArticleType.getStyleKey()).getName());
+		sizeLabel.setText(provider.getSizeProvider().resolveData(updatedArticleType.getSizeKey()).getName());
+		colorLabel.setText(provider.getColorProvider().resolveData(updatedArticleType.getColorKey()).getName());
 		buyPrice.setText(formatter.formatCentsToValue(updatedArticleType.getBuyPrice()));
 		buyPriceTextBox.setValue(formatter.formatCentsToValue(updatedArticleType.getBuyPrice()));
 		buyPriceTextBox.setStyleName("baseInput");
@@ -160,10 +167,10 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 		printStickerLink.setHref(PRINT_STICKER_URL + updatedArticleType.getProductNumber());
 		articleTypeDetailPopup.setPopupPosition(500, 50);
 		articleTypeDetailPopup.show();
-		
+
 		updateImage();
 	}
-	
+
 	private void updateImage() {
 		if (updatedArticleType.getImageId() != null && updatedArticleType.getImageId() > 0) {
 			AsyncCallback<ArticleTypeImageDTO> callback = new AsyncCallback<ArticleTypeImageDTO>() {
@@ -171,6 +178,7 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 				public void onSuccess(ArticleTypeImageDTO result) {
 					image.setUrl(result.getImageUrl() + ArticleTypeImageDTO.IMAGE_OPTIONS_BIG);
 				}
+
 				@Override
 				public void onFailure(Throwable caught) {
 				}
@@ -178,7 +186,7 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 			imageUploadService.readArticleTypeImage(updatedArticleType.getImageId(), callback);
 		}
 	}
-	
+
 	public void hide() {
 		if (editMode) {
 			editMode = false;
@@ -194,42 +202,41 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 		popup.addCloseHandler(this);
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
-		
+
 		VerticalPanel mainPanel = new VerticalPanel();
 
 		Panel headline = createHeadline();
 		mainPanel.add(headline);
-		
+
 		image = createArticleImage();
 		mainPanel.add(image);
 
 		mainPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		productMatrix = createProductMatrix();
 		mainPanel.add(productMatrix);
-		
+
 		detailsGrid = createDetailsGrid();
 		mainPanel.add(detailsGrid);
-		
+
 		errorLabel = new Label();
 		mainPanel.add(errorLabel);
-		
+
 		Panel navPanel = createNavPanel();
 		mainPanel.add(navPanel);
-		
+
 		popup.add(mainPanel);
 		return popup;
 	}
-	
+
 	private Panel createHeadline() {
 		HorizontalPanel hp = new HorizontalPanel();
 		hp.setWidth("400px");
 		hp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-		
-		
+
 		headerLabel = new Label();
 		headerLabel.setStyleName("dialogHeader");
 		hp.add(headerLabel);
-		
+
 		hp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		Button addToNotepadButton = new Button("+");
 		addToNotepadButton.addClickHandler(new ClickHandler() {
@@ -239,14 +246,14 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 			}
 		});
 		hp.add(addToNotepadButton);
-		
+
 		hp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		printStickerLink = new Anchor(textMessages.sticker(), false, "", "xfashion_sticker");
 		hp.add(printStickerLink);
-		
+
 		return hp;
 	}
-	
+
 	private Image createArticleImage() {
 		Image img = createImage("", 1, 1);
 		img.addClickHandler(new ClickHandler() {
@@ -267,31 +274,31 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 		});
 		return img;
 	}
-	
+
 	private Grid createProductMatrix() {
 		Grid matrix = new Grid(2, 3);
 		matrix.setStyleName("articleCell");
-		
-		category = createCategoryLabel();
-		name = new Label();
-		name.setTitle(textMessages.name());
-		name.setStyleName("articleUpCe");
+
+		categoryLabel = createCategoryLabel();
+		nameLabel = new Label();
+		nameLabel.setTitle(textMessages.name());
+		nameLabel.setStyleName("articleUpCe");
 		nameTextBox = new TextBox();
-		color = createColorLabel();
-		style = createStyleLabel();
-		brand = createBrandLabel();
-		size = createSizeLabel();
-		
-		matrix.setWidget(0, 0, category);
-		matrix.setWidget(0, 1, name);
-		matrix.setWidget(0, 2, color);
-		matrix.setWidget(1, 0, style);
-		matrix.setWidget(1, 1, brand);
-		matrix.setWidget(1, 2, size);
-		
+		colorLabel = createColorLabel();
+		styleLabel = createStyleLabel();
+		brandLabel = createBrandLabel();
+		sizeLabel = createSizeLabel();
+
+		matrix.setWidget(0, 0, categoryLabel);
+		matrix.setWidget(0, 1, nameLabel);
+		matrix.setWidget(0, 2, colorLabel);
+		matrix.setWidget(1, 0, styleLabel);
+		matrix.setWidget(1, 1, brandLabel);
+		matrix.setWidget(1, 2, sizeLabel);
+
 		return matrix;
 	}
-	
+
 	private Label createCategoryLabel() {
 		final Label label = new Label();
 		label.setTitle(textMessages.category());
@@ -300,21 +307,13 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 			@Override
 			public void onClick(ClickEvent event) {
 				if (editMode) {
-//					ChooseCategoryPopup chooseCategoryPopup = new ChooseCategoryPopup(panelMediator);
-//					chooseCategoryPopup.addSelectionHandler(new SelectionHandler<CategoryDTO>() {
-//						public void onSelection(SelectionEvent<CategoryDTO> event) {
-//							CategoryDTO selected = event.getSelectedItem();
-//							updatedArticleType.setCategoryKey(selected.getKey());
-//							label.setText(selected.getName());
-//						}
-//					});
-//					chooseCategoryPopup.show();
+					Xfashion.eventBus.fireEvent(new ShowChooseCategoryAndStylePopupEvent());
 				}
 			}
 		});
 		return label;
 	}
-	
+
 	private Label createStyleLabel() {
 		final Label label = new Label();
 		label.setTitle(textMessages.style());
@@ -323,21 +322,13 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 			@Override
 			public void onClick(ClickEvent event) {
 				if (editMode) {
-//					ChooseStylePopup choosePopup = new ChooseStylePopup(panelMediator);
-//					choosePopup.addSelectionHandler(new SelectionHandler<StyleDTO>() {
-//						public void onSelection(SelectionEvent<StyleDTO> event) {
-//							StyleDTO selected = event.getSelectedItem();
-//							updatedArticleType.setStyleKey(selected.getKey());
-//							label.setText(selected.getName());
-//						}
-//					});
-//					choosePopup.show();
+					Xfashion.eventBus.fireEvent(new ShowChooseCategoryAndStylePopupEvent());
 				}
 			}
 		});
 		return label;
 	}
-	
+
 	private Label createBrandLabel() {
 		final Label label = new Label();
 		label.setTitle(textMessages.brand());
@@ -361,12 +352,13 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 			@Override
 			public void onClick(ClickEvent event) {
 				if (editMode) {
-					Xfashion.eventBus.fireEvent(new ShowChooseSizePopupEvent());				}
+					Xfashion.eventBus.fireEvent(new ShowChooseSizePopupEvent());
+				}
 			}
 		});
 		return label;
 	}
-	
+
 	private Label createColorLabel() {
 		final Label label = new Label();
 		label.setTitle(textMessages.color());
@@ -375,19 +367,19 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 			@Override
 			public void onClick(ClickEvent event) {
 				if (editMode) {
-					Xfashion.eventBus.fireEvent(new ShowChooseColorPopupEvent());				
+					Xfashion.eventBus.fireEvent(new ShowChooseColorPopupEvent());
 				}
 			}
 		});
 		return label;
 	}
-	
+
 	@Override
 	public void onChooseBrand(ChooseBrandEvent event) {
 		if (updatedArticleType != null) {
 			BrandDTO selected = event.getCellData();
 			updatedArticleType.setBrandKey(selected.getKey());
-			brand.setText(selected.getName());
+			brandLabel.setText(selected.getName());
 		}
 	}
 
@@ -396,7 +388,7 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 		if (updatedArticleType != null) {
 			SizeDTO selected = event.getCellData();
 			updatedArticleType.setSizeKey(selected.getKey());
-			size.setText(selected.getName());
+			sizeLabel.setText(selected.getName());
 		}
 	}
 
@@ -405,13 +397,25 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 		if (updatedArticleType != null) {
 			ColorDTO selected = event.getCellData();
 			updatedArticleType.setColorKey(selected.getKey());
-			color.setText(selected.getName());
+			colorLabel.setText(selected.getName());
+		}
+	}
+	
+	@Override
+	public void onChooseCategoryAndStyle(ChooseCategoryAndStyleEvent event) {
+		if (updatedArticleType != null) {
+			CategoryDTO newCategory = event.getCategory();
+			StyleDTO newStyle = event.getStyle();
+			updatedArticleType.setCategoryKey(newCategory.getKey());
+			categoryLabel.setText(newCategory.getName());
+			updatedArticleType.setStyleKey(newStyle.getKey());
+			styleLabel.setText(newStyle.getName());
 		}
 	}
 
 	private Grid createDetailsGrid() {
 		Grid grid = new Grid(3, 2);
-		
+
 		buyPriceGrid = new Grid(1, 2);
 		Label buyPriceLabel = new Label(textMessages.buyPrice() + ":");
 		grid.setWidget(0, 0, buyPriceLabel);
@@ -419,7 +423,7 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 		buyPriceTextBox = new TextBox();
 		buyPriceTextBox.setWidth("50px");
 		grid.setWidget(0, 1, buyPriceGrid);
-		
+
 		sellPriceGrid = new Grid(1, 2);
 		Label sellPriceLabel = new Label(textMessages.sellPrice() + ":");
 		grid.setWidget(1, 0, sellPriceLabel);
@@ -429,10 +433,10 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 		grid.setWidget(1, 1, sellPriceGrid);
 
 		productNumber = createGridLabelRow(grid, 2, textMessages.ean() + ":");
-		
+
 		return grid;
 	}
-	
+
 	private Label createGridLabelRow(Grid grid, int row, String name) {
 		Label label = new Label(name);
 		Label content = new Label();
@@ -440,19 +444,19 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 		grid.setWidget(row, 1, content);
 		return content;
 	}
-	
+
 	private Image createImage(String url, int width, int height) {
 		Image img = new Image(url);
 		img.setWidth(width + "px");
 		img.setHeight(height + "px");
 		return img;
 	}
-	
+
 	private Panel createNavPanel() {
 		HorizontalPanel hp = new HorizontalPanel();
-		
+
 		editArticleButton = new Button(textMessages.edit());
-		editArticleButton.addClickHandler(new ClickHandler()  {
+		editArticleButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				editArticleType();
@@ -467,7 +471,7 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 			public void onClick(ClickEvent event) {
 				showDeleteConfirmation();
 			}
-		}); 
+		});
 		hp.add(deleteArticleButton);
 
 		hp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
@@ -479,10 +483,10 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 			}
 		});
 		hp.add(cancelButton);
-		
+
 		return hp;
 	}
-	
+
 	private void editArticleType() {
 		if (editMode) {
 			try {
@@ -504,7 +508,7 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 			editMode = true;
 		}
 	}
-	
+
 	private void updateArticleType() throws CreateArticleException {
 		try {
 			Integer price = formatter.parseEurToCents(sellPriceTextBox.getText());
@@ -519,7 +523,7 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 			throw new CreateArticleException(errorMessages.invalidPrice());
 		}
 		if (nameTextBox.getText() == null || "".equals(nameTextBox.getText())) {
-			throw  new CreateArticleException(errorMessages.invalidName());
+			throw new CreateArticleException(errorMessages.invalidName());
 		} else {
 			updatedArticleType.setName(nameTextBox.getText());
 		}
@@ -533,24 +537,24 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 		articleType.setSellPrice(updatedArticleType.getSellPrice());
 		articleType.setImageId(updatedArticleType.getImageId());
 	}
-	
+
 	private void resetEditArticleType() {
 		articleTypeDetailPopup.setAutoHideEnabled(true);
 		editArticleButton.setText(textMessages.edit());
 		cancelButton.setText(textMessages.close());
-		productMatrix.setWidget(0, 1, name);
+		productMatrix.setWidget(0, 1, nameLabel);
 		buyPriceGrid.setWidget(0, 1, buyPrice);
 		sellPriceGrid.setWidget(0, 1, sellPrice);
 		editMode = false;
 	}
-	
+
 	private void showDeleteConfirmation() {
 		final DialogBox confirmDelete = new DialogBox();
 		DockPanel panel = new DockPanel();
 
 		Label label = new Label(textMessages.confirmDeleteArticle());
 		panel.add(label, DockPanel.NORTH);
-		
+
 		Button yesButton = new Button(textMessages.yes());
 		yesButton.addStyleName("leftDialogButton");
 		yesButton.addClickHandler(new ClickHandler() {
@@ -573,16 +577,16 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 			}
 		});
 		panel.add(noButton, DockPanel.EAST);
-		
+
 		confirmDelete.add(panel);
 		confirmDelete.setModal(true);
 		confirmDelete.center();
-		
+
 	}
 
 	@Override
 	public void onClose(CloseEvent<PopupPanel> event) {
-		
+
 	}
-	
+
 }

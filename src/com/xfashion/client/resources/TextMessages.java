@@ -15,6 +15,7 @@ public interface TextMessages extends Messages {
 	String articleCreateHeader();
 	String articleCreate();
 	String selectImage();
+	String select();
 	
 	String name();
 	String brand();
