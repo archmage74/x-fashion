@@ -7,13 +7,13 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ListDataProvider;
 import com.xfashion.client.ErrorEvent;
-import com.xfashion.client.SimpleFilterDataProvider2;
+import com.xfashion.client.SimpleFilterDataProvider;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTypeDataProvider;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.SizeDTO;
 
-public class SizeDataProvider extends SimpleFilterDataProvider2<SizeDTO> implements SelectSizeHandler, ClearSizeSelectionHandler, DeleteSizeHandler,
+public class SizeDataProvider extends SimpleFilterDataProvider<SizeDTO> implements SelectSizeHandler, ClearSizeSelectionHandler, DeleteSizeHandler,
 		CreateSizeHandler, UpdateSizeHandler, MoveDownSizeHandler, MoveUpSizeHandler, ShowChooseSizePopupHandler {
 
 	protected ListDataProvider<SizeDTO> leftProvider;

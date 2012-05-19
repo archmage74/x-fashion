@@ -2,13 +2,13 @@ package com.xfashion.client.color;
 
 import com.google.gwt.resources.client.ImageResource;
 import com.xfashion.client.ResizeableIconFilterPanel;
-import com.xfashion.client.SimpleFilterDataProvider2;
+import com.xfashion.client.SimpleFilterDataProvider;
 import com.xfashion.client.Xfashion;
 import com.xfashion.shared.ColorDTO;
 
 public class ColorPanel extends ResizeableIconFilterPanel<ColorDTO> {
 
-	public ColorPanel(SimpleFilterDataProvider2<ColorDTO> dataProvider) {
+	public ColorPanel(SimpleFilterDataProvider<ColorDTO> dataProvider) {
 		super(dataProvider);
 	}
 

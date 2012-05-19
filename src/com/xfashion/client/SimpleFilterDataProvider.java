@@ -10,11 +10,11 @@ import com.xfashion.client.at.ArticleTypeDataProvider;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.FilterCellData;
 
-public abstract class SimpleFilterDataProvider2<T extends FilterCellData> extends FilterDataProvider<T> {
+public abstract class SimpleFilterDataProvider<T extends FilterCellData> extends FilterDataProvider<T> {
 
 	private Set<String> filter;
 
-	public SimpleFilterDataProvider2(ArticleTypeDataProvider articleProvider) {
+	public SimpleFilterDataProvider(ArticleTypeDataProvider articleProvider) {
 		super(articleProvider);
 		filter = new HashSet<String>();
 	}

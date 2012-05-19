@@ -14,6 +14,12 @@ public class Buttons {
 		return icon;
 	}
 	
+	public static Image editBulk() {
+		Image icon = new Image(images.iconEditBulk());
+		icon.setStyleName("buttonShowTools");
+		return icon;
+	}
+	
 	public static Image minimize() {
 		Image icon = new Image(images.iconMinimize());
 		icon.setStyleName("buttonMinMax");

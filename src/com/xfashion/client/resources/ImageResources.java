@@ -10,6 +10,10 @@ public interface ImageResources extends ClientBundle {
 	@ImageOptions(width=23, height=23)
 	ImageResource iconShowTools();
 	
+	@Source("icon-editbulk.png")
+	@ImageOptions(width=23, height=23)
+	ImageResource iconEditBulk();
+	
 	@Source("icon-minimize.png")
 	@ImageOptions(width=12, height=23)
 	ImageResource iconMinimize();

@@ -66,7 +66,11 @@ public class ArticleType implements IsSerializable {
 		setColorKey(KeyFactory.stringToKey(dto.getColorKey()));
 		setBuyPrice(dto.getBuyPrice());
 		setSellPrice(dto.getSellPrice());
-		setImageKey(KeyFactory.stringToKey(dto.getImageKey()));
+		if (dto.getImageKey() != null) {
+			setImageKey(KeyFactory.stringToKey(dto.getImageKey()));
+		} else {
+			setImageKey(null);
+		}
 	}
 	
 	public ArticleTypeDTO createDTO() {
@@ -81,7 +85,11 @@ public class ArticleType implements IsSerializable {
 		dto.setColorKey(KeyFactory.keyToString(getColorKey()));
 		dto.setBuyPrice(getBuyPrice());
 		dto.setSellPrice(getSellPrice());
-		dto.setImageKey(KeyFactory.keyToString(getImageKey()));
+		if (getImageKey() != null) {
+			dto.setImageKey(KeyFactory.keyToString(getImageKey()));
+		} else {
+			dto.setImageKey(null);
+		}
 		return dto;
 	}
 

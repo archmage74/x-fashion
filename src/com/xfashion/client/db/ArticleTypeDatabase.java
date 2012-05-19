@@ -15,6 +15,8 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTypeDataProvider;
 import com.xfashion.client.at.ProvidesArticleFilter;
+import com.xfashion.client.at.bulk.UpdateArticleTypesEvent;
+import com.xfashion.client.at.bulk.UpdateArticleTypesHandler;
 import com.xfashion.client.brand.BrandDataProvider;
 import com.xfashion.client.cat.CategoryDataProvider;
 import com.xfashion.client.color.ColorDataProvider;
@@ -22,12 +24,9 @@ import com.xfashion.client.name.NameFilterEvent;
 import com.xfashion.client.name.NameFilterHandler;
 import com.xfashion.client.size.SizeDataProvider;
 import com.xfashion.shared.ArticleTypeDTO;
-import com.xfashion.shared.BrandDTO;
 import com.xfashion.shared.CategoryDTO;
-import com.xfashion.shared.ColorDTO;
-import com.xfashion.shared.SizeDTO;
 
-public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHandler, RefreshFilterHandler {
+public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHandler, RefreshFilterHandler, UpdateArticleTypesHandler {
 
 	private ArticleTypeServiceAsync articleTypeService = (ArticleTypeServiceAsync) GWT.create(ArticleTypeService.class);
 
@@ -72,6 +71,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 	private void registerForEvents() {
 		Xfashion.eventBus.addHandler(RefreshFilterEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(NameFilterEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(UpdateArticleTypesEvent.TYPE, this);
 	}
 
 	private void readArticleTypes() {
@@ -80,7 +80,6 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 			public void onFailure(Throwable caught) {
 				Xfashion.fireError(caught.getMessage());
 			}
-
 			@Override
 			public void onSuccess(Set<ArticleTypeDTO> result) {
 				articleTypeProvider.getList().clear();
@@ -212,18 +211,6 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 		colorProvider.update(temp);
 	}
 
-	public void addBrandDisplay(HasData<BrandDTO> display) {
-		brandProvider.addDataDisplay(display);
-	}
-
-	public void addSizeDisplay(HasData<SizeDTO> display) {
-		sizeProvider.addDataDisplay(display);
-	}
-
-	public void addColorDisplay(HasData<ColorDTO> display) {
-		colorProvider.addDataDisplay(display);
-	}
-
 	public void addArticleTypeDisplay(HasData<ArticleTypeDTO> display) {
 		articleTypeProvider.addDataDisplay(display);
 	}
@@ -265,6 +252,13 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 			}
 		};
 		articleTypeService.createArticleType(articleType, callback);
+	}
+
+	@Override
+	public void onUpdateArticleTypes(UpdateArticleTypesEvent event) {
+		for (ArticleTypeDTO at : event.getArticleTypes()) {
+			updateArticleType(at);
+		}
 	}
 
 	public void updateArticleType(final ArticleTypeDTO articleType) {

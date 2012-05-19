@@ -12,6 +12,7 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SuggestBox;
@@ -21,9 +22,11 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.xfashion.client.ErrorEvent;
 import com.xfashion.client.PanelMediator;
 import com.xfashion.client.Xfashion;
+import com.xfashion.client.at.bulk.BulkEditArticleTypePopup;
 import com.xfashion.client.name.NameFilterEvent;
 import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.resources.TextMessages;
+import com.xfashion.client.tool.Buttons;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.SizeDTO;
 
@@ -72,8 +75,10 @@ public class ArticleTypePanel {
 	private HorizontalPanel createHeaderPanel(MultiWordSuggestOracle nameOracle) {
 		headerPanel = new HorizontalPanel();
 		headerPanel.addStyleName("filterHeader");
+		
+		HorizontalPanel nameSuggestPanel = new HorizontalPanel();
+
 		nameSuggestBox = new SuggestBox(nameOracle);
-		headerPanel.add(nameSuggestBox);
 		nameSuggestBox.setStyleName("nameSuggestBox");
 		
 		SelectionHandler<SuggestOracle.Suggestion> nameSelectionHandler = new SelectionHandler<SuggestOracle.Suggestion>() {
@@ -94,8 +99,9 @@ public class ArticleTypePanel {
 			}
 		};
 		nameSuggestBox.addKeyUpHandler(nameValueChangeHandler);
+		nameSuggestPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		nameSuggestPanel.add(nameSuggestBox);
 		
-		headerPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
 		Button deleteNameFilterButton = new Button(textMessages.clearNameSuggestFilter());
 		deleteNameFilterButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -105,7 +111,11 @@ public class ArticleTypePanel {
 			}
 		});
 		deleteNameFilterButton.setStyleName("clearNameFilterButton");
-		headerPanel.add(deleteNameFilterButton);
+		nameSuggestPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
+		nameSuggestPanel.add(deleteNameFilterButton);
+		
+		headerPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
+		headerPanel.add(nameSuggestPanel);
 		
 		headerPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		Button addArticleButton = new Button(textMessages.createArticle());
@@ -116,18 +126,26 @@ public class ArticleTypePanel {
 			}
 		});
 		headerPanel.add(addArticleButton);
-		setHeaderColor(null);
+
+		headerPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		headerPanel.add(createEditBulkButton());
+
 		return headerPanel;
 	}
-	
-	public void setHeaderColor(String color) {
-		if (color != null) {
-			headerPanel.getElement().getStyle().setBackgroundColor(color);
-		} else {
-			headerPanel.getElement().getStyle().setBackgroundColor("#777");
-		}
-	}
 
+	private Image createEditBulkButton() {
+		Image editBulkButton = Buttons.editBulk();
+		ClickHandler editBulkButtonClickHandler = new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				BulkEditArticleTypePopup bulkEditPopup = new BulkEditArticleTypePopup(provider);
+				bulkEditPopup.showPopup(panelMediator.getArticleTypeDatabase().getArticleTypeProvider().getList());
+			}
+		};
+		editBulkButton.addClickHandler(editBulkButtonClickHandler);
+		return editBulkButton;
+	}
+	
 	private void addArticle() {
 		ArticleTypeDTO articleType = panelMediator.createArticleTypeFromSelection();
 		List<SizeDTO> sizes = panelMediator.getSelectedSizes();

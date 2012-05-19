@@ -17,6 +17,10 @@ public interface TextMessages extends Messages {
 	String selectImage();
 	String select();
 	
+	String bulkMultipleAttributes();
+	String bulkEdit();
+	String bulkEditConfirmation(int articleNumber);
+	
 	String name();
 	String brand();
 	String style();

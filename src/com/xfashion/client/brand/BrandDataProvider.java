@@ -5,13 +5,13 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.xfashion.client.ErrorEvent;
-import com.xfashion.client.SimpleFilterDataProvider2;
+import com.xfashion.client.SimpleFilterDataProvider;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTypeDataProvider;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.BrandDTO;
 
-public class BrandDataProvider extends SimpleFilterDataProvider2<BrandDTO> implements CreateBrandHandler, UpdateBrandHandler, DeleteBrandHandler,
+public class BrandDataProvider extends SimpleFilterDataProvider<BrandDTO> implements CreateBrandHandler, UpdateBrandHandler, DeleteBrandHandler,
 MoveUpBrandHandler, MoveDownBrandHandler, SelectBrandHandler, ClearBrandSelectionHandler, ShowChooseBrandPopupHandler {
 	
 	public BrandDataProvider(ArticleTypeDataProvider articleProvider) {

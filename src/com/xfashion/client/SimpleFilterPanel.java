@@ -75,7 +75,7 @@ public abstract class SimpleFilterPanel<T extends FilterCellData> extends Filter
 		return dataProvider;
 	}
 
-	public void setDataProvider(SimpleFilterDataProvider2<T> dataProvider) {
+	public void setDataProvider(SimpleFilterDataProvider<T> dataProvider) {
 		this.dataProvider = dataProvider;
 	}
 
