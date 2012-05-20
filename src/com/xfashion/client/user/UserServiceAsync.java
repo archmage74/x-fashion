@@ -1,10 +1,12 @@
 package com.xfashion.client.user;
 
 import java.util.List;
+import java.util.Set;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.xfashion.shared.ResetPasswordDTO;
 import com.xfashion.shared.UserDTO;
+import com.xfashion.shared.notepad.NotepadDTO;
 
 public interface UserServiceAsync {
 
@@ -24,8 +26,14 @@ public interface UserServiceAsync {
 	
 	void createResetPassword(UserDTO user, AsyncCallback<Void> callback);
 
-	void readResetPassword(Long id, AsyncCallback<ResetPasswordDTO> callback);
+	void readResetPassword(String keyString, AsyncCallback<ResetPasswordDTO> callback);
 
 	void deleteResetPassword(ResetPasswordDTO resetPassword, AsyncCallback<Void> callback);
 
+	void createNotepad(NotepadDTO notepad, AsyncCallback<NotepadDTO> callback);
+	
+	void readOwnNotepads(AsyncCallback<Set<NotepadDTO>> callback);
+
+	void updateOwnNotepad(NotepadDTO notepad, AsyncCallback<NotepadDTO> callback);
+	
 }

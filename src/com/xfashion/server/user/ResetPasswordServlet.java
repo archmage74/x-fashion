@@ -112,8 +112,7 @@ public class ResetPasswordServlet extends HttpServlet {
 		UserDTO user;
 		ResetPasswordDTO reset;
 		try {
-			Long resetId = Long.parseLong(id);
-			reset = userService.readResetPassword(resetId);
+			reset = userService.readResetPassword(id);
 			long oneDay = 24 * 60 * 60 * 1000;
 			long now = new Date().getTime();
 			if (reset.getCreationTimestamp().getTime() + oneDay < now) {

@@ -21,7 +21,31 @@ public interface ImageResources extends ClientBundle {
 	@Source("icon-maximize.png")
 	@ImageOptions(width=12, height=23)
 	ImageResource iconMaximize();
-	
+
+	@Source("icon-clearnotepad.png")
+	@ImageOptions(width=23, height=23)
+	ImageResource iconClearnotepad();
+
+	@Source("icon-open.png")
+	@ImageOptions(width=23, height=23)
+	ImageResource iconOpen();
+
+	@Source("icon-save.png")
+	@ImageOptions(width=23, height=23)
+	ImageResource iconSave();
+
+	@Source("icon-deliverynotice.png")
+	@ImageOptions(width=23, height=23)
+	ImageResource iconDeliverynotice();
+
+	@Source("icon-printsticker.png")
+	@ImageOptions(width=23, height=23)
+	ImageResource iconPrintsticker();
+
+	@Source("icon-scanbarcode.png")
+	@ImageOptions(width=23, height=23)
+	ImageResource iconScanbarcode();
+
 	@Source("icon-delete.png")
 	@ImageOptions(width=10, height=11)
 	ImageResource iconDelete();

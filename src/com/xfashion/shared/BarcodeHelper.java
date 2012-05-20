@@ -3,6 +3,11 @@ package com.xfashion.shared;
 
 public class BarcodeHelper {
 
+	public static final Long ARTICLE_PREFIX = 1L;
+	public static final Character ARTICLE_PREFIX_CHAR = '1';
+	public static final Long DELIVERY_NOTICE_PREFIX = 2L;
+	public static final Character DELIVERY_NOTICE_PREFIX_CHAR = '2';
+	
 	public String generateArticleEan(ArticleTypeDTO at) {
 		if (at.getProductNumber() > 199999999999L || at.getProductNumber() < 100000000000L) {
 			throw new RuntimeException("product number out of range");

@@ -4,6 +4,8 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class ArticleTypeDTO extends DTO implements IsSerializable {
 	
+	public static final Integer MAX_PRICE = 99999;
+	
 	private Long productNumber;
 
 	private String name;

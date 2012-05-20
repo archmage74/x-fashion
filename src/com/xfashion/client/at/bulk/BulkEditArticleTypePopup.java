@@ -89,7 +89,7 @@ public class BulkEditArticleTypePopup implements CloseHandler<PopupPanel>, Choos
 	protected List<HandlerRegistration> handlerRegistrations = new ArrayList<HandlerRegistration>();
 
 	public BulkEditArticleTypePopup(ProvidesArticleFilter provider) {
-		this.provider = provider;  
+		this.provider = provider;
 		this.textMessages = GWT.create(TextMessages.class);
 		registerForEvents();
 	}
@@ -128,55 +128,55 @@ public class BulkEditArticleTypePopup implements CloseHandler<PopupPanel>, Choos
 		} else {
 			nameTextBox.setValue(bulk.getSourceName());
 		}
-		
+
 		if (bulk.getSourceBrandKey() == null) {
 			brandLabel.setText(textMessages.bulkMultipleAttributes());
 		} else {
 			brandLabel.setText(provider.getBrandProvider().resolveData(bulk.getSourceBrandKey()).getName());
 		}
-		
+
 		if (bulk.getSourceCategoryKey() == null) {
 			categoryLabel.setText(textMessages.bulkMultipleAttributes());
 		} else {
 			categoryLabel.setText(provider.getCategoryProvider().resolveData(bulk.getSourceCategoryKey()).getName());
 		}
-		
+
 		if (bulk.getSourceStyleKey() == null) {
 			styleLabel.setText(textMessages.bulkMultipleAttributes());
 		} else {
 			styleLabel.setText(provider.getCategoryProvider().resolveStyle(bulk.getSourceStyleKey()).getName());
 		}
-		
+
 		if (bulk.getSourceSizeKey() == null) {
 			sizeLabel.setText(textMessages.bulkMultipleAttributes());
 		} else {
 			sizeLabel.setText(provider.getSizeProvider().resolveData(bulk.getSourceSizeKey()).getName());
 		}
-		
+
 		if (bulk.getSourceColorKey() == null) {
 			colorLabel.setText(textMessages.bulkMultipleAttributes());
 		} else {
 			colorLabel.setText(provider.getColorProvider().resolveData(bulk.getSourceColorKey()).getName());
 		}
-		
+
 		if (bulk.getSourceBuyPrice() == null) {
 			buyPriceTextBox.setValue(textMessages.bulkMultipleAttributes());
 		} else {
 			buyPriceTextBox.setValue(formatter.formatCentsToValue(bulk.getSourceBuyPrice()));
 		}
-		
+
 		if (bulk.getSourceSellPrice() == null) {
 			sellPriceTextBox.setValue(textMessages.bulkMultipleAttributes());
 		} else {
 			sellPriceTextBox.setValue(formatter.formatCentsToValue(bulk.getSourceSellPrice()));
 		}
-		
+
 		articleTypeDetailPopup.setPopupPosition(500, 50);
 		articleTypeDetailPopup.show();
 
 		updateImage();
 	}
-	
+
 	private void updateImage() {
 		String imageKey = null;
 		if (bulk.getTargetImageKey() != null) {
@@ -190,6 +190,7 @@ public class BulkEditArticleTypePopup implements CloseHandler<PopupPanel>, Choos
 				public void onSuccess(ArticleTypeImageDTO result) {
 					image.setUrl(result.getImageUrl() + ArticleTypeImageDTO.IMAGE_OPTIONS_BIG);
 				}
+
 				@Override
 				public void onFailure(Throwable caught) {
 					Xfashion.fireError(caught.getMessage());
@@ -368,6 +369,7 @@ public class BulkEditArticleTypePopup implements CloseHandler<PopupPanel>, Choos
 			BrandDTO selected = event.getCellData();
 			bulk.setTargetBrandKey(selected.getKey());
 			brandLabel.setText(selected.getName());
+			brandLabel.addStyleName("editBulkChanged");
 		}
 	}
 
@@ -377,6 +379,7 @@ public class BulkEditArticleTypePopup implements CloseHandler<PopupPanel>, Choos
 			SizeDTO selected = event.getCellData();
 			bulk.setTargetSizeKey(selected.getKey());
 			sizeLabel.setText(selected.getName());
+			sizeLabel.addStyleName("editBulkChanged");
 		}
 	}
 
@@ -386,9 +389,10 @@ public class BulkEditArticleTypePopup implements CloseHandler<PopupPanel>, Choos
 			ColorDTO selected = event.getCellData();
 			bulk.setTargetColorKey(selected.getKey());
 			colorLabel.setText(selected.getName());
+			colorLabel.addStyleName("editBulkChanged");
 		}
 	}
-	
+
 	@Override
 	public void onChooseCategoryAndStyle(ChooseCategoryAndStyleEvent event) {
 		if (bulk != null) {
@@ -396,23 +400,36 @@ public class BulkEditArticleTypePopup implements CloseHandler<PopupPanel>, Choos
 			StyleDTO newStyle = event.getStyle();
 			bulk.setTargetCategoryKey(newCategory.getKey());
 			categoryLabel.setText(newCategory.getName());
+			categoryLabel.addStyleName("editBulkChanged");
 			bulk.setTargetStyleKey(newStyle.getKey());
 			styleLabel.setText(newStyle.getName());
+			styleLabel.addStyleName("editBulkChanged");
 		}
 	}
-	
+
 	public void onChangeBuyPrice() {
-		Integer price = formatter.parseEurToCents(buyPriceTextBox.getText());
-		bulk.setTargetBuyPrice(price);
+		try {
+			Integer price = formatter.parseEurToCents(buyPriceTextBox.getText());
+			bulk.setTargetBuyPrice(price);
+			buyPriceTextBox.addStyleName("editBulkChanged");
+		} catch (NumberFormatException e) {
+			Xfashion.fireError(errorMessages.invalidPrice());
+		}
 	}
-	
+
 	public void onChangeSellPrice() {
-		Integer price = formatter.parseEurToCents(sellPriceTextBox.getText());
-		bulk.setTargetSellPrice(price);
+		try {
+			Integer price = formatter.parseEurToCents(sellPriceTextBox.getText());
+			bulk.setTargetSellPrice(price);
+			sellPriceTextBox.addStyleName("editBulkChanged");
+		} catch (NumberFormatException e) {
+			Xfashion.fireError(errorMessages.invalidPrice());
+		}
 	}
-	
+
 	public void onChangeName() {
 		bulk.setTargetName(nameTextBox.getValue());
+		nameTextBox.addStyleName("editBulkChanged");
 	}
 
 	private Grid createDetailsGrid() {
@@ -489,9 +506,16 @@ public class BulkEditArticleTypePopup implements CloseHandler<PopupPanel>, Choos
 	}
 
 	private void saveArticleType() {
+		validate();
 		bulk.applyChanges(articleTypes);
 		Xfashion.eventBus.fireEvent(new UpdateArticleTypesEvent(articleTypes));
 		hide();
+	}
+
+	private void validate() {
+		if (bulk.getTargetName() == "") {
+			Xfashion.fireError(errorMessages.invalidName());
+		}
 	}
 
 	private void showSaveConfirmation() {
@@ -503,7 +527,7 @@ public class BulkEditArticleTypePopup implements CloseHandler<PopupPanel>, Choos
 
 		HorizontalPanel hp = new HorizontalPanel();
 		panel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		
+
 		Button yesButton = new Button(textMessages.yes());
 		yesButton.addStyleName("leftDialogButton");
 		yesButton.addClickHandler(new ClickHandler() {

@@ -12,6 +12,6 @@ public interface NotepadService extends RemoteService {
 	
 	public static final String SESSION_NOTEPAD = "currentNotepad";
 
-	void sendNotepad(NotepadDTO user);
+	void saveNotepadInSession(NotepadDTO user);
 	
 }

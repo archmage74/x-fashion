@@ -4,7 +4,7 @@ import com.google.gwt.i18n.client.Messages;
 
 public interface ErrorMessages extends Messages {
 
-	String noteImplemented();
+	String notImplemented();
 	
 	String createAttributeNoName();
 
@@ -37,4 +37,8 @@ public interface ErrorMessages extends Messages {
 	String noArticlesInNotepad();
 
 	String noCategorySelected();
+
+	String noNotepadNameSpecified();
+	String noNotepadToOpenSelected();
+	String notepadNotEmpty();
 }

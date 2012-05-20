@@ -3,6 +3,7 @@ package com.xfashion.client.notepad;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -17,11 +18,12 @@ import com.xfashion.client.at.ArticleTable;
 import com.xfashion.client.at.ProvidesArticleFilter;
 import com.xfashion.client.resources.ImageResources;
 import com.xfashion.client.resources.TextMessages;
+import com.xfashion.client.tool.Buttons;
 import com.xfashion.shared.notepad.ArticleAmountDTO;
 
 public class NotepadPanel implements IsMinimizable {
 
-	public static final int PANEL_MAX_WIDTH = 600; 
+	public static final int PANEL_MAX_WIDTH = 550; 
 	public static final int PANEL_MIN_WIDTH = 25;
 	
 	private PanelMediator panelMediator;
@@ -72,7 +74,27 @@ public class NotepadPanel implements IsMinimizable {
 	protected HorizontalPanel createHeaderPanel() {
 		headerPanel = new HorizontalPanel();
 		headerPanel.addStyleName("filterHeader");
+		headerPanel.setWidth(PANEL_MAX_WIDTH + "px");
+		
 
+		headerPanel.add(createMinmaxButton());
+		headerPanel.add(createHeaderLabel());
+		
+		HorizontalPanel toolPanel = new HorizontalPanel();
+		toolPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		toolPanel.add(createClearNotepadIcon());
+		toolPanel.add(createOpenNotepadIcon());
+		toolPanel.add(createSaveNotepadIcon());
+		toolPanel.add(createPrintDeliveryNoticeIcon());
+		toolPanel.add(createPrintStickerIcon());
+		toolPanel.add(createRecordArticlesIcon());
+		headerPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		headerPanel.add(toolPanel);
+		
+		return headerPanel;
+	}
+	
+	private Image createMinmaxButton() {
 		minmaxButton = new Image();
 		if (isMinimized()) {
 			minmaxButton.setResource(images.iconMaximize());
@@ -87,13 +109,85 @@ public class NotepadPanel implements IsMinimizable {
 			}
 		};
 		minmaxButton.addClickHandler(minmaxClickHandler);
-		headerPanel.add(minmaxButton);
-
+		return minmaxButton;
+	}
+	
+	private Label createHeaderLabel() {
 		Label headerLabel = new Label(textMessages.notepadManagementHeader());
 		headerLabel.addStyleName("filterLabel attributeFilterLabel");
-		headerPanel.add(headerLabel);
-		
-		return headerPanel;
+		return headerLabel;
+	}
+	
+	private Image createClearNotepadIcon() {
+		Image icon = Buttons.clearnotepad();
+		icon.setTitle(textMessages.clearNotepadHint());
+		icon.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Xfashion.eventBus.fireEvent(new ClearNotepadEvent());
+			}
+		});
+		return icon;
+	}
+
+	private Image createOpenNotepadIcon() {
+		Image icon = Buttons.open();
+		icon.setTitle(textMessages.openNotepadHint());
+		icon.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Xfashion.eventBus.fireEvent(new RequestOpenNotepadEvent());
+			}
+		});
+		return icon;
+	}
+
+	private Image createSaveNotepadIcon() {
+		Image icon = Buttons.save();
+		icon.setTitle(textMessages.saveNotepadHint());
+		icon.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Xfashion.eventBus.fireEvent(new RequestSaveNotepadEvent());
+			}
+		});
+		return icon;
+	}
+
+	private Image createPrintDeliveryNoticeIcon() {
+		Image icon = Buttons.deliverynotice();
+		icon.setTitle(textMessages.printDeliveryNoticeHint());
+		icon.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Xfashion.eventBus.fireEvent(new PrintDeliveryNoticeEvent());
+			}
+		});
+		return icon;
+	}
+
+	private Image createPrintStickerIcon() {
+		Image icon = Buttons.printsticker();
+		icon.setTitle(textMessages.printStickersHint());
+		icon.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Xfashion.eventBus.fireEvent(new PrintNotepadStickersEvent());
+			}
+		});
+		return icon;
+	}
+
+	private Image createRecordArticlesIcon() {
+		Image icon = Buttons.scanbarcode();
+		icon.setTitle(textMessages.recordArticlesHint());
+		icon.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Xfashion.eventBus.fireEvent(new RecordArticlesEvent());
+			}
+		});
+		return icon;
 	}
 
 	public void minmax() {

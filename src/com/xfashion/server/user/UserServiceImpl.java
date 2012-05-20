@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
@@ -17,11 +18,14 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.xfashion.client.user.UserService;
 import com.xfashion.server.PMF;
+import com.xfashion.server.notepad.Notepad;
 import com.xfashion.shared.ResetPasswordDTO;
 import com.xfashion.shared.UserDTO;
+import com.xfashion.shared.notepad.NotepadDTO;
 
 public class UserServiceImpl extends RemoteServiceServlet implements UserService {
 
@@ -32,7 +36,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 	private static User adminUser; 
 	static {
 		adminUser = new User(new UserDTO("root", "root", "archmage74@gmail.com"));
-		adminUser.setPassword("37e73865cdc6a4eead2fb25e19c2ca96");
+		adminUser.setPassword("1c782d2abe3bacd092fe9cdaaf1bba52");
 	}
 
 	@Override
@@ -68,6 +72,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 			if (user.validatePassword(password)) {
 				dto = user.createDTO();
 			}
+			this.getThreadLocalRequest().getSession().setAttribute(SESSION_USER, dto);
 		} finally {
 			pm.close();
 		}
@@ -80,7 +85,11 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		UserDTO dto = null;
 		try {
 			User user = readUserByUsername(pm, username);
-			dto = user.createDTO();
+			if (user == null) {
+				dto = null;
+			} else {
+				dto = user.createDTO();
+			}
 		} finally {
 			pm.close();
 		}
@@ -90,19 +99,24 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 	@SuppressWarnings("unchecked")
 	private User readUserByUsername(PersistenceManager pm, String username) {
 		User user;
-		if (adminUser.getUsername().equals(username)) {
-			user = adminUser;
+		Query userQuery = pm.newQuery(User.class);
+		userQuery.setFilter("username == usernameParam");
+		userQuery.declareParameters("String usernameParam");
+		List<User> users = (List<User>) userQuery.execute(username);
+		if (users.size() == 1) {
+			user = users.get(0);
 		} else {
-			Query userQuery = pm.newQuery(User.class);
-			userQuery.setFilter("username == usernameParam");
-			userQuery.declareParameters("String usernameParam");
-			List<User> users = (List<User>) userQuery.execute(username);
-			if (users.size() == 1) {
-				user = users.get(0);
+			if (adminUser.getUsername().equals(username)) {
+				user = pm.makePersistent(adminUser);
 			} else {
 				throw new RuntimeException("Could not read user '" + username + "', query returned " + users.size() + " entities");
 			}
 		}
+		return user;
+	}
+	
+	private User readUser(PersistenceManager pm, String key) {
+		User user = pm.getObjectById(User.class, KeyFactory.stringToKey(key));
 		return user;
 	}
 
@@ -139,7 +153,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 	}
 	
 	private void updateUser(PersistenceManager pm, UserDTO dto) {
-		User user = pm.getObjectById(User.class, dto.getId());
+		User user = readUser(pm, dto.getKey());
 		user.updateFromDTO(dto);
 		pm.makePersistent(user);
 	}
@@ -155,7 +169,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 	}
 	
 	private void updatePassword(PersistenceManager pm, UserDTO dto, String password) {
-		User user = pm.getObjectById(User.class, dto.getId());
+		User user = readUser(pm, dto.getKey());
 		user.encodeAndSetPassword(password);
 		pm.makePersistent(user);
 	}
@@ -171,7 +185,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 	}
 	
 	private void deleteUser(PersistenceManager pm, UserDTO dto) {
-		User user = pm.getObjectById(User.class, dto.getId());
+		User user = readUser(pm, dto.getKey());
 		pm.deletePersistent(user);
 	}
 	
@@ -194,11 +208,11 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 	}
 	
 	@Override
-	public ResetPasswordDTO readResetPassword(Long id) {
+	public ResetPasswordDTO readResetPassword(String keyString) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		ResetPasswordDTO dto = null;
 		try {
-			ResetPassword rp = readResetPassword(pm, id);
+			ResetPassword rp = readResetPassword(pm, keyString);
 			dto = rp.createDTO();
 		} finally {
 			pm.close();
@@ -206,8 +220,8 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		return dto;
 	}
 	
-	private ResetPassword readResetPassword(PersistenceManager pm, Long id) {
-		return pm.getObjectById(ResetPassword.class, id);
+	private ResetPassword readResetPassword(PersistenceManager pm, String keyString) {
+		return pm.getObjectById(ResetPassword.class, KeyFactory.stringToKey(keyString));
 	}
 	
 	@Override
@@ -221,7 +235,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 	}
 	
 	private void deleteResetPassword(PersistenceManager pm, ResetPasswordDTO dto) {
-		ResetPassword rp = pm.getObjectById(ResetPassword.class, dto.getId());
+		ResetPassword rp = readResetPassword(pm, dto.getKey());
 		pm.deletePersistent(rp);
 	}
 	
@@ -234,7 +248,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
         String all = request.getRequestURL().toString();
         String base = all.substring(0, all.indexOf(request.getServletPath()));
         
-        String msgBody = base + "/resetpassword/" + rp.getId();
+        String msgBody = base + "/resetpassword/" + rp.getKey();
         log.info("created reset link=" + msgBody);
         
         try {
@@ -252,4 +266,66 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 			throw new RuntimeException(e);
 		}
 	}
+
+	@Override
+	public NotepadDTO createNotepad(NotepadDTO dto) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			Notepad notepad = createNotepad(pm, dto);
+			dto = notepad.createDTO();
+		} finally {
+			pm.close();
+		}
+		return dto;
+	}
+	
+	public Notepad createNotepad(PersistenceManager pm, NotepadDTO dto) {
+		Shop shop = readOwnShop(pm);
+		Notepad notepad = new Notepad(dto);
+		shop.getNotepads().add(notepad);
+		return notepad;
+	}
+	
+	@Override
+	public Set<NotepadDTO> readOwnNotepads() {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		Set<NotepadDTO> notepads = null;
+		try {
+			Shop shop = readOwnShop(pm);
+			notepads = shop.createNotepadDTOs(); 
+		} finally {
+			pm.close();
+		}
+		return notepads;
+	}
+	
+	public Notepad readNotepad(PersistenceManager pm, String keyString) {
+		Notepad notepad = pm.getObjectById(Notepad.class, KeyFactory.stringToKey(keyString));
+		return notepad;
+	}
+	
+	public Shop readOwnShop(PersistenceManager pm) {
+		UserDTO userDTO = (UserDTO) this.getThreadLocalRequest().getSession().getAttribute(SESSION_USER);
+		if (userDTO == null) {
+			throw new RuntimeException("no user logged in");
+		}
+		User user = readUser(pm, userDTO.getKey());
+		return user.getShop();
+	}
+
+	public NotepadDTO updateOwnNotepad(NotepadDTO dto) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			updateNotepad(pm, dto);
+		} finally {
+			pm.close();
+		}
+		return dto;
+	}
+
+	private void updateNotepad(PersistenceManager pm, NotepadDTO dto) {
+		Notepad notepad = readNotepad(pm, dto.getKey());
+		notepad.updateFromDto(dto);
+	}
+	
 }

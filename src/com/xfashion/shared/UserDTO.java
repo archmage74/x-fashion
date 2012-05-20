@@ -1,10 +1,14 @@
 package com.xfashion.shared;
 
+import java.io.Serializable;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class UserDTO implements IsSerializable {
+public class UserDTO implements IsSerializable, Serializable {
 
-	private Long id;
+	private static final long serialVersionUID = -5257634660252618442L;
+
+	private String key;
 	
 	private String username;
 	
@@ -33,14 +37,14 @@ public class UserDTO implements IsSerializable {
 		setEmail(email);
 	}
 
-	public Long getId() {
-		return id;
+	public String getKey() {
+		return key;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setKey(String key) {
+		this.key = key;
 	}
-	
+
 	public String getUsername() {
 		return username;
 	}
@@ -80,5 +84,5 @@ public class UserDTO implements IsSerializable {
 	public void setEnabled(Boolean enabled) {
 		this.enabled = enabled;
 	}
-	
+
 }

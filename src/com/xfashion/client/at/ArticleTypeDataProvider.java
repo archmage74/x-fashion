@@ -9,11 +9,11 @@ public class ArticleTypeDataProvider extends ArticleDataProvider<ArticleTypeDTO>
 
 	private boolean loaded;
 	
-	private HashMap<Long, ArticleTypeDTO> idToItem;
+	private HashMap<String, ArticleTypeDTO> idToItem;
 
 	public ArticleTypeDataProvider() {
 		loaded = false;
-		idToItem = new HashMap<Long, ArticleTypeDTO>();
+		idToItem = new HashMap<String, ArticleTypeDTO>();
 	}
 	
 	public ArticleTypeDTO retrieveArticleType(ArticleTypeDTO item) {
@@ -28,8 +28,8 @@ public class ArticleTypeDataProvider extends ArticleDataProvider<ArticleTypeDTO>
 		this.loaded = loaded;
 	}
 
-	public ArticleTypeDTO resolveData(Long id) {
-		return idToItem.get(id);
+	public ArticleTypeDTO resolveData(String key) {
+		return idToItem.get(key);
 	}
 
 	public void refreshResolver() {
@@ -39,7 +39,7 @@ public class ArticleTypeDataProvider extends ArticleDataProvider<ArticleTypeDTO>
 	private void refreshResolver(List<ArticleTypeDTO> list) {
 		idToItem.clear();
 		for (ArticleTypeDTO item : list) {
-			idToItem.put(item.getProductNumber(), item);
+			idToItem.put(item.getKey(), item);
 		}
 	}
 

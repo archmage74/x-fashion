@@ -5,6 +5,6 @@ import com.xfashion.shared.notepad.NotepadDTO;
 
 public interface NotepadServiceAsync {
 
-	void sendNotepad(NotepadDTO notepad, AsyncCallback<Void> callback);
+	void saveNotepadInSession(NotepadDTO notepad, AsyncCallback<Void> callback);
 	
 }

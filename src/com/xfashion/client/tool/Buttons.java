@@ -32,6 +32,42 @@ public class Buttons {
 		return icon;
 	}
 	
+	public static Image deliverynotice() {
+		Image icon = new Image(images.iconDeliverynotice());
+		icon.setStyleName("buttonShowTools");
+		return icon;
+	}
+	
+	public static Image clearnotepad() {
+		Image icon = new Image(images.iconClearnotepad());
+		icon.setStyleName("buttonShowTools");
+		return icon;
+	}
+	
+	public static Image open() {
+		Image icon = new Image(images.iconOpen());
+		icon.setStyleName("buttonShowTools");
+		return icon;
+	}
+	
+	public static Image save() {
+		Image icon = new Image(images.iconSave());
+		icon.setStyleName("buttonShowTools");
+		return icon;
+	}
+	
+	public static Image printsticker() {
+		Image icon = new Image(images.iconPrintsticker());
+		icon.setStyleName("buttonShowTools");
+		return icon;
+	}
+	
+	public static Image scanbarcode() {
+		Image icon = new Image(images.iconScanbarcode());
+		icon.setStyleName("buttonShowTools");
+		return icon;
+	}
+	
 	public static Image edit() {
 		Image icon = new Image(images.iconEdit());
 		icon.setStyleName("buttonTool");

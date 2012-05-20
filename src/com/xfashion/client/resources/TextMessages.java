@@ -40,6 +40,7 @@ public interface TextMessages extends Messages {
 	String cancel();
 	String edit();
 	String close();
+	String open();
 
 	String notepadManagementHeader();
 	String printSticker();
@@ -54,4 +55,10 @@ public interface TextMessages extends Messages {
 	String createArticle();
 	String clearNameSuggestFilter();
 
+	String clearNotepadHint();
+	String openNotepadHint();
+	String saveNotepadHint();
+	String printDeliveryNoticeHint();
+	String printStickersHint();
+	String recordArticlesHint();
 }

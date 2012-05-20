@@ -41,10 +41,10 @@ public class MultiSticker extends HttpServlet {
 		
 		out.print(stickerRenderer.renderHeader());
 		boolean firstpage = true;
-		for (ArticleAmountDTO aa : notepad.getArticleTypes()) {
-			Long productNumber = aa.getProductNumber();
+		for (ArticleAmountDTO aa : notepad.getArticles()) {
+			String articleTypeKey = aa.getArticleTypeKey();
 			for (int i=0; i<aa.getAmount(); i++) {
-				out.print(stickerRenderer.render(productNumber, currencyFormat, !firstpage));
+				out.print(stickerRenderer.render(articleTypeKey, currencyFormat, !firstpage));
 				firstpage = false;
 			}
 		}

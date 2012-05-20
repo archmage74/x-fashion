@@ -2,6 +2,7 @@ package com.xfashion.shared.notepad;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
@@ -11,37 +12,58 @@ public class NotepadDTO implements Serializable, IsSerializable {
 	
 	private static final long serialVersionUID = -5274228818084728571L;
 	
-	private Long id;
+	private String key;
+	
+	private String name;
+	
+	private Date creationDate;
 	
 	private List<ArticleAmountDTO> articles;
 
 	public NotepadDTO() {
+		creationDate = new Date();
 		articles = new ArrayList<ArticleAmountDTO>();
 	}
 	
-	public Long getId() {
-		return id;
+	public String getKey() {
+		return key;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setKey(String key) {
+		this.key = key;
 	}
 
-	public List<ArticleAmountDTO> getArticleTypes() {
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public List<ArticleAmountDTO> getArticles() {
 		return articles;
 	}
-
-	public void setArticleTypes(List<ArticleAmountDTO> articles) {
-		this.articles = articles;
-	}
-
-	public void addArticleType(ArticleTypeDTO articleType) {
-		addArticleType(articleType, 1);
+	
+	public void addArticle(ArticleTypeDTO articleType) {
+		addArticle(articleType, 1);
 	}
 	
-	public void addArticleType(ArticleTypeDTO articleType, Integer amount) {
-		ArticleAmountDTO articleAmount = retrieveArticleAmount(articleType.getProductNumber());
+	public void addArticle(ArticleTypeDTO articleType, Integer amount) {
+		ArticleAmountDTO articleAmount = retrieveArticleAmount(articleType.getKey());
 		articleAmount.increaseAmount(amount);
+	}
+	
+	public void setArticles(List<ArticleAmountDTO> articles) {
+		this.articles = articles;
 	}
 	
 	public void deductArticleType(ArticleTypeDTO articleType) {
@@ -49,7 +71,7 @@ public class NotepadDTO implements Serializable, IsSerializable {
 	}
 	
 	public void deductArticleType(ArticleTypeDTO articleType, Integer amount) {
-		ArticleAmountDTO articleAmount = retrieveArticleAmount(articleType.getProductNumber());
+		ArticleAmountDTO articleAmount = retrieveArticleAmount(articleType.getKey());
 		if (articleAmount.getAmount() > amount) {
 			articleAmount.decreaseAmount(amount);
 		} else {
@@ -57,15 +79,15 @@ public class NotepadDTO implements Serializable, IsSerializable {
 		}
 	}
 	
-	public ArticleAmountDTO retrieveArticleAmount(Long productNumber) {
+	public ArticleAmountDTO retrieveArticleAmount(String articleTypeKey) {
 		for (ArticleAmountDTO a : articles) {
-			if (productNumber.equals(a.getProductNumber())) {
+			if (articleTypeKey.equals(a.getArticleTypeKey())) {
 				return a;
 			}
 		}
-		ArticleAmountDTO a = new ArticleAmountDTO(productNumber, 0);
+		ArticleAmountDTO a = new ArticleAmountDTO(articleTypeKey, 0);
 		articles.add(a);
 		return a;
 	}
-	
+
 }

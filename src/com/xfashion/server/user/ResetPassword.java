@@ -7,6 +7,8 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.xfashion.shared.ResetPasswordDTO;
 
 @PersistenceCapable
@@ -14,7 +16,7 @@ public class ResetPassword {
 
 	@PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private Long id;
+	private Key key;
 	
 	@Persistent
 	private String username;
@@ -31,20 +33,12 @@ public class ResetPassword {
 		setUsername(dto.getUsername());
 	}
 	
-	public ResetPasswordDTO createDTO() {
-		ResetPasswordDTO dto = new ResetPasswordDTO();
-		dto.setUsername(getUsername());
-		dto.setCreationTimestamp(getCreationTimestamp());
-		dto.setId(getId());
-		return dto;
+	public Key getKey() {
+		return key;
 	}
 	
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
+	public String getKeyAsString() {
+		return KeyFactory.keyToString(key);
 	}
 
 	public String getUsername() {
@@ -63,4 +57,12 @@ public class ResetPassword {
 		this.creationTimestamp = creationTimestamp;
 	}
 
+	public ResetPasswordDTO createDTO() {
+		ResetPasswordDTO dto = new ResetPasswordDTO();
+		dto.setKey(getKeyAsString());
+		dto.setUsername(getUsername());
+		dto.setCreationTimestamp(getCreationTimestamp());
+		return dto;
+	}
+	
 }

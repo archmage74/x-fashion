@@ -86,8 +86,6 @@ public class MenuPanel implements LoginHandler {
 		menu.addItem(articleTypeItem);
 		MenuItem userManagementItem = new MenuItem(menuMessages.userManagement(), showUserManagement);
 		menu.addItem(userManagementItem);
-		MenuItem notepadManagementItem = new MenuItem(menuMessages.notepadManagement(), showNotepadManagementProfile);
-		menu.addItem(notepadManagementItem);
 		MenuItem userProfileItem = new MenuItem(menuMessages.userProfile(), showUserProfile);
 		menu.addItem(userProfileItem);
 		MenuItem testItem = new MenuItem(menuMessages.test(), test);

@@ -8,7 +8,9 @@ public class ArticleAmountDTO implements Serializable, IsSerializable {
 
 	private static final long serialVersionUID = 8130078401724950984L;
 
-	protected Long productNumber;
+	protected String key;
+	
+	protected String articleTypeKey;
 	
 	protected Integer amount;
 
@@ -16,17 +18,25 @@ public class ArticleAmountDTO implements Serializable, IsSerializable {
 		
 	}
 	
-	public ArticleAmountDTO(Long productNumber, Integer amount) {
-		this.productNumber = productNumber;
+	public ArticleAmountDTO(String articleTypeKey, Integer amount) {
+		this.articleTypeKey = articleTypeKey;
 		this.amount = amount;
 	}
 	
-	public Long getProductNumber() {
-		return productNumber;
+	public String getKey() {
+		return key;
+	}
+	
+	public void setKey(String key) {
+		this.key = key;
+	}
+	
+	public String getArticleTypeKey() {
+		return articleTypeKey;
 	}
 
-	public void setProductNumber(Long productNumber) {
-		this.productNumber = productNumber;
+	public void setArticleTypeKey(String articleTypeKey) {
+		this.articleTypeKey = articleTypeKey;
 	}
 
 	public Integer getAmount() {

@@ -11,7 +11,7 @@ public class NotepadServiceImpl extends RemoteServiceServlet implements NotepadS
 	private static final long serialVersionUID = 1L;
 	
 	@Override
-	public void sendNotepad(NotepadDTO dto) {
+	public void saveNotepadInSession(NotepadDTO dto) {
 		this.getThreadLocalRequest().getSession().setAttribute(SESSION_NOTEPAD, dto);
 	}
 	

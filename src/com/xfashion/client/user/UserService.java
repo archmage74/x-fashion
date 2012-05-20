@@ -1,17 +1,21 @@
 package com.xfashion.client.user;
 
 import java.util.List;
+import java.util.Set;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import com.xfashion.shared.ResetPasswordDTO;
 import com.xfashion.shared.UserDTO;
+import com.xfashion.shared.notepad.NotepadDTO;
 
 /**
  * The client side stub for the RPC service.
  */
 @RemoteServiceRelativePath("userService")
 public interface UserService extends RemoteService {
+	
+	public static final String SESSION_USER = "currentUser";
 	
 	UserDTO createUser(UserDTO user);
 	
@@ -29,8 +33,14 @@ public interface UserService extends RemoteService {
 
 	void createResetPassword(UserDTO user);
 	
-	ResetPasswordDTO readResetPassword(Long id);
+	ResetPasswordDTO readResetPassword(String keyString);
 	
 	void deleteResetPassword(ResetPasswordDTO resetPassword);
+	
+	NotepadDTO createNotepad(NotepadDTO notepad); 
+	
+	Set<NotepadDTO> readOwnNotepads();
+	
+	NotepadDTO updateOwnNotepad(NotepadDTO notepad);
 	
 }

@@ -5,6 +5,8 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.xfashion.shared.UserDTO;
 
 @PersistenceCapable
@@ -12,7 +14,7 @@ public class User {
 
 	@PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private Long id;
+	private Key key;
     
     @Persistent
     private String username;
@@ -28,12 +30,12 @@ public class User {
 	
 	@Persistent
 	private Boolean enabled;
-
-	public User() {
-		
-	}
+	
+	@Persistent
+	private Shop shop;
 	
 	public User(UserDTO dto) {
+		shop = new Shop();
 		updateFromDTO(dto);
 	}
 	
@@ -46,7 +48,7 @@ public class User {
 	
 	public UserDTO createDTO() {
 		UserDTO dto = new UserDTO();
-		dto.setId(getId());
+		dto.setKey(getKeyAsString());
 		dto.setUsername(getUsername());
 		dto.setDescription(getDescription());
 		dto.setEmail(getEmail());
@@ -54,12 +56,16 @@ public class User {
 		return dto;
 	}
 	
-	public Long getId() {
-		return id;
+	public Key getKey() {
+		return key;
 	}
 	
-	public void setId(Long id) {
-		this.id = id;
+	public String getKeyAsString() {
+		return KeyFactory.keyToString(key);
+	}
+	
+	public void setKey(Key key) {
+		this.key = key;
 	}
 	
 	public String getUsername() {
@@ -119,6 +125,14 @@ public class User {
 
 	public void setEnabled(Boolean enabled) {
 		this.enabled = enabled;
+	}
+
+	public Shop getShop() {
+		return shop;
+	}
+
+	public void setShop(Shop shop) {
+		this.shop = shop;
 	}
 
 }

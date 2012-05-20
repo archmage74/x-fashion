@@ -198,12 +198,6 @@
 	color: #fff;
 	padding: 5px;
 }
-.categoryMtrs {
-	font-size: 20px;
-	font-weight: bold;
-	color: white;
-	background: #2B3781;
-}
 .articleCell {
 	border-collapse: collapse;
 	margin: 3px;
@@ -408,4 +402,7 @@ table.toolGrid * td {
 	position: absolute;
 	right: 0px;
 	top: 100px;
+}
+.editBulkChanged {
+	background: #D68543;
 }

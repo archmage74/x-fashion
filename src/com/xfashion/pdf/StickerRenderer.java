@@ -25,11 +25,16 @@ public class StickerRenderer {
 	}
 	
 	public String render(Long productNumber, NumberFormat nf) {
-		return render(productNumber, nf, false);
+		ArticleTypeDTO articleType = readArticleType(productNumber);
+		return render(articleType, nf, false);
 	}
 	
-	public String render(Long productNumber, NumberFormat nf, boolean pagebreakBefore) {
-		ArticleTypeDTO articleType = readArticleType(productNumber);
+	public String render(String articleTypeKey, NumberFormat nf, boolean pagebreakBefore) {
+		ArticleTypeDTO articleType = readArticleType(articleTypeKey);
+		return render(articleType, nf, pagebreakBefore);
+	}
+	
+	public String render(ArticleTypeDTO articleType, NumberFormat nf, boolean pagebreakBefore) {
 		
 		StringBuffer sb = new StringBuffer();
 		String pagebreak = "";
@@ -80,6 +85,10 @@ public class StickerRenderer {
 		sb.append(s);
 		sb.append("</td>");
 		return sb;
+	}
+	
+	private ArticleTypeDTO readArticleType(String key) {
+		return articleTypeService.readArticleType(key);
 	}
 	
 	private ArticleTypeDTO readArticleType(Long productNumber) {
