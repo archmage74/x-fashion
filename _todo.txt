@@ -26,7 +26,7 @@ DONE - order: marke - stil - name - farbe - groesse
 DONE - buttons to add +1 or +10 articles to notepad
 REMOVED pdf instead of html (removed because html is sufficient)
 DONE - define styles per category
-REMOVED - name filter enhancement (name filte panel replaces this) Wenn ich R in dasTextfeld schreibe und zb Romania ausgew�hlt habe, w�re es super wenn ich jetzt mit den Richtungstasten auf der Tastatur (oben unten) zu durch die anderen Namen bl�ttern k�nnte. Aber nicht nur durch die R�s sondern durch alle name die durch die Filter nicht gesperrt sind und das nach Alphabet sortiert.
+REMOVED - name filter enhancement (name filter panel replaces this) Wenn ich R in dasTextfeld schreibe und zb Romania ausgew�hlt habe, w�re es super wenn ich jetzt mit den Richtungstasten auf der Tastatur (oben unten) zu durch die anderen Namen bl�ttern k�nnte. Aber nicht nur durch die R�s sondern durch alle name die durch die Filter nicht gesperrt sind und das nach Alphabet sortiert.
 DONE - resize sticker (img + price)
 DONE - bugfix: +1 to notepad adds +10
 DONE - notepad: -1/-10
@@ -35,8 +35,7 @@ DONE - generate barcode bugfix (barcode reader)
 DONE - multi-column size-panel
 DONE - filter table style like name-filter
 DONE - solve edit category+style problem
-
-bulk editing of articles (current shown articles or notepad)
+DONE - bulk editing of articles (current shown articles or notepad)
 
 delivery-note for delivery from headquarter
 
