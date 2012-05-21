@@ -14,9 +14,6 @@ public class AttributeHelper {
 
 		Iterator<ArticleTypeDTO> iterator = articleTypes.iterator();
 		T key = accessor.getAttribute(iterator.next());
-		if (key == null) {
-			throw new RuntimeException("Found non-initialized articleType");
-		}
 
 		while (iterator.hasNext()) {
 			T nextKey = accessor.getAttribute(iterator.next());
