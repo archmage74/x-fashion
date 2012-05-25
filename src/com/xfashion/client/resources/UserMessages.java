@@ -8,12 +8,15 @@ public interface UserMessages extends Messages {
 	@DefaultMessage("User Management")
 	String userManagementHeader();
 	
-	@DefaultMessage("Name")
+	@DefaultMessage("User-Name")
 	String username();
 	
 	@DefaultMessage("Passwort")
 	String password();
 	
+	@DefaultMessage("Shop-Name")
+	String shopname();
+
 	@DefaultMessage("Beschreibung")
 	String description();
 	
@@ -60,7 +63,5 @@ public interface UserMessages extends Messages {
 	
 	@DefaultMessage("Name und/oder Passwort falsch.")
 	String loginFailed();
-
-
 
 }

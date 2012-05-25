@@ -41,6 +41,11 @@
 	</servlet>
 	
 	<servlet>
+		<servlet-name>deliverynotice</servlet-name>
+		<servlet-class>com.xfashion.pdf.DeliveryNotice</servlet-class>
+	</servlet>
+	
+	<servlet>
 		<servlet-name>imageupload</servlet-name>
 		<servlet-class>com.xfashion.server.img.ImageUploadServlet</servlet-class>
 	</servlet>
@@ -83,6 +88,11 @@
 	<servlet-mapping>
 		<servlet-name>multisticker</servlet-name>
 		<url-pattern>/pdf/multisticker</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>deliverynotice</servlet-name>
+		<url-pattern>/pdf/deliverynotice</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>

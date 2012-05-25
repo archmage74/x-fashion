@@ -38,10 +38,10 @@ public class Notepad {
 	
 	public Notepad(NotepadDTO dto) {
 		this();
-		updateFromDto(dto);
+		updateFromDTO(dto);
 	}
 
-	public void updateFromDto(NotepadDTO dto) {
+	public void updateFromDTO(NotepadDTO dto) {
 		setName(dto.getName());
 		setCreationDate(dto.getCreationDate());
 		updateArticles(dto.getArticles());

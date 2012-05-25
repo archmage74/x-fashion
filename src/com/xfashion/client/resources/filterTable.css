@@ -45,6 +45,7 @@
 }
 
 .cellTableCell {
+	vertical-align: top;
 	padding: 0px 0px;
 	overflow: hidden;
 }

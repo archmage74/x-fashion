@@ -8,6 +8,7 @@ import com.google.gwt.user.cellview.client.Column;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTable;
 import com.xfashion.client.at.ProvidesArticleFilter;
+import com.xfashion.client.notepad.event.NotepadRemoveArticleEvent;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.notepad.ArticleAmountDTO;
 

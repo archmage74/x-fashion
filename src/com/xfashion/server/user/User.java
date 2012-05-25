@@ -23,9 +23,6 @@ public class User {
 	private String password;
 	
 	@Persistent
-	private String description;
-	
-	@Persistent
 	private String email;
 	
 	@Persistent
@@ -37,23 +34,6 @@ public class User {
 	public User(UserDTO dto) {
 		shop = new Shop();
 		updateFromDTO(dto);
-	}
-	
-	public void updateFromDTO(UserDTO dto) {
-		setUsername(dto.getUsername());
-		setDescription(dto.getDescription());
-		setEmail(dto.getEmail());
-		setEnabled(dto.getEnabled());
-	}
-	
-	public UserDTO createDTO() {
-		UserDTO dto = new UserDTO();
-		dto.setKey(getKeyAsString());
-		dto.setUsername(getUsername());
-		dto.setDescription(getDescription());
-		dto.setEmail(getEmail());
-		dto.setEnabled(getEnabled());
-		return dto;
 	}
 	
 	public Key getKey() {
@@ -100,14 +80,6 @@ public class User {
 		return true;
 	}
 	
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
 	public String getEmail() {
 		return email;
 	}
@@ -135,4 +107,27 @@ public class User {
 		this.shop = shop;
 	}
 
+	public void updateFromDTO(UserDTO dto) {
+		setUsername(dto.getUsername());
+		setEmail(dto.getEmail());
+		setEnabled(dto.getEnabled());
+		if (dto.getShop() != null) {
+			if (getShop() != null) {
+				getShop().updateFromDTO(dto.getShop());
+			} else {
+				setShop(new Shop(dto.getShop()));
+			}
+		}
+	}
+	
+	public UserDTO createDTO() {
+		UserDTO dto = new UserDTO();
+		dto.setKey(getKeyAsString());
+		dto.setUsername(getUsername());
+		dto.setEmail(getEmail());
+		dto.setEnabled(getEnabled());
+		dto.setShop(getShop().createDTO());
+		return dto;
+	}
+	
 }

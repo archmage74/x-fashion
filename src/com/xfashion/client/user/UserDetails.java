@@ -30,6 +30,7 @@ public class UserDetails {
 	private UserDTO currentUser;
 	
 	private TextBox usernameTextBox;
+	private TextBox shopnameTextBox;
 	private TextArea detailsTextBox;
 	private TextBox emailTextBox;
 	private CheckBox enabledCheckBox;
@@ -52,32 +53,45 @@ public class UserDetails {
 
 	public Panel createUserDetails() {
 		Panel p = new VerticalPanel();
-		Grid grid = new Grid(4, 2);
+		Grid grid = new Grid(5, 2);
+		
+		int row = 0;
 		
 		Label usernameLabel = new Label(userMessages.username() + ":");
-		grid.setWidget(0, 0, usernameLabel);
+		grid.setWidget(row, 0, usernameLabel);
 		usernameTextBox = new TextBox();
 		usernameTextBox.setWidth("150px");
 		usernameTextBox.setEnabled(false);
-		grid.setWidget(0, 1, usernameTextBox);
+		grid.setWidget(row, 1, usernameTextBox);
+		row++;
+		
+		Label shopnameLabel = new Label(userMessages.shopname() + ":");
+		grid.setWidget(row, 0, shopnameLabel);
+		shopnameTextBox = new TextBox();
+		shopnameTextBox.setWidth("150px");
+		grid.setWidget(row, 1, shopnameTextBox);
+		row++;
 		
 		Label detailsLabel = new Label(userMessages.description() + ":");
-		grid.setWidget(1, 0, detailsLabel);
+		grid.setWidget(row, 0, detailsLabel);
 		detailsTextBox = new TextArea();
 		detailsTextBox.setWidth("150px");
 		detailsTextBox.setHeight("80px");
-		grid.setWidget(1, 1, detailsTextBox);
+		grid.setWidget(row, 1, detailsTextBox);
+		row++;
 		
 		Label emailLabel = new Label(userMessages.email() + ":");
-		grid.setWidget(2, 0, emailLabel);
+		grid.setWidget(row, 0, emailLabel);
 		emailTextBox = new TextBox();
 		emailTextBox.setWidth("150px");
-		grid.setWidget(2, 1, emailTextBox);
+		grid.setWidget(row, 1, emailTextBox);
+		row++;
 		
 		Label enabledLabel = new Label(userMessages.enabled() + ":");
-		grid.setWidget(3, 0, enabledLabel);
+		grid.setWidget(row, 0, enabledLabel);
 		enabledCheckBox = new CheckBox();
-		grid.setWidget(3, 1, enabledCheckBox);
+		grid.setWidget(row, 1, enabledCheckBox);
+		row++;
 		
 		p.add(grid);
 		
@@ -128,12 +142,19 @@ public class UserDetails {
 	public void updateDetails(UserDTO user) {
 		if (user == null) {
 			usernameTextBox.setValue("");
+			shopnameTextBox.setValue("");
 			detailsTextBox.setValue("");
 			emailTextBox.setValue("");
 			enabledCheckBox.setValue(true);
 		} else {
 			usernameTextBox.setValue(noNullString(user.getUsername()));
-			detailsTextBox.setValue(noNullString(user.getDescription()));
+			if (user.getShop() != null) {
+				shopnameTextBox.setValue(noNullString(user.getShop().getName()));
+				detailsTextBox.setValue(noNullString(user.getShop().getDescription()));
+			} else {
+				shopnameTextBox.setValue("");
+				detailsTextBox.setValue("");
+			}
 			emailTextBox.setValue(noNullString(user.getEmail()));
 			enabledCheckBox.setValue(user.getEnabled());
 		}
@@ -200,7 +221,8 @@ public class UserDetails {
 			throw new CreateUserException(userMessages.errorEmailEmpty());
 		}
 		user.setUsername(usernameTextBox.getValue());
-		user.setDescription(detailsTextBox.getValue());
+		user.getShop().setName(shopnameTextBox.getValue());
+		user.getShop().setDescription(detailsTextBox.getValue());
 		user.setEmail(emailTextBox.getValue());
 		user.setEnabled(enabledCheckBox.getValue());
 	}

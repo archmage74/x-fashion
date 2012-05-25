@@ -12,17 +12,44 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.db.ArticleTypeDatabase;
+import com.xfashion.client.notepad.event.ClearNotepadEvent;
+import com.xfashion.client.notepad.event.ClearNotepadHandler;
+import com.xfashion.client.notepad.event.NotepadAddArticleEvent;
+import com.xfashion.client.notepad.event.NotepadAddArticleHandler;
+import com.xfashion.client.notepad.event.NotepadRemoveArticleEvent;
+import com.xfashion.client.notepad.event.NotepadRemoveArticleHandler;
+import com.xfashion.client.notepad.event.OpenDeliveryNoticeEvent;
+import com.xfashion.client.notepad.event.OpenDeliveryNoticeHandler;
+import com.xfashion.client.notepad.event.OpenNotepadEvent;
+import com.xfashion.client.notepad.event.OpenNotepadHandler;
+import com.xfashion.client.notepad.event.PrintDeliveryNoticeEvent;
+import com.xfashion.client.notepad.event.PrintDeliveryNoticeHandler;
+import com.xfashion.client.notepad.event.PrintNotepadStickersEvent;
+import com.xfashion.client.notepad.event.PrintNotepadStickersHandler;
+import com.xfashion.client.notepad.event.RecordArticlesEvent;
+import com.xfashion.client.notepad.event.RecordArticlesHandler;
+import com.xfashion.client.notepad.event.RequestOpenNotepadEvent;
+import com.xfashion.client.notepad.event.RequestOpenNotepadHandler;
+import com.xfashion.client.notepad.event.RequestSaveNotepadEvent;
+import com.xfashion.client.notepad.event.RequestSaveNotepadHandler;
+import com.xfashion.client.notepad.event.SaveDeliveryNoticeEvent;
+import com.xfashion.client.notepad.event.SaveDeliveryNoticeHandler;
+import com.xfashion.client.notepad.event.SaveNotepadEvent;
+import com.xfashion.client.notepad.event.SaveNotepadHandler;
 import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.client.user.UserService;
 import com.xfashion.client.user.UserServiceAsync;
+import com.xfashion.shared.DeliveryNoticeDTO;
 import com.xfashion.shared.notepad.ArticleAmountDTO;
 import com.xfashion.shared.notepad.NotepadDTO;
 
 public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemoveArticleHandler, PrintNotepadStickersHandler, ClearNotepadHandler,
-		OpenNotepadHandler, RequestOpenNotepadHandler, SaveNotepadHandler, RequestSaveNotepadHandler, PrintDeliveryNoticeHandler, RecordArticlesHandler {
+		OpenNotepadHandler, OpenDeliveryNoticeHandler, RequestOpenNotepadHandler, SaveDeliveryNoticeHandler, SaveNotepadHandler, RequestSaveNotepadHandler, PrintDeliveryNoticeHandler, RecordArticlesHandler {
 
 	public static final String PRINT_STICKER_URL = "/pdf/multisticker";
+
+	public static final String PRINT_DELIVERY_NOTICE_URL = "/pdf/deliverynotice";
 
 	private UserServiceAsync userService = (UserServiceAsync) GWT.create(UserService.class);
 	
@@ -34,6 +61,7 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 	private ErrorMessages errorMessages;
 
 	private NotepadDTO currentNotepad;
+	private DeliveryNoticeDTO currentDeliveryNotice;
 
 	private ListBox articleListBox;
 
@@ -92,7 +120,7 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 	@Override
 	public void onPrintNotepadStickers(PrintNotepadStickersEvent event) {
 		if (currentNotepad.getArticles().size() > 0) {
-			sendNotepad();
+			sendNotepadPrintAction(createPrintStickerCallback());
 		} else {
 			Xfashion.fireError(errorMessages.noArticlesInNotepad());
 		}
@@ -161,7 +189,13 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 
 	@Override
 	public void onPrintDeliveryNotice(PrintDeliveryNoticeEvent event) {
-		Xfashion.fireError(errorMessages.notImplemented());
+		if (currentNotepad.getArticles().size() == 0) {
+			Xfashion.fireError(errorMessages.noArticlesInNotepad());
+		} else if (currentDeliveryNotice == null) {
+			Xfashion.fireError(errorMessages.noDeliveryNotice());
+		} else {
+			sendDeliveryNoticePrintAction(createPrintDeliveryNoticeCallback());
+		}
 	}
 
 	@Override
@@ -180,31 +214,43 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 	}
 
 	@Override
+	public void onSaveDeliveryNotice(SaveDeliveryNoticeEvent event) {
+		currentDeliveryNotice = event.getDeliveryNotice();
+		if (currentDeliveryNotice.getKey() == null) {
+			createDeliveryNotice(currentDeliveryNotice);
+		} else {
+			updateDeliveryNotice(currentDeliveryNotice);
+		}
+	}
+
+	@Override
 	public void onRequestOpenNotepad(RequestOpenNotepadEvent event) {
 		openNotepadPopup.show(currentNotepad);
 	}
 
 	@Override
 	public void onOpenNotepad(OpenNotepadEvent event) {
+		currentDeliveryNotice = null;
 		currentNotepad = event.getNotepad();
 		refreshProvider();
-//		AsyncCallback<Set<NotepadDTO>> callback = new AsyncCallback<Set<NotepadDTO>>() {
-//			@Override
-//			public void onSuccess(Set<NotepadDTO> result) {
-//				if (result.size() > 0) {
-//				} else {
-//					Xfashion.fireError("no notepads founds");
-//				}
-//			}
-//			@Override
-//			public void onFailure(Throwable caught) {
-//				Xfashion.fireError(caught.getMessage());
-//			}
-//		};
-//		userService.readOwnNotepads(callback);
 	}
 
-	protected void sendNotepad() {
+	@Override
+	public void onOpenDeliveryNotice(OpenDeliveryNoticeEvent event) {
+		currentDeliveryNotice = event.getDeliveryNotice();
+		currentNotepad = currentDeliveryNotice.getNotepad();
+		refreshProvider();
+	}
+
+	protected void sendNotepadPrintAction(AsyncCallback<Void> printCallback) {
+		notepadService.saveNotepadInSession(currentNotepad, printCallback);
+	}
+	
+	protected void sendDeliveryNoticePrintAction(AsyncCallback<Void> printCallback) {
+		notepadService.saveDeliveryNoticeInSession(currentDeliveryNotice, printCallback);
+	}
+	
+	protected AsyncCallback<Void> createPrintStickerCallback() {
 		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 			@Override
 			public void onSuccess(Void result) {
@@ -215,7 +261,21 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 				Xfashion.fireError(caught.getMessage());
 			}
 		};
-		notepadService.saveNotepadInSession(currentNotepad, callback);
+		return callback;
+	}
+
+	protected AsyncCallback<Void> createPrintDeliveryNoticeCallback() {
+		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+			@Override
+			public void onSuccess(Void result) {
+				Window.open(PRINT_DELIVERY_NOTICE_URL, "_blank", "");
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
+			}
+		};
+		return callback;
 	}
 
 	public ArticleAmountDataProvider getArticleProvider() {
@@ -256,13 +316,45 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 		userService.updateOwnNotepad(notepad, callback);
 	}
 
+	private void createDeliveryNotice(DeliveryNoticeDTO deliverNotice) {
+		AsyncCallback<DeliveryNoticeDTO> callback = new AsyncCallback<DeliveryNoticeDTO>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
+			}
+			@Override
+			public void onSuccess(DeliveryNoticeDTO result) {
+				currentNotepad = result.getNotepad();
+				refreshProvider();
+			}
+		};
+		userService.createDeliveryNotice(deliverNotice, callback);
+	}
+	
+	private void updateDeliveryNotice(DeliveryNoticeDTO deliveryNotice) {
+		AsyncCallback<DeliveryNoticeDTO> callback = new AsyncCallback<DeliveryNoticeDTO>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
+			}
+			@Override
+			public void onSuccess(DeliveryNoticeDTO result) {
+				currentNotepad = result.getNotepad();
+				refreshProvider();
+			}
+		};
+		userService.updateDeliveryNotice(deliveryNotice, callback);
+	}
+
 	private void registerForEvents() {
 		Xfashion.eventBus.addHandler(NotepadAddArticleEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(NotepadRemoveArticleEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(PrintNotepadStickersEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(ClearNotepadEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(OpenNotepadEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(OpenDeliveryNoticeEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(SaveNotepadEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(SaveDeliveryNoticeEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(RequestSaveNotepadEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(RecordArticlesEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(PrintDeliveryNoticeEvent.TYPE, this);

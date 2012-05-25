@@ -38,4 +38,12 @@ public class BarcodeHelper {
 		return checksum;
 	}
 
+	public String generateDeliveryNoticeEan(long deliveryNoticeId) {
+		if (deliveryNoticeId > 299999999999L || deliveryNoticeId < 200000000000L) {
+			throw new RuntimeException("delivery-notice-number out of range");
+		}
+
+		return generateEan(deliveryNoticeId);
+	}
+
 }

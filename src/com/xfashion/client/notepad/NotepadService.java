@@ -2,6 +2,7 @@ package com.xfashion.client.notepad;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+import com.xfashion.shared.DeliveryNoticeDTO;
 import com.xfashion.shared.notepad.NotepadDTO;
 
 /**
@@ -11,7 +12,11 @@ import com.xfashion.shared.notepad.NotepadDTO;
 public interface NotepadService extends RemoteService {
 	
 	public static final String SESSION_NOTEPAD = "currentNotepad";
+	
+	public static final String SESSION_DELIVERY_NOTICE = "currentDeliveryNotice";
 
 	void saveNotepadInSession(NotepadDTO user);
+
+	void saveDeliveryNoticeInSession(DeliveryNoticeDTO currentNotepad);
 	
 }

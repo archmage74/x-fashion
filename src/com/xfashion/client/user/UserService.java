@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+import com.xfashion.shared.DeliveryNoticeDTO;
 import com.xfashion.shared.ResetPasswordDTO;
 import com.xfashion.shared.UserDTO;
 import com.xfashion.shared.notepad.NotepadDTO;
@@ -42,5 +43,10 @@ public interface UserService extends RemoteService {
 	Set<NotepadDTO> readOwnNotepads();
 	
 	NotepadDTO updateOwnNotepad(NotepadDTO notepad);
+
+	DeliveryNoticeDTO createDeliveryNotice(DeliveryNoticeDTO deliverNotice);
 	
+	Set<DeliveryNoticeDTO> readOwnDeliveryNotices();
+	
+	DeliveryNoticeDTO updateDeliveryNotice(DeliveryNoticeDTO deliveryNotice);
 }

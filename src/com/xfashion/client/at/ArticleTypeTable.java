@@ -5,7 +5,7 @@ import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.xfashion.client.Xfashion;
-import com.xfashion.client.notepad.NotepadAddArticleEvent;
+import com.xfashion.client.notepad.event.NotepadAddArticleEvent;
 import com.xfashion.shared.ArticleTypeDTO;
 
 public class ArticleTypeTable extends ArticleTable<ArticleTypeDTO> {

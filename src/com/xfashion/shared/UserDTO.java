@@ -14,26 +14,24 @@ public class UserDTO implements IsSerializable, Serializable {
 	
 	private String password;
 	
-	private String description;
-	
 	private String email;
 	
 	private Boolean enabled = true;
+	
+	private ShopDTO shop;
 
 	public UserDTO() {
-		
+		shop = new ShopDTO();
 	}
 	
-	public UserDTO(String username, String description, String email) {
+	public UserDTO(String username, String email) {
 		setUsername(username);
-		setDescription(description);
 		setEmail(email);
 	}
 	
-	public UserDTO(String username, String password, String description, String email) {
+	public UserDTO(String username, String password, String email) {
 		setUsername(username);
 		setPassword(password);
-		setDescription(description);
 		setEmail(email);
 	}
 
@@ -61,14 +59,6 @@ public class UserDTO implements IsSerializable, Serializable {
 		this.password = password;
 	}
 
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
 	public String getEmail() {
 		return email;
 	}
@@ -83,6 +73,14 @@ public class UserDTO implements IsSerializable, Serializable {
 
 	public void setEnabled(Boolean enabled) {
 		this.enabled = enabled;
+	}
+
+	public ShopDTO getShop() {
+		return shop;
+	}
+
+	public void setShop(ShopDTO shop) {
+		this.shop = shop;
 	}
 
 }

@@ -42,7 +42,7 @@ import com.xfashion.client.color.ShowChooseColorPopupEvent;
 import com.xfashion.client.img.ImageManagementPopup;
 import com.xfashion.client.img.ImageUploadService;
 import com.xfashion.client.img.ImageUploadServiceAsync;
-import com.xfashion.client.notepad.NotepadAddArticleEvent;
+import com.xfashion.client.notepad.event.NotepadAddArticleEvent;
 import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.client.size.ChooseSizeEvent;

@@ -36,10 +36,11 @@ DONE - multi-column size-panel
 DONE - filter table style like name-filter
 DONE - solve edit category+style problem
 DONE - bulk editing of articles (current shown articles or notepad)
-
-delivery-note for delivery from headquarter
+DONE - delivery-note for delivery from headquarter
 
 define user-roles (admin, shop, ?)
+
+update delivery note with shop and central data
 
 article-stock per user
 

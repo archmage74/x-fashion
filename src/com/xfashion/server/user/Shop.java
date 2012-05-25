@@ -12,6 +12,8 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.xfashion.server.notepad.ArticleAmount;
 import com.xfashion.server.notepad.Notepad;
+import com.xfashion.shared.DeliveryNoticeDTO;
+import com.xfashion.shared.ShopDTO;
 import com.xfashion.shared.notepad.NotepadDTO;
 
 @PersistenceCapable
@@ -22,14 +24,29 @@ public class Shop {
 	private Key key;
 
 	@Persistent
+	private String name;
+
+	@Persistent
+	private String description;
+	
+	@Persistent
 	Set<Notepad> notepads;
+	
+	@Persistent
+	Set<DeliveryNotice> deliveryNotices;
 	
 	@Persistent
 	Set<ArticleAmount> articles;
 	
 	public Shop() {
 		notepads = new HashSet<Notepad>();
+		deliveryNotices = new HashSet<DeliveryNotice>();
 		articles = new HashSet<ArticleAmount>();
+	}
+	
+	public Shop(ShopDTO dto) {
+		this();
+		updateFromDTO(dto);
 	}
 	
 	public Key getKey() {
@@ -40,6 +57,22 @@ public class Shop {
 		return KeyFactory.keyToString(key);
 	}
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	public Set<Notepad> getNotepads() {
 		return notepads;
 	}
@@ -48,12 +81,37 @@ public class Shop {
 		return articles;
 	}
 
+	public Set<DeliveryNotice> getDeliveryNotices() {
+		return deliveryNotices;
+	}
+	
+	public ShopDTO createDTO() {
+		ShopDTO dto = new ShopDTO();
+		dto.setKeyString(getKeyAsString());
+		dto.setName(getName());
+		dto.setDescription(getDescription());
+		return dto;
+	}
+
 	public Set<NotepadDTO> createNotepadDTOs() {
 		Set<NotepadDTO> dtos = new HashSet<NotepadDTO>();
 		for (Notepad notepad : notepads) {
 			dtos.add(notepad.createDTO());
 		}
 		return dtos;
+	}
+
+	public Set<DeliveryNoticeDTO> createDeliveryNoticeDTOs() {
+		Set<DeliveryNoticeDTO> dtos = new HashSet<DeliveryNoticeDTO>();
+		for (DeliveryNotice deliveryNotice : deliveryNotices) {
+			dtos.add(deliveryNotice.createDTO());
+		}
+		return dtos;
+	}
+
+	public void updateFromDTO(ShopDTO dto) {
+		setName(dto.getName());
+		setDescription(dto.getDescription());
 	}
 
 }

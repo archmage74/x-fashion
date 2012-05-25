@@ -2,6 +2,7 @@ package com.xfashion.server.notepad;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.xfashion.client.notepad.NotepadService;
+import com.xfashion.shared.DeliveryNoticeDTO;
 import com.xfashion.shared.notepad.NotepadDTO;
 
 public class NotepadServiceImpl extends RemoteServiceServlet implements NotepadService {
@@ -13,6 +14,11 @@ public class NotepadServiceImpl extends RemoteServiceServlet implements NotepadS
 	@Override
 	public void saveNotepadInSession(NotepadDTO dto) {
 		this.getThreadLocalRequest().getSession().setAttribute(SESSION_NOTEPAD, dto);
+	}
+
+	@Override
+	public void saveDeliveryNoticeInSession(DeliveryNoticeDTO dto) {
+		this.getThreadLocalRequest().getSession().setAttribute(SESSION_DELIVERY_NOTICE, dto);
 	}
 	
 }

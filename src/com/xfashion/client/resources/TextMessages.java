@@ -1,5 +1,7 @@
 package com.xfashion.client.resources;
 
+import java.util.Date;
+
 import com.google.gwt.i18n.client.Messages;
 
 public interface TextMessages extends Messages {
@@ -51,10 +53,14 @@ public interface TextMessages extends Messages {
 	String retrieveNotepad();
 	String saveNotepad();
 	String orderNotepad();
+	String notepadTypeNotepad();
+	String notepadTypeDeliveryNotice();
 	
 	String createArticle();
 	String clearNameSuggestFilter();
 
+	String deliveryNoticeListBoxLine(Long deliveryNoticeId, String shopName, Date creationDate);
+	String notepadListBoxLine(String notepadName, Date creationDate);
 	String clearNotepadHint();
 	String openNotepadHint();
 	String saveNotepadHint();

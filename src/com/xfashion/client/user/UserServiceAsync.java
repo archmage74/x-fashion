@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.xfashion.shared.DeliveryNoticeDTO;
 import com.xfashion.shared.ResetPasswordDTO;
 import com.xfashion.shared.UserDTO;
 import com.xfashion.shared.notepad.NotepadDTO;
@@ -35,5 +36,11 @@ public interface UserServiceAsync {
 	void readOwnNotepads(AsyncCallback<Set<NotepadDTO>> callback);
 
 	void updateOwnNotepad(NotepadDTO notepad, AsyncCallback<NotepadDTO> callback);
+
+	void createDeliveryNotice(DeliveryNoticeDTO deliverNotice, AsyncCallback<DeliveryNoticeDTO> callback);
+
+	void readOwnDeliveryNotices(AsyncCallback<Set<DeliveryNoticeDTO>> callback);
+
+	void updateDeliveryNotice(DeliveryNoticeDTO notepad, AsyncCallback<DeliveryNoticeDTO> callback);
 	
 }

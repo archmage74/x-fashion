@@ -11,10 +11,10 @@ import com.xfashion.client.db.ArticleTypeDatabase;
 import com.xfashion.client.name.NamePanel;
 import com.xfashion.client.notepad.ArticleAmountDataProvider;
 import com.xfashion.client.notepad.NotepadPanel;
-import com.xfashion.client.notepad.NotepadStartMaximizeEvent;
-import com.xfashion.client.notepad.NotepadStartMaximizeHandler;
-import com.xfashion.client.notepad.NotepadStartMinimizeEvent;
-import com.xfashion.client.notepad.NotepadStartMinimizeHandler;
+import com.xfashion.client.notepad.event.NotepadStartMaximizeEvent;
+import com.xfashion.client.notepad.event.NotepadStartMaximizeHandler;
+import com.xfashion.client.notepad.event.NotepadStartMinimizeEvent;
+import com.xfashion.client.notepad.event.NotepadStartMinimizeHandler;
 import com.xfashion.client.size.SizePanel;
 import com.xfashion.client.style.StylePanel;
 
