@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
@@ -16,6 +17,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.resources.UserMessages;
+import com.xfashion.shared.UserCountry;
 import com.xfashion.shared.UserDTO;
 
 public class UserDetails {
@@ -33,6 +35,7 @@ public class UserDetails {
 	private TextBox shopnameTextBox;
 	private TextArea detailsTextBox;
 	private TextBox emailTextBox;
+	private ListBox countryListBox;
 	private CheckBox enabledCheckBox;
 	private Button sendPasswordButton;
 	
@@ -53,7 +56,7 @@ public class UserDetails {
 
 	public Panel createUserDetails() {
 		Panel p = new VerticalPanel();
-		Grid grid = new Grid(5, 2);
+		Grid grid = new Grid(6, 2);
 		
 		int row = 0;
 		
@@ -87,6 +90,14 @@ public class UserDetails {
 		grid.setWidget(row, 1, emailTextBox);
 		row++;
 		
+		Label countryLabel = new Label(userMessages.country() + ":");
+		grid.setWidget(row, 0, countryLabel);
+		countryListBox = new ListBox();
+		countryListBox.addItem(UserCountry.AT.longName(), UserCountry.AT.name());
+		countryListBox.addItem(UserCountry.DE.longName(), UserCountry.DE.name());
+		grid.setWidget(row, 1, countryListBox);
+		row++;
+
 		Label enabledLabel = new Label(userMessages.enabled() + ":");
 		grid.setWidget(row, 0, enabledLabel);
 		enabledCheckBox = new CheckBox();
@@ -146,6 +157,7 @@ public class UserDetails {
 			detailsTextBox.setValue("");
 			emailTextBox.setValue("");
 			enabledCheckBox.setValue(true);
+			countryListBox.setSelectedIndex(0);
 		} else {
 			usernameTextBox.setValue(noNullString(user.getUsername()));
 			if (user.getShop() != null) {
@@ -157,6 +169,12 @@ public class UserDetails {
 			}
 			emailTextBox.setValue(noNullString(user.getEmail()));
 			enabledCheckBox.setValue(user.getEnabled());
+			for (int i=0; i<countryListBox.getItemCount(); i++) {
+				if (countryListBox.getValue(i).equals(user.getCountry().name())) {
+					countryListBox.setSelectedIndex(i);
+					break;
+				}
+			}
 		}
 	}
 	
@@ -225,6 +243,7 @@ public class UserDetails {
 		user.getShop().setDescription(detailsTextBox.getValue());
 		user.setEmail(emailTextBox.getValue());
 		user.setEnabled(enabledCheckBox.getValue());
+		user.setCountry(UserCountry.valueOf(countryListBox.getValue(countryListBox.getSelectedIndex())));
 	}
 	
 	private void sendPassword(UserDTO user) {

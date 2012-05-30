@@ -64,4 +64,7 @@ public interface UserMessages extends Messages {
 	@DefaultMessage("Name und/oder Passwort falsch.")
 	String loginFailed();
 
+	@DefaultMessage("Land:")
+	String country();
+
 }

@@ -7,6 +7,7 @@ import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.xfashion.shared.UserCountry;
 import com.xfashion.shared.UserDTO;
 
 @PersistenceCapable
@@ -30,6 +31,9 @@ public class User {
 	
 	@Persistent
 	private Shop shop;
+	
+	@Persistent
+	private String country;
 	
 	public User(UserDTO dto) {
 		shop = new Shop();
@@ -107,10 +111,19 @@ public class User {
 		this.shop = shop;
 	}
 
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
 	public void updateFromDTO(UserDTO dto) {
 		setUsername(dto.getUsername());
 		setEmail(dto.getEmail());
 		setEnabled(dto.getEnabled());
+		setCountry(dto.getCountry().name());
 		if (dto.getShop() != null) {
 			if (getShop() != null) {
 				getShop().updateFromDTO(dto.getShop());
@@ -127,6 +140,11 @@ public class User {
 		dto.setEmail(getEmail());
 		dto.setEnabled(getEnabled());
 		dto.setShop(getShop().createDTO());
+		if (getCountry() == null) {
+			dto.setCountry(UserCountry.AT);
+		} else {
+			dto.setCountry(UserCountry.valueOf(getCountry()));
+		}
 		return dto;
 	}
 	

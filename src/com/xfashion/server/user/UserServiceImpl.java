@@ -28,6 +28,7 @@ import com.xfashion.server.util.IdCounterServiceImpl;
 import com.xfashion.server.util.IdCounterType;
 import com.xfashion.shared.DeliveryNoticeDTO;
 import com.xfashion.shared.ResetPasswordDTO;
+import com.xfashion.shared.UserCountry;
 import com.xfashion.shared.UserDTO;
 import com.xfashion.shared.notepad.NotepadDTO;
 
@@ -39,7 +40,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 	
 	private static User adminUser;
 	static {
-		adminUser = new User(new UserDTO("root", "root", "archmage74@gmail.com"));
+		adminUser = new User(new UserDTO("root", "root", "archmage74@gmail.com", UserCountry.AT));
 		adminUser.setPassword("1c782d2abe3bacd092fe9cdaaf1bba52");
 	}
 

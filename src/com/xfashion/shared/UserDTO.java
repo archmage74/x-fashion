@@ -19,6 +19,8 @@ public class UserDTO implements IsSerializable, Serializable {
 	private Boolean enabled = true;
 	
 	private ShopDTO shop;
+	
+	private UserCountry country;
 
 	public UserDTO() {
 		shop = new ShopDTO();
@@ -29,10 +31,11 @@ public class UserDTO implements IsSerializable, Serializable {
 		setEmail(email);
 	}
 	
-	public UserDTO(String username, String password, String email) {
+	public UserDTO(String username, String password, String email, UserCountry country) {
 		setUsername(username);
 		setPassword(password);
 		setEmail(email);
+		setCountry(country);
 	}
 
 	public String getKey() {
@@ -81,6 +84,14 @@ public class UserDTO implements IsSerializable, Serializable {
 
 	public void setShop(ShopDTO shop) {
 		this.shop = shop;
+	}
+
+	public UserCountry getCountry() {
+		return country;
+	}
+
+	public void setCountry(UserCountry country) {
+		this.country = country;
 	}
 
 }
