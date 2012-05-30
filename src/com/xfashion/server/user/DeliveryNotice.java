@@ -25,6 +25,9 @@ public class DeliveryNotice {
 	
 	@Persistent
 	private Key targetShopKey;
+	
+	@Persistent
+	private Key sourceShopKey;
 
 	public DeliveryNotice() {
 		
@@ -75,12 +78,29 @@ public class DeliveryNotice {
 		this.targetShopKey = targetShopKey;
 	}
 
+	public Key getSourceShopKey() {
+		return sourceShopKey;
+	}
+
+	public String getSourceShopKeyAsString() {
+		if (sourceShopKey != null) {
+			return KeyFactory.keyToString(sourceShopKey);
+		} else {
+			return null;
+		}
+	}
+
+	public void setSourceShopKey(Key sourceShopKey) {
+		this.sourceShopKey = sourceShopKey;
+	}
+
 	public DeliveryNoticeDTO createDTO() {
 		DeliveryNoticeDTO dto = new DeliveryNoticeDTO();
 		dto.setKey(getKeyAsString());
 		dto.setId(getId());
 		dto.setNotepad(notepad.createDTO());
 		dto.setTargetShopKey(getTargetShopKeyAsString());
+		dto.setSourceShopKey(getSourceShopKeyAsString());
 		return dto;
 	}
 	
@@ -92,6 +112,7 @@ public class DeliveryNotice {
 		}
 		setId(dto.getId());
 		setTargetShopKey(KeyFactory.stringToKey(dto.getTargetShop().getKeyString()));
+		setSourceShopKey(KeyFactory.stringToKey(dto.getSourceShop().getKeyString()));
 	}
 
 }

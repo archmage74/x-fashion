@@ -13,13 +13,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.xfashion.client.db.ArticleTypeService;
 import com.xfashion.client.notepad.NotepadService;
-import com.xfashion.client.user.UserService;
 import com.xfashion.server.ArticleTypeServiceImpl;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.BarcodeHelper;
 import com.xfashion.shared.DeliveryNoticeDTO;
-import com.xfashion.shared.ShopDTO;
-import com.xfashion.shared.UserDTO;
 import com.xfashion.shared.notepad.ArticleAmountDTO;
 
 public class DeliveryNotice extends HttpServlet {
@@ -46,15 +43,13 @@ public class DeliveryNotice extends HttpServlet {
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
 		DeliveryNoticeDTO dn = (DeliveryNoticeDTO) req.getSession().getAttribute(NotepadService.SESSION_DELIVERY_NOTICE);
-		UserDTO user = (UserDTO) req.getSession().getAttribute(UserService.SESSION_USER);
-		ShopDTO myShop = user.getShop(); 
 		
 		res.setContentType("text/html; charset=iso-8859-15");
 		res.setCharacterEncoding("iso-8859-15");
 		
 		ServletOutputStream out = res.getOutputStream();
 		
-		out.print(renderHeader(dn, myShop));
+		out.print(renderHeader(dn));
 		int sum = 0;
 		for (ArticleAmountDTO aa : dn.getNotepad().getArticles()) {
 			sum += aa.getAmount();
@@ -63,7 +58,7 @@ public class DeliveryNotice extends HttpServlet {
 		out.print(renderFooter(sum));
 	}
 	
-	public String renderHeader(DeliveryNoticeDTO dn, ShopDTO myShop) {
+	public String renderHeader(DeliveryNoticeDTO dn) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<html><head>");
 		sb.append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-15\" />");
@@ -90,7 +85,7 @@ public class DeliveryNotice extends HttpServlet {
 		sb.append(renderAsAddress(dn.getTargetShop().getDescription()));
 		sb.append("</td>");
 		sb.append("<td class=\"addressFrom\">");
-		sb.append(renderAsAddress(myShop.getDescription()));
+		sb.append(renderAsAddress(dn.getSourceShop().getDescription()));
 		sb.append("</td>\n");
 		sb.append("</tr>\n");
 		sb.append("\n");

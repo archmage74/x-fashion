@@ -16,6 +16,10 @@ public class DeliveryNoticeDTO extends DTO implements Serializable {
 
 	private ShopDTO targetShop;
 
+	private String sourceShopKey;
+
+	private ShopDTO sourceShop;
+
 	public NotepadDTO getNotepad() {
 		return notepad;
 	}
@@ -46,6 +50,22 @@ public class DeliveryNoticeDTO extends DTO implements Serializable {
 
 	public void setTargetShop(ShopDTO targetShop) {
 		this.targetShop = targetShop;
+	}
+
+	public ShopDTO getSourceShop() {
+		return sourceShop;
+	}
+
+	public void setSourceShop(ShopDTO sourceShop) {
+		this.sourceShop = sourceShop;
+	}
+
+	public String getSourceShopKey() {
+		return sourceShopKey;
+	}
+
+	public void setSourceShopKey(String sourceShopKey) {
+		this.sourceShopKey = sourceShopKey;
 	}
 
 }

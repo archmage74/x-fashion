@@ -351,16 +351,20 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		try {
 			DeliveryNotice deliveryNotice = createDeliveryNotice(pm, dto);
 			dto = deliveryNotice.createDTO();
-			setTargetShopToDeliveryNoticeDTO(pm, dto);
+			setShopsToDeliveryNoticeDTO(pm, dto);
 		} finally {
 			pm.close();
 		}
 		return dto;
 	}
 	
-	public void setTargetShopToDeliveryNoticeDTO(PersistenceManager pm, DeliveryNoticeDTO dto) {
-		Shop shop = pm.getObjectById(Shop.class, KeyFactory.stringToKey(dto.getTargetShopKey()));
-		dto.setTargetShop(shop.createDTO());
+	public void setShopsToDeliveryNoticeDTO(PersistenceManager pm, DeliveryNoticeDTO dto) {
+		if (dto.getSourceShopKey() != null) {
+			Shop source = pm.getObjectById(Shop.class, KeyFactory.stringToKey(dto.getSourceShopKey()));
+			dto.setSourceShop(source.createDTO());
+		}
+		Shop target = pm.getObjectById(Shop.class, KeyFactory.stringToKey(dto.getTargetShopKey()));
+		dto.setTargetShop(target.createDTO());
 	}
 
 	public DeliveryNotice createDeliveryNotice(PersistenceManager pm, DeliveryNoticeDTO dto) {
@@ -378,7 +382,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 			Shop shop = readOwnShop(pm);
 			dtos = shop.createDeliveryNoticeDTOs();
 			for (DeliveryNoticeDTO dto : dtos) {
-				setTargetShopToDeliveryNoticeDTO(pm, dto);
+				setShopsToDeliveryNoticeDTO(pm, dto);
 			}
 		} finally {
 			pm.close();
@@ -388,6 +392,35 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 
 	public DeliveryNotice readDeliveryNotice(PersistenceManager pm, String keyString) {
 		DeliveryNotice deliveryNotice = pm.getObjectById(DeliveryNotice.class, KeyFactory.stringToKey(keyString));
+		return deliveryNotice;
+	}
+
+	@Override
+	public DeliveryNoticeDTO readDeliveryNoticeById(Long id) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		DeliveryNoticeDTO dto = null;
+		try {
+			DeliveryNotice deliveryNotice = readDeliveryNoticeById(pm, id);
+			if (deliveryNotice != null) {
+				dto = deliveryNotice.createDTO();
+				setShopsToDeliveryNoticeDTO(pm, dto);
+			}
+		} finally {
+			pm.close();
+		}
+		return dto;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public DeliveryNotice readDeliveryNoticeById(PersistenceManager pm, Long id) {
+		DeliveryNotice deliveryNotice = null;
+		Query userQuery = pm.newQuery(DeliveryNotice.class);
+		userQuery.setFilter("id == idParam");
+		userQuery.declareParameters("Long idParam");
+		List<DeliveryNotice> deliveryNotices = (List<DeliveryNotice>) userQuery.execute(id);
+		if (deliveryNotices.size() == 1) {
+			deliveryNotice = deliveryNotices.get(0);
+		}
 		return deliveryNotice;
 	}
 

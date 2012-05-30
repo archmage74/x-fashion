@@ -36,10 +36,10 @@ public class MenuPanel implements LoginHandler {
 	
 	@Override
 	public void onLogin(LoginEvent event) {
+		redraw();
 		if (loggedInLabel != null) {
 			loggedInLabel.setText(event.getUser().getUsername());
 		}
-		redraw();
 	}
 	
 	public void addMenuPanel() {

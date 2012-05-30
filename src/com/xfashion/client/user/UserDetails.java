@@ -92,25 +92,27 @@ public class UserDetails {
 		grid.setWidget(row, 1, emailTextBox);
 		row++;
 		
-		if (UserRole.ADMIN.equals(UserManagement.user.getRole()) || UserRole.DEVELOPER.equals(UserManagement.user.getRole())) {
-			Label countryLabel = new Label(userMessages.country() + ":");
-			grid.setWidget(row, 0, countryLabel);
-			countryListBox = new ListBox();
-			countryListBox.addItem(UserCountry.AT.longName(), UserCountry.AT.name());
-			countryListBox.addItem(UserCountry.DE.longName(), UserCountry.DE.name());
-			grid.setWidget(row, 1, countryListBox);
-			row++;
+		Label countryLabel = new Label(userMessages.country() + ":");
+		grid.setWidget(row, 0, countryLabel);
+		countryListBox = new ListBox();
+		countryListBox.addItem(UserCountry.AT.longName(), UserCountry.AT.name());
+		countryListBox.addItem(UserCountry.DE.longName(), UserCountry.DE.name());
+		grid.setWidget(row, 1, countryListBox);
+		row++;
+		if (!UserManagement.hasRole(UserRole.ADMIN, UserRole.DEVELOPER)) {
+			countryListBox.setEnabled(false);
 		}
 
-		if (UserRole.ADMIN.equals(UserManagement.user.getRole()) || UserRole.DEVELOPER.equals(UserManagement.user.getRole())) {
-			Label roleLabel = new Label(userMessages.role() + ":");
-			grid.setWidget(row, 0, roleLabel);
-			roleListBox = new ListBox();
-			roleListBox.addItem(UserRole.SHOP.name(), UserRole.SHOP.name());
-			roleListBox.addItem(UserRole.ADMIN.name(), UserRole.ADMIN.name());
-			roleListBox.addItem(UserRole.DEVELOPER.name(), UserRole.DEVELOPER.name());
-			grid.setWidget(row, 1, roleListBox);
-			row++;
+		Label roleLabel = new Label(userMessages.role() + ":");
+		grid.setWidget(row, 0, roleLabel);
+		roleListBox = new ListBox();
+		roleListBox.addItem(UserRole.SHOP.name(), UserRole.SHOP.name());
+		roleListBox.addItem(UserRole.ADMIN.name(), UserRole.ADMIN.name());
+		roleListBox.addItem(UserRole.DEVELOPER.name(), UserRole.DEVELOPER.name());
+		grid.setWidget(row, 1, roleListBox);
+		row++;
+		if (!UserManagement.hasRole(UserRole.ADMIN, UserRole.DEVELOPER)) {
+			roleListBox.setEnabled(false);
 		}
 
 		Label enabledLabel = new Label(userMessages.enabled() + ":");
@@ -118,6 +120,9 @@ public class UserDetails {
 		enabledCheckBox = new CheckBox();
 		grid.setWidget(row, 1, enabledCheckBox);
 		row++;
+		if (!UserManagement.hasRole(UserRole.ADMIN, UserRole.DEVELOPER)) {
+			enabledCheckBox.setEnabled(false);
+		}
 		
 		p.add(grid);
 		
@@ -265,6 +270,7 @@ public class UserDetails {
 		user.setEmail(emailTextBox.getValue());
 		user.setEnabled(enabledCheckBox.getValue());
 		user.setCountry(UserCountry.valueOf(countryListBox.getValue(countryListBox.getSelectedIndex())));
+		user.setRole(UserRole.valueOf(roleListBox.getValue(roleListBox.getSelectedIndex())));
 	}
 	
 	private void sendPassword(UserDTO user) {

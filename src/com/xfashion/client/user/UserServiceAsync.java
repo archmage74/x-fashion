@@ -34,6 +34,8 @@ public interface UserServiceAsync {
 	void createNotepad(NotepadDTO notepad, AsyncCallback<NotepadDTO> callback);
 	
 	void readOwnNotepads(AsyncCallback<Set<NotepadDTO>> callback);
+	
+	void readDeliveryNoticeById(Long id, AsyncCallback<DeliveryNoticeDTO> callback);
 
 	void updateOwnNotepad(NotepadDTO notepad, AsyncCallback<NotepadDTO> callback);
 

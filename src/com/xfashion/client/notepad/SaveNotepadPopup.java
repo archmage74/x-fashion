@@ -5,6 +5,7 @@ import java.util.Date;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.notepad.event.SaveDeliveryNoticeEvent;
 import com.xfashion.client.notepad.event.SaveNotepadEvent;
+import com.xfashion.client.user.UserManagement;
 import com.xfashion.shared.DeliveryNoticeDTO;
 import com.xfashion.shared.notepad.NotepadDTO;
 
@@ -75,6 +76,8 @@ public class SaveNotepadPopup extends NotepadActionPopup {
 			currentNotepad.setName(deliveryNotice.getNotepad().getName());
 			currentNotepad.setCreationDate(new Date());
 			deliveryNotice.setNotepad(currentNotepad);
+			deliveryNotice.setTargetShop(knownUsers.get(userListBox.getSelectedIndex()).getShop());
+			deliveryNotice.setSourceShop(UserManagement.user.getShop());
 			save(deliveryNotice);
 		} else {
 			currentNotepad.setKey(null);
@@ -83,6 +86,7 @@ public class SaveNotepadPopup extends NotepadActionPopup {
 			DeliveryNoticeDTO deliveryNotice = new DeliveryNoticeDTO();
 			deliveryNotice.setNotepad(currentNotepad);
 			deliveryNotice.setTargetShop(knownUsers.get(userListBox.getSelectedIndex()).getShop());
+			deliveryNotice.setSourceShop(UserManagement.user.getShop());
 			save(deliveryNotice);
 		}
 		

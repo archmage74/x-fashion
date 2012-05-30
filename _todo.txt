@@ -37,10 +37,12 @@ DONE - filter table style like name-filter
 DONE - solve edit category+style problem
 DONE - bulk editing of articles (current shown articles or notepad)
 DONE - delivery-note for delivery from headquarter
+DONE - add country to user-details
+DONE - load delivery-note by id
+DONE - define user-roles (admin, shop, ?)
+DONE - update delivery note with shop and central data
 
-define user-roles (admin, shop, ?)
-
-update delivery note with shop and central data
+sell-price per country
 
 article-stock per user
 

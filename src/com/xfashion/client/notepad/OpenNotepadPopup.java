@@ -1,16 +1,22 @@
 package com.xfashion.client.notepad;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.notepad.event.OpenDeliveryNoticeEvent;
 import com.xfashion.client.notepad.event.OpenNotepadEvent;
+import com.xfashion.client.user.UserService;
+import com.xfashion.client.user.UserServiceAsync;
 import com.xfashion.shared.BarcodeHelper;
 import com.xfashion.shared.DeliveryNoticeDTO;
 import com.xfashion.shared.notepad.NotepadDTO;
 
 public class OpenNotepadPopup extends NotepadActionPopup {
 
+	private UserServiceAsync userService = (UserServiceAsync) GWT.create(UserService.class);
+	
 	public OpenNotepadPopup() {
 		super();
 	}
@@ -59,11 +65,34 @@ public class OpenNotepadPopup extends NotepadActionPopup {
 				}
 			}
 			if (name.toCharArray()[0] == BarcodeHelper.DELIVERY_NOTICE_PREFIX_CHAR) {
-				Xfashion.fireError("entering of EAN codes not supported yet");
+				loadDeliveryNoticeByEAN(nameTextBox.getValue());
+			} else {
+				Xfashion.fireError(errorMessages.noValidDeliveryNoticeEAN());
+				nameTextBox.setText("");
 			}
 		}
 	}
 	
+	private void loadDeliveryNoticeByEAN(String ean) {
+		String idString = ean.substring(0, 12);
+		Long id = Long.parseLong(idString);
+		AsyncCallback<DeliveryNoticeDTO> callback = new AsyncCallback<DeliveryNoticeDTO>() {
+			@Override
+			public void onSuccess(DeliveryNoticeDTO result) {
+				if (result == null) {
+					Xfashion.fireError(errorMessages.noValidDeliveryNoticeEAN());
+				} else {
+					loadDeliveryNotice(result);
+				}
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
+			}
+		};
+		userService.readDeliveryNoticeById(id, callback);
+	}
+
 	private void loadNotepad() {
 		if (notepadListBox.getSelectedIndex() != -1) {
 			NotepadDTO stored = savedNotepads.get(notepadListBox.getSelectedIndex());
@@ -78,12 +107,16 @@ public class OpenNotepadPopup extends NotepadActionPopup {
 	private void loadDeliveryNotice() {
 		if (notepadListBox.getSelectedIndex() != -1) {
 			DeliveryNoticeDTO deliveryNotice = savedDeliveryNotices.get(notepadListBox.getSelectedIndex());
-			Xfashion.eventBus.fireEvent(new OpenDeliveryNoticeEvent(deliveryNotice));
-			resetListBoxes();
-			hide();
+			loadDeliveryNotice(deliveryNotice);
 		} else {
 			Xfashion.fireError(errorMessages.noNotepadToOpenSelected());
 		}
+	}
+
+	private void loadDeliveryNotice(DeliveryNoticeDTO deliveryNotice) {
+		Xfashion.eventBus.fireEvent(new OpenDeliveryNoticeEvent(deliveryNotice));
+		resetListBoxes();
+		hide();
 	}
 
 }

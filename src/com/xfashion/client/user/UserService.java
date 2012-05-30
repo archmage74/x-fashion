@@ -42,6 +42,8 @@ public interface UserService extends RemoteService {
 	
 	Set<NotepadDTO> readOwnNotepads();
 	
+	DeliveryNoticeDTO readDeliveryNoticeById(Long id);
+		
 	NotepadDTO updateOwnNotepad(NotepadDTO notepad);
 
 	DeliveryNoticeDTO createDeliveryNotice(DeliveryNoticeDTO deliverNotice);
