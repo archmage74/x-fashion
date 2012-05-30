@@ -19,6 +19,7 @@ import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.resources.UserMessages;
 import com.xfashion.shared.UserCountry;
 import com.xfashion.shared.UserDTO;
+import com.xfashion.shared.UserRole;
 
 public class UserDetails {
 
@@ -36,6 +37,7 @@ public class UserDetails {
 	private TextArea detailsTextBox;
 	private TextBox emailTextBox;
 	private ListBox countryListBox;
+	private ListBox roleListBox;
 	private CheckBox enabledCheckBox;
 	private Button sendPasswordButton;
 	
@@ -56,7 +58,7 @@ public class UserDetails {
 
 	public Panel createUserDetails() {
 		Panel p = new VerticalPanel();
-		Grid grid = new Grid(6, 2);
+		Grid grid = new Grid(7, 2);
 		
 		int row = 0;
 		
@@ -90,13 +92,26 @@ public class UserDetails {
 		grid.setWidget(row, 1, emailTextBox);
 		row++;
 		
-		Label countryLabel = new Label(userMessages.country() + ":");
-		grid.setWidget(row, 0, countryLabel);
-		countryListBox = new ListBox();
-		countryListBox.addItem(UserCountry.AT.longName(), UserCountry.AT.name());
-		countryListBox.addItem(UserCountry.DE.longName(), UserCountry.DE.name());
-		grid.setWidget(row, 1, countryListBox);
-		row++;
+		if (UserRole.ADMIN.equals(UserManagement.user.getRole()) || UserRole.DEVELOPER.equals(UserManagement.user.getRole())) {
+			Label countryLabel = new Label(userMessages.country() + ":");
+			grid.setWidget(row, 0, countryLabel);
+			countryListBox = new ListBox();
+			countryListBox.addItem(UserCountry.AT.longName(), UserCountry.AT.name());
+			countryListBox.addItem(UserCountry.DE.longName(), UserCountry.DE.name());
+			grid.setWidget(row, 1, countryListBox);
+			row++;
+		}
+
+		if (UserRole.ADMIN.equals(UserManagement.user.getRole()) || UserRole.DEVELOPER.equals(UserManagement.user.getRole())) {
+			Label roleLabel = new Label(userMessages.role() + ":");
+			grid.setWidget(row, 0, roleLabel);
+			roleListBox = new ListBox();
+			roleListBox.addItem(UserRole.SHOP.name(), UserRole.SHOP.name());
+			roleListBox.addItem(UserRole.ADMIN.name(), UserRole.ADMIN.name());
+			roleListBox.addItem(UserRole.DEVELOPER.name(), UserRole.DEVELOPER.name());
+			grid.setWidget(row, 1, roleListBox);
+			row++;
+		}
 
 		Label enabledLabel = new Label(userMessages.enabled() + ":");
 		grid.setWidget(row, 0, enabledLabel);
@@ -172,6 +187,12 @@ public class UserDetails {
 			for (int i=0; i<countryListBox.getItemCount(); i++) {
 				if (countryListBox.getValue(i).equals(user.getCountry().name())) {
 					countryListBox.setSelectedIndex(i);
+					break;
+				}
+			}
+			for (int i=0; i<roleListBox.getItemCount(); i++) {
+				if (roleListBox.getValue(i).equals(user.getRole().name())) {
+					roleListBox.setSelectedIndex(i);
 					break;
 				}
 			}

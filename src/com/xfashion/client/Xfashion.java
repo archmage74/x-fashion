@@ -21,9 +21,9 @@ public class Xfashion implements EntryPoint {
 		MainPanel mainPanel = new MainPanel();
 
 		MenuPanel menuPanel = new MenuPanel(mainPanel);
-		menuPanel.addNavPanel();
+		menuPanel.addMenuPanel();
 		
 		mainPanel.showUserProfilePanel();
-	}		
-	
+	}
+
 }

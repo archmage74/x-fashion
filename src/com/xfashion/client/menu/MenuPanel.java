@@ -15,6 +15,8 @@ import com.xfashion.client.Xfashion;
 import com.xfashion.client.resources.MenuMessages;
 import com.xfashion.client.user.LoginEvent;
 import com.xfashion.client.user.LoginHandler;
+import com.xfashion.client.user.UserManagement;
+import com.xfashion.shared.UserRole;
 
 public class MenuPanel implements LoginHandler {
 
@@ -22,9 +24,12 @@ public class MenuPanel implements LoginHandler {
 	
 	private MainPanel mainPanel;
 	
+	private VerticalPanel navPanel;
+	
 	private Label loggedInLabel;
 	
 	public MenuPanel(MainPanel mainPanel) {
+		menuMessages = GWT.create(MenuMessages.class);
 		this.mainPanel = mainPanel;
 		Xfashion.eventBus.addHandler(LoginEvent.TYPE, this);
 	}
@@ -34,12 +39,11 @@ public class MenuPanel implements LoginHandler {
 		if (loggedInLabel != null) {
 			loggedInLabel.setText(event.getUser().getUsername());
 		}
+		redraw();
 	}
 	
-	public void addNavPanel() {
-		menuMessages = GWT.create(MenuMessages.class);
-		
-		VerticalPanel navPanel = new VerticalPanel();
+	public void addMenuPanel() {
+		navPanel = new VerticalPanel();
 		navPanel.addStyleName("navigationPanel");
 		RootPanel.get("navPanelContainer").add(navPanel);
 		
@@ -56,43 +60,67 @@ public class MenuPanel implements LoginHandler {
 		menu.setWidth("1200px");
 		menu.setAnimationEnabled(true);
 
-		Command showArticleType = new Command() {
-			public void execute() {
-				mainPanel.showArticleTypePanel();
-			}
-		};
-		Command showUserManagement = new Command() {
-			public void execute() {
-				mainPanel.showUserManagementPanel();
-			}
-		};
-		Command showNotepadManagementProfile = new Command() {
-			public void execute() {
-				mainPanel.showNotepadManagementProfilePanel();
-			}
-		};
-		Command showUserProfile = new Command() {
-			public void execute() {
-				mainPanel.showUserProfilePanel();
-			}
-		};
+		menu.addItem(createArticleTypeMenuItem());
+
+		if (UserManagement.hasRole(UserRole.DEVELOPER, UserRole.ADMIN)) {
+			menu.addItem(createUserManagementMenuItem());
+		}
+		
+		menu.addItem(createUserProfileMenuItem());
+
+		if (UserManagement.hasRole(UserRole.DEVELOPER)) {
+			menu.addItem(createTestMenuItem());
+		}
+
+		navPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_BOTTOM);
+		navPanel.add(menu);
+	}
+	
+	public void redraw() {
+		navPanel.clear();
+		RootPanel.get("navPanelContainer").remove(navPanel);
+		navPanel = null;
+		addMenuPanel();
+	}
+
+	private MenuItem createTestMenuItem() {
 		Command test = new Command() {
 			public void execute() {
 				mainPanel.test();
 			}
 		};
-
-		MenuItem articleTypeItem = new MenuItem(menuMessages.articleType(), showArticleType);
-		menu.addItem(articleTypeItem);
-		MenuItem userManagementItem = new MenuItem(menuMessages.userManagement(), showUserManagement);
-		menu.addItem(userManagementItem);
-		MenuItem userProfileItem = new MenuItem(menuMessages.userProfile(), showUserProfile);
-		menu.addItem(userProfileItem);
 		MenuItem testItem = new MenuItem(menuMessages.test(), test);
-		menu.addItem(testItem);
+		return testItem;
+	}
 
-		navPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_BOTTOM);
-		navPanel.add(menu);
+	private MenuItem createUserProfileMenuItem() {
+		Command showUserProfile = new Command() {
+			public void execute() {
+				mainPanel.showUserProfilePanel();
+			}
+		};
+		MenuItem userProfileItem = new MenuItem(menuMessages.userProfile(), showUserProfile);
+		return userProfileItem;
+	}
+
+	private MenuItem createUserManagementMenuItem() {
+		Command showUserManagement = new Command() {
+			public void execute() {
+				mainPanel.showUserManagementPanel();
+			}
+		};
+		MenuItem userManagementItem = new MenuItem(menuMessages.userManagement(), showUserManagement);
+		return userManagementItem;
+	}
+
+	private MenuItem createArticleTypeMenuItem() {
+		Command showArticleType = new Command() {
+			public void execute() {
+				mainPanel.showArticleTypePanel();
+			}
+		};
+		MenuItem articleTypeItem = new MenuItem(menuMessages.articleType(), showArticleType);
+		return articleTypeItem;
 	}
 
 }

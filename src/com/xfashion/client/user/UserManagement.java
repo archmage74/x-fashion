@@ -18,6 +18,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.resources.UserMessages;
 import com.xfashion.shared.UserDTO;
+import com.xfashion.shared.UserRole;
 
 public class UserManagement {
 
@@ -35,7 +36,19 @@ public class UserManagement {
 	
 	private UserDTO currentUser;
 	
-	public static UserDTO loggedInUser = null;
+	public static UserDTO user = null;
+	
+	public static boolean hasRole(UserRole... roles) {
+		if (user == null) {
+			return false;
+		}
+		for (UserRole role : roles) {
+			if (role.equals(user.getRole())) {
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	public UserManagement() {
 		userMessages = GWT.create(UserMessages.class);

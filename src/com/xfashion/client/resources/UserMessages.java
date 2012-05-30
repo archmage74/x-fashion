@@ -67,4 +67,7 @@ public interface UserMessages extends Messages {
 	@DefaultMessage("Land:")
 	String country();
 
+	@DefaultMessage("Rolle:")
+	String role();
+
 }

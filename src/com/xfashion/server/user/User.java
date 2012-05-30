@@ -9,6 +9,7 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.xfashion.shared.UserCountry;
 import com.xfashion.shared.UserDTO;
+import com.xfashion.shared.UserRole;
 
 @PersistenceCapable
 public class User {
@@ -34,6 +35,9 @@ public class User {
 	
 	@Persistent
 	private String country;
+	
+	@Persistent
+	private String role;
 	
 	public User(UserDTO dto) {
 		shop = new Shop();
@@ -119,11 +123,20 @@ public class User {
 		this.country = country;
 	}
 
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+	
 	public void updateFromDTO(UserDTO dto) {
 		setUsername(dto.getUsername());
 		setEmail(dto.getEmail());
 		setEnabled(dto.getEnabled());
 		setCountry(dto.getCountry().name());
+		setRole(dto.getRole().name());
 		if (dto.getShop() != null) {
 			if (getShop() != null) {
 				getShop().updateFromDTO(dto.getShop());
@@ -145,7 +158,18 @@ public class User {
 		} else {
 			dto.setCountry(UserCountry.valueOf(getCountry()));
 		}
+		if (getRole() == null) {
+			if (getUsername().equals("roman")) {
+				dto.setRole(UserRole.ADMIN);
+			} else if (getUsername().equals("werner") || getUsername().equals("root")) {
+				dto.setRole(UserRole.DEVELOPER);
+			} else {
+				dto.setRole(UserRole.SHOP);
+			}
+		} else {
+			dto.setRole(UserRole.valueOf(getRole()));
+		}
 		return dto;
 	}
-	
+
 }

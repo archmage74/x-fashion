@@ -48,7 +48,7 @@ public class UserProfile {
 	
 	private void updatePanel() {
 		panel.clear();
-		if (UserManagement.loggedInUser == null) {
+		if (UserManagement.user == null) {
 			if (loginPanel == null) {
 				loginPanel = createLoginPanel();
 			}
@@ -119,7 +119,7 @@ public class UserProfile {
 					Xfashion.fireError(userMessages.loginFailed());
 				} else {
 					loginButton.setEnabled(true);
-					UserManagement.loggedInUser = result;
+					UserManagement.user = result;
 					Xfashion.eventBus.fireEvent(new LoginEvent(result));
 					updatePanel();
 				}
@@ -143,7 +143,7 @@ public class UserProfile {
 		UserDetails userDetails = new UserDetails();
 		Panel up = userDetails.createUserDetails();
 		vp.add(up);
-		userDetails.selectUser(UserManagement.loggedInUser);
+		userDetails.selectUser(UserManagement.user);
 		
 		return vp;
 	}

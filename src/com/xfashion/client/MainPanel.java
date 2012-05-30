@@ -18,7 +18,7 @@ import com.xfashion.shared.SizeDTO;
 
 public class MainPanel implements ErrorHandler {
 
-	private boolean DEV_MODE = true;
+	private boolean DEV_MODE = false;
 	
 	private Panel contentPanel;
 
@@ -53,7 +53,7 @@ public class MainPanel implements ErrorHandler {
 	}
 
 	public void showArticleTypePanel() {
-		if (!DEV_MODE && UserManagement.loggedInUser == null) {
+		if (!DEV_MODE && UserManagement.user == null) {
 			showUserProfilePanel();
 		} else {
 			contentPanel.clear();
@@ -63,7 +63,7 @@ public class MainPanel implements ErrorHandler {
 	}
 
 	public void showUserManagementPanel() {
-		if (!DEV_MODE && UserManagement.loggedInUser == null) {
+		if (!DEV_MODE && UserManagement.user == null) {
 			showUserProfilePanel();
 		} else {
 			contentPanel.clear();
@@ -72,16 +72,6 @@ public class MainPanel implements ErrorHandler {
 		}
 	}
 	
-	public void showNotepadManagementProfilePanel() {
-		if (!DEV_MODE && UserManagement.loggedInUser == null) {
-			showUserProfilePanel();
-		} else {
-			contentPanel.clear();
-			Panel panel = notepadManagement.getPanel();
-			contentPanel.add(panel);
-		}
-	}
-
 	public void showUserProfilePanel() {
 		contentPanel.clear();
 		Panel panel = userProfile.getPanel();

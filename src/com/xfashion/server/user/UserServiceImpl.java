@@ -30,6 +30,7 @@ import com.xfashion.shared.DeliveryNoticeDTO;
 import com.xfashion.shared.ResetPasswordDTO;
 import com.xfashion.shared.UserCountry;
 import com.xfashion.shared.UserDTO;
+import com.xfashion.shared.UserRole;
 import com.xfashion.shared.notepad.NotepadDTO;
 
 public class UserServiceImpl extends RemoteServiceServlet implements UserService {
@@ -40,7 +41,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 	
 	private static User adminUser;
 	static {
-		adminUser = new User(new UserDTO("root", "root", "archmage74@gmail.com", UserCountry.AT));
+		adminUser = new User(new UserDTO("root", "root", "archmage74@gmail.com", UserCountry.AT, UserRole.DEVELOPER));
 		adminUser.setPassword("1c782d2abe3bacd092fe9cdaaf1bba52");
 	}
 
