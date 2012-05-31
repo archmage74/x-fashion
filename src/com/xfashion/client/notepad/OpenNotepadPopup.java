@@ -7,6 +7,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.notepad.event.OpenDeliveryNoticeEvent;
 import com.xfashion.client.notepad.event.OpenNotepadEvent;
+import com.xfashion.client.user.UserManagement;
 import com.xfashion.client.user.UserService;
 import com.xfashion.client.user.UserServiceAsync;
 import com.xfashion.shared.BarcodeHelper;
@@ -79,11 +80,7 @@ public class OpenNotepadPopup extends NotepadActionPopup {
 		AsyncCallback<DeliveryNoticeDTO> callback = new AsyncCallback<DeliveryNoticeDTO>() {
 			@Override
 			public void onSuccess(DeliveryNoticeDTO result) {
-				if (result == null) {
-					Xfashion.fireError(errorMessages.noValidDeliveryNoticeEAN());
-				} else {
-					loadDeliveryNotice(result);
-				}
+				validateLoadDeliveryNotice(result);
 			}
 			@Override
 			public void onFailure(Throwable caught) {
@@ -104,6 +101,17 @@ public class OpenNotepadPopup extends NotepadActionPopup {
 		}
 	}
 
+	private void validateLoadDeliveryNotice(DeliveryNoticeDTO deliveryNotice) {
+		String myShopKey = UserManagement.user.getShop().getKeyString();
+		if (deliveryNotice == null) {
+			Xfashion.fireError(errorMessages.noValidDeliveryNoticeEAN());
+		} else if (!deliveryNotice.getSourceShopKey().equals(myShopKey) && !deliveryNotice.getTargetShopKey().equals(myShopKey)) {
+			Xfashion.fireError(errorMessages.noValidDeliveryNoticeEAN());
+		} else {
+			loadDeliveryNotice(deliveryNotice);
+		}
+	}
+	
 	private void loadDeliveryNotice() {
 		if (notepadListBox.getSelectedIndex() != -1) {
 			DeliveryNoticeDTO deliveryNotice = savedDeliveryNotices.get(notepadListBox.getSelectedIndex());

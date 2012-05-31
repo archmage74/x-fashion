@@ -1,6 +1,8 @@
 package com.xfashion.shared;
 
-public enum UserCountry {
+import com.google.gwt.user.client.rpc.IsSerializable;
+
+public enum UserCountry implements IsSerializable {
 	AT ("Österreich"),
 	DE ("Deutschland");
 	

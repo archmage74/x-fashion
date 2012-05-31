@@ -1,6 +1,8 @@
 package com.xfashion.shared;
 
-public enum UserRole {
+import com.google.gwt.user.client.rpc.IsSerializable;
+
+public enum UserRole implements IsSerializable {
 	DEVELOPER,
 	ADMIN,
 	SHOP;
