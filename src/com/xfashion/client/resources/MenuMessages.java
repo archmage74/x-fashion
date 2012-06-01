@@ -1,6 +1,7 @@
 package com.xfashion.client.resources;
 
 import com.google.gwt.i18n.client.Messages;
+import com.google.gwt.safehtml.shared.SafeHtml;
 
 public interface MenuMessages extends Messages {
 
@@ -21,4 +22,7 @@ public interface MenuMessages extends Messages {
 	
 	@DefaultMessage("Test")
 	String test();
+
+	@DefaultMessage("Bestand")
+	SafeHtml stock();
 }

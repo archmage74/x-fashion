@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import com.xfashion.client.at.ArticleTypeDetailPopup;
 import com.xfashion.client.at.ArticleTypePanel;
 import com.xfashion.client.at.CreateArticleTypePopup;
 import com.xfashion.client.brand.BrandPanel;
@@ -28,7 +27,6 @@ public class PanelMediator {
 	private ArticleTypePanel articleTypePanel;
 	
 	private CreateArticleTypePopup createArticleTypePopup;
-	private ArticleTypeDetailPopup articleTypeDetailPopup;
 	
 	private ArticleTypeDatabase articleTypeDatabase;
 	
@@ -108,14 +106,6 @@ public class PanelMediator {
 		this.createArticleTypePopup = createArticleTypePopup;
 	}
 
-	public ArticleTypeDetailPopup getArticleTypeDetailPopup() {
-		return articleTypeDetailPopup;
-	}
-	
-	public void setArticleTypeDetailPopup(ArticleTypeDetailPopup articleTypeDetailPopup) {
-		this.articleTypeDetailPopup = articleTypeDetailPopup;
-	}
-	
 	public List<SizeDTO> getSelectedSizes() {
 		ArrayList<SizeDTO> list = new ArrayList<SizeDTO>();
 		Set<String> sizes = articleTypeDatabase.getSizeProvider().getFilter();
@@ -156,12 +146,4 @@ public class PanelMediator {
 		articleTypeDatabase.createArticleType(articleType);
 	}
 	
-	public void updateArticleType(ArticleTypeDTO articleType) {
-		articleTypeDatabase.updateArticleType(articleType);
-	}
-	
-	public void deleteArticleType(ArticleTypeDTO articleType) {
-		articleTypeDatabase.deleteArticleType(articleType);
-	}
-
 }

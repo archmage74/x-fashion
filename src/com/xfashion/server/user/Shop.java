@@ -14,6 +14,7 @@ import com.xfashion.server.notepad.ArticleAmount;
 import com.xfashion.server.notepad.Notepad;
 import com.xfashion.shared.DeliveryNoticeDTO;
 import com.xfashion.shared.ShopDTO;
+import com.xfashion.shared.notepad.ArticleAmountDTO;
 import com.xfashion.shared.notepad.NotepadDTO;
 
 @PersistenceCapable
@@ -112,6 +113,14 @@ public class Shop {
 	public void updateFromDTO(ShopDTO dto) {
 		setName(dto.getName());
 		setDescription(dto.getDescription());
+	}
+
+	public Set<ArticleAmountDTO> createStock() {
+		Set<ArticleAmountDTO> dtos = new HashSet<ArticleAmountDTO>();
+		for (ArticleAmount articleAmount : getArticles()) {
+			dtos.add(articleAmount.createDTO());
+		}
+		return dtos;
 	}
 
 }

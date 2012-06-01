@@ -68,6 +68,12 @@ public class Buttons {
 		return icon;
 	}
 	
+	public static Image intostock() {
+		Image icon = new Image(images.iconIntostock());
+		icon.setStyleName("buttonShowTools");
+		return icon;
+	}
+	
 	public static Image edit() {
 		Image icon = new Image(images.iconEdit());
 		icon.setStyleName("buttonTool");

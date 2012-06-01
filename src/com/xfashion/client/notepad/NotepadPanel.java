@@ -11,7 +11,6 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.xfashion.client.IsMinimizable;
-import com.xfashion.client.PanelMediator;
 import com.xfashion.client.PanelWidthAnimation;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTable;
@@ -22,6 +21,7 @@ import com.xfashion.client.notepad.event.NotepadStartMinimizeEvent;
 import com.xfashion.client.notepad.event.PrintDeliveryNoticeEvent;
 import com.xfashion.client.notepad.event.PrintNotepadStickersEvent;
 import com.xfashion.client.notepad.event.RecordArticlesEvent;
+import com.xfashion.client.notepad.event.RequestIntoStockEvent;
 import com.xfashion.client.notepad.event.RequestOpenNotepadEvent;
 import com.xfashion.client.notepad.event.RequestSaveNotepadEvent;
 import com.xfashion.client.resources.ImageResources;
@@ -33,8 +33,6 @@ public class NotepadPanel implements IsMinimizable {
 
 	public static final int PANEL_MAX_WIDTH = 550; 
 	public static final int PANEL_MIN_WIDTH = 25;
-	
-	private PanelMediator panelMediator;
 	
 	private ProvidesArticleFilter provider;
 	
@@ -48,11 +46,10 @@ public class NotepadPanel implements IsMinimizable {
 	protected TextMessages textMessages;
 	protected ImageResources images;
 	
-	public NotepadPanel(PanelMediator panelMediator) {
+	public NotepadPanel(ProvidesArticleFilter provider) {
 		textMessages = GWT.create(TextMessages.class);
 		images = GWT.<ImageResources>create(ImageResources.class);
-		this.panelMediator = panelMediator;
-		this.provider = panelMediator.getArticleTypeDatabase();
+		this.provider = provider;
 	}
 	
 	public Panel createPanel(ArticleAmountDataProvider articleTypeProvider) {
@@ -72,8 +69,8 @@ public class NotepadPanel implements IsMinimizable {
 		panel.add(headerPanel);
 		
 		
-		ArticleTable<ArticleAmountDTO> att = new CountingArticleTable(provider);
-		Panel atp = att.create(articleAmountProvider, panelMediator);
+		ArticleTable<ArticleAmountDTO> att = new NotepadArticleTable(provider);
+		Panel atp = att.create(articleAmountProvider);
 		panel.add(atp);
 		
 		return panel;
@@ -96,6 +93,7 @@ public class NotepadPanel implements IsMinimizable {
 		toolPanel.add(createPrintDeliveryNoticeIcon());
 		toolPanel.add(createPrintStickerIcon());
 		toolPanel.add(createRecordArticlesIcon());
+		toolPanel.add(createIntoStockIcon());
 		headerPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		headerPanel.add(toolPanel);
 		
@@ -193,6 +191,18 @@ public class NotepadPanel implements IsMinimizable {
 			@Override
 			public void onClick(ClickEvent event) {
 				Xfashion.eventBus.fireEvent(new RecordArticlesEvent());
+			}
+		});
+		return icon;
+	}
+
+	private Image createIntoStockIcon() {
+		Image icon = Buttons.intostock();
+		icon.setTitle(textMessages.intoStockHint());
+		icon.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Xfashion.eventBus.fireEvent(new RequestIntoStockEvent());
 			}
 		});
 		return icon;

@@ -67,4 +67,7 @@ public interface TextMessages extends Messages {
 	String printDeliveryNoticeHint();
 	String printStickersHint();
 	String recordArticlesHint();
+	String intoStockHint();
+
+	String stockManagementHeader();
 }

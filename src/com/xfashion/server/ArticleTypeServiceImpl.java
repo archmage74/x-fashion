@@ -492,8 +492,14 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 	@Override
 	synchronized public ArticleTypeDTO createArticleType(ArticleTypeDTO dto) throws IllegalArgumentException {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
-		Category category = readCategory(pm, dto.getCategoryKey());
-		pm.close();
+		Category category;
+		try {
+			category = readCategory(pm, dto.getCategoryKey());
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		} finally {
+			pm.close();
+		}
 
 		pm = PMF.get().getPersistenceManager();
 		try {
@@ -599,7 +605,7 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 		return dto;
 	}
 
-	private ArticleType readArticleType(PersistenceManager pm, String key) {
+	public ArticleType readArticleType(PersistenceManager pm, String key) {
 		ArticleType articleType = pm.getObjectById(ArticleType.class, key);
 		return articleType;
 	}

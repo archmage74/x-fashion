@@ -41,7 +41,9 @@ public interface ErrorMessages extends Messages {
 	String noNotepadNameSpecified();
 	String noNotepadToOpenSelected();
 	String notepadNotEmpty();
+	String notepadEmpty();
 	String noDeliveryNotice();
 	String noValidDeliveryNoticeEAN();
+
 
 }

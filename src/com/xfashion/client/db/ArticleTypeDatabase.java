@@ -14,7 +14,12 @@ import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ListDataProvider;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTypeDataProvider;
+import com.xfashion.client.at.ArticleTypeDetailPopup;
+import com.xfashion.client.at.DeleteArticleTypeEvent;
+import com.xfashion.client.at.DeleteArticleTypeHandler;
 import com.xfashion.client.at.ProvidesArticleFilter;
+import com.xfashion.client.at.UpdateArticleTypeEvent;
+import com.xfashion.client.at.UpdateArticleTypeHandler;
 import com.xfashion.client.at.bulk.UpdateArticleTypesEvent;
 import com.xfashion.client.at.bulk.UpdateArticleTypesHandler;
 import com.xfashion.client.brand.BrandDataProvider;
@@ -26,7 +31,8 @@ import com.xfashion.client.size.SizeDataProvider;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.CategoryDTO;
 
-public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHandler, RefreshFilterHandler, UpdateArticleTypesHandler {
+public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHandler, RefreshFilterHandler, UpdateArticleTypesHandler,
+		RequestShowArticleTypeDetailsHandler, UpdateArticleTypeHandler, DeleteArticleTypeHandler {
 
 	private ArticleTypeServiceAsync articleTypeService = (ArticleTypeServiceAsync) GWT.create(ArticleTypeService.class);
 
@@ -45,6 +51,8 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 
 	private String nameFilter = null;
 
+	ArticleTypeDetailPopup articleTypeDetailPopup = null;
+	
 	public ArticleTypeDatabase() {
 
 	}
@@ -68,18 +76,13 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 		readArticleTypes();
 	}
 
-	private void registerForEvents() {
-		Xfashion.eventBus.addHandler(RefreshFilterEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(NameFilterEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(UpdateArticleTypesEvent.TYPE, this);
-	}
-
 	private void readArticleTypes() {
 		AsyncCallback<Set<ArticleTypeDTO>> callback = new AsyncCallback<Set<ArticleTypeDTO>>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				Xfashion.fireError(caught.getMessage());
 			}
+
 			@Override
 			public void onSuccess(Set<ArticleTypeDTO> result) {
 				articleTypeProvider.getList().clear();
@@ -261,6 +264,19 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 		}
 	}
 
+	@Override
+	public void onUpdateArticleType(UpdateArticleTypeEvent event) {
+		updateArticleType(event.getArticleType());
+	}
+
+	@Override
+	public void onRequestShowArticleTypeDetails(RequestShowArticleTypeDetailsEvent event) {
+		if (articleTypeDetailPopup == null) {
+			articleTypeDetailPopup = new ArticleTypeDetailPopup(this);
+		}
+		articleTypeDetailPopup.showPopup(event.getArticleType());
+	}
+
 	public void updateArticleType(final ArticleTypeDTO articleType) {
 		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 			@Override
@@ -278,6 +294,11 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 		articleTypeService.updateArticleType(articleType, callback);
 	}
 
+	@Override
+	public void onDeleteArticleType(DeleteArticleTypeEvent event) {
+		deleteArticleType(event.getArticleType());
+	}
+	
 	public void deleteArticleType(final ArticleTypeDTO articleType) {
 		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 			@Override
@@ -309,6 +330,15 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 
 	public void setNameProvider(ListDataProvider<String> nameProvider) {
 		this.nameProvider = nameProvider;
+	}
+
+	private void registerForEvents() {
+		Xfashion.eventBus.addHandler(RefreshFilterEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(NameFilterEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(UpdateArticleTypesEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(UpdateArticleTypeEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(DeleteArticleTypeEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(RequestShowArticleTypeDetailsEvent.TYPE, this);
 	}
 
 }

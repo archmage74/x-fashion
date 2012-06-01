@@ -7,6 +7,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.xfashion.shared.DeliveryNoticeDTO;
 import com.xfashion.shared.ResetPasswordDTO;
 import com.xfashion.shared.UserDTO;
+import com.xfashion.shared.notepad.ArticleAmountDTO;
 import com.xfashion.shared.notepad.NotepadDTO;
 
 public interface UserServiceAsync {
@@ -44,5 +45,14 @@ public interface UserServiceAsync {
 	void readOwnDeliveryNotices(AsyncCallback<Set<DeliveryNoticeDTO>> callback);
 
 	void updateDeliveryNotice(DeliveryNoticeDTO notepad, AsyncCallback<DeliveryNoticeDTO> callback);
+
+	void createStockEntry(ArticleAmountDTO articleAmount, AsyncCallback<ArticleAmountDTO> callback);
+
+	void readStock(AsyncCallback<Set<ArticleAmountDTO>> callback);
+
+	void updateStockEntry(ArticleAmountDTO articleAmount, AsyncCallback<Void> callback);
+
+	void deleteStockEntry(ArticleAmountDTO articleAmount, AsyncCallback<Void> callback);
+	
 	
 }

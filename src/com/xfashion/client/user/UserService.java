@@ -8,6 +8,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import com.xfashion.shared.DeliveryNoticeDTO;
 import com.xfashion.shared.ResetPasswordDTO;
 import com.xfashion.shared.UserDTO;
+import com.xfashion.shared.notepad.ArticleAmountDTO;
 import com.xfashion.shared.notepad.NotepadDTO;
 
 /**
@@ -38,6 +39,7 @@ public interface UserService extends RemoteService {
 	
 	void deleteResetPassword(ResetPasswordDTO resetPassword);
 	
+	// Notepad
 	NotepadDTO createNotepad(NotepadDTO notepad); 
 	
 	Set<NotepadDTO> readOwnNotepads();
@@ -46,9 +48,19 @@ public interface UserService extends RemoteService {
 		
 	NotepadDTO updateOwnNotepad(NotepadDTO notepad);
 
+	// DeliveryNotice
 	DeliveryNoticeDTO createDeliveryNotice(DeliveryNoticeDTO deliverNotice);
 	
 	Set<DeliveryNoticeDTO> readOwnDeliveryNotices();
 	
 	DeliveryNoticeDTO updateDeliveryNotice(DeliveryNoticeDTO deliveryNotice);
+
+	// Shop-Stock
+	ArticleAmountDTO createStockEntry(ArticleAmountDTO articleAmount) throws IllegalArgumentException;
+	
+	Set<ArticleAmountDTO> readStock() throws IllegalArgumentException;
+	
+	void updateStockEntry(ArticleAmountDTO articleAmount) throws IllegalArgumentException;
+	
+	void deleteStockEntry(ArticleAmountDTO articleAmount) throws IllegalArgumentException;
 }

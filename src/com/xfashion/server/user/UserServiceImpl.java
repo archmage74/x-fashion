@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
+import javax.jdo.Transaction;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
@@ -23,6 +24,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.xfashion.client.user.UserService;
 import com.xfashion.client.util.IdCounterService;
 import com.xfashion.server.PMF;
+import com.xfashion.server.notepad.ArticleAmount;
 import com.xfashion.server.notepad.Notepad;
 import com.xfashion.server.util.IdCounterServiceImpl;
 import com.xfashion.server.util.IdCounterType;
@@ -31,6 +33,7 @@ import com.xfashion.shared.ResetPasswordDTO;
 import com.xfashion.shared.UserCountry;
 import com.xfashion.shared.UserDTO;
 import com.xfashion.shared.UserRole;
+import com.xfashion.shared.notepad.ArticleAmountDTO;
 import com.xfashion.shared.notepad.NotepadDTO;
 
 public class UserServiceImpl extends RemoteServiceServlet implements UserService {
@@ -440,4 +443,89 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		deliveryNotice.updateFromDTO(dto);
 	}
 
+	// *****************
+	// Shop-Stock
+	// *****************
+	@Override
+	public ArticleAmountDTO createStockEntry(ArticleAmountDTO dto) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			ArticleAmount articleAmount = createStockEntry(pm, dto);
+			dto = articleAmount.createDTO();
+		} finally {
+			pm.close();
+		}
+		return dto;
+	}
+	
+	public ArticleAmount createStockEntry(PersistenceManager pm, ArticleAmountDTO dto) {
+		Transaction tx = pm.currentTransaction();
+		ArticleAmount articleAmount = null;
+		try {
+			tx.begin();
+			Shop shop = readOwnShop(pm);
+			for (ArticleAmount aa : shop.getArticles()) {
+				if (aa.getArticleTypeKey().equals(dto.getArticleTypeKey())) {
+					throw new RuntimeException("Article is already in stock");
+				}
+			}
+			articleAmount = new ArticleAmount(dto);
+			shop.getArticles().add(articleAmount);
+			tx.commit();
+		} finally {
+			if (tx.isActive()) {
+				tx.rollback();
+			}
+		}
+		return articleAmount;
+	}
+
+	@Override
+	public Set<ArticleAmountDTO> readStock() {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		Set<ArticleAmountDTO> dtos = null;
+		try {
+			Shop shop = readOwnShop(pm);
+			dtos = shop.createStock();
+		} finally {
+			pm.close();
+		}
+		return dtos;
+	}
+
+	public ArticleAmount readStockEntry(PersistenceManager pm, String keyString) {
+		ArticleAmount articleAmount = pm.getObjectById(ArticleAmount.class, KeyFactory.stringToKey(keyString));
+		return articleAmount;
+	}
+	
+	@Override
+	public void updateStockEntry(ArticleAmountDTO dto) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			updateStockEntry(pm, dto);
+		} finally {
+			pm.close();
+		}
+	}
+
+	private void updateStockEntry(PersistenceManager pm, ArticleAmountDTO dto) {
+		ArticleAmount articleAmount = readStockEntry(pm, dto.getKey());
+		articleAmount.updateFromDTO(dto);
+	}
+
+	@Override
+	public void deleteStockEntry(ArticleAmountDTO dto) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			deleteStockEntry(pm, dto);
+		} finally {
+			pm.close();
+		}
+	}
+
+	private void deleteStockEntry(PersistenceManager pm, ArticleAmountDTO dto) {
+		ArticleAmount articleAmount = readStockEntry(pm, dto.getKey());
+		pm.deletePersistent(articleAmount);
+	}
+	
 }

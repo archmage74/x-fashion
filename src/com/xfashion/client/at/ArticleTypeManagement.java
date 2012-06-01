@@ -47,7 +47,7 @@ public class ArticleTypeManagement implements NotepadStartMaximizeHandler, Notep
 			panelMediator.setColorPanel(colorPanel);
 			namePanel = new NamePanel(articleTypeDatabase.getNameProvider());
 			articleTypePanel = new ArticleTypePanel(panelMediator);
-			notepadPanel = new NotepadPanel(panelMediator);
+			notepadPanel = new NotepadPanel(articleTypeDatabase);
 
 			panel.add(categoryPanel.createPanel());
 			panel.add(brandPanel.createPanel());
@@ -59,8 +59,7 @@ public class ArticleTypeManagement implements NotepadStartMaximizeHandler, Notep
 			panel.add(notepadPanel.createPanel(notepadArticleProvider));
 		}
 		
-		Xfashion.eventBus.addHandler(NotepadStartMaximizeEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(NotepadStartMinimizeEvent.TYPE, this);
+		registerForEvents();
 		
 		return panel;
 	}
@@ -83,5 +82,9 @@ public class ArticleTypeManagement implements NotepadStartMaximizeHandler, Notep
 		namePanel.maximize();
 	}
 
+	private void registerForEvents() {
+		Xfashion.eventBus.addHandler(NotepadStartMaximizeEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(NotepadStartMinimizeEvent.TYPE, this);
+	}
 
 }

@@ -66,7 +66,7 @@ public class ArticleTypePanel {
 		panel.add(headerPanel);
 		
 		ArticleTypeTable att = new ArticleTypeTable(provider);
-		Panel atp = att.create(articleTypeProvider, panelMediator);
+		Panel atp = att.create(articleTypeProvider);
 		panel.add(atp);
 		
 		return panel;

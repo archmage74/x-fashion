@@ -11,7 +11,8 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.view.client.CellPreviewEvent;
-import com.xfashion.client.PanelMediator;
+import com.xfashion.client.Xfashion;
+import com.xfashion.client.db.RequestShowArticleTypeDetailsEvent;
 import com.xfashion.client.resources.FilterTableResources;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.shared.ArticleTypeDTO;
@@ -27,8 +28,6 @@ public abstract class ArticleTable<T> {
 	
 	protected ArticleDataProvider<T> articleProvider;
 
-	private ArticleTypeDetailPopup articleTypeDetailPopup;
-
 	protected TextMessages textMessages;
 	
 	public ArticleTable(ProvidesArticleFilter provider) {
@@ -38,9 +37,8 @@ public abstract class ArticleTable<T> {
 	
 	protected abstract void addNavColumns(CellTable<T> cellTable);
 
-	public Panel create(final ArticleDataProvider<T> ap, PanelMediator panelMediator) {
+	public Panel create(final ArticleDataProvider<T> ap) {
 		articleProvider = ap; 
-		articleTypeDetailPopup = new ArticleTypeDetailPopup(panelMediator);
 
 		CellTable<T> cellTable = new CellTable<T>(10000, GWT.<FilterTableResources> create(FilterTableResources.class));
 
@@ -161,7 +159,7 @@ public abstract class ArticleTable<T> {
 			public void onCellPreview(CellPreviewEvent<T> event) {
 				ArticleTypeDTO at = ap.retrieveArticleType(event.getValue());
 				if ("click".equals(event.getNativeEvent().getType()) && event.getColumn() < 5) {
-					articleTypeDetailPopup.showPopup(at);
+					Xfashion.eventBus.fireEvent(new RequestShowArticleTypeDetailsEvent(at));
 				}
 			}
 		};

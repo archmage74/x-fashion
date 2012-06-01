@@ -61,6 +61,7 @@ public class MenuPanel implements LoginHandler {
 		menu.setAnimationEnabled(true);
 
 		menu.addItem(createArticleTypeMenuItem());
+		menu.addItem(createStockMenuItem());
 
 		if (UserManagement.hasRole(UserRole.DEVELOPER, UserRole.ADMIN)) {
 			menu.addItem(createUserManagementMenuItem());
@@ -120,6 +121,16 @@ public class MenuPanel implements LoginHandler {
 			}
 		};
 		MenuItem articleTypeItem = new MenuItem(menuMessages.articleType(), showArticleType);
+		return articleTypeItem;
+	}
+
+	private MenuItem createStockMenuItem() {
+		Command showStock = new Command() {
+			public void execute() {
+				mainPanel.showStockPanel();
+			}
+		};
+		MenuItem articleTypeItem = new MenuItem(menuMessages.stock(), showStock);
 		return articleTypeItem;
 	}
 

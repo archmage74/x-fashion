@@ -28,7 +28,6 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.web.bindery.event.shared.HandlerRegistration;
 import com.xfashion.client.Formatter;
-import com.xfashion.client.PanelMediator;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.brand.ChooseBrandEvent;
 import com.xfashion.client.brand.ChooseBrandHandler;
@@ -65,8 +64,6 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 	private ImageUploadServiceAsync imageUploadService = (ImageUploadServiceAsync) GWT.create(ImageUploadService.class);
 
 	private BarcodeHelper barcodeHelper = new BarcodeHelper();
-
-	private PanelMediator panelMediator;
 
 	private DecoratedPopupPanel articleTypeDetailPopup;
 
@@ -109,10 +106,8 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 
 	protected List<HandlerRegistration> handlerRegistrations = new ArrayList<HandlerRegistration>();
 
-	public ArticleTypeDetailPopup(PanelMediator panelMediator) {
-		this.panelMediator = panelMediator;
-		provider = panelMediator.getArticleTypeDatabase();
-		panelMediator.setArticleTypeDetailPopup(this);
+	public ArticleTypeDetailPopup(ProvidesArticleFilter provider) {
+		this.provider = provider; 
 		textMessages = GWT.create(TextMessages.class);
 		registerForEvents();
 	}
@@ -493,7 +488,7 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 				updateArticleType();
 				buyPrice.setText(formatter.formatCentsToValue(updatedArticleType.getBuyPrice()));
 				sellPrice.setText(formatter.formatCentsToValue(updatedArticleType.getSellPrice()));
-				panelMediator.updateArticleType(articleType);
+				Xfashion.eventBus.fireEvent(new UpdateArticleTypeEvent(articleType));
 				resetEditArticleType();
 			} catch (CreateArticleException e) {
 				errorLabel.setText(e.getMessage());
@@ -562,7 +557,7 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 			public void onClick(ClickEvent event) {
 				confirmDelete.hide();
 				articleTypeDetailPopup.hide();
-				panelMediator.deleteArticleType(articleType);
+				Xfashion.eventBus.fireEvent(new DeleteArticleTypeEvent(articleType));
 			}
 		});
 		panel.add(yesButton, DockPanel.WEST);

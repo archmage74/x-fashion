@@ -45,6 +45,10 @@ public interface ImageResources extends ClientBundle {
 	@Source("icon-scanbarcode.png")
 	@ImageOptions(width=23, height=23)
 	ImageResource iconScanbarcode();
+	
+	@Source("icon-intostock.png")
+	@ImageOptions(width=23, height=23)
+	ImageResource iconIntostock();
 
 	@Source("icon-delete.png")
 	@ImageOptions(width=10, height=11)

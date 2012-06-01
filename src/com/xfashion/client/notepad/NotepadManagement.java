@@ -5,15 +5,11 @@ import java.util.Date;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.db.ArticleTypeDatabase;
 import com.xfashion.client.notepad.event.ClearNotepadEvent;
 import com.xfashion.client.notepad.event.ClearNotepadHandler;
+import com.xfashion.client.notepad.event.IntoStockEvent;
 import com.xfashion.client.notepad.event.NotepadAddArticleEvent;
 import com.xfashion.client.notepad.event.NotepadAddArticleHandler;
 import com.xfashion.client.notepad.event.NotepadRemoveArticleEvent;
@@ -28,6 +24,8 @@ import com.xfashion.client.notepad.event.PrintNotepadStickersEvent;
 import com.xfashion.client.notepad.event.PrintNotepadStickersHandler;
 import com.xfashion.client.notepad.event.RecordArticlesEvent;
 import com.xfashion.client.notepad.event.RecordArticlesHandler;
+import com.xfashion.client.notepad.event.RequestIntoStockEvent;
+import com.xfashion.client.notepad.event.RequestIntoStockHandler;
 import com.xfashion.client.notepad.event.RequestOpenNotepadEvent;
 import com.xfashion.client.notepad.event.RequestOpenNotepadHandler;
 import com.xfashion.client.notepad.event.RequestSaveNotepadEvent;
@@ -37,15 +35,14 @@ import com.xfashion.client.notepad.event.SaveDeliveryNoticeHandler;
 import com.xfashion.client.notepad.event.SaveNotepadEvent;
 import com.xfashion.client.notepad.event.SaveNotepadHandler;
 import com.xfashion.client.resources.ErrorMessages;
-import com.xfashion.client.resources.TextMessages;
 import com.xfashion.client.user.UserService;
 import com.xfashion.client.user.UserServiceAsync;
 import com.xfashion.shared.DeliveryNoticeDTO;
-import com.xfashion.shared.notepad.ArticleAmountDTO;
 import com.xfashion.shared.notepad.NotepadDTO;
 
 public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemoveArticleHandler, PrintNotepadStickersHandler, ClearNotepadHandler,
-		OpenNotepadHandler, OpenDeliveryNoticeHandler, RequestOpenNotepadHandler, SaveDeliveryNoticeHandler, SaveNotepadHandler, RequestSaveNotepadHandler, PrintDeliveryNoticeHandler, RecordArticlesHandler {
+		OpenNotepadHandler, OpenDeliveryNoticeHandler, RequestOpenNotepadHandler, SaveDeliveryNoticeHandler, SaveNotepadHandler, 
+		RequestSaveNotepadHandler, PrintDeliveryNoticeHandler, RecordArticlesHandler, RequestIntoStockHandler {
 
 	public static final String PRINT_STICKER_URL = "/pdf/multisticker";
 
@@ -55,66 +52,24 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 	
 	private NotepadServiceAsync notepadService;
 
-	private Panel panel;
-
-	private TextMessages textMessages;
 	private ErrorMessages errorMessages;
 
 	private NotepadDTO currentNotepad;
 	private DeliveryNoticeDTO currentDeliveryNotice;
 
-	private ListBox articleListBox;
-
 	private ArticleAmountDataProvider articleProvider;
 
-	private ArticleTypeDatabase articleTypeDatabase;
-	
 	protected SaveNotepadPopup saveNotepadPopup;
 	protected OpenNotepadPopup openNotepadPopup;
 
 	public NotepadManagement(ArticleTypeDatabase articleTypeDatabase) {
-		this.articleTypeDatabase = articleTypeDatabase;
 		articleProvider = new ArticleAmountDataProvider(articleTypeDatabase);
-		textMessages = GWT.create(TextMessages.class);
 		errorMessages = GWT.create(ErrorMessages.class);
 		notepadService = (NotepadServiceAsync) GWT.create(NotepadService.class);
 		currentNotepad = new NotepadDTO();
 		saveNotepadPopup = new SaveNotepadPopup();
 		openNotepadPopup = new OpenNotepadPopup();
 		registerForEvents();
-	}
-
-	public Panel getPanel() {
-		if (panel == null) {
-			panel = createPanel();
-		}
-		return panel;
-	}
-
-	public Panel createPanel() {
-
-		VerticalPanel vp = new VerticalPanel();
-
-		Label l = createHeader();
-		vp.add(l);
-
-		HorizontalPanel hp = new HorizontalPanel();
-
-		articleListBox = createArticleListBox();
-		refreshListBox();
-		hp.add(articleListBox);
-
-		VerticalPanel buttonPanel = createButtonPanel();
-
-		hp.add(buttonPanel);
-		vp.add(hp);
-
-		return vp;
-	}
-
-	private VerticalPanel createButtonPanel() {
-		VerticalPanel buttonPanel = new VerticalPanel();
-		return buttonPanel;
 	}
 
 	@Override
@@ -141,46 +96,17 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 		articleProvider.setList(currentNotepad.getArticles());
 	}
 
-	private Label createHeader() {
-		Label l = new Label(textMessages.notepadManagementHeader());
-		l.setStyleName("contentHeader");
-		return l;
-	}
-
-	private ListBox createArticleListBox() {
-		ListBox lb = new ListBox();
-		lb.setWidth("300px");
-		lb.setVisibleItemCount(30);
-		return lb;
-	}
-
-	private void refreshListBox() {
-		if (articleListBox != null) {
-			articleListBox.clear();
-			for (ArticleAmountDTO aa : currentNotepad.getArticles()) {
-				StringBuffer item = new StringBuffer();
-				item.append(aa.getAmount());
-				item.append(" - ");
-				item.append(articleTypeDatabase.getArticleTypeProvider().resolveData(aa.getArticleTypeKey()).getName());
-				articleListBox.addItem(item.toString());
-			}
-		}
-	}
-
 	@Override
 	public void onNotepadAddArticle(NotepadAddArticleEvent event) {
 		currentNotepad.addArticle(event.getArticleType(), event.getAmount());
 		articleProvider.setList(currentNotepad.getArticles());
-		refreshListBox();
 	}
 
 	@Override
 	public void onNotepadRemoveArticle(NotepadRemoveArticleEvent event) {
 		currentNotepad.deductArticleType(event.getArticleType(), event.getAmount());
 		articleProvider.setList(currentNotepad.getArticles());
-		refreshListBox();
 	}
-
 
 	@Override
 	public void onRecordArticles(RecordArticlesEvent event) {
@@ -240,6 +166,14 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 		currentDeliveryNotice = event.getDeliveryNotice();
 		currentNotepad = currentDeliveryNotice.getNotepad();
 		refreshProvider();
+	}
+
+	@Override
+	public void onRequestIntoStock(RequestIntoStockEvent event) {
+		if (currentNotepad == null || currentNotepad.getArticles().size() == 0) {
+			Xfashion.fireError(errorMessages.notepadEmpty());
+		}
+		Xfashion.eventBus.fireEvent(new IntoStockEvent(currentNotepad));
 	}
 
 	protected void sendNotepadPrintAction(AsyncCallback<Void> printCallback) {
@@ -359,6 +293,7 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 		Xfashion.eventBus.addHandler(RecordArticlesEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(PrintDeliveryNoticeEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(RequestOpenNotepadEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(RequestIntoStockEvent.TYPE, this);
 	}
 
 }
