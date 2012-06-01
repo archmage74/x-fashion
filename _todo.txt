@@ -42,8 +42,6 @@ DONE - load delivery-note by id
 DONE - define user-roles (admin, shop, ?)
 DONE - update delivery note with shop and central data
 
-sell-price per country
-
 article-stock per user
 
 scanning of article and add immediately to notepad
@@ -51,6 +49,8 @@ scanning of article and add immediately to notepad
 sell article (remove article from article-stock))
 
 sell-statistics (list of all single sells)
+
+NEW - sell-price per country
 
 NEW - 1-pixel difference problem between filter-icons and filter-border 
 
