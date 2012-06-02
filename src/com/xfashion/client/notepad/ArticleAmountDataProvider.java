@@ -18,4 +18,9 @@ public class ArticleAmountDataProvider extends ArticleDataProvider<ArticleAmount
 		return articleTypeDatabase.getArticleTypeProvider().resolveData(item.getArticleTypeKey());
 	}
 
+	@Override
+	public ArticleTypeDTO retrieveArticleType(Long productNumber) {
+		return articleTypeDatabase.getArticleTypeProvider().retrieveArticleType(productNumber);
+	}
+
 }

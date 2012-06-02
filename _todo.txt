@@ -41,10 +41,8 @@ DONE - add country to user-details
 DONE - load delivery-note by id
 DONE - define user-roles (admin, shop, ?)
 DONE - update delivery note with shop and central data
-
-article-stock per user
-
-scanning of article and add immediately to notepad
+DONE - article-stock per user
+DONE - scanning of article and add immediately to notepad
 
 sell article (remove article from article-stock))
 

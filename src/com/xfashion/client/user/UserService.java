@@ -1,5 +1,6 @@
 package com.xfashion.client.user;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -60,6 +61,8 @@ public interface UserService extends RemoteService {
 	
 	Set<ArticleAmountDTO> readStock() throws IllegalArgumentException;
 	
+	Collection<ArticleAmountDTO> addStockEntries(Collection<ArticleAmountDTO> dtos) throws IllegalArgumentException;
+		
 	void updateStockEntry(ArticleAmountDTO articleAmount) throws IllegalArgumentException;
 	
 	void deleteStockEntry(ArticleAmountDTO articleAmount) throws IllegalArgumentException;

@@ -1,6 +1,7 @@
 package com.xfashion.client.stock;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -14,6 +15,7 @@ import com.xfashion.client.notepad.ArticleAmountDataProvider;
 import com.xfashion.client.notepad.event.ClearNotepadEvent;
 import com.xfashion.client.notepad.event.IntoStockEvent;
 import com.xfashion.client.notepad.event.IntoStockHandler;
+import com.xfashion.client.resources.TextMessages;
 import com.xfashion.client.user.LoginEvent;
 import com.xfashion.client.user.LoginHandler;
 import com.xfashion.client.user.UserService;
@@ -30,7 +32,10 @@ public class StockManagement implements IntoStockHandler, LoginHandler {
 	private StockPanel stockPanel;
 	private Panel panel;
 	
+	TextMessages textMessages;
+	
 	public StockManagement(ArticleTypeDatabase articleTypeDatabase) {
+		textMessages = GWT.create(TextMessages.class);
 		this.stockProvider = new ArticleAmountDataProvider(articleTypeDatabase);
 		this.stockPanel = new StockPanel(articleTypeDatabase);
 		registerForEvents();
@@ -38,15 +43,23 @@ public class StockManagement implements IntoStockHandler, LoginHandler {
 	
 	@Override
 	public void onIntoStock(IntoStockEvent event) {
-		for (ArticleAmountDTO aa : event.getNotepad().getArticles()) {
-			ArticleAmountDTO stockItem = stock.get(aa.getArticleTypeKey());
-			if (stockItem == null) {
-				createStockItem(aa);
-			} else {
-				stockItem.increaseAmount(aa.getAmount());
-				updateStockItem(stockItem);
-			}
+		Long cnt = 0L;
+		for (ArticleAmountDTO articleAmount : event.getNotepad().getArticles()) {
+			cnt += articleAmount.getAmount();
 		}
+		final Long addedArticleNumber = cnt;
+		AsyncCallback<Collection<ArticleAmountDTO>> callback = new AsyncCallback<Collection<ArticleAmountDTO>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
+			}
+			@Override
+			public void onSuccess(Collection<ArticleAmountDTO> result) {
+				storeStock(result);
+				Xfashion.fireError(textMessages.intoStockResult(addedArticleNumber));
+			}
+		};
+		userService.addStockEntries(event.getNotepad().getArticles(), callback);
 		Xfashion.eventBus.fireEvent(new ClearNotepadEvent());
 	}
 
@@ -108,7 +121,7 @@ public class StockManagement implements IntoStockHandler, LoginHandler {
 		userService.readStock(callback);
 	}
 
-	protected void storeStock(Set<ArticleAmountDTO> result) {
+	protected void storeStock(Collection<ArticleAmountDTO> result) {
 		stock = new HashMap<String, ArticleAmountDTO>();
 		List<ArticleAmountDTO> list = new ArrayList<ArticleAmountDTO>();
 		for (ArticleAmountDTO aa : result) {

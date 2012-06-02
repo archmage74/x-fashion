@@ -44,6 +44,7 @@ public interface ErrorMessages extends Messages {
 	String notepadEmpty();
 	String noDeliveryNotice();
 	String noValidDeliveryNoticeEAN();
-
+	String noValidArticleTypeEAN();
+	String cannotAddDeliveryNoticeToStock();
 
 }

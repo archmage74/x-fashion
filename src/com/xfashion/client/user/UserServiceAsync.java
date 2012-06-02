@@ -1,5 +1,6 @@
 package com.xfashion.client.user;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -50,9 +51,10 @@ public interface UserServiceAsync {
 
 	void readStock(AsyncCallback<Set<ArticleAmountDTO>> callback);
 
+	void addStockEntries(Collection<ArticleAmountDTO> dtos, AsyncCallback<Collection<ArticleAmountDTO>> callback);
+	
 	void updateStockEntry(ArticleAmountDTO articleAmount, AsyncCallback<Void> callback);
 
 	void deleteStockEntry(ArticleAmountDTO articleAmount, AsyncCallback<Void> callback);
-	
 	
 }

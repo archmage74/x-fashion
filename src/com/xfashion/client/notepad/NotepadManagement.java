@@ -61,6 +61,7 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 
 	protected SaveNotepadPopup saveNotepadPopup;
 	protected OpenNotepadPopup openNotepadPopup;
+	protected ScanArticlePopup scanArticlePopup;
 
 	public NotepadManagement(ArticleTypeDatabase articleTypeDatabase) {
 		articleProvider = new ArticleAmountDataProvider(articleTypeDatabase);
@@ -69,6 +70,7 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 		currentNotepad = new NotepadDTO();
 		saveNotepadPopup = new SaveNotepadPopup();
 		openNotepadPopup = new OpenNotepadPopup();
+		scanArticlePopup = new ScanArticlePopup(articleProvider);
 		registerForEvents();
 	}
 
@@ -89,6 +91,7 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 	private void resetNotepad() {
 		currentNotepad.getArticles().clear();
 		currentNotepad.setCreationDate(new Date());
+		currentDeliveryNotice = null;
 		refreshProvider();
 	}
 	
@@ -110,7 +113,7 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 
 	@Override
 	public void onRecordArticles(RecordArticlesEvent event) {
-		Xfashion.fireError(errorMessages.notImplemented());
+		scanArticlePopup.show();
 	}
 
 	@Override
@@ -170,6 +173,10 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 
 	@Override
 	public void onRequestIntoStock(RequestIntoStockEvent event) {
+		if (currentDeliveryNotice != null) {
+			Xfashion.fireError(errorMessages.cannotAddDeliveryNoticeToStock());
+			return;
+		}
 		if (currentNotepad == null || currentNotepad.getArticles().size() == 0) {
 			Xfashion.fireError(errorMessages.notepadEmpty());
 		}

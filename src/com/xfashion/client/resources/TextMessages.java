@@ -70,4 +70,5 @@ public interface TextMessages extends Messages {
 	String intoStockHint();
 
 	String stockManagementHeader();
+	String intoStockResult(Long addedArticleNumber);
 }

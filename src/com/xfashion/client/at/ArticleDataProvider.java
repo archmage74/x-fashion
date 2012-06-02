@@ -7,4 +7,6 @@ public abstract class ArticleDataProvider<T> extends ListDataProvider<T> {
 
 	public abstract ArticleTypeDTO retrieveArticleType(T item);
 
+	public abstract ArticleTypeDTO retrieveArticleType(Long productNumber);
+
 }

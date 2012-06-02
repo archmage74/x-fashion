@@ -2,7 +2,10 @@ package com.xfashion.server.user;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -511,6 +514,43 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 	private void updateStockEntry(PersistenceManager pm, ArticleAmountDTO dto) {
 		ArticleAmount articleAmount = readStockEntry(pm, dto.getKey());
 		articleAmount.updateFromDTO(dto);
+	}
+
+	@Override
+	public Collection<ArticleAmountDTO> addStockEntries(Collection<ArticleAmountDTO> dtos) {
+		Map<String, ArticleAmountDTO> dtoMap = new HashMap<String, ArticleAmountDTO>();
+		for (ArticleAmountDTO dto : dtos) {
+			dtoMap.put(dto.getArticleTypeKey(), dto);
+		}
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			Shop shop = updateStockEntries(pm, dtoMap);
+			dtos = shop.createStock();
+		} finally {
+			pm.close();
+		}
+		return dtos;
+	}
+	
+	private Shop updateStockEntries(PersistenceManager pm, Map<String, ArticleAmountDTO> dtos) {
+		Collection<ArticleAmountDTO> toAdd = dtos.values();
+		Shop shop = readOwnShop(pm);
+		
+		for (ArticleAmount articleAmount : shop.getArticles()) {
+			ArticleAmountDTO dto = dtos.get(KeyFactory.keyToString(articleAmount.getArticleTypeKey()));
+			if (dto != null) {
+				articleAmount.setAmount(articleAmount.getAmount() + dto.getAmount());
+				toAdd.remove(dto);
+			}
+		}
+		pm.flush();
+		
+		for (ArticleAmountDTO dto : toAdd) {
+			shop.getArticles().add(new ArticleAmount(dto));
+		}
+		pm.flush();
+		
+		return shop;
 	}
 
 	@Override
