@@ -48,6 +48,8 @@ sell article (remove article from article-stock))
 
 sell-statistics (list of all single sells)
 
+filter for stock
+
 NEW - sell-price per country
 
 NEW - 1-pixel difference problem between filter-icons and filter-border 
