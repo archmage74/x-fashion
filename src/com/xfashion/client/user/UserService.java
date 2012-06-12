@@ -65,5 +65,7 @@ public interface UserService extends RemoteService {
 		
 	void updateStockEntry(ArticleAmountDTO articleAmount) throws IllegalArgumentException;
 	
+	Collection<ArticleAmountDTO> sellArticlesFromStock(Collection<ArticleAmountDTO> articles);
+
 	void deleteStockEntry(ArticleAmountDTO articleAmount) throws IllegalArgumentException;
 }

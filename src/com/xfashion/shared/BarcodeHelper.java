@@ -1,6 +1,7 @@
 package com.xfashion.shared;
 
 
+
 public class BarcodeHelper {
 
 	public static final Long ARTICLE_PREFIX = 1L;

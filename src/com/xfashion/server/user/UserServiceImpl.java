@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -524,7 +525,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		}
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
-			Shop shop = updateStockEntries(pm, dtoMap);
+			Shop shop = addStockEntries(pm, dtoMap);
 			dtos = shop.createStock();
 		} finally {
 			pm.close();
@@ -532,7 +533,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		return dtos;
 	}
 	
-	private Shop updateStockEntries(PersistenceManager pm, Map<String, ArticleAmountDTO> dtos) {
+	private Shop addStockEntries(PersistenceManager pm, Map<String, ArticleAmountDTO> dtos) {
 		Collection<ArticleAmountDTO> toAdd = dtos.values();
 		Shop shop = readOwnShop(pm);
 		
@@ -549,6 +550,61 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 			shop.getArticles().add(new ArticleAmount(dto));
 		}
 		pm.flush();
+		
+		return shop;
+	}
+
+	@Override
+	public Collection<ArticleAmountDTO> sellArticlesFromStock(Collection<ArticleAmountDTO> dtos) {
+		Map<String, ArticleAmountDTO> dtoMap = new HashMap<String, ArticleAmountDTO>();
+		for (ArticleAmountDTO dto : dtos) {
+			dtoMap.put(dto.getArticleTypeKey(), dto);
+		}
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			Shop shop = removeStockEntries(pm, dtoMap);
+			dtos = shop.createStock();
+		} finally {
+			pm.close();
+		}
+		return dtos;
+	}
+	
+	private Shop removeStockEntries(PersistenceManager pm, Map<String, ArticleAmountDTO> dtos) {
+		Collection<ArticleAmountDTO> notInStock = dtos.values();
+		Shop shop = null;
+		Transaction tx = pm.currentTransaction();
+
+		try {
+			tx.begin();
+			shop = readOwnShop(pm);
+			Collection<ArticleAmount> toRemove = new HashSet<ArticleAmount>();
+
+			for (ArticleAmount articleAmount : shop.getArticles()) {
+				ArticleAmountDTO dto = dtos.get(KeyFactory.keyToString(articleAmount.getArticleTypeKey()));
+				if (dto != null) {
+					Integer newAmount = articleAmount.getAmount() - dto.getAmount();
+					if (newAmount < 0) {
+						throw new RuntimeException("Could not sell articles because there are not enough articles in stock");
+					} else if (newAmount == 0) {
+						toRemove.add(articleAmount);
+					} else {
+						articleAmount.setAmount(articleAmount.getAmount() - dto.getAmount());
+					}
+					notInStock.remove(dto);
+				}
+			}
+			if (notInStock.size() > 0) {
+				throw new RuntimeException("Could not sell articles because they are not in stock");
+			}
+			shop.getArticles().removeAll(toRemove);
+			
+			tx.commit();
+		} finally {
+			if (tx.isActive()) {
+				tx.rollback();
+			}
+		}
 		
 		return shop;
 	}

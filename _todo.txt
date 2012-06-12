@@ -43,8 +43,7 @@ DONE - define user-roles (admin, shop, ?)
 DONE - update delivery note with shop and central data
 DONE - article-stock per user
 DONE - scanning of article and add immediately to notepad
-
-sell article (remove article from article-stock))
+DONE - sell article (remove article from article-stock))
 
 sell-statistics (list of all single sells)
 

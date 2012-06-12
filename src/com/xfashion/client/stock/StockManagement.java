@@ -16,13 +16,17 @@ import com.xfashion.client.notepad.event.ClearNotepadEvent;
 import com.xfashion.client.notepad.event.IntoStockEvent;
 import com.xfashion.client.notepad.event.IntoStockHandler;
 import com.xfashion.client.resources.TextMessages;
+import com.xfashion.client.stock.event.RequestOpenSellPopupEvent;
+import com.xfashion.client.stock.event.RequestOpenSellPopupHandler;
+import com.xfashion.client.stock.event.SellFromStockEvent;
+import com.xfashion.client.stock.event.SellFromStockHandler;
 import com.xfashion.client.user.LoginEvent;
 import com.xfashion.client.user.LoginHandler;
 import com.xfashion.client.user.UserService;
 import com.xfashion.client.user.UserServiceAsync;
 import com.xfashion.shared.notepad.ArticleAmountDTO;
 
-public class StockManagement implements IntoStockHandler, LoginHandler {
+public class StockManagement implements IntoStockHandler, SellFromStockHandler, RequestOpenSellPopupHandler, LoginHandler {
 
 	private UserServiceAsync userService = (UserServiceAsync) GWT.create(UserService.class);
 
@@ -31,16 +35,18 @@ public class StockManagement implements IntoStockHandler, LoginHandler {
 	ArticleAmountDataProvider stockProvider;
 	private StockPanel stockPanel;
 	private Panel panel;
-	
+	private SellFromStockPopup sellFromStockPopup;
+		
 	TextMessages textMessages;
-	
+
 	public StockManagement(ArticleTypeDatabase articleTypeDatabase) {
 		textMessages = GWT.create(TextMessages.class);
+		this.stock = new HashMap<String, ArticleAmountDTO>();
 		this.stockProvider = new ArticleAmountDataProvider(articleTypeDatabase);
 		this.stockPanel = new StockPanel(articleTypeDatabase);
 		registerForEvents();
 	}
-	
+
 	@Override
 	public void onIntoStock(IntoStockEvent event) {
 		Long cnt = 0L;
@@ -63,12 +69,42 @@ public class StockManagement implements IntoStockHandler, LoginHandler {
 		Xfashion.eventBus.fireEvent(new ClearNotepadEvent());
 	}
 
+	@Override
+	public void onRequestOpenSellPopup(RequestOpenSellPopupEvent event) {
+		if (sellFromStockPopup == null) {
+			sellFromStockPopup = new SellFromStockPopup(stockProvider, stock);
+		}
+		sellFromStockPopup.show();
+	}
+
+	@Override
+	public void onSellFromStock(SellFromStockEvent event) {
+		Long cnt = 0L;
+		for (ArticleAmountDTO articleAmount : event.getArticles()) {
+			cnt += articleAmount.getAmount();
+		}
+		final Long soldArticleNumber = cnt;
+		AsyncCallback<Collection<ArticleAmountDTO>> callback = new AsyncCallback<Collection<ArticleAmountDTO>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
+			}
+			@Override
+			public void onSuccess(Collection<ArticleAmountDTO> result) {
+				storeStock(result);
+				Xfashion.fireError(textMessages.sellStockResult(soldArticleNumber));
+			}
+		};
+		userService.sellArticlesFromStock(event.getArticles(), callback);
+	}
+
 	private void createStockItem(ArticleAmountDTO articleAmount) {
 		AsyncCallback<ArticleAmountDTO> callback = new AsyncCallback<ArticleAmountDTO>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				Xfashion.fireError(caught.getMessage());
 			}
+
 			@Override
 			public void onSuccess(ArticleAmountDTO result) {
 				stock.put(result.getArticleTypeKey(), result);
@@ -86,6 +122,7 @@ public class StockManagement implements IntoStockHandler, LoginHandler {
 			public void onFailure(Throwable caught) {
 				Xfashion.fireError(caught.getMessage());
 			}
+
 			@Override
 			public void onSuccess(Void result) {
 				stockProvider.flush();
@@ -94,12 +131,12 @@ public class StockManagement implements IntoStockHandler, LoginHandler {
 		};
 		userService.updateStockEntry(articleAmount, callback);
 	}
-	
+
 	@Override
 	public void onLogin(LoginEvent event) {
 		readStock();
 	}
-	
+
 	public Panel getPanel() {
 		if (panel == null) {
 			panel = stockPanel.createPanel(stockProvider);
@@ -113,6 +150,7 @@ public class StockManagement implements IntoStockHandler, LoginHandler {
 			public void onFailure(Throwable caught) {
 				Xfashion.fireError(caught.getMessage());
 			}
+
 			@Override
 			public void onSuccess(Set<ArticleAmountDTO> result) {
 				storeStock(result);
@@ -122,7 +160,7 @@ public class StockManagement implements IntoStockHandler, LoginHandler {
 	}
 
 	protected void storeStock(Collection<ArticleAmountDTO> result) {
-		stock = new HashMap<String, ArticleAmountDTO>();
+		stock.clear();
 		List<ArticleAmountDTO> list = new ArrayList<ArticleAmountDTO>();
 		for (ArticleAmountDTO aa : result) {
 			stock.put(aa.getArticleTypeKey(), aa);
@@ -133,6 +171,8 @@ public class StockManagement implements IntoStockHandler, LoginHandler {
 
 	private void registerForEvents() {
 		Xfashion.eventBus.addHandler(IntoStockEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(RequestOpenSellPopupEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(SellFromStockEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(LoginEvent.TYPE, this);
 	}
 

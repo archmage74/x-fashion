@@ -74,6 +74,12 @@ public class Buttons {
 		return icon;
 	}
 	
+	public static Image sell() {
+		Image icon = new Image(images.iconSell());
+		icon.setStyleName("buttonShowTools");
+		return icon;
+	}
+	
 	public static Image edit() {
 		Image icon = new Image(images.iconEdit());
 		icon.setStyleName("buttonTool");
@@ -97,5 +103,5 @@ public class Buttons {
 		icon.setStyleName("buttonTool");
 		return icon;
 	}
-	
+
 }

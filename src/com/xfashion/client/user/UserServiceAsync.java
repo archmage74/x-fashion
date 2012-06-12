@@ -55,6 +55,8 @@ public interface UserServiceAsync {
 	
 	void updateStockEntry(ArticleAmountDTO articleAmount, AsyncCallback<Void> callback);
 
+	void sellArticlesFromStock(Collection<ArticleAmountDTO> articles, AsyncCallback<Collection<ArticleAmountDTO>> callback);
+
 	void deleteStockEntry(ArticleAmountDTO articleAmount, AsyncCallback<Void> callback);
 	
 }

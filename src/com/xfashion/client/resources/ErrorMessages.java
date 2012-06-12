@@ -47,4 +47,6 @@ public interface ErrorMessages extends Messages {
 	String noValidArticleTypeEAN();
 	String cannotAddDeliveryNoticeToStock();
 
+	String notEnoughArticlesInStock();
+
 }
