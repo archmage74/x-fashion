@@ -57,7 +57,7 @@ NEW - 1-pixel difference problem between filter-icons and filter-border
 
 differenz anzeige - lieferschein vs bestandsaufnahme
 
-prevent application from sleeping (needed any more?)
+prevent application from sleeping (needed any more?) or progress indication during login
 
 NEW - lazy loading of images in image management
 
