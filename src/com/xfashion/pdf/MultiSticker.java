@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.xfashion.client.notepad.NotepadService;
-import com.xfashion.shared.notepad.ArticleAmountDTO;
-import com.xfashion.shared.notepad.NotepadDTO;
+import com.xfashion.shared.ArticleAmountDTO;
+import com.xfashion.shared.NotepadDTO;
 
 public class MultiSticker extends HttpServlet {
 

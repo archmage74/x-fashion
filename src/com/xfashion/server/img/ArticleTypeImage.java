@@ -11,7 +11,7 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.utils.SystemProperty;
 import com.google.gwt.user.client.rpc.IsSerializable;
-import com.xfashion.shared.img.ArticleTypeImageDTO;
+import com.xfashion.shared.ArticleTypeImageDTO;
 
 @PersistenceCapable
 public class ArticleTypeImage implements IsSerializable {

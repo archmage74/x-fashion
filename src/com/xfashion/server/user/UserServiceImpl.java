@@ -2,7 +2,9 @@ package com.xfashion.server.user;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -28,17 +30,19 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.xfashion.client.user.UserService;
 import com.xfashion.client.util.IdCounterService;
 import com.xfashion.server.PMF;
+import com.xfashion.server.SoldArticle;
 import com.xfashion.server.notepad.ArticleAmount;
 import com.xfashion.server.notepad.Notepad;
 import com.xfashion.server.util.IdCounterServiceImpl;
 import com.xfashion.server.util.IdCounterType;
+import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.DeliveryNoticeDTO;
+import com.xfashion.shared.NotepadDTO;
 import com.xfashion.shared.ResetPasswordDTO;
+import com.xfashion.shared.SoldArticleDTO;
 import com.xfashion.shared.UserCountry;
 import com.xfashion.shared.UserDTO;
 import com.xfashion.shared.UserRole;
-import com.xfashion.shared.notepad.ArticleAmountDTO;
-import com.xfashion.shared.notepad.NotepadDTO;
 
 public class UserServiceImpl extends RemoteServiceServlet implements UserService {
 
@@ -555,23 +559,24 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 	}
 
 	@Override
-	public Collection<ArticleAmountDTO> sellArticlesFromStock(Collection<ArticleAmountDTO> dtos) {
-		Map<String, ArticleAmountDTO> dtoMap = new HashMap<String, ArticleAmountDTO>();
-		for (ArticleAmountDTO dto : dtos) {
+	public Collection<ArticleAmountDTO> sellArticlesFromStock(Collection<SoldArticleDTO> dtos) {
+		Map<String, SoldArticleDTO> dtoMap = new HashMap<String, SoldArticleDTO>();
+		for (SoldArticleDTO dto : dtos) {
 			dtoMap.put(dto.getArticleTypeKey(), dto);
 		}
+		Collection<ArticleAmountDTO> stock = null;
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
 			Shop shop = removeStockEntries(pm, dtoMap);
-			dtos = shop.createStock();
+			stock = shop.createStock();
 		} finally {
 			pm.close();
 		}
-		return dtos;
+		return stock;
 	}
 	
-	private Shop removeStockEntries(PersistenceManager pm, Map<String, ArticleAmountDTO> dtos) {
-		Collection<ArticleAmountDTO> notInStock = dtos.values();
+	private Shop removeStockEntries(PersistenceManager pm, Map<String, SoldArticleDTO> dtos) {
+		Collection<SoldArticleDTO> notInStock = dtos.values();
 		Shop shop = null;
 		Transaction tx = pm.currentTransaction();
 
@@ -581,7 +586,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 			Collection<ArticleAmount> toRemove = new HashSet<ArticleAmount>();
 
 			for (ArticleAmount articleAmount : shop.getArticles()) {
-				ArticleAmountDTO dto = dtos.get(KeyFactory.keyToString(articleAmount.getArticleTypeKey()));
+				SoldArticleDTO dto = dtos.get(KeyFactory.keyToString(articleAmount.getArticleTypeKey()));
 				if (dto != null) {
 					Integer newAmount = articleAmount.getAmount() - dto.getAmount();
 					if (newAmount < 0) {
@@ -590,6 +595,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 						toRemove.add(articleAmount);
 					} else {
 						articleAmount.setAmount(articleAmount.getAmount() - dto.getAmount());
+						createSoldArticle(pm, shop, dto);
 					}
 					notInStock.remove(dto);
 				}
@@ -609,6 +615,12 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		return shop;
 	}
 
+	private SoldArticle createSoldArticle(PersistenceManager pm, Shop shop, SoldArticleDTO dto) {
+		SoldArticle soldArticle = new SoldArticle(dto);
+		shop.getSoldArticles().add(soldArticle);
+		return soldArticle;
+	}
+
 	@Override
 	public void deleteStockEntry(ArticleAmountDTO dto) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
@@ -622,6 +634,53 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 	private void deleteStockEntry(PersistenceManager pm, ArticleAmountDTO dto) {
 		ArticleAmount articleAmount = readStockEntry(pm, dto.getKey());
 		pm.deletePersistent(articleAmount);
+	}
+
+	@Override
+	public List<SoldArticleDTO> readSoldArticles(Date month) throws IllegalArgumentException {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		DateRange range = calculateMonthRange(month);
+		List<SoldArticleDTO> dtos = new ArrayList<SoldArticleDTO>();
+		try {
+			Collection<SoldArticle> soldArticles = readSoldArticles(pm, range); 
+			for (SoldArticle soldArticle : soldArticles) {
+				dtos.add(soldArticle.createDTO());
+			}
+		} finally {
+			pm.close();
+		}
+		return dtos;
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<SoldArticle> readSoldArticles(PersistenceManager pm, DateRange range) {
+		Query soldArticleQuery = pm.newQuery(SoldArticle.class);
+//		soldArticleQuery.setFilter("sellDate >= startParam");
+//		soldArticleQuery.setFilter("sellDate < endParam");
+//		soldArticleQuery.declareParameters("java.util.Date startParam, java.util.Date endParam");
+		soldArticleQuery.setOrdering("sellDate desc");
+//		List<SoldArticle> soldArticles = (List<SoldArticle>) soldArticleQuery.execute(range.start, range.end);
+		List<SoldArticle> soldArticles = (List<SoldArticle>) soldArticleQuery.execute();
+		return soldArticles;
+	}
+
+	private DateRange calculateMonthRange(Date date) {
+		DateRange range = new DateRange();
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		int year = calendar.get(Calendar.YEAR);
+		int month = calendar.get(Calendar.MONTH);
+		calendar.clear();
+		calendar.set(year, month, 1);
+		range.start = calendar.getTime();
+		calendar.set(year, month + 1, 1);
+		range.end = calendar.getTime();
+		return range;
+	}
+	
+	private class DateRange {
+		public Date start;
+		public Date end;
 	}
 	
 }

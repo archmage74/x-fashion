@@ -12,7 +12,7 @@ import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.images.ImagesService;
-import com.xfashion.shared.img.ArticleTypeImageDTO;
+import com.xfashion.shared.ArticleTypeImageDTO;
 
 @PersistenceCapable
 public class Images {

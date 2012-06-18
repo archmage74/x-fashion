@@ -38,7 +38,7 @@ import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.user.UserService;
 import com.xfashion.client.user.UserServiceAsync;
 import com.xfashion.shared.DeliveryNoticeDTO;
-import com.xfashion.shared.notepad.NotepadDTO;
+import com.xfashion.shared.NotepadDTO;
 
 public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemoveArticleHandler, PrintNotepadStickersHandler, ClearNotepadHandler,
 		OpenNotepadHandler, OpenDeliveryNoticeHandler, RequestOpenNotepadHandler, SaveDeliveryNoticeHandler, SaveNotepadHandler, 

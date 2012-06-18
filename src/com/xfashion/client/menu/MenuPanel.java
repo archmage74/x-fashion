@@ -62,13 +62,13 @@ public class MenuPanel implements LoginHandler {
 
 		menu.addItem(createArticleTypeMenuItem());
 		menu.addItem(createStockMenuItem());
+		menu.addItem(createUserProfileMenuItem());
 
 		if (UserManagement.hasRole(UserRole.DEVELOPER, UserRole.ADMIN)) {
+			menu.addItem(createSellStatisticMenuItem());
 			menu.addItem(createUserManagementMenuItem());
 		}
 		
-		menu.addItem(createUserProfileMenuItem());
-
 		if (UserManagement.hasRole(UserRole.DEVELOPER)) {
 			menu.addItem(createTestMenuItem());
 		}
@@ -131,6 +131,16 @@ public class MenuPanel implements LoginHandler {
 			}
 		};
 		MenuItem articleTypeItem = new MenuItem(menuMessages.stock(), showStock);
+		return articleTypeItem;
+	}
+
+	private MenuItem createSellStatisticMenuItem() {
+		Command showStock = new Command() {
+			public void execute() {
+				mainPanel.showSellStatsticPanel();
+			}
+		};
+		MenuItem articleTypeItem = new MenuItem(menuMessages.sellStatistic(), showStock);
 		return articleTypeItem;
 	}
 

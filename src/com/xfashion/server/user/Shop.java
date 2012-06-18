@@ -10,12 +10,13 @@ import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.xfashion.server.SoldArticle;
 import com.xfashion.server.notepad.ArticleAmount;
 import com.xfashion.server.notepad.Notepad;
+import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.DeliveryNoticeDTO;
+import com.xfashion.shared.NotepadDTO;
 import com.xfashion.shared.ShopDTO;
-import com.xfashion.shared.notepad.ArticleAmountDTO;
-import com.xfashion.shared.notepad.NotepadDTO;
 
 @PersistenceCapable
 public class Shop {
@@ -39,10 +40,14 @@ public class Shop {
 	@Persistent
 	Set<ArticleAmount> articles;
 	
+	@Persistent
+	Set<SoldArticle> soldArticles;
+	
 	public Shop() {
 		notepads = new HashSet<Notepad>();
 		deliveryNotices = new HashSet<DeliveryNotice>();
 		articles = new HashSet<ArticleAmount>();
+		soldArticles = new HashSet<SoldArticle>();
 	}
 	
 	public Shop(ShopDTO dto) {
@@ -86,6 +91,10 @@ public class Shop {
 		return deliveryNotices;
 	}
 	
+	public Set<SoldArticle> getSoldArticles() {
+		return soldArticles;
+	}
+
 	public ShopDTO createDTO() {
 		ShopDTO dto = new ShopDTO();
 		dto.setKeyString(getKeyAsString());

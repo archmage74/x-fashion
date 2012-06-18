@@ -1,7 +1,7 @@
 package com.xfashion.client.notepad.event;
 
 import com.google.web.bindery.event.shared.Event;
-import com.xfashion.shared.notepad.NotepadDTO;
+import com.xfashion.shared.NotepadDTO;
 
 public class IntoStockEvent extends Event<IntoStockHandler> {
 

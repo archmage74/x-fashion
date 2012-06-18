@@ -24,7 +24,8 @@ import com.xfashion.client.user.LoginEvent;
 import com.xfashion.client.user.LoginHandler;
 import com.xfashion.client.user.UserService;
 import com.xfashion.client.user.UserServiceAsync;
-import com.xfashion.shared.notepad.ArticleAmountDTO;
+import com.xfashion.shared.ArticleAmountDTO;
+import com.xfashion.shared.SoldArticleDTO;
 
 public class StockManagement implements IntoStockHandler, SellFromStockHandler, RequestOpenSellPopupHandler, LoginHandler {
 
@@ -80,7 +81,7 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 	@Override
 	public void onSellFromStock(SellFromStockEvent event) {
 		Long cnt = 0L;
-		for (ArticleAmountDTO articleAmount : event.getArticles()) {
+		for (SoldArticleDTO articleAmount : event.getArticles()) {
 			cnt += articleAmount.getAmount();
 		}
 		final Long soldArticleNumber = cnt;
@@ -96,40 +97,6 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 			}
 		};
 		userService.sellArticlesFromStock(event.getArticles(), callback);
-	}
-
-	private void createStockItem(ArticleAmountDTO articleAmount) {
-		AsyncCallback<ArticleAmountDTO> callback = new AsyncCallback<ArticleAmountDTO>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				Xfashion.fireError(caught.getMessage());
-			}
-
-			@Override
-			public void onSuccess(ArticleAmountDTO result) {
-				stock.put(result.getArticleTypeKey(), result);
-				stockProvider.getList().add(result);
-				stockProvider.flush();
-				stockProvider.refresh();
-			}
-		};
-		userService.createStockEntry(articleAmount, callback);
-	}
-
-	private void updateStockItem(ArticleAmountDTO articleAmount) {
-		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				Xfashion.fireError(caught.getMessage());
-			}
-
-			@Override
-			public void onSuccess(Void result) {
-				stockProvider.flush();
-				stockProvider.refresh();
-			}
-		};
-		userService.updateStockEntry(articleAmount, callback);
 	}
 
 	@Override

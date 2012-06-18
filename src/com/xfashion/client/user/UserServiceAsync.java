@@ -1,15 +1,17 @@
 package com.xfashion.client.user;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.DeliveryNoticeDTO;
+import com.xfashion.shared.NotepadDTO;
 import com.xfashion.shared.ResetPasswordDTO;
+import com.xfashion.shared.SoldArticleDTO;
 import com.xfashion.shared.UserDTO;
-import com.xfashion.shared.notepad.ArticleAmountDTO;
-import com.xfashion.shared.notepad.NotepadDTO;
 
 public interface UserServiceAsync {
 
@@ -55,8 +57,10 @@ public interface UserServiceAsync {
 	
 	void updateStockEntry(ArticleAmountDTO articleAmount, AsyncCallback<Void> callback);
 
-	void sellArticlesFromStock(Collection<ArticleAmountDTO> articles, AsyncCallback<Collection<ArticleAmountDTO>> callback);
+	void sellArticlesFromStock(Collection<SoldArticleDTO> articles, AsyncCallback<Collection<ArticleAmountDTO>> callback);
 
 	void deleteStockEntry(ArticleAmountDTO articleAmount, AsyncCallback<Void> callback);
+
+	void readSoldArticles(Date month, AsyncCallback<List<SoldArticleDTO>> callback);
 	
 }

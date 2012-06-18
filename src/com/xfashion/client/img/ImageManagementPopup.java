@@ -29,7 +29,7 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.xfashion.shared.img.ArticleTypeImageDTO;
+import com.xfashion.shared.ArticleTypeImageDTO;
 
 public class ImageManagementPopup implements HasSelectionHandlers<ArticleTypeImageDTO> {
 

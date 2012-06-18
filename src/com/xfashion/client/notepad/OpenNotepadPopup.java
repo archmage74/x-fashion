@@ -12,7 +12,7 @@ import com.xfashion.client.user.UserService;
 import com.xfashion.client.user.UserServiceAsync;
 import com.xfashion.shared.BarcodeHelper;
 import com.xfashion.shared.DeliveryNoticeDTO;
-import com.xfashion.shared.notepad.NotepadDTO;
+import com.xfashion.shared.NotepadDTO;
 
 public class OpenNotepadPopup extends NotepadActionPopup {
 

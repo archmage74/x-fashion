@@ -2,7 +2,7 @@ package com.xfashion.client.notepad;
 
 import java.util.Comparator;
 
-import com.xfashion.shared.notepad.NotepadDTO;
+import com.xfashion.shared.NotepadDTO;
 
 public class NoticeByCreationData implements Comparator<NotepadDTO> {
 

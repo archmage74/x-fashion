@@ -7,7 +7,7 @@ import com.xfashion.client.notepad.event.SaveDeliveryNoticeEvent;
 import com.xfashion.client.notepad.event.SaveNotepadEvent;
 import com.xfashion.client.user.UserManagement;
 import com.xfashion.shared.DeliveryNoticeDTO;
-import com.xfashion.shared.notepad.NotepadDTO;
+import com.xfashion.shared.NotepadDTO;
 
 public class SaveNotepadPopup extends NotepadActionPopup {
 

@@ -20,8 +20,8 @@ import com.xfashion.client.img.ImageManagementPopup;
 import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.shared.ArticleTypeDTO;
+import com.xfashion.shared.ArticleTypeImageDTO;
 import com.xfashion.shared.SizeDTO;
-import com.xfashion.shared.img.ArticleTypeImageDTO;
 
 public class CreateArticleTypePopup {
 	

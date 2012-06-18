@@ -2,8 +2,8 @@ package com.xfashion.client.notepad;
 
 import com.xfashion.client.at.ArticleDataProvider;
 import com.xfashion.client.db.ArticleTypeDatabase;
+import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.ArticleTypeDTO;
-import com.xfashion.shared.notepad.ArticleAmountDTO;
 
 public class ArticleAmountDataProvider extends ArticleDataProvider<ArticleAmountDTO> {
 

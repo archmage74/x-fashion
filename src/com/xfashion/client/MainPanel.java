@@ -12,6 +12,7 @@ import com.xfashion.client.db.ArticleTypeDatabase;
 import com.xfashion.client.db.ArticleTypeService;
 import com.xfashion.client.db.ArticleTypeServiceAsync;
 import com.xfashion.client.notepad.NotepadManagement;
+import com.xfashion.client.sell.SellStatisticManagement;
 import com.xfashion.client.stock.StockManagement;
 import com.xfashion.client.user.UserManagement;
 import com.xfashion.client.user.UserProfile;
@@ -35,7 +36,9 @@ public class MainPanel implements ErrorHandler {
 	
 	private UserProfile userProfile;
 	
-	StockManagement stockManagement;
+	private StockManagement stockManagement;
+	
+	private SellStatisticManagement sellStatisticManagement; 
 
 	private ErrorPopup errorPopup;
 	
@@ -45,6 +48,7 @@ public class MainPanel implements ErrorHandler {
 		panelMediator = new PanelMediator();
 		panelMediator.setArticleTypeDatabase(articleTypeDatabase);
 		stockManagement = new StockManagement(articleTypeDatabase);
+		sellStatisticManagement = new SellStatisticManagement();
 
 		contentPanel = new SimplePanel();
 		RootPanel.get("mainPanelContainer").add(contentPanel);
@@ -85,6 +89,12 @@ public class MainPanel implements ErrorHandler {
 	public void showStockPanel() {
 		contentPanel.clear();
 		Panel panel = stockManagement.getPanel();
+		contentPanel.add(panel);
+	}
+
+	public void showSellStatsticPanel() {
+		contentPanel.clear();
+		Panel panel = sellStatisticManagement.getPanel();
 		contentPanel.add(panel);
 	}
 

@@ -1,4 +1,4 @@
-package com.xfashion.shared.notepad;
+package com.xfashion.shared;
 
 import java.io.Serializable;
 

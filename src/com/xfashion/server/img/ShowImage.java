@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
-import com.xfashion.shared.img.ArticleTypeImageDTO;
+import com.xfashion.shared.ArticleTypeImageDTO;
 
 public class ShowImage extends HttpServlet {
 

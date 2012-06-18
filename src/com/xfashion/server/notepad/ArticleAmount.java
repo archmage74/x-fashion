@@ -7,7 +7,7 @@ import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
-import com.xfashion.shared.notepad.ArticleAmountDTO;
+import com.xfashion.shared.ArticleAmountDTO;
 
 @PersistenceCapable
 public class ArticleAmount {

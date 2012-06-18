@@ -14,10 +14,10 @@ import javax.servlet.http.HttpServletResponse;
 import com.xfashion.client.db.ArticleTypeService;
 import com.xfashion.client.notepad.NotepadService;
 import com.xfashion.server.ArticleTypeServiceImpl;
+import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.BarcodeHelper;
 import com.xfashion.shared.DeliveryNoticeDTO;
-import com.xfashion.shared.notepad.ArticleAmountDTO;
 
 public class DeliveryNotice extends HttpServlet {
 

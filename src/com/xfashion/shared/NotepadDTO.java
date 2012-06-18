@@ -1,4 +1,4 @@
-package com.xfashion.shared.notepad;
+package com.xfashion.shared;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
-import com.xfashion.shared.ArticleTypeDTO;
 
 public class NotepadDTO implements Serializable, IsSerializable {
 	

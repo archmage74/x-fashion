@@ -2,7 +2,6 @@ package com.xfashion.shared;
 
 import java.io.Serializable;
 
-import com.xfashion.shared.notepad.NotepadDTO;
 
 public class DeliveryNoticeDTO extends DTO implements Serializable {
 

@@ -26,8 +26,8 @@ import com.xfashion.client.resources.TextMessages;
 import com.xfashion.client.user.UserService;
 import com.xfashion.client.user.UserServiceAsync;
 import com.xfashion.shared.DeliveryNoticeDTO;
+import com.xfashion.shared.NotepadDTO;
 import com.xfashion.shared.UserDTO;
-import com.xfashion.shared.notepad.NotepadDTO;
 
 public abstract class NotepadActionPopup {
 

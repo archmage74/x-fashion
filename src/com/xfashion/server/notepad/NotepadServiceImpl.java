@@ -3,7 +3,7 @@ package com.xfashion.server.notepad;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.xfashion.client.notepad.NotepadService;
 import com.xfashion.shared.DeliveryNoticeDTO;
-import com.xfashion.shared.notepad.NotepadDTO;
+import com.xfashion.shared.NotepadDTO;
 
 public class NotepadServiceImpl extends RemoteServiceServlet implements NotepadService {
 

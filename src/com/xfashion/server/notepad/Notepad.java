@@ -13,8 +13,8 @@ import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
-import com.xfashion.shared.notepad.ArticleAmountDTO;
-import com.xfashion.shared.notepad.NotepadDTO;
+import com.xfashion.shared.ArticleAmountDTO;
+import com.xfashion.shared.NotepadDTO;
 
 @PersistenceCapable
 public class Notepad {

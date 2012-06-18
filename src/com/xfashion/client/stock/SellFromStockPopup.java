@@ -23,14 +23,16 @@ import com.xfashion.client.notepad.ArticleAmountDataProvider;
 import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.client.stock.event.SellFromStockEvent;
+import com.xfashion.client.user.UserManagement;
+import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.BarcodeHelper;
-import com.xfashion.shared.notepad.ArticleAmountDTO;
+import com.xfashion.shared.SoldArticleDTO;
 
 public class SellFromStockPopup {
 
 	protected List<ArticleTypeDTO> articles;
-	protected Map<Long, ArticleAmountDTO> articleAmounts;
+	protected Map<Long, SoldArticleDTO> articleAmounts;
 	protected ArticleAmountDataProvider stockProvider;
 	protected Map<String, ArticleAmountDTO> stock;
 
@@ -46,7 +48,7 @@ public class SellFromStockPopup {
 		this.stockProvider = stockProvider;
 		this.stock = stock;
 		this.articles = new ArrayList<ArticleTypeDTO>();
-		this.articleAmounts = new HashMap<Long, ArticleAmountDTO>();
+		this.articleAmounts = new HashMap<Long, SoldArticleDTO>();
 		textMessages = GWT.create(TextMessages.class);
 		errorMessages = GWT.create(ErrorMessages.class);
 		formatter = new Formatter();
@@ -124,13 +126,13 @@ public class SellFromStockPopup {
 
 		ArticleTypeDTO articleType = stockProvider.retrieveArticleType(ean);
 
-		ArticleAmountDTO sellArticle = articleAmounts.get(ean);
+		SoldArticleDTO sellArticle = articleAmounts.get(ean);
 		if (sellArticle == null) {
-			sellArticle = new ArticleAmountDTO(articleType.getKey(), 0);
+			sellArticle = new SoldArticleDTO(articleType, UserManagement.user.getShop(), 0);
 		}
 
 		ArticleAmountDTO stockEntry = stock.get(articleType.getKey());
-		if (stockEntry.getAmount() <= sellArticle.getAmount()) {
+		if (stockEntry == null || stockEntry.getAmount() <= sellArticle.getAmount()) {
 			Xfashion.fireError(errorMessages.notEnoughArticlesInStock());
 		} else {
 			sellArticle.increaseAmount();

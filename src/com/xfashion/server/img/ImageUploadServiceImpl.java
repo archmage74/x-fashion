@@ -13,7 +13,7 @@ import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.xfashion.client.img.ImageUploadService;
 import com.xfashion.server.PMF;
-import com.xfashion.shared.img.ArticleTypeImageDTO;
+import com.xfashion.shared.ArticleTypeImageDTO;
 
 public class ImageUploadServiceImpl extends RemoteServiceServlet implements ImageUploadService {
 

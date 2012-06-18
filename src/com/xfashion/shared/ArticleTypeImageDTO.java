@@ -1,6 +1,5 @@
-package com.xfashion.shared.img;
+package com.xfashion.shared;
 
-import com.xfashion.shared.DTO;
 
 public class ArticleTypeImageDTO extends DTO {
 	

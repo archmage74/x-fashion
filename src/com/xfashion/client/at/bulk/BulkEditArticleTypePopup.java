@@ -48,12 +48,12 @@ import com.xfashion.client.size.ChooseSizeEvent;
 import com.xfashion.client.size.ChooseSizeHandler;
 import com.xfashion.client.size.ShowChooseSizePopupEvent;
 import com.xfashion.shared.ArticleTypeDTO;
+import com.xfashion.shared.ArticleTypeImageDTO;
 import com.xfashion.shared.BrandDTO;
 import com.xfashion.shared.CategoryDTO;
 import com.xfashion.shared.ColorDTO;
 import com.xfashion.shared.SizeDTO;
 import com.xfashion.shared.StyleDTO;
-import com.xfashion.shared.img.ArticleTypeImageDTO;
 
 public class BulkEditArticleTypePopup implements CloseHandler<PopupPanel>, ChooseBrandHandler, ChooseSizeHandler, ChooseColorHandler,
 		ChooseCategoryAndStyleHandler {

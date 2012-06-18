@@ -2,7 +2,7 @@ package com.xfashion.client.notepad;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.xfashion.shared.DeliveryNoticeDTO;
-import com.xfashion.shared.notepad.NotepadDTO;
+import com.xfashion.shared.NotepadDTO;
 
 public interface NotepadServiceAsync {
 

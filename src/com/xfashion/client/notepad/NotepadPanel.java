@@ -27,7 +27,7 @@ import com.xfashion.client.notepad.event.RequestSaveNotepadEvent;
 import com.xfashion.client.resources.ImageResources;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.client.tool.Buttons;
-import com.xfashion.shared.notepad.ArticleAmountDTO;
+import com.xfashion.shared.ArticleAmountDTO;
 
 public class NotepadPanel implements IsMinimizable {
 

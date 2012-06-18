@@ -18,7 +18,7 @@ import com.xfashion.client.resources.ImageResources;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.client.stock.event.RequestOpenSellPopupEvent;
 import com.xfashion.client.tool.Buttons;
-import com.xfashion.shared.notepad.ArticleAmountDTO;
+import com.xfashion.shared.ArticleAmountDTO;
 
 public class StockPanel {
 

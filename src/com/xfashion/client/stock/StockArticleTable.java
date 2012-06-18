@@ -5,7 +5,7 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.xfashion.client.at.ArticleTable;
 import com.xfashion.client.at.ProvidesArticleFilter;
-import com.xfashion.shared.notepad.ArticleAmountDTO;
+import com.xfashion.shared.ArticleAmountDTO;
 
 public class StockArticleTable extends ArticleTable<ArticleAmountDTO> {
 
