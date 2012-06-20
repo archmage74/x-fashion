@@ -25,7 +25,9 @@ import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.client.user.UserService;
 import com.xfashion.client.user.UserServiceAsync;
+import com.xfashion.shared.BarcodeHelper;
 import com.xfashion.shared.DeliveryNoticeDTO;
+import com.xfashion.shared.EanFormatException;
 import com.xfashion.shared.NotepadDTO;
 import com.xfashion.shared.UserDTO;
 
@@ -50,6 +52,7 @@ public abstract class NotepadActionPopup {
 
 	protected TextMessages textMessages;
 	protected ErrorMessages errorMessages;
+	protected BarcodeHelper barcodeHelper;
 
 	protected abstract void performAction();
 
@@ -60,6 +63,7 @@ public abstract class NotepadActionPopup {
 		currentType = TYPE_NOTEPAD;
 		textMessages = GWT.create(TextMessages.class);
 		errorMessages = GWT.create(ErrorMessages.class);
+		barcodeHelper = new BarcodeHelper();
 	}
 
 	public void show(NotepadDTO notepad) {
@@ -186,7 +190,12 @@ public abstract class NotepadActionPopup {
 		List<DeliveryNoticeDTO> sorted = new ArrayList<DeliveryNoticeDTO>(deliveryNotices);
 		Collections.sort(sorted, new DeliveryNoticeById());
 		for (DeliveryNoticeDTO deliveryNotice : sorted) {
-			Long deliveryNoticeId = deliveryNotice.getId();
+			String deliveryNoticeId = "";
+			try {
+				deliveryNoticeId = barcodeHelper.generateDeliveryNoticeEan(deliveryNotice.getId());
+			} catch (EanFormatException e) {
+				deliveryNoticeId = "???";
+			}
 			String shopName = deliveryNotice.getTargetShop().getName();
 			Date creationDate = deliveryNotice.getNotepad().getCreationDate();
 			notepadListBox.addItem(textMessages.deliveryNoticeListBoxLine(deliveryNoticeId, shopName, creationDate));

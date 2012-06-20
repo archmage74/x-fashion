@@ -55,11 +55,15 @@ public interface TextMessages extends Messages {
 	String orderNotepad();
 	String notepadTypeNotepad();
 	String notepadTypeDeliveryNotice();
+	String notepadInfo1(String notepadName);
+	String notepadInfo2(Date creationDate);
+	String deliveryNoticeInfo1(String deliveryNoticeEan); 
+	String deliveryNoticeInfo2(String shopName, Date creationDate);
 	
 	String createArticle();
 	String clearNameSuggestFilter();
 
-	String deliveryNoticeListBoxLine(Long deliveryNoticeId, String shopName, Date creationDate);
+	String deliveryNoticeListBoxLine(String deliveryNoticeEan, String shopName, Date creationDate);
 	String notepadListBoxLine(String notepadName, Date creationDate);
 	String clearNotepadHint();
 	String openNotepadHint();

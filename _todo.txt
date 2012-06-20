@@ -44,8 +44,9 @@ DONE - update delivery note with shop and central data
 DONE - article-stock per user
 DONE - scanning of article and add immediately to notepad
 DONE - sell article (remove article from article-stock))
-
-sell-statistics (list of all single sells)
+DONE - sell-statistics (list of all single sells)
+DONE - show notepad and delivery-notice info in notepad-header
+DONE - show full EAN for delivery-notices (including checksum-digit)
 
 filter for stock
 

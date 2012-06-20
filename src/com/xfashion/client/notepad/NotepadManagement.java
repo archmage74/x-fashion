@@ -9,6 +9,7 @@ import com.xfashion.client.Xfashion;
 import com.xfashion.client.db.ArticleTypeDatabase;
 import com.xfashion.client.notepad.event.ClearNotepadEvent;
 import com.xfashion.client.notepad.event.ClearNotepadHandler;
+import com.xfashion.client.notepad.event.DeliveryNoticeUpdatedEvent;
 import com.xfashion.client.notepad.event.IntoStockEvent;
 import com.xfashion.client.notepad.event.NotepadAddArticleEvent;
 import com.xfashion.client.notepad.event.NotepadAddArticleHandler;
@@ -169,6 +170,7 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 		currentDeliveryNotice = event.getDeliveryNotice();
 		currentNotepad = currentDeliveryNotice.getNotepad();
 		refreshProvider();
+		Xfashion.eventBus.fireEvent(new DeliveryNoticeUpdatedEvent(event.getDeliveryNotice()));
 	}
 
 	@Override
@@ -265,6 +267,7 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 			}
 			@Override
 			public void onSuccess(DeliveryNoticeDTO result) {
+				Xfashion.eventBus.fireEvent(new DeliveryNoticeUpdatedEvent(result));
 				currentNotepad = result.getNotepad();
 				refreshProvider();
 			}
