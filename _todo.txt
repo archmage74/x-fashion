@@ -48,9 +48,31 @@ DONE - sell-statistics (list of all single sells)
 DONE - show notepad and delivery-notice info in notepad-header
 DONE - show full EAN for delivery-notices (including checksum-digit)
 
+add username in set-password mail and in form
+
 filter for stock
 
-NEW - sell-price per country
+show articles amount in stock for stock filters
+
+show notepad in stock-view
+
+show +1/+10 in article-panel in stock view
+
+user management: shop -> shop-kuerzel, add shop-name, add seperate fields for strasse, hnr, plz, ort
+
+show own sell statistik for shop including time
+
+show all or shop specific sell statistic for admin
+
+show matrix in sell window
+
+show price-sum in sell window
+
+flyer-price administration and barcode print
+
+price reduction management (see mail from roman)
+
+NEW - seperate sell-prices for DE and AT
 
 NEW - 1-pixel difference problem between filter-icons and filter-border 
 
