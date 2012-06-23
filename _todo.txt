@@ -47,8 +47,9 @@ DONE - sell article (remove article from article-stock))
 DONE - sell-statistics (list of all single sells)
 DONE - show notepad and delivery-notice info in notepad-header
 DONE - show full EAN for delivery-notices (including checksum-digit)
+DONE - user management: shop -> shop-kuerzel, add shop-name, add seperate fields for strasse, hnr, plz, ort
 
-add username in set-password mail and in form
+TEST - add username in set-password mail and in form
 
 filter for stock
 
@@ -57,8 +58,6 @@ show articles amount in stock for stock filters
 show notepad in stock-view
 
 show +1/+10 in article-panel in stock view
-
-user management: shop -> shop-kuerzel, add shop-name, add seperate fields for strasse, hnr, plz, ort
 
 show own sell statistik for shop including time
 

@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
-import java.util.StringTokenizer;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
@@ -18,6 +17,7 @@ import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.BarcodeHelper;
 import com.xfashion.shared.DeliveryNoticeDTO;
+import com.xfashion.shared.ShopDTO;
 
 public class DeliveryNotice extends HttpServlet {
 
@@ -82,10 +82,10 @@ public class DeliveryNotice extends HttpServlet {
 		sb.append("</tr>\n");
 		sb.append("<tr>\n");
 		sb.append("<td class=\"addressTo\">An:<br />\n");
-		sb.append(renderAsAddress(dn.getTargetShop().getDescription()));
+		sb.append(renderAsAddress(dn.getTargetShop()));
 		sb.append("</td>");
 		sb.append("<td class=\"addressFrom\">");
-		sb.append(renderAsAddress(dn.getSourceShop().getDescription()));
+		sb.append(renderAsAddress(dn.getSourceShop()));
 		sb.append("</td>\n");
 		sb.append("</tr>\n");
 		sb.append("\n");
@@ -99,11 +99,29 @@ public class DeliveryNotice extends HttpServlet {
 		return sb.toString();
 	}
 	
-	private StringBuffer renderAsAddress(String shopDescription) {
+	private StringBuffer renderAsAddress(ShopDTO shop) {
 		StringBuffer sb = new StringBuffer();
-		StringTokenizer t = new StringTokenizer(shopDescription, "\n");
-		while (t.hasMoreElements()) {
-			sb.append(t.nextToken()).append("<br />\n");
+
+		addAddressLine(sb, shop.getName(), null);
+		addAddressLine(sb, shop.getStreet(), shop.getHousenumber());
+		addAddressLine(sb, shop.getPostalcode(), shop.getCity());
+		
+		return sb;
+	}
+	
+	private StringBuffer addAddressLine(StringBuffer sb, String s1, String s2) {
+		boolean line = false;
+		if (s1 != null && s1.length() != 0) {
+			sb.append(s1);
+			sb.append(" ");
+			line = true;
+		}
+		if (s2 != null && s2.length() != 0) {
+			sb.append(s2);
+			line = true;
+		}
+		if (line) {
+			sb.append("<br />\n");
 		}
 		return sb;
 	}

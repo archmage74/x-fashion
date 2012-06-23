@@ -265,7 +265,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		String all = request.getRequestURL().toString();
 		String base = all.substring(0, all.indexOf(request.getServletPath()));
 
-		String msgBody = base + "/resetpassword/" + rp.getKey();
+		String msgBody = createResetPasswordMessage(user, rp, base); 
 		log.info("created reset link=" + msgBody);
 
 		try {
@@ -282,6 +282,18 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	private String createResetPasswordMessage(UserDTO user, ResetPasswordDTO rp, String base) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("User: ");
+		sb.append(user.getUsername());
+		sb.append("\n");
+		sb.append(base);
+		sb.append("/resetpassword/");
+		sb.append(rp.getKey());
+		String msgBody = sb.toString();
+		return msgBody;
 	}
 
 	// *******************
@@ -655,12 +667,12 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 	@SuppressWarnings("unchecked")
 	private List<SoldArticle> readSoldArticles(PersistenceManager pm, DateRange range) {
 		Query soldArticleQuery = pm.newQuery(SoldArticle.class);
-//		soldArticleQuery.setFilter("sellDate >= startParam");
-//		soldArticleQuery.setFilter("sellDate < endParam");
-//		soldArticleQuery.declareParameters("java.util.Date startParam, java.util.Date endParam");
+		soldArticleQuery.setFilter("sellDate >= startParam");
+		soldArticleQuery.setFilter("sellDate < endParam");
+		soldArticleQuery.declareParameters("java.util.Date startParam, java.util.Date endParam");
 		soldArticleQuery.setOrdering("sellDate desc");
-//		List<SoldArticle> soldArticles = (List<SoldArticle>) soldArticleQuery.execute(range.start, range.end);
-		List<SoldArticle> soldArticles = (List<SoldArticle>) soldArticleQuery.execute();
+		List<SoldArticle> soldArticles = (List<SoldArticle>) soldArticleQuery.execute(range.start, range.end);
+//		List<SoldArticle> soldArticles = (List<SoldArticle>) soldArticleQuery.execute();
 		return soldArticles;
 	}
 

@@ -25,11 +25,26 @@ public class Shop {
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Key key;
 
+	@Persistent 
+	private String shortName;
+	
 	@Persistent
 	private String name;
 
 	@Persistent
-	private String description;
+	private String street;
+	
+	@Persistent
+	private String housenumber;
+	
+	@Persistent
+	private String postalcode;
+	
+	@Persistent
+	private String city;
+	
+//	@Persistent
+//	private String description;
 	
 	@Persistent
 	Set<Notepad> notepads;
@@ -63,6 +78,18 @@ public class Shop {
 		return KeyFactory.keyToString(key);
 	}
 
+	public String getShortName() {
+		if (shortName == null) {
+			return name;
+		} else {
+			return shortName;
+		}
+	}
+
+	public void setShortName(String shortName) {
+		this.shortName = shortName;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -71,12 +98,36 @@ public class Shop {
 		this.name = name;
 	}
 
-	public String getDescription() {
-		return description;
+	public String getStreet() {
+		return street;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
+	public void setStreet(String street) {
+		this.street = street;
+	}
+
+	public String getHousenumber() {
+		return housenumber;
+	}
+
+	public void setHousenumber(String housenumber) {
+		this.housenumber = housenumber;
+	}
+
+	public String getPostalcode() {
+		return postalcode;
+	}
+
+	public void setPostalcode(String postalcode) {
+		this.postalcode = postalcode;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
 	}
 
 	public Set<Notepad> getNotepads() {
@@ -98,8 +149,12 @@ public class Shop {
 	public ShopDTO createDTO() {
 		ShopDTO dto = new ShopDTO();
 		dto.setKeyString(getKeyAsString());
+		dto.setShortName(getShortName());
 		dto.setName(getName());
-		dto.setDescription(getDescription());
+		dto.setStreet(getStreet());
+		dto.setHousenumber(getHousenumber());
+		dto.setPostalcode(getPostalcode());
+		dto.setCity(getCity());
 		return dto;
 	}
 
@@ -120,8 +175,12 @@ public class Shop {
 	}
 
 	public void updateFromDTO(ShopDTO dto) {
+		setShortName(dto.getShortName());
 		setName(dto.getName());
-		setDescription(dto.getDescription());
+		setStreet(dto.getStreet());
+		setHousenumber(dto.getHousenumber());
+		setPostalcode(dto.getPostalcode());
+		setCity(dto.getCity());
 	}
 
 	public Set<ArticleAmountDTO> createStock() {

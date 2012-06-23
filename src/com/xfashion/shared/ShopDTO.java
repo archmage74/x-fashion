@@ -10,9 +10,17 @@ public class ShopDTO implements IsSerializable, Serializable {
 
 	private String keyString;
 
+	private String shortName;
+	
 	private String name;
-
-	private String description;
+	
+	private String street;
+	
+	private String housenumber;
+	
+	private String postalcode;
+	
+	private String city;
 
 	public String getKeyString() {
 		return keyString;
@@ -20,6 +28,14 @@ public class ShopDTO implements IsSerializable, Serializable {
 
 	public void setKeyString(String keyString) {
 		this.keyString = keyString;
+	}
+	
+	public String getShortName() {
+		return shortName;
+	}
+	
+	public void setShortName(String shortName) {
+		this.shortName = shortName;
 	}
 
 	public String getName() {
@@ -30,13 +46,36 @@ public class ShopDTO implements IsSerializable, Serializable {
 		this.name = name;
 	}
 
-	public String getDescription() {
-		return description;
+	public String getStreet() {
+		return street;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
+	public void setStreet(String street) {
+		this.street = street;
 	}
-	
-	
+
+	public String getHousenumber() {
+		return housenumber;
+	}
+
+	public void setHousenumber(String housenumber) {
+		this.housenumber = housenumber;
+	}
+
+	public String getPostalcode() {
+		return postalcode;
+	}
+
+	public void setPostalcode(String postalcode) {
+		this.postalcode = postalcode;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
 }

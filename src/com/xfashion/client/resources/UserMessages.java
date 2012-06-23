@@ -14,12 +14,18 @@ public interface UserMessages extends Messages {
 	@DefaultMessage("Passwort")
 	String password();
 	
-	@DefaultMessage("Shop-Name")
-	String shopname();
+	@DefaultMessage("Shop-Kürzel")
+	String shortName();
 
-	@DefaultMessage("Beschreibung")
-	String description();
-	
+	@DefaultMessage("Shop-Name")
+	String shopName();
+
+	@DefaultMessage("Strasse/HNr.")
+	String streetAndHousenumber();
+
+	@DefaultMessage("PLZ/Ort")
+	String postalcodeAndCity();
+
 	@DefaultMessage("E-Mail")
 	String email();
 	
