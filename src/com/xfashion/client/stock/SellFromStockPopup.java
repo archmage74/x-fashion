@@ -12,6 +12,7 @@ import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
@@ -37,7 +38,8 @@ public class SellFromStockPopup {
 	protected Map<String, ArticleAmountDTO> stock;
 
 	protected DialogBox dialogBox;
-	protected VerticalPanel articlePanel;
+	protected Grid articleGrid;
+	protected Label priceSumLabel;
 	protected TextBox eanTextBox;
 
 	protected TextMessages textMessages;
@@ -73,8 +75,7 @@ public class SellFromStockPopup {
 		dialogBox = new DialogBox();
 
 		VerticalPanel vp = new VerticalPanel();
-		articlePanel = new VerticalPanel();
-		vp.add(articlePanel);
+		vp.add(createArticleGrid());
 		vp.add(createEanTextBox());
 
 		HorizontalPanel nav = new HorizontalPanel();
@@ -98,7 +99,7 @@ public class SellFromStockPopup {
 		return okButton;
 	}
 
-	private Widget createCancelButton() {
+	protected Widget createCancelButton() {
 		Button cancelButton = new Button(textMessages.cancel());
 		cancelButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -109,6 +110,17 @@ public class SellFromStockPopup {
 		return cancelButton;
 	}
 
+	protected Grid createArticleGrid() {
+		articleGrid = new Grid(1,2);
+		articleGrid.setWidget(0, 1, createPriceSumLabel());
+		return articleGrid;
+	}
+	
+	protected Widget createPriceSumLabel() {
+		priceSumLabel = new Label();
+		return priceSumLabel;
+	}
+	
 	protected Widget createEanTextBox() {
 		eanTextBox = new TextBox();
 		eanTextBox.setWidth("120px");
@@ -137,17 +149,27 @@ public class SellFromStockPopup {
 		} else {
 			sellArticle.increaseAmount();
 			articleAmounts.put(articleType.getProductNumber(), sellArticle);
-			articlePanel.add(createArticleDisplay(articleType));
+			articles.add(articleType);
+			addArticleDisplay(articleType);
+			refreshPriceSum();
 		}
 	}
+	
+	protected void refreshPriceSum() {
+		Integer sum = 0;
+		for (ArticleTypeDTO article : articles) {
+			sum += article.getSellPrice();
+		}
+		priceSumLabel.setText(formatter.formatCentsToCurrency(sum));
+	}
 
-	private Widget createArticleDisplay(ArticleTypeDTO articleType) {
-		StringBuffer sb = new StringBuffer();
-		sb.append(articleType.getName());
-		sb.append(" - ");
-		sb.append(formatter.formatCentsToCurrency(articleType.getSellPrice()));
-		Label l = new Label(sb.toString());
-		return l;
+	protected void addArticleDisplay(ArticleTypeDTO articleType) {
+		Label articleNameLabel = new Label(articleType.getName());
+		Label articlePriceLabel = new Label(formatter.formatCentsToCurrency(articleType.getSellPrice()));
+		articleGrid.resizeRows(articles.size() + 1);
+		articleGrid.setWidget(articles.size() - 1, 0, articleNameLabel);
+		articleGrid.setWidget(articles.size() - 1, 1, articlePriceLabel);
+		articleGrid.setWidget(articles.size(), 1, priceSumLabel);
 	}
 
 	private void checkForEAN() {
@@ -173,9 +195,12 @@ public class SellFromStockPopup {
 	}
 
 	protected void reset() {
-		articlePanel.clear();
 		articles.clear();
 		articleAmounts.clear();
+		priceSumLabel.setText("");
+		articleGrid.clear();
+		articleGrid.resizeRows(1);
+		articleGrid.setWidget(0, 1, priceSumLabel);
 		resetEanTextBox();
 	}
 

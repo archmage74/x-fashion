@@ -51,6 +51,14 @@ DONE - user management: shop -> shop-kuerzel, add shop-name, add seperate fields
 
 TEST - add username in set-password mail and in form
 
+show price-sum in sell window
+
+show own sell statistik for shop including time
+
+show sold articles seperatly in statistic
+
+show matrix in sell statsitic
+
 filter for stock
 
 show articles amount in stock for stock filters
@@ -59,13 +67,7 @@ show notepad in stock-view
 
 show +1/+10 in article-panel in stock view
 
-show own sell statistik for shop including time
-
 show all or shop specific sell statistic for admin
-
-show matrix in sell window
-
-show price-sum in sell window
 
 flyer-price administration and barcode print
 
