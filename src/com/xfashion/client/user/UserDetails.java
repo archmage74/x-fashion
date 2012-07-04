@@ -95,10 +95,9 @@ public class UserDetails {
 		if (userManagement == null) {
 			Xfashion.fireError(errorMessages.createUserNoUserManagement());
 		}
-		UserDTO newUser = new UserDTO();
 		usernameTextBox.setEnabled(true);
 		sendPasswordButton.setEnabled(false);
-		updateDetails(newUser);
+		updateDetails(currentUser);
 	}
 
 	public void updateDetails(UserDTO user) {

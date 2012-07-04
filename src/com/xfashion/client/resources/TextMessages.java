@@ -79,5 +79,7 @@ public interface TextMessages extends Messages {
 	String sellStockResult(Long soldArticleNumber);
 	String sellArticles();
 	String sellStatisticHeader();
+	String allShops();
 	String sellStatisticListBoxLine(Integer amount, String articleName, Date sellDate, String sellPrice);
+	String addMoreSoldArticles();
 }

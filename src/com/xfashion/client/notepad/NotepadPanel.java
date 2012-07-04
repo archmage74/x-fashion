@@ -296,7 +296,7 @@ public class NotepadPanel implements IsMinimizable, OpenNotepadHandler, SaveNote
 
 	private void setDeliveryNoticeInfo(DeliveryNoticeDTO dn) {
 		String deliveryNoticeEan = barcodeHelper.generateDeliveryNoticeEan(dn.getId());
-		String shopName = dn.getTargetShop().getName();
+		String shopName = dn.getTargetShop().getShortName();
 		Date creationDate = dn.getNotepad().getCreationDate();
 		setHeaderInfo(textMessages.notepadTypeDeliveryNotice(), textMessages.deliveryNoticeInfo1(deliveryNoticeEan),
 				textMessages.deliveryNoticeInfo2(shopName, creationDate));

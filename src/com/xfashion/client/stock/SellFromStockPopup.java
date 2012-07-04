@@ -32,8 +32,8 @@ import com.xfashion.shared.SoldArticleDTO;
 
 public class SellFromStockPopup {
 
-	protected List<ArticleTypeDTO> articles;
-	protected Map<Long, SoldArticleDTO> articleAmounts;
+	protected List<SoldArticleDTO> sellArticles;
+	protected Map<Long, ArticleAmountDTO> articleAmounts;
 	protected ArticleAmountDataProvider stockProvider;
 	protected Map<String, ArticleAmountDTO> stock;
 
@@ -49,8 +49,8 @@ public class SellFromStockPopup {
 	public SellFromStockPopup(ArticleAmountDataProvider stockProvider, Map<String, ArticleAmountDTO> stock) {
 		this.stockProvider = stockProvider;
 		this.stock = stock;
-		this.articles = new ArrayList<ArticleTypeDTO>();
-		this.articleAmounts = new HashMap<Long, SoldArticleDTO>();
+		this.sellArticles = new ArrayList<SoldArticleDTO>();
+		this.articleAmounts = new HashMap<Long, ArticleAmountDTO>();
 		textMessages = GWT.create(TextMessages.class);
 		errorMessages = GWT.create(ErrorMessages.class);
 		formatter = new Formatter();
@@ -137,39 +137,40 @@ public class SellFromStockPopup {
 		Long ean = Long.parseLong(eanString);
 
 		ArticleTypeDTO articleType = stockProvider.retrieveArticleType(ean);
+		SoldArticleDTO sellArticle = new SoldArticleDTO(articleType, UserManagement.user.getShop(), 1);
 
-		SoldArticleDTO sellArticle = articleAmounts.get(ean);
-		if (sellArticle == null) {
-			sellArticle = new SoldArticleDTO(articleType, UserManagement.user.getShop(), 0);
+		ArticleAmountDTO sellArticleAmount = articleAmounts.get(ean);
+		if (sellArticleAmount == null) {
+			sellArticleAmount = new ArticleAmountDTO(articleType.getKey(), 0); 
+			articleAmounts.put(articleType.getProductNumber(), sellArticleAmount);
 		}
 
 		ArticleAmountDTO stockEntry = stock.get(articleType.getKey());
 		if (stockEntry == null || stockEntry.getAmount() <= sellArticle.getAmount()) {
 			Xfashion.fireError(errorMessages.notEnoughArticlesInStock());
 		} else {
-			sellArticle.increaseAmount();
-			articleAmounts.put(articleType.getProductNumber(), sellArticle);
-			articles.add(articleType);
-			addArticleDisplay(articleType);
+			sellArticleAmount.increaseAmount();
+			sellArticles.add(sellArticle);
+			addArticleToGrid(articleType);
 			refreshPriceSum();
 		}
 	}
 	
 	protected void refreshPriceSum() {
 		Integer sum = 0;
-		for (ArticleTypeDTO article : articles) {
-			sum += article.getSellPrice();
+		for (SoldArticleDTO sellArticle : sellArticles) {
+			sum += sellArticle.getSellPrice();
 		}
 		priceSumLabel.setText(formatter.formatCentsToCurrency(sum));
 	}
 
-	protected void addArticleDisplay(ArticleTypeDTO articleType) {
+	protected void addArticleToGrid(ArticleTypeDTO articleType) {
 		Label articleNameLabel = new Label(articleType.getName());
 		Label articlePriceLabel = new Label(formatter.formatCentsToCurrency(articleType.getSellPrice()));
-		articleGrid.resizeRows(articles.size() + 1);
-		articleGrid.setWidget(articles.size() - 1, 0, articleNameLabel);
-		articleGrid.setWidget(articles.size() - 1, 1, articlePriceLabel);
-		articleGrid.setWidget(articles.size(), 1, priceSumLabel);
+		articleGrid.resizeRows(sellArticles.size() + 1);
+		articleGrid.setWidget(sellArticles.size() - 1, 0, articleNameLabel);
+		articleGrid.setWidget(sellArticles.size() - 1, 1, articlePriceLabel);
+		articleGrid.setWidget(sellArticles.size(), 1, priceSumLabel);
 	}
 
 	private void checkForEAN() {
@@ -190,12 +191,12 @@ public class SellFromStockPopup {
 	}
 
 	protected void sell() {
-		Xfashion.eventBus.fireEvent(new SellFromStockEvent(articleAmounts.values()));
+		Xfashion.eventBus.fireEvent(new SellFromStockEvent(sellArticles));
 		hide();
 	}
 
 	protected void reset() {
-		articles.clear();
+		sellArticles.clear();
 		articleAmounts.clear();
 		priceSumLabel.setText("");
 		articleGrid.clear();

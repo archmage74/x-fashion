@@ -48,16 +48,19 @@ DONE - sell-statistics (list of all single sells)
 DONE - show notepad and delivery-notice info in notepad-header
 DONE - show full EAN for delivery-notices (including checksum-digit)
 DONE - user management: shop -> shop-kuerzel, add shop-name, add seperate fields for strasse, hnr, plz, ort
+DONE - show price-sum in sell window
+DONE - show sold articles seperatly in statistic
+DONE - show date + time in sell statisitc
 
 TEST - add username in set-password mail and in form
 
-show price-sum in sell window
+show all or shop specific sell statistic for admin
 
-show own sell statistik for shop including time
+show own sell statistik for shop
 
-show sold articles seperatly in statistic
+show matrix in sell statistic
 
-show matrix in sell statsitic
+
 
 filter for stock
 
@@ -66,8 +69,6 @@ show articles amount in stock for stock filters
 show notepad in stock-view
 
 show +1/+10 in article-panel in stock view
-
-show all or shop specific sell statistic for admin
 
 flyer-price administration and barcode print
 

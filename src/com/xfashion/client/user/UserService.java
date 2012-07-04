@@ -1,7 +1,6 @@
 package com.xfashion.client.user;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -21,6 +20,8 @@ import com.xfashion.shared.UserDTO;
 public interface UserService extends RemoteService {
 	
 	public static final String SESSION_USER = "currentUser";
+	
+	public static final String ROOT_USERNAME = "root";
 	
 	UserDTO createUser(UserDTO user);
 	
@@ -71,5 +72,9 @@ public interface UserService extends RemoteService {
 
 	void deleteStockEntry(ArticleAmountDTO articleAmount) throws IllegalArgumentException;
 	
-	List<SoldArticleDTO> readSoldArticles(Date month) throws IllegalArgumentException;
+	List<SoldArticleDTO> readSoldArticles(long from, long to) throws IllegalArgumentException;
+	
+	List<SoldArticleDTO> readSoldArticlesOfShop(String shopKey, long from, long to) throws IllegalArgumentException;
+
+	List<SoldArticleDTO> readOwnSoldArticles(long from, long to) throws IllegalArgumentException;
 }

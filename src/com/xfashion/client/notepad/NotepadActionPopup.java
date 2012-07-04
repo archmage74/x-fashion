@@ -196,7 +196,7 @@ public abstract class NotepadActionPopup {
 			} catch (EanFormatException e) {
 				deliveryNoticeId = "???";
 			}
-			String shopName = deliveryNotice.getTargetShop().getName();
+			String shopName = deliveryNotice.getTargetShop().getShortName();
 			Date creationDate = deliveryNotice.getNotepad().getCreationDate();
 			notepadListBox.addItem(textMessages.deliveryNoticeListBoxLine(deliveryNoticeId, shopName, creationDate));
 			savedDeliveryNotices.add(deliveryNotice);
@@ -205,9 +205,12 @@ public abstract class NotepadActionPopup {
 
 	private void updateUsers(Collection<UserDTO> users) {
 		userListBox.clear();
+		knownUsers.clear();
 		for (UserDTO user : users) {
-			userListBox.addItem(user.getShop().getName());
-			knownUsers.add(user);
+			if (!UserService.ROOT_USERNAME.equals(user.getUsername())) {
+				userListBox.addItem(user.getShop().getShortName());
+				knownUsers.add(user);
+			}
 		}
 	}
 
@@ -250,7 +253,6 @@ public abstract class NotepadActionPopup {
 			public void onSuccess(List<UserDTO> result) {
 				updateUsers(result);
 			}
-
 			@Override
 			public void onFailure(Throwable caught) {
 				Xfashion.fireError(caught.getMessage());

@@ -58,7 +58,6 @@ public class StockPanel {
 		headerPanel = createHeaderPanel();
 		panel.add(headerPanel);
 		
-		
 		ArticleTable<ArticleAmountDTO> att = new StockArticleTable(provider);
 		Panel atp = att.create(articleAmountProvider);
 		panel.add(atp);

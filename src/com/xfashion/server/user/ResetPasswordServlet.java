@@ -36,10 +36,12 @@ public class ResetPasswordServlet extends HttpServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
 		ServletOutputStream out = res.getOutputStream();
 		String id = req.getPathInfo().substring(1);
-		renderResetForm(out, id, null);
+		UserService userService = new UserServiceImpl();
+		ResetPasswordDTO resetDTO = userService.readResetPassword(id);
+		renderResetForm(out, resetDTO, null);
 	}
 	
-	private void renderResetForm(ServletOutputStream out, String id, String error) throws IOException {
+	private void renderResetForm(ServletOutputStream out, ResetPasswordDTO resetDTO, String error) throws IOException {
 		out.println("<html>");
 		out.println("<body>");
 
@@ -48,11 +50,11 @@ public class ResetPasswordServlet extends HttpServlet {
 		out.println("</h2>");
 		
 		out.println("<form action=\"/resetpassword\" method=\"POST\">");
-		out.println("<input type=\"hidden\" name=\"" + PARAM_ID + "\" value=\"" + id + "\" />");
+		out.println("<input type=\"hidden\" name=\"" + PARAM_ID + "\" value=\"" + resetDTO.getKey() + "\" />");
 		out.println("<table>");
-		out.println(generateFormField("User", PARAM_USERNAME, false));
-		out.println(generateFormField("Password 1", PARAM_PASSWORD_1, true));
-		out.println(generateFormField("Password 2", PARAM_PASSWORD_2, true));
+		out.println(generateFormField("User", PARAM_USERNAME, resetDTO.getUsername(), false));
+		out.println(generateFormField("Password 1", PARAM_PASSWORD_1, null, true));
+		out.println(generateFormField("Password 2", PARAM_PASSWORD_2, null, true));
 		out.println("</table>");
 		if (error != null) {
 			out.println("<p style=\"text-color: red;\">" + error + "</p>");
@@ -64,7 +66,7 @@ public class ResetPasswordServlet extends HttpServlet {
 		out.println("</html>");
 	}
 	
-	private String generateFormField(String label, String name, boolean password) {
+	private String generateFormField(String label, String name, String value, boolean password) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<tr><td>");
 		sb.append(label);
@@ -77,6 +79,9 @@ public class ResetPasswordServlet extends HttpServlet {
 			sb.append("text");
 		}
 		sb.append("\" name=\"").append(name).append("\"");
+		if (value != null) {
+			sb.append(" value=\"").append(value).append("\"");
+		}
 		sb.append(" />");
 		sb.append("</td></tr>");
 		return sb.toString();
@@ -87,6 +92,10 @@ public class ResetPasswordServlet extends HttpServlet {
 		ServletOutputStream out = res.getOutputStream();
 		
 		String id = req.getParameter(PARAM_ID);
+
+		UserService userService = new UserServiceImpl();
+		ResetPasswordDTO resetDTO = userService.readResetPassword(id);
+		
 		String username = req.getParameter(PARAM_USERNAME);
 		String password1 = req.getParameter(PARAM_PASSWORD_1);
 		String password2 = req.getParameter(PARAM_PASSWORD_2);
@@ -96,44 +105,41 @@ public class ResetPasswordServlet extends HttpServlet {
 			return;
 		}
 		if (username == null || username.length() == 0) {
-			renderResetForm(out, id, ERROR_NO_USERNAME);
+			renderResetForm(out, resetDTO, ERROR_NO_USERNAME);
 			return;
 		}
 		if (password1 == null || password1.length() == 0) {
-			renderResetForm(out, id, ERROR_NO_PASSWORD);
+			renderResetForm(out, resetDTO, ERROR_NO_PASSWORD);
 			return;
 		}
 		if (!password1.equals(password2)) {
-			renderResetForm(out, id, ERROR_PASSWORD_MISMATCH);
+			renderResetForm(out, resetDTO, ERROR_PASSWORD_MISMATCH);
 			return;
 		}
 		
-		UserService userService = new UserServiceImpl();
 		UserDTO user;
-		ResetPasswordDTO reset;
 		try {
-			reset = userService.readResetPassword(id);
 			long oneDay = 24 * 60 * 60 * 1000;
 			long now = new Date().getTime();
-			if (reset.getCreationTimestamp().getTime() + oneDay < now) {
-				renderResetForm(out, id, ERROR_NOT_FOUND);
+			if (resetDTO.getCreationTimestamp().getTime() + oneDay < now) {
+				renderResetForm(out, resetDTO, ERROR_NOT_FOUND);
 				return;
 			}
 			user = userService.readUserByUsername(username);
 			if (!user.getEnabled()) {
-				renderResetForm(out, id, ERROR_NOT_FOUND);
+				renderResetForm(out, resetDTO, ERROR_NOT_FOUND);
 				return;
 			}
-			if (!user.getUsername().equals(reset.getUsername())) {
-				renderResetForm(out, id, ERROR_NOT_FOUND);
+			if (!user.getUsername().equals(resetDTO.getUsername())) {
+				renderResetForm(out, resetDTO, ERROR_NOT_FOUND);
 				return;
 			}
 		} catch (JDOObjectNotFoundException e) {
-			renderResetForm(out, id, ERROR_NOT_FOUND);
+			renderResetForm(out, resetDTO, ERROR_NOT_FOUND);
 			return;
 		}
 		userService.updatePassword(user, password1);
-		userService.deleteResetPassword(reset);
+		userService.deleteResetPassword(resetDTO);
 		
 		renderSuccessForm(req, res);
 	}
