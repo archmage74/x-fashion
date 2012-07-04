@@ -674,9 +674,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 	@SuppressWarnings("unchecked")
 	private List<SoldArticle> readSoldArticles(PersistenceManager pm, long from, long to) {
 		Query soldArticleQuery = pm.newQuery(SoldArticle.class);
-//		soldArticleQuery.setFilter("sellDate >= startParam && sellDate < endParam");
 		soldArticleQuery.setRange(from, to);
-//		soldArticleQuery.declareParameters("java.util.Date startParam, java.util.Date endParam");
 		soldArticleQuery.setOrdering("sellDate desc");
 		List<SoldArticle> soldArticles = (List<SoldArticle>) soldArticleQuery.execute();
 		return soldArticles;
@@ -702,6 +700,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		Query soldArticleQuery = pm.newQuery(SoldArticle.class);
 		soldArticleQuery.setFilter("shopKey == shopKeyParam");
 		soldArticleQuery.declareParameters("com.google.appengine.api.datastore.Key shopKeyParam");
+		soldArticleQuery.setRange(from, to);
 		soldArticleQuery.setOrdering("sellDate desc");
 		List<SoldArticle> soldArticles = (List<SoldArticle>) soldArticleQuery.execute(KeyFactory.stringToKey(shopKey));
 		return soldArticles;

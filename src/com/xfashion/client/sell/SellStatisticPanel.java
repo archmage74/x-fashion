@@ -24,11 +24,13 @@ import com.xfashion.client.resources.ImageResources;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.client.sell.event.AddMoreSoldArticlesEvent;
 import com.xfashion.client.sell.event.ShowSellStatisticEvent;
+import com.xfashion.client.user.UserManagement;
 import com.xfashion.client.user.UserService;
 import com.xfashion.client.user.UserServiceAsync;
 import com.xfashion.shared.ShopDTO;
 import com.xfashion.shared.SoldArticleDTO;
 import com.xfashion.shared.UserDTO;
+import com.xfashion.shared.UserRole;
 
 public class SellStatisticPanel {
 
@@ -41,7 +43,8 @@ public class SellStatisticPanel {
 	protected Panel scrollPanel;
 	
 	protected ListBox shopListBox;
-	protected ListBox soldArticlesListBox; 
+	protected ListBox soldArticlesListBox;
+	protected Button addMoreButton;
 	protected HorizontalPanel headerPanel;
 	
 	protected TextMessages textMessages;
@@ -92,6 +95,14 @@ public class SellStatisticPanel {
 		}
 	}
 	
+	public void enableAddMore() {
+		addMoreButton.setEnabled(true);
+	}
+	
+	public void disableAddMore() {
+		addMoreButton.setEnabled(false);
+	}
+	
 	public Integer getNumberOfShownSoldArticles() {
 		return soldArticlesListBox.getItemCount();
 	}
@@ -101,7 +112,9 @@ public class SellStatisticPanel {
 		VerticalPanel panel = new VerticalPanel();
 
 		panel.add(createHeaderPanel());
-		panel.add(createShopList());
+		if (UserManagement.hasRole(UserRole.ADMIN, UserRole.DEVELOPER)) {
+			panel.add(createShopList());
+		}
 		panel.add(createSoldArticleList());
 		panel.add(createAddMoreButton());
 		
@@ -121,7 +134,7 @@ public class SellStatisticPanel {
 	}
 
 	private Widget createAddMoreButton() {
-		Button addMoreButton = new Button(textMessages.addMoreSoldArticles());
+		addMoreButton = new Button(textMessages.addMoreSoldArticles());
 		addMoreButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {

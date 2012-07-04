@@ -51,12 +51,11 @@ DONE - user management: shop -> shop-kuerzel, add shop-name, add seperate fields
 DONE - show price-sum in sell window
 DONE - show sold articles seperatly in statistic
 DONE - show date + time in sell statisitc
+DONE - show all or shop specific sell statistic for admin
+DONE - show own sell statistik for shop
 
 TEST - add username in set-password mail and in form
 
-show all or shop specific sell statistic for admin
-
-show own sell statistik for shop
 
 show matrix in sell statistic
 
@@ -74,9 +73,9 @@ flyer-price administration and barcode print
 
 price reduction management (see mail from roman)
 
-NEW - seperate sell-prices for DE and AT
+seperate sell-prices for DE and AT
 
-NEW - 1-pixel difference problem between filter-icons and filter-border 
+1-pixel difference problem between filter-icons and filter-border 
 
 --------------------
 

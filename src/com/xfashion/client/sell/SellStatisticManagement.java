@@ -12,53 +12,36 @@ import com.xfashion.client.sell.event.AddMoreSoldArticlesEvent;
 import com.xfashion.client.sell.event.AddMoreSoldArticlesHandler;
 import com.xfashion.client.sell.event.ShowSellStatisticEvent;
 import com.xfashion.client.sell.event.ShowSellStatisticHandler;
+import com.xfashion.client.user.UserManagement;
 import com.xfashion.client.user.UserService;
 import com.xfashion.client.user.UserServiceAsync;
 import com.xfashion.shared.ShopDTO;
 import com.xfashion.shared.SoldArticleDTO;
 import com.xfashion.shared.UserDTO;
+import com.xfashion.shared.UserRole;
 
 public class SellStatisticManagement implements ShowSellStatisticHandler, AddMoreSoldArticlesHandler {
-
+	
 	public static final int CHUNK_SIZE = 50;
 	
 	private UserServiceAsync userService = (UserServiceAsync) GWT.create(UserService.class);
-
+	
 	private SellStatisticPanel sellStatisticPanel;
 	private Panel panel;
 	
+	private ShopDTO currentShop;
+	
 	private List<SoldArticleDTO> soldArticles;
-		
+	
 	TextMessages textMessages;
-
+	
 	public SellStatisticManagement() {
 		textMessages = GWT.create(TextMessages.class);
 		this.sellStatisticPanel = new SellStatisticPanel();
 		soldArticles = new ArrayList<SoldArticleDTO>();
 		registerForEvents();
 	}
-
-//	@Override
-//	public void onSellFromStock(SellFromStockEvent event) {
-//		Long cnt = 0L;
-//		for (SoldArticleDTO articleAmount : event.getArticles()) {
-//			cnt += articleAmount.getAmount();
-//		}
-//		final Long soldArticleNumber = cnt;
-//		AsyncCallback<Collection<ArticleAmountDTO>> callback = new AsyncCallback<Collection<ArticleAmountDTO>>() {
-//			@Override
-//			public void onFailure(Throwable caught) {
-//				Xfashion.fireError(caught.getMessage());
-//			}
-//			@Override
-//			public void onSuccess(Collection<ArticleAmountDTO> result) {
-//				storeStock(result);
-//				Xfashion.fireError(textMessages.sellStockResult(soldArticleNumber));
-//			}
-//		};
-//		userService.sellArticlesFromStock(event.getArticles(), callback);
-//	}
-
+	
 	public Panel getPanel() {
 		if (panel == null) {
 			panel = sellStatisticPanel.createPanel();
@@ -66,22 +49,18 @@ public class SellStatisticManagement implements ShowSellStatisticHandler, AddMor
 		refresh();
 		return panel;
 	}
-
+	
 	@Override
 	public void onSellFromStock(ShowSellStatisticEvent event) {
-		sellStatisticPanel.clearSoldArticles();
-		if (event.getShop() == null) {
-			readSoldArticlesOfAllShops();
-		} else {
-			readSoldArticles(event.getShop());
-		}
+		currentShop = event.getShop();
+		readSoldArticles();
 	}
-
+	
 	@Override
 	public void onAddMoreSoldArticles(AddMoreSoldArticlesEvent event) {
 		addMoreSoldArticles();
 	}
-
+	
 	private void addMoreSoldArticles() {
 		int from = sellStatisticPanel.getNumberOfShownSoldArticles();
 		int to = from + CHUNK_SIZE;
@@ -95,37 +74,30 @@ public class SellStatisticManagement implements ShowSellStatisticHandler, AddMor
 				Xfashion.fireError(caught.getMessage());
 			}
 		};
-		userService.readSoldArticles(from, to, callback);
+		if (currentShop == null) {
+			userService.readSoldArticles(from, to, callback);
+		} else {
+			userService.readSoldArticlesOfShop(currentShop.getKeyString(), from, to, callback);
+		}
 	}
 	
 	private void refresh() {
-		readSoldArticlesOfAllShops();
+		if (UserManagement.hasRole(UserRole.SHOP)) {
+			currentShop = UserManagement.user.getShop();
+		}
 		readShops();
+		readSoldArticles();
 	}
 	
-	private void readSoldArticlesOfAllShops() {
+	private void readSoldArticles() {
 		clearSoldArticles();
 		addMoreSoldArticles();
 	}
 	
-	private void readSoldArticles(ShopDTO shopDTO) {
-		clearSoldArticles();
-		AsyncCallback<List<SoldArticleDTO>> callback = new AsyncCallback<List<SoldArticleDTO>>() {
-			@Override
-			public void onSuccess(List<SoldArticleDTO> result) {
-				addSoldArticles(result);
-			}
-			@Override
-			public void onFailure(Throwable caught) {
-				Xfashion.fireError(caught.getMessage());
-			}
-		};
-		userService.readSoldArticlesOfShop(shopDTO.getKeyString(), 0, 100, callback);
-	}
-
 	private void clearSoldArticles() {
 		soldArticles.clear();
 		sellStatisticPanel.clearSoldArticles();
+		sellStatisticPanel.enableAddMore();
 	}
 	
 	private void readShops() {
@@ -141,12 +113,15 @@ public class SellStatisticManagement implements ShowSellStatisticHandler, AddMor
 		};
 		userService.readUsers(callback);
 	}
-
+	
 	protected void addSoldArticles(List<SoldArticleDTO> result) {
 		soldArticles.addAll(result);
 		sellStatisticPanel.addSoldArticles(result);
+		if (result.size() < CHUNK_SIZE) {
+			sellStatisticPanel.disableAddMore();
+		}
 	}
-
+	
 	private void registerForEvents() {
 		Xfashion.eventBus.addHandler(ShowSellStatisticEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(AddMoreSoldArticlesEvent.TYPE, this);

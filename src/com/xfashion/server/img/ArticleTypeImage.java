@@ -9,6 +9,7 @@ import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.images.ImagesService;
+import com.google.appengine.api.images.ServingUrlOptions;
 import com.google.appengine.api.utils.SystemProperty;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.xfashion.shared.ArticleTypeImageDTO;
@@ -48,7 +49,7 @@ public class ArticleTypeImage implements IsSerializable {
 		dto.setBlobKey(getBlobKey());
 		if (imagesService != null) {
 			BlobKey key = new BlobKey(getBlobKey());
-			String url = imagesService.getServingUrl(key);
+			String url = imagesService.getServingUrl(ServingUrlOptions.Builder.withBlobKey(key));
 			if (!PRODUCTION_MODE) {
 				url = url.replaceAll("http://0.0.0.0:8888", "http://127.0.0.1:8888");
 			}
