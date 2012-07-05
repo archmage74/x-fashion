@@ -8,12 +8,14 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTable;
 import com.xfashion.client.at.ProvidesArticleFilter;
+import com.xfashion.client.db.ArticleTypeDatabase;
 import com.xfashion.client.notepad.ArticleAmountDataProvider;
+import com.xfashion.client.notepad.NotepadPanel;
 import com.xfashion.client.resources.ImageResources;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.client.stock.event.RequestOpenSellPopupEvent;
@@ -27,12 +29,12 @@ public class StockPanel {
 	
 	private ProvidesArticleFilter provider;
 	
-	protected Panel scrollPanel;
-	
-	private HorizontalPanel headerPanel;
+	protected HorizontalPanel headerPanel;
+	protected HorizontalPanel panel;
+	protected ScrollPanel scrollPanel;
 	
 	protected boolean minimized = false;
-
+	
 	protected TextMessages textMessages;
 	protected ImageResources images;
 	
@@ -42,27 +44,35 @@ public class StockPanel {
 		this.provider = provider;
 	}
 	
-	public Panel createPanel(ArticleAmountDataProvider articleTypeProvider) {
-		Panel articlePanel = createArticlePanel(articleTypeProvider);
-		scrollPanel = new SimplePanel();
-		scrollPanel.setStyleName("filterPanel");
-		setWidth(PANEL_MAX_WIDTH);
-		scrollPanel.add(articlePanel);
-		return scrollPanel;
+	public Panel createPanel(ArticleTypeDatabase articleTypeDatabase, ArticleAmountDataProvider stockProvider, 
+			ArticleAmountDataProvider notepadArticleProvider) {
+
+		if (panel == null) {
+			panel = new HorizontalPanel();
+			panel.add(createArticlePanel(stockProvider));
+			NotepadPanel notepadPanel = new NotepadPanel(articleTypeDatabase);
+			panel.add(notepadPanel.createPanel(notepadArticleProvider, false));
+		}
+		return panel;
 	}
 	
 	protected Panel createArticlePanel(ArticleAmountDataProvider articleAmountProvider) {
 
-		VerticalPanel panel = new VerticalPanel();
+		VerticalPanel articlePanel = new VerticalPanel();
 
 		headerPanel = createHeaderPanel();
-		panel.add(headerPanel);
+		articlePanel.add(headerPanel);
 		
 		ArticleTable<ArticleAmountDTO> att = new StockArticleTable(provider);
 		Panel atp = att.create(articleAmountProvider);
-		panel.add(atp);
+		articlePanel.add(atp);
+
+		scrollPanel = new ScrollPanel();
+		scrollPanel.setStyleName("filterPanel");
+		setWidth(PANEL_MAX_WIDTH);
+		scrollPanel.add(articlePanel);
 		
-		return panel;
+		return articlePanel;
 	}
 	
 	protected HorizontalPanel createHeaderPanel() {
@@ -70,7 +80,6 @@ public class StockPanel {
 		headerPanel.addStyleName("filterHeader");
 		headerPanel.setWidth(PANEL_MAX_WIDTH + "px");
 
-//		headerPanel.add(createMinmaxButton());
 		headerPanel.add(createHeaderLabel());
 		
 		HorizontalPanel toolPanel = new HorizontalPanel();

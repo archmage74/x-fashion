@@ -33,16 +33,19 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 
 	private HashMap<String, ArticleAmountDTO> stock;
 
-	ArticleAmountDataProvider stockProvider;
+	protected ArticleAmountDataProvider stockProvider;
+	protected ArticleTypeDatabase articleTypeDatabase;
+	
 	private StockPanel stockPanel;
 	private Panel panel;
 	private SellFromStockPopup sellFromStockPopup;
 		
 	TextMessages textMessages;
-
+	
 	public StockManagement(ArticleTypeDatabase articleTypeDatabase) {
 		textMessages = GWT.create(TextMessages.class);
 		this.stock = new HashMap<String, ArticleAmountDTO>();
+		this.articleTypeDatabase = articleTypeDatabase;
 		this.stockProvider = new ArticleAmountDataProvider(articleTypeDatabase);
 		this.stockPanel = new StockPanel(articleTypeDatabase);
 		registerForEvents();
@@ -77,7 +80,7 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 		}
 		sellFromStockPopup.show();
 	}
-
+	
 	@Override
 	public void onSellFromStock(SellFromStockEvent event) {
 		Long cnt = 0L;
@@ -98,19 +101,19 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 		};
 		userService.sellArticlesFromStock(event.getArticles(), callback);
 	}
-
+	
 	@Override
 	public void onLogin(LoginEvent event) {
 		readStock();
 	}
-
-	public Panel getPanel() {
+	
+	public Panel getPanel(ArticleAmountDataProvider notepadArticleProvider) {
 		if (panel == null) {
-			panel = stockPanel.createPanel(stockProvider);
+			panel = stockPanel.createPanel(articleTypeDatabase, stockProvider, notepadArticleProvider);
 		}
 		return panel;
 	}
-
+	
 	private void readStock() {
 		AsyncCallback<Set<ArticleAmountDTO>> callback = new AsyncCallback<Set<ArticleAmountDTO>>() {
 			@Override
@@ -125,7 +128,7 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 		};
 		userService.readStock(callback);
 	}
-
+	
 	protected void storeStock(Collection<ArticleAmountDTO> result) {
 		stock.clear();
 		List<ArticleAmountDTO> list = new ArrayList<ArticleAmountDTO>();
@@ -135,7 +138,7 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 		}
 		stockProvider.setList(list);
 	}
-
+	
 	private void registerForEvents() {
 		Xfashion.eventBus.addHandler(IntoStockEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(RequestOpenSellPopupEvent.TYPE, this);

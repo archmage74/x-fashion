@@ -89,17 +89,6 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 		resetNotepad();
 	}
 
-	private void resetNotepad() {
-		currentNotepad.getArticles().clear();
-		currentNotepad.setCreationDate(new Date());
-		currentDeliveryNotice = null;
-		refreshProvider();
-	}
-	
-	private void refreshProvider() {
-		articleProvider.setList(currentNotepad.getArticles());
-	}
-
 	@Override
 	public void onNotepadAddArticle(NotepadAddArticleEvent event) {
 		currentNotepad.addArticle(event.getArticleType(), event.getAmount());
@@ -185,6 +174,14 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 		Xfashion.eventBus.fireEvent(new IntoStockEvent(currentNotepad));
 	}
 
+	public ArticleAmountDataProvider getArticleProvider() {
+		return articleProvider;
+	}
+
+	public void setArticleProvider(ArticleAmountDataProvider articleProvider) {
+		this.articleProvider = articleProvider;
+	}
+
 	protected void sendNotepadPrintAction(AsyncCallback<Void> printCallback) {
 		notepadService.saveNotepadInSession(currentNotepad, printCallback);
 	}
@@ -221,14 +218,6 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 		return callback;
 	}
 
-	public ArticleAmountDataProvider getArticleProvider() {
-		return articleProvider;
-	}
-
-	public void setArticleProvider(ArticleAmountDataProvider articleProvider) {
-		this.articleProvider = articleProvider;
-	}
-
 	private void createNotepad(NotepadDTO notepad) {
 		AsyncCallback<NotepadDTO> callback = new AsyncCallback<NotepadDTO>() {
 			@Override
@@ -244,6 +233,17 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 		userService.createNotepad(notepad, callback);
 	}
 	
+	private void resetNotepad() {
+		currentNotepad.getArticles().clear();
+		currentNotepad.setCreationDate(new Date());
+		currentDeliveryNotice = null;
+		refreshProvider();
+	}
+	
+	private void refreshProvider() {
+		articleProvider.setList(currentNotepad.getArticles());
+	}
+
 	private void updateNotepad(NotepadDTO notepad) {
 		AsyncCallback<NotepadDTO> callback = new AsyncCallback<NotepadDTO>() {
 			@Override

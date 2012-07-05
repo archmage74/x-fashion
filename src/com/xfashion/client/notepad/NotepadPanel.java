@@ -69,10 +69,20 @@ public class NotepadPanel implements IsMinimizable, OpenNotepadHandler, SaveNote
 	}
 
 	public Panel createPanel(ArticleAmountDataProvider articleTypeProvider) {
+		return createPanel(articleTypeProvider, true);
+	}
+
+	public Panel createPanel(ArticleAmountDataProvider articleTypeProvider, boolean minimized) {
 		Panel articlePanel = createArticlePanel(articleTypeProvider);
 		scrollPanel = new SimplePanel();
 		scrollPanel.setStyleName("filterPanel");
-		setWidth(PANEL_MIN_WIDTH);
+		if (minimized) {
+			this.minimized = minimized;
+			setWidth(PANEL_MIN_WIDTH);
+		} else {
+			this.minimized = minimized;
+			setWidth(PANEL_MAX_WIDTH);
+		}
 		scrollPanel.add(articlePanel);
 		return scrollPanel;
 	}

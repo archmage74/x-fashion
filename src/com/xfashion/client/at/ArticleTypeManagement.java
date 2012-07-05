@@ -34,7 +34,7 @@ public class ArticleTypeManagement implements NotepadStartMaximizeHandler, Notep
 	public Panel getPanel(ArticleTypeDatabase articleTypeDatabase, PanelMediator panelMediator, ArticleAmountDataProvider notepadArticleProvider) {
 		if (panel == null) {
 			panel = new HorizontalPanel();
-	
+			
 			categoryPanel = new CategoryPanel(articleTypeDatabase.getCategoryProvider());
 			panelMediator.setCategoryPanel(categoryPanel);
 			brandPanel = new BrandPanel(articleTypeDatabase.getBrandProvider());
@@ -48,7 +48,7 @@ public class ArticleTypeManagement implements NotepadStartMaximizeHandler, Notep
 			namePanel = new NamePanel(articleTypeDatabase.getNameProvider());
 			articleTypePanel = new ArticleTypePanel(panelMediator);
 			notepadPanel = new NotepadPanel(articleTypeDatabase);
-
+			
 			panel.add(categoryPanel.createPanel());
 			panel.add(brandPanel.createPanel());
 			panel.add(stylePanel.createPanel());
@@ -56,7 +56,7 @@ public class ArticleTypeManagement implements NotepadStartMaximizeHandler, Notep
 			panel.add(colorPanel.createPanel());
 			panel.add(sizePanel.createPanel(new String[] {"sizePanel"}));
 			panel.add(articleTypePanel.createPanel(articleTypeDatabase.getArticleTypeProvider(), articleTypeDatabase.getNameOracle()));
-			panel.add(notepadPanel.createPanel(notepadArticleProvider));
+			panel.add(notepadPanel.createPanel(notepadArticleProvider, true));
 		}
 		
 		registerForEvents();
