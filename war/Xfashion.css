@@ -273,14 +273,22 @@
 }
 .articlePrice {
 	text-align: right;
+	vertical-align: middle;
 	font-size: 20px;
 	width: 75px;
 	height: 50;
 }
 .articleAmount {
 	text-align: right;
+	vertical-align: middle;
 	font-size: 20px;
 	width: 40px;
+	height: 50;
+}
+.articleSellDate {
+	text-align: center;
+	vertical-align: middle;
+	width: 150px;
 	height: 50;
 }
 .pricePrefix {

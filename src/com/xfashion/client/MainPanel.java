@@ -24,8 +24,6 @@ public class MainPanel implements ErrorHandler {
 	
 	private Panel contentPanel;
 
-	private PanelMediator panelMediator;
-	
 	private ArticleTypeDatabase articleTypeDatabase;
 
 	private ArticleTypeManagement articleTypeManagement;
@@ -47,10 +45,8 @@ public class MainPanel implements ErrorHandler {
 		articleTypeDatabase.init();
 		userManagement = new UserManagement();
 		notepadManagement = new NotepadManagement(articleTypeDatabase);
-		panelMediator = new PanelMediator();
-		panelMediator.setArticleTypeDatabase(articleTypeDatabase);
 		stockManagement = new StockManagement(articleTypeDatabase);
-		sellStatisticManagement = new SellStatisticManagement();
+		sellStatisticManagement = new SellStatisticManagement(articleTypeDatabase);
 
 		contentPanel = new SimplePanel();
 		RootPanel.get("mainPanelContainer").add(contentPanel);
@@ -65,7 +61,7 @@ public class MainPanel implements ErrorHandler {
 			showUserProfilePanel();
 		} else {
 			contentPanel.clear();
-			Panel panel = articleTypeManagement.getPanel(articleTypeDatabase, panelMediator, notepadManagement.getArticleProvider());
+			Panel panel = articleTypeManagement.getPanel(articleTypeDatabase, notepadManagement.getArticleProvider());
 			contentPanel.add(panel);
 		}
 	}

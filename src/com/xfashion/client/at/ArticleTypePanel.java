@@ -1,6 +1,8 @@
 package com.xfashion.client.at;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -20,14 +22,16 @@ import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.xfashion.client.ErrorEvent;
-import com.xfashion.client.PanelMediator;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.bulk.BulkEditArticleTypePopup;
+import com.xfashion.client.db.ArticleTypeDatabase;
 import com.xfashion.client.name.NameFilterEvent;
 import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.resources.TextMessages;
+import com.xfashion.client.size.SizeDataProvider;
 import com.xfashion.client.tool.Buttons;
 import com.xfashion.shared.ArticleTypeDTO;
+import com.xfashion.shared.CategoryDTO;
 import com.xfashion.shared.SizeDTO;
 
 public class ArticleTypePanel {
@@ -40,32 +44,28 @@ public class ArticleTypePanel {
 
 	private ErrorMessages errorMessages;
 	
-	private PanelMediator panelMediator;
-	
 	private HorizontalPanel headerPanel;
 	
-	private ProvidesArticleFilter provider;
+	private ArticleTypeDatabase articleTypeDatabase;
 	
 	private TextMessages textMessages;
 	
-	public ArticleTypePanel(PanelMediator panelMediator) {
-		this.panelMediator = panelMediator;
-		textMessages = GWT.create(TextMessages.class);
-		provider = panelMediator.getArticleTypeDatabase();
-		errorMessages = GWT.create(ErrorMessages.class);
-		panelMediator.setArticleTypePanel(this);
+	public ArticleTypePanel(ArticleTypeDatabase filterProvider) {
+		this.textMessages = GWT.create(TextMessages.class);
+		this.articleTypeDatabase = filterProvider;
+		this.errorMessages = GWT.create(ErrorMessages.class);
 	}
 	
 	public Panel createPanel(ArticleTypeDataProvider articleTypeProvider, MultiWordSuggestOracle nameOracle) {
 
-		createArticleTypePopup = new CreateArticleTypePopup(panelMediator);
+		createArticleTypePopup = new CreateArticleTypePopup(articleTypeDatabase);
 
 		VerticalPanel panel = new VerticalPanel();
 
 		headerPanel = createHeaderPanel(nameOracle);
 		panel.add(headerPanel);
 		
-		ArticleTypeTable att = new ArticleTypeTable(provider);
+		ArticleTypeTable att = new ArticleTypeTable(articleTypeDatabase);
 		Panel atp = att.create(articleTypeProvider);
 		panel.add(atp);
 		
@@ -138,8 +138,8 @@ public class ArticleTypePanel {
 		ClickHandler editBulkButtonClickHandler = new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				BulkEditArticleTypePopup bulkEditPopup = new BulkEditArticleTypePopup(provider);
-				bulkEditPopup.showPopup(panelMediator.getArticleTypeDatabase().getArticleTypeProvider().getList());
+				BulkEditArticleTypePopup bulkEditPopup = new BulkEditArticleTypePopup(articleTypeDatabase);
+				bulkEditPopup.showPopup(articleTypeDatabase.getArticleTypeProvider().getList());
 			}
 		};
 		editBulkButton.addClickHandler(editBulkButtonClickHandler);
@@ -147,8 +147,8 @@ public class ArticleTypePanel {
 	}
 	
 	private void addArticle() {
-		ArticleTypeDTO articleType = panelMediator.createArticleTypeFromSelection();
-		List<SizeDTO> sizes = panelMediator.getSelectedSizes();
+		ArticleTypeDTO articleType = createArticleTypeFromSelection();
+		List<SizeDTO> sizes = getSelectedSizes();
 		if (articleType.getCategoryKey() == null) {
 			Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.articleCreateNoCategory()));
 		} else if (articleType.getBrandKey() == null) {
@@ -164,16 +164,48 @@ public class ArticleTypePanel {
 		}
 	}
 
+	private ArticleTypeDTO createArticleTypeFromSelection() {
+		ArticleTypeDTO at = new ArticleTypeDTO();
+
+		CategoryDTO category = articleTypeDatabase.getCategoryProvider().getCategoryFilter();
+		if (category != null) {
+			at.setCategoryKey(category.getKey());
+		}
+
+		Set<String> styles = articleTypeDatabase.getCategoryProvider().getStyleFilter();
+		if (styles.size() == 1) {
+			at.setStyleKey(styles.iterator().next());
+		}
+		
+		Set<String> brands = articleTypeDatabase.getBrandProvider().getFilter();
+		if (brands.size() == 1) {
+			at.setBrandKey(brands.iterator().next());
+		}
+		
+		Set<String> colors = articleTypeDatabase.getColorProvider().getFilter();
+		if (colors.size() == 1) {
+			at.setColorKey(colors.iterator().next());
+		}
+		
+		return at;
+	}
+	
+	private List<SizeDTO> getSelectedSizes() {
+		ArrayList<SizeDTO> list = new ArrayList<SizeDTO>();
+		Set<String> sizes = articleTypeDatabase.getSizeProvider().getFilter();
+		SizeDataProvider sizeProvider = articleTypeDatabase.getSizeProvider();
+		for (String id : sizes) {
+			list.add(sizeProvider.resolveData(id));
+		}
+		return list;
+	}
+	
 	public ArticleTypeDTO getSelectedCategory() {
 		return selectedArticleType;
 	}
 
 	public void setSelectedCategory(ArticleTypeDTO selectedArticleType) {
 		this.selectedArticleType = selectedArticleType;
-	}
-
-	public PanelMediator getPanelMediator() {
-		return panelMediator;
 	}
 
 }

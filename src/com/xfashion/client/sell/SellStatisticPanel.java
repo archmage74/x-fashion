@@ -20,6 +20,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.xfashion.client.Formatter;
 import com.xfashion.client.Xfashion;
+import com.xfashion.client.at.ArticleTable;
+import com.xfashion.client.at.ProvidesArticleFilter;
 import com.xfashion.client.resources.ImageResources;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.client.sell.event.AddMoreSoldArticlesEvent;
@@ -34,16 +36,17 @@ import com.xfashion.shared.UserRole;
 
 public class SellStatisticPanel {
 
-	public static final int PANEL_WIDTH = 550; 
+	public static final int PANEL_WIDTH = 800; 
 
 	protected UserServiceAsync userService = (UserServiceAsync) GWT.create(UserService.class);
 
 	protected List<ShopDTO> knownShops;
+	protected ProvidesArticleFilter filterProvider;
 	
 	protected Panel scrollPanel;
 	
 	protected ListBox shopListBox;
-	protected ListBox soldArticlesListBox;
+//	protected ListBox soldArticlesListBox;
 	protected Button addMoreButton;
 	protected HorizontalPanel headerPanel;
 	
@@ -51,16 +54,17 @@ public class SellStatisticPanel {
 	protected ImageResources images;
 	protected Formatter formatter;
 	
-	public SellStatisticPanel() {
+	public SellStatisticPanel(ProvidesArticleFilter filterProvider) {
 		knownShops = new ArrayList<ShopDTO>();
-		
 		textMessages = GWT.create(TextMessages.class);
 		images = GWT.<ImageResources>create(ImageResources.class);
 		formatter = new Formatter();
+
+		this.filterProvider = filterProvider;
 	}
 	
-	public Panel createPanel() {
-		Panel articlePanel = createArticlePanel();
+	public Panel createPanel(SoldArticleDataProvider articleAmountProvider) {
+		Panel articlePanel = createArticlePanel(articleAmountProvider);
 		scrollPanel = new SimplePanel();
 		scrollPanel.setStyleName("filterPanel");
 		setWidth(PANEL_WIDTH);
@@ -72,15 +76,15 @@ public class SellStatisticPanel {
 		scrollPanel.setWidth(width + "px");
 	}
 
-	public void clearSoldArticles() {
-		soldArticlesListBox.clear();
-	}
+//	public void clearSoldArticles() {
+//		soldArticlesListBox.clear();
+//	}
 	
-	public void addSoldArticles(List<SoldArticleDTO> result) {
-		for (SoldArticleDTO soldArticle : result) {
-			soldArticlesListBox.addItem(createSoldArticleEntry(soldArticle));
-		}
-	}
+//	public void addSoldArticles(List<SoldArticleDTO> result) {
+//		for (SoldArticleDTO soldArticle : result) {
+//			soldArticlesListBox.addItem(createSoldArticleEntry(soldArticle));
+//		}
+//	}
 	
 	public void setUsers(Collection<UserDTO> users) {
 		shopListBox.clear();
@@ -103,11 +107,11 @@ public class SellStatisticPanel {
 		addMoreButton.setEnabled(false);
 	}
 	
-	public Integer getNumberOfShownSoldArticles() {
-		return soldArticlesListBox.getItemCount();
-	}
+//	public Integer getNumberOfShownSoldArticles() {
+//		return soldArticlesListBox.getItemCount();
+//	}
 	
-	protected Panel createArticlePanel() {
+	protected Panel createArticlePanel(SoldArticleDataProvider articleAmountProvider) {
 
 		VerticalPanel panel = new VerticalPanel();
 
@@ -115,7 +119,12 @@ public class SellStatisticPanel {
 		if (UserManagement.hasRole(UserRole.ADMIN, UserRole.DEVELOPER)) {
 			panel.add(createShopList());
 		}
-		panel.add(createSoldArticleList());
+
+		ArticleTable<SoldArticleDTO> att = new SellStatisticArticleTable(filterProvider);
+		Panel atp = att.create(articleAmountProvider);
+		panel.add(atp);
+
+//		panel.add(createSoldArticleList());
 		panel.add(createAddMoreButton());
 		
 		return panel;
@@ -173,15 +182,10 @@ public class SellStatisticPanel {
 		return headerLabel;
 	}
 	
-	private Widget createSoldArticleList() {
-		soldArticlesListBox = new ListBox();
-		soldArticlesListBox.setVisibleItemCount(30);
-		return soldArticlesListBox;
-	}
-	
-	private String createSoldArticleEntry(SoldArticleDTO sa) {
-		String sellPrice = formatter.formatCentsToCurrency(sa.getSellPrice()); 
-		return textMessages.sellStatisticListBoxLine(sa.getAmount(), sa.getArticleName(), sa.getSellDate(), sellPrice);
-	}
+//	private Widget createSoldArticleList() {
+//		soldArticlesListBox = new ListBox();
+//		soldArticlesListBox.setVisibleItemCount(30);
+//		return soldArticlesListBox;
+//	}
 	
 }

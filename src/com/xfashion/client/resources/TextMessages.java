@@ -80,6 +80,6 @@ public interface TextMessages extends Messages {
 	String sellArticles();
 	String sellStatisticHeader();
 	String allShops();
-	String sellStatisticListBoxLine(Integer amount, String articleName, Date sellDate, String sellPrice);
+	String sellStatisticDate(Date sellDate);
 	String addMoreSoldArticles();
 }

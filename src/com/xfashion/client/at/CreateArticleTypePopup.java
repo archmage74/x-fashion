@@ -15,7 +15,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.xfashion.client.Formatter;
-import com.xfashion.client.PanelMediator;
+import com.xfashion.client.db.ArticleTypeDatabase;
 import com.xfashion.client.img.ImageManagementPopup;
 import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.resources.TextMessages;
@@ -41,8 +41,7 @@ public class CreateArticleTypePopup {
 	private ArticleTypeDTO currentArticleType = null;
 	private List<SizeDTO> currentSizes = null;
 	
-	private PanelMediator panelMediator = null;
-	private ProvidesArticleFilter provider; 
+	private ArticleTypeDatabase articleTypeDatabase; 
 	
 	private Formatter formatter;
 	
@@ -51,13 +50,11 @@ public class CreateArticleTypePopup {
 	private ErrorMessages errorMessages;
 	private TextMessages textMessages;
 	
-	public CreateArticleTypePopup(PanelMediator panelMediator) {
-		errorMessages = GWT.create(ErrorMessages.class);
-		textMessages = GWT.create(TextMessages.class);
-		this.panelMediator = panelMediator;
-		provider = panelMediator.getArticleTypeDatabase();
-		panelMediator.setCreateArticleTypePopup(this);
-		formatter = Formatter.getInstance();
+	public CreateArticleTypePopup(ArticleTypeDatabase articleTypeDatabase) {
+		this.errorMessages = GWT.create(ErrorMessages.class);
+		this.textMessages = GWT.create(TextMessages.class);
+		this.articleTypeDatabase = articleTypeDatabase;
+		this.formatter = Formatter.getInstance();
 	}
 	
 	public void showForPrefilledArticleType(ArticleTypeDTO articleType, List<SizeDTO> sizes) {
@@ -67,10 +64,10 @@ public class CreateArticleTypePopup {
 		currentArticleType = articleType;
 		currentSizes = sizes;
 		
-		categoryLabel.setText(provider.getCategoryProvider().resolveData(articleType.getCategoryKey()).getName());
-		styleLabel.setText(provider.getCategoryProvider().resolveStyle(articleType.getStyleKey()).getName());
-		brandLabel.setText(provider.getBrandProvider().resolveData(articleType.getBrandKey()).getName());
-		colorLabel.setText(provider.getColorProvider().resolveData(articleType.getColorKey()).getName());
+		categoryLabel.setText(articleTypeDatabase.getCategoryProvider().resolveData(articleType.getCategoryKey()).getName());
+		styleLabel.setText(articleTypeDatabase.getCategoryProvider().resolveStyle(articleType.getStyleKey()).getName());
+		brandLabel.setText(articleTypeDatabase.getBrandProvider().resolveData(articleType.getBrandKey()).getName());
+		colorLabel.setText(articleTypeDatabase.getColorProvider().resolveData(articleType.getColorKey()).getName());
 		if (sizes.size() > 1) {
 			sizeLabel.setText(textMessages.articleCreateMultipleSizes());
 			StringBuffer sb = new StringBuffer();
@@ -178,7 +175,7 @@ public class CreateArticleTypePopup {
 		updateArticleType(currentArticleType);
 		for (SizeDTO size : currentSizes) {
 			currentArticleType.setSizeKey(size.getKey());
-			panelMediator.createArticleType(currentArticleType);
+			articleTypeDatabase.createArticleType(currentArticleType);
 		}
 	}
 	
@@ -253,8 +250,4 @@ public class CreateArticleTypePopup {
 		return textBox;
 	}
 
-	public PanelMediator getPanelMediator() {
-		return panelMediator;
-	}
-	
 }

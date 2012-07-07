@@ -1,12 +1,12 @@
 package com.xfashion.client.sell;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Panel;
 import com.xfashion.client.Xfashion;
+import com.xfashion.client.db.ArticleTypeDatabase;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.client.sell.event.AddMoreSoldArticlesEvent;
 import com.xfashion.client.sell.event.AddMoreSoldArticlesHandler;
@@ -31,20 +31,24 @@ public class SellStatisticManagement implements ShowSellStatisticHandler, AddMor
 	
 	private ShopDTO currentShop;
 	
-	private List<SoldArticleDTO> soldArticles;
+	protected ArticleTypeDatabase articleTypeDatabase;
+	private SoldArticleDataProvider sellStatisticProvider;
 	
 	TextMessages textMessages;
 	
-	public SellStatisticManagement() {
-		textMessages = GWT.create(TextMessages.class);
-		this.sellStatisticPanel = new SellStatisticPanel();
-		soldArticles = new ArrayList<SoldArticleDTO>();
+	public SellStatisticManagement(ArticleTypeDatabase articleTypeDatabase) {
+		this.textMessages = GWT.create(TextMessages.class);
+		this.articleTypeDatabase = articleTypeDatabase;
+		this.sellStatisticProvider = new SoldArticleDataProvider(articleTypeDatabase);
+
+		this.sellStatisticPanel = new SellStatisticPanel(articleTypeDatabase);
+
 		registerForEvents();
 	}
 	
 	public Panel getPanel() {
 		if (panel == null) {
-			panel = sellStatisticPanel.createPanel();
+			panel = sellStatisticPanel.createPanel(sellStatisticProvider);
 		}
 		refresh();
 		return panel;
@@ -62,7 +66,7 @@ public class SellStatisticManagement implements ShowSellStatisticHandler, AddMor
 	}
 	
 	private void addMoreSoldArticles() {
-		int from = sellStatisticPanel.getNumberOfShownSoldArticles();
+		int from = sellStatisticProvider.getList().size();
 		int to = from + CHUNK_SIZE;
 		AsyncCallback<List<SoldArticleDTO>> callback = new AsyncCallback<List<SoldArticleDTO>>() {
 			@Override
@@ -95,8 +99,7 @@ public class SellStatisticManagement implements ShowSellStatisticHandler, AddMor
 	}
 	
 	private void clearSoldArticles() {
-		soldArticles.clear();
-		sellStatisticPanel.clearSoldArticles();
+		sellStatisticProvider.getList().clear();
 		sellStatisticPanel.enableAddMore();
 	}
 	
@@ -115,8 +118,8 @@ public class SellStatisticManagement implements ShowSellStatisticHandler, AddMor
 	}
 	
 	protected void addSoldArticles(List<SoldArticleDTO> result) {
-		soldArticles.addAll(result);
-		sellStatisticPanel.addSoldArticles(result);
+//		sellStatisticPanel.addSoldArticles(result);
+		sellStatisticProvider.getList().addAll(result);
 		if (result.size() < CHUNK_SIZE) {
 			sellStatisticPanel.disableAddMore();
 		}

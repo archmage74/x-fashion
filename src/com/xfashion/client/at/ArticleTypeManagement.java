@@ -2,7 +2,6 @@ package com.xfashion.client.at;
 
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Panel;
-import com.xfashion.client.PanelMediator;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.brand.BrandPanel;
 import com.xfashion.client.cat.CategoryPanel;
@@ -31,22 +30,17 @@ public class ArticleTypeManagement implements NotepadStartMaximizeHandler, Notep
 	NotepadPanel notepadPanel;
 	ArticleTypePanel articleTypePanel;
 
-	public Panel getPanel(ArticleTypeDatabase articleTypeDatabase, PanelMediator panelMediator, ArticleAmountDataProvider notepadArticleProvider) {
+	public Panel getPanel(ArticleTypeDatabase articleTypeDatabase, ArticleAmountDataProvider notepadArticleProvider) {
 		if (panel == null) {
 			panel = new HorizontalPanel();
 			
 			categoryPanel = new CategoryPanel(articleTypeDatabase.getCategoryProvider());
-			panelMediator.setCategoryPanel(categoryPanel);
 			brandPanel = new BrandPanel(articleTypeDatabase.getBrandProvider());
-			panelMediator.setBrandPanel(brandPanel);
 			stylePanel = new StylePanel(articleTypeDatabase.getCategoryProvider().getStyleProvider());
-			panelMediator.setStylePanel(stylePanel);
 			sizePanel = new SizePanel(articleTypeDatabase.getSizeProvider());
-			panelMediator.setSizePanel(sizePanel);
 			colorPanel = new ColorPanel(articleTypeDatabase.getColorProvider());
-			panelMediator.setColorPanel(colorPanel);
 			namePanel = new NamePanel(articleTypeDatabase.getNameProvider());
-			articleTypePanel = new ArticleTypePanel(panelMediator);
+			articleTypePanel = new ArticleTypePanel(articleTypeDatabase);
 			notepadPanel = new NotepadPanel(articleTypeDatabase);
 			
 			panel.add(categoryPanel.createPanel());

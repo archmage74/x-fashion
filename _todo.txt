@@ -54,16 +54,14 @@ DONE - show date + time in sell statisitc
 DONE - show all or shop specific sell statistic for admin
 DONE - show own sell statistik for shop
 DONE - show notepad in stock-view
+DONE - show +1/+10 in article-panel in stock view
+DONE - show matrix in sell statistic
 
 TEST - add username in set-password mail and in form
-
-show +1/+10 in article-panel in stock view
 
 filter for stock-view
 
 show articles amount in stock for stock filters
-
-show matrix in sell statistic
 
 flyer-price administration and barcode print
 
