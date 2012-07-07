@@ -60,7 +60,10 @@ public class MenuPanel implements LoginHandler {
 		menu.setWidth("1200px");
 		menu.setAnimationEnabled(true);
 
-		menu.addItem(createArticleTypeMenuItem());
+		if (UserManagement.hasRole(UserRole.DEVELOPER, UserRole.ADMIN)) {
+			menu.addItem(createArticleTypeMenuItem());
+		}
+
 		menu.addItem(createStockMenuItem());
 		menu.addItem(createUserProfileMenuItem());
 		menu.addItem(createSellStatisticMenuItem());

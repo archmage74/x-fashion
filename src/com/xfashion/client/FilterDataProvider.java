@@ -8,7 +8,7 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.xfashion.client.at.ArticleTypeDataProvider;
 import com.xfashion.client.db.ArticleTypeService;
 import com.xfashion.client.db.ArticleTypeServiceAsync;
-import com.xfashion.client.db.RefreshFilterEvent;
+import com.xfashion.client.db.event.RefreshFilterEvent;
 import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.FilterCellData;

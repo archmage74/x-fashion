@@ -1,4 +1,5 @@
-package com.xfashion.client.db;
+package com.xfashion.client.db.event;
+
 
 public interface RefreshFilterHandler {
 	

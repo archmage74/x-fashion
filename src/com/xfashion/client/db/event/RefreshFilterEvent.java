@@ -1,4 +1,4 @@
-package com.xfashion.client.db;
+package com.xfashion.client.db.event;
 
 import com.google.web.bindery.event.shared.Event;
 

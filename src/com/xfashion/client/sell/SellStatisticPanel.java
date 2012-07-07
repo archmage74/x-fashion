@@ -46,7 +46,6 @@ public class SellStatisticPanel {
 	protected Panel scrollPanel;
 	
 	protected ListBox shopListBox;
-//	protected ListBox soldArticlesListBox;
 	protected Button addMoreButton;
 	protected HorizontalPanel headerPanel;
 	
@@ -76,16 +75,6 @@ public class SellStatisticPanel {
 		scrollPanel.setWidth(width + "px");
 	}
 
-//	public void clearSoldArticles() {
-//		soldArticlesListBox.clear();
-//	}
-	
-//	public void addSoldArticles(List<SoldArticleDTO> result) {
-//		for (SoldArticleDTO soldArticle : result) {
-//			soldArticlesListBox.addItem(createSoldArticleEntry(soldArticle));
-//		}
-//	}
-	
 	public void setUsers(Collection<UserDTO> users) {
 		shopListBox.clear();
 		knownShops.clear();
@@ -107,10 +96,6 @@ public class SellStatisticPanel {
 		addMoreButton.setEnabled(false);
 	}
 	
-//	public Integer getNumberOfShownSoldArticles() {
-//		return soldArticlesListBox.getItemCount();
-//	}
-	
 	protected Panel createArticlePanel(SoldArticleDataProvider articleAmountProvider) {
 
 		VerticalPanel panel = new VerticalPanel();
@@ -124,7 +109,6 @@ public class SellStatisticPanel {
 		Panel atp = att.create(articleAmountProvider);
 		panel.add(atp);
 
-//		panel.add(createSoldArticleList());
 		panel.add(createAddMoreButton());
 		
 		return panel;
@@ -181,11 +165,5 @@ public class SellStatisticPanel {
 		headerLabel.addStyleName("filterLabel attributeFilterLabel");
 		return headerLabel;
 	}
-	
-//	private Widget createSoldArticleList() {
-//		soldArticlesListBox = new ListBox();
-//		soldArticlesListBox.setVisibleItemCount(30);
-//		return soldArticlesListBox;
-//	}
 	
 }

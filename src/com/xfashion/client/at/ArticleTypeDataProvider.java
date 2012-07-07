@@ -7,14 +7,11 @@ import com.xfashion.shared.ArticleTypeDTO;
 
 public class ArticleTypeDataProvider extends ArticleDataProvider<ArticleTypeDTO> {
 
-	private boolean loaded;
-	
 	private HashMap<String, ArticleTypeDTO> idToItem;
 	
 	private HashMap<Long, ArticleTypeDTO> productNumberToItem;
 
 	public ArticleTypeDataProvider() {
-		loaded = false;
 		idToItem = new HashMap<String, ArticleTypeDTO>();
 		productNumberToItem = new HashMap<Long, ArticleTypeDTO>();
 	}
@@ -27,14 +24,6 @@ public class ArticleTypeDataProvider extends ArticleDataProvider<ArticleTypeDTO>
 	@Override
 	public ArticleTypeDTO retrieveArticleType(Long productNumber) {
 		return productNumberToItem.get(productNumber);
-	}
-
-	public boolean isLoaded() {
-		return loaded;
-	}
-
-	public void setLoaded(boolean loaded) {
-		this.loaded = loaded;
 	}
 
 	public ArticleTypeDTO resolveData(String key) {

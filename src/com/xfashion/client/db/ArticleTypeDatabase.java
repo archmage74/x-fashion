@@ -25,6 +25,9 @@ import com.xfashion.client.at.bulk.UpdateArticleTypesHandler;
 import com.xfashion.client.brand.BrandDataProvider;
 import com.xfashion.client.cat.CategoryDataProvider;
 import com.xfashion.client.color.ColorDataProvider;
+import com.xfashion.client.db.event.FilterRefreshedEvent;
+import com.xfashion.client.db.event.RefreshFilterEvent;
+import com.xfashion.client.db.event.RefreshFilterHandler;
 import com.xfashion.client.name.NameFilterEvent;
 import com.xfashion.client.name.NameFilterHandler;
 import com.xfashion.client.size.SizeDataProvider;
@@ -90,7 +93,6 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 				articleTypeProvider.getList().addAll(result);
 				articleTypeProvider.refreshResolver();
 				updateAvailableArticleNames();
-				articleTypeProvider.setLoaded(true);
 			}
 		};
 		articleTypeService.readArticleTypes(callback);
@@ -108,6 +110,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 	public void onRefreshFilter(RefreshFilterEvent event) {
 		applyFilters();
 		updateProviders();
+		Xfashion.eventBus.fireEvent(new FilterRefreshedEvent());
 	}
 
 	public void updateAvailableArticleNames() {
