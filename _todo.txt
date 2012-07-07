@@ -56,10 +56,9 @@ DONE - show own sell statistik for shop
 DONE - show notepad in stock-view
 DONE - show +1/+10 in article-panel in stock view
 DONE - show matrix in sell statistic
+DONE - filter for stock-view
 
 TEST - add username in set-password mail and in form
-
-filter for stock-view
 
 show articles amount in stock for stock filters
 
