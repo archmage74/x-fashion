@@ -82,4 +82,14 @@ public interface TextMessages extends Messages {
 	String allShops();
 	String sellStatisticDate(Date sellDate);
 	String addMoreSoldArticles();
+
+	String promoHeader();
+	String activate();
+	String deactivate();
+	String createPromo(); 
+	String printPromo();
+	String showActivatedPromos();
+	String showAllPromos();
+	String promoListBoxLine(String price, String ean);
+	String promoDeactivatedListBoxLine(String price, String ean);
 }

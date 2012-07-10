@@ -17,6 +17,8 @@ import com.xfashion.client.notepad.ArticleAmountDataProvider;
 import com.xfashion.client.notepad.event.ClearNotepadEvent;
 import com.xfashion.client.notepad.event.IntoStockEvent;
 import com.xfashion.client.notepad.event.IntoStockHandler;
+import com.xfashion.client.promo.PromoService;
+import com.xfashion.client.promo.PromoServiceAsync;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.client.stock.event.RequestOpenSellPopupEvent;
 import com.xfashion.client.stock.event.RequestOpenSellPopupHandler;
@@ -28,13 +30,16 @@ import com.xfashion.client.user.UserService;
 import com.xfashion.client.user.UserServiceAsync;
 import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.ArticleTypeDTO;
+import com.xfashion.shared.PromoDTO;
 import com.xfashion.shared.SoldArticleDTO;
 
 public class StockManagement implements IntoStockHandler, SellFromStockHandler, RequestOpenSellPopupHandler, LoginHandler, FilterRefreshedHandler {
 
 	private UserServiceAsync userService = (UserServiceAsync) GWT.create(UserService.class);
-
+	private PromoServiceAsync promoService = (PromoServiceAsync) GWT.create(PromoService.class);
+	
 	private HashMap<String, ArticleAmountDTO> stock;
+	private HashMap<Long, PromoDTO> promos;
 
 	protected ArticleAmountDataProvider stockProvider;
 	protected ArticleTypeDatabase articleTypeDatabase;
@@ -46,11 +51,14 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 	TextMessages textMessages;
 
 	public StockManagement(ArticleTypeDatabase articleTypeDatabase) {
-		textMessages = GWT.create(TextMessages.class);
 		this.stock = new HashMap<String, ArticleAmountDTO>();
+		this.promos = new HashMap<Long, PromoDTO>();
 		this.articleTypeDatabase = articleTypeDatabase;
 		this.stockProvider = new ArticleAmountDataProvider(articleTypeDatabase);
 		this.stockPanel = new StockPanel(articleTypeDatabase);
+
+		this.textMessages = GWT.create(TextMessages.class);
+		
 		registerForEvents();
 	}
 
@@ -82,7 +90,7 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 		if (sellFromStockPopup == null) {
 			sellFromStockPopup = new SellFromStockPopup(stockProvider, stock);
 		}
-		sellFromStockPopup.show();
+		sellFromStockPopup.show(promos);
 	}
 
 	@Override
@@ -121,6 +129,7 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 		if (panel == null) {
 			panel = stockPanel.createPanel(articleTypeDatabase, stockProvider, notepadArticleProvider);
 		}
+		readPromos();
 		return panel;
 	}
 
@@ -140,7 +149,6 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 			public void onFailure(Throwable caught) {
 				Xfashion.fireError(caught.getMessage());
 			}
-
 			@Override
 			public void onSuccess(Set<ArticleAmountDTO> result) {
 				storeStock(result);
@@ -149,6 +157,27 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 		userService.readStock(callback);
 	}
 
+	private void readPromos() {
+		AsyncCallback<List<PromoDTO>> callback = new AsyncCallback<List<PromoDTO>>() {
+			@Override
+			public void onSuccess(List<PromoDTO> result) {
+				storePromos(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
+			}
+		};
+		promoService.readActivePromos(callback);
+	}
+
+	private void storePromos(List<PromoDTO> promoList) {
+		promos.clear();
+		for (PromoDTO promo : promoList) {
+			promos.put(promo.getEan(), promo);
+		}
+	}
+	
 	private void refresh() {
 		List<ArticleTypeDTO> filteredArticleTypes = articleTypeDatabase.getArticleTypeProvider().getList();
 		List<ArticleAmountDTO> filteredStockItems = new ArrayList<ArticleAmountDTO>();

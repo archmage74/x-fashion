@@ -28,4 +28,7 @@ public interface MenuMessages extends Messages {
 
 	@DefaultMessage("Verkäufe")
 	SafeHtml sellStatistic();
+
+	@DefaultMessage("Aktionen")
+	SafeHtml promo();
 }

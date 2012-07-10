@@ -26,6 +26,11 @@
 	</servlet>
 	
 	<servlet>
+		<servlet-name>promoServlet</servlet-name>
+		<servlet-class>com.xfashion.server.PromoServiceImpl</servlet-class>
+	</servlet>
+	
+	<servlet>
 		<servlet-name>resetPasswordServlet</servlet-name>
 		<servlet-class>com.xfashion.server.user.ResetPasswordServlet</servlet-class>
 	</servlet>
@@ -43,6 +48,11 @@
 	<servlet>
 		<servlet-name>deliverynotice</servlet-name>
 		<servlet-class>com.xfashion.pdf.DeliveryNotice</servlet-class>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>promosticker</servlet-name>
+		<servlet-class>com.xfashion.pdf.PromoSticker</servlet-class>
 	</servlet>
 	
 	<servlet>
@@ -75,6 +85,11 @@
 		<url-pattern>/xfashion/notepadService</url-pattern>
 	</servlet-mapping>
 	
+  	<servlet-mapping>
+		<servlet-name>promoServlet</servlet-name>
+		<url-pattern>/xfashion/promoService</url-pattern>
+	</servlet-mapping>
+
 	<servlet-mapping>
 		<servlet-name>resetPasswordServlet</servlet-name>
 		<url-pattern>/resetpassword/*</url-pattern>
@@ -88,6 +103,11 @@
 	<servlet-mapping>
 		<servlet-name>multisticker</servlet-name>
 		<url-pattern>/pdf/multisticker</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>promosticker</servlet-name>
+		<url-pattern>/pdf/promosticker</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>

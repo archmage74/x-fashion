@@ -25,7 +25,7 @@ public class SellStatisticManagement implements ShowSellStatisticHandler, AddMor
 	public static final int CHUNK_SIZE = 50;
 	
 	private UserServiceAsync userService = (UserServiceAsync) GWT.create(UserService.class);
-	
+
 	private SellStatisticPanel sellStatisticPanel;
 	private Panel panel;
 	

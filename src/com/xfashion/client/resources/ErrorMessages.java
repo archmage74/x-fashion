@@ -49,4 +49,7 @@ public interface ErrorMessages extends Messages {
 
 	String notEnoughArticlesInStock();
 
+	String noSellArticles();
+	String unknownPromo();
+
 }

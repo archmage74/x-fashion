@@ -28,6 +28,7 @@ import com.xfashion.client.user.UserManagement;
 import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.BarcodeHelper;
+import com.xfashion.shared.PromoDTO;
 import com.xfashion.shared.SoldArticleDTO;
 
 public class SellFromStockPopup {
@@ -36,11 +37,14 @@ public class SellFromStockPopup {
 	protected Map<Long, ArticleAmountDTO> articleAmounts;
 	protected ArticleAmountDataProvider stockProvider;
 	protected Map<String, ArticleAmountDTO> stock;
+	
+	protected Map<Long, PromoDTO> promos;
 
 	protected DialogBox dialogBox;
 	protected Grid articleGrid;
 	protected Label priceSumLabel;
 	protected TextBox eanTextBox;
+	protected Label lastArticlePriceLabel;
 
 	protected TextMessages textMessages;
 	protected ErrorMessages errorMessages;
@@ -51,12 +55,13 @@ public class SellFromStockPopup {
 		this.stock = stock;
 		this.sellArticles = new ArrayList<SoldArticleDTO>();
 		this.articleAmounts = new HashMap<Long, ArticleAmountDTO>();
-		textMessages = GWT.create(TextMessages.class);
-		errorMessages = GWT.create(ErrorMessages.class);
-		formatter = new Formatter();
+		this.textMessages = GWT.create(TextMessages.class);
+		this.errorMessages = GWT.create(ErrorMessages.class);
+		this.formatter = new Formatter();
 	}
 
-	public void show() {
+	public void show(Map<Long, PromoDTO> promos) {
+		this.promos = promos;
 		if (dialogBox == null) {
 			dialogBox = create();
 		}
@@ -166,10 +171,10 @@ public class SellFromStockPopup {
 
 	protected void addArticleToGrid(ArticleTypeDTO articleType) {
 		Label articleNameLabel = new Label(articleType.getName());
-		Label articlePriceLabel = new Label(formatter.formatCentsToCurrency(articleType.getSellPrice()));
+		lastArticlePriceLabel = new Label(formatter.formatCentsToCurrency(articleType.getSellPrice()));
 		articleGrid.resizeRows(sellArticles.size() + 1);
 		articleGrid.setWidget(sellArticles.size() - 1, 0, articleNameLabel);
-		articleGrid.setWidget(sellArticles.size() - 1, 1, articlePriceLabel);
+		articleGrid.setWidget(sellArticles.size() - 1, 1, lastArticlePriceLabel);
 		articleGrid.setWidget(sellArticles.size(), 1, priceSumLabel);
 	}
 
@@ -184,10 +189,31 @@ public class SellFromStockPopup {
 			if (value.toCharArray()[0] == BarcodeHelper.ARTICLE_PREFIX_CHAR) {
 				addArticle(value.substring(0, 12));
 				eanTextBox.setText("");
+			} else if (value.toCharArray()[0] == BarcodeHelper.PROMO_NOTICE_PREFIX_CHAR) {
+				if (sellArticles.size() == 0) {
+					Xfashion.fireError(errorMessages.noSellArticles());
+				} else {
+					modifyPriceOfLastArticle(value.substring(0, 12));
+				}
+				resetEanTextBox();
 			} else {
 				Xfashion.fireError(errorMessages.noValidArticleTypeEAN());
 			}
 		}
+	}
+
+	private void modifyPriceOfLastArticle(String promoIdString) {
+		Long promoId = Long.parseLong(promoIdString);
+		PromoDTO promo = promos.get(promoId);
+		if (promo == null) {
+			Xfashion.fireError(errorMessages.unknownPromo());
+			return;
+		}
+		
+		SoldArticleDTO soldArticle = sellArticles.get(sellArticles.size() - 1);
+		soldArticle.setSellPrice(promo.getPrice());
+		lastArticlePriceLabel.setText(formatter.formatCentsToCurrency(promo.getPrice()));
+		refreshPriceSum();
 	}
 
 	protected void sell() {

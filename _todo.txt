@@ -57,18 +57,19 @@ DONE - show notepad in stock-view
 DONE - show +1/+10 in article-panel in stock view
 DONE - show matrix in sell statistic
 DONE - filter for stock-view
+DONE - flyer-price administration and barcode print
 
 TEST - add username in set-password mail and in form
 
-show articles amount in stock for stock filters
-
-flyer-price administration and barcode print
+show real-sell price not current-sell in sell-statistic
 
 price reduction management (see mail from roman)
 
 seperate sell-prices for DE and AT
 
 1-pixel difference problem between filter-icons and filter-border 
+
+show articles amount in stock for stock filters (extract superclass of articleTypeDatabase for filtering)
 
 --------------------
 
