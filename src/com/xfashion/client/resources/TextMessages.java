@@ -25,10 +25,15 @@ public interface TextMessages extends Messages {
 	
 	String name();
 	String brand();
+	String unknownBrand();
 	String style();
+	String unknownStyle();
 	String size();
+	String unknownSize();
 	String color();
+	String unknownColor();
 	String category();
+	String unknownCategory();
 	String buyPrice();
 	String sellPrice();
 	String ean();

@@ -268,6 +268,7 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 			@Override
 			public void onSuccess(DeliveryNoticeDTO result) {
 				Xfashion.eventBus.fireEvent(new DeliveryNoticeUpdatedEvent(result));
+				currentDeliveryNotice = result;
 				currentNotepad = result.getNotepad();
 				refreshProvider();
 			}

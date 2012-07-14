@@ -145,11 +145,11 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 		nameTextBox.setValue(articleType.getName());
 		nameTextBox.setStyleName("baseInput");
 		nameTextBox.setWidth("96px");
-		brandLabel.setText(provider.getBrandProvider().resolveData(updatedArticleType.getBrandKey()).getName());
-		categoryLabel.setText(provider.getCategoryProvider().resolveData(updatedArticleType.getCategoryKey()).getName());
-		styleLabel.setText(provider.getCategoryProvider().resolveStyle(updatedArticleType.getStyleKey()).getName());
-		sizeLabel.setText(provider.getSizeProvider().resolveData(updatedArticleType.getSizeKey()).getName());
-		colorLabel.setText(provider.getColorProvider().resolveData(updatedArticleType.getColorKey()).getName());
+		brandLabel.setText(resolveBrand());
+		categoryLabel.setText(resolveCategory());
+		styleLabel.setText(resolveStyleName());
+		sizeLabel.setText(resolveSize());
+		colorLabel.setText(resolveColor());
 		buyPrice.setText(formatter.formatCentsToValue(updatedArticleType.getBuyPrice()));
 		buyPriceTextBox.setValue(formatter.formatCentsToValue(updatedArticleType.getBuyPrice()));
 		buyPriceTextBox.setStyleName("baseInput");
@@ -164,6 +164,51 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 		articleTypeDetailPopup.show();
 
 		updateImage();
+	}
+
+	private String resolveColor() {
+		ColorDTO color = provider.getColorProvider().resolveData(updatedArticleType.getColorKey());
+		if (color == null) {
+			return textMessages.unknownColor();
+		} else {
+			return color.getName();
+		}
+	}
+
+	private String resolveSize() {
+		SizeDTO size = provider.getSizeProvider().resolveData(updatedArticleType.getSizeKey());
+		if (size == null) {
+			return textMessages.unknownSize();
+		} else {
+			return size.getName();
+		}
+	}
+
+	private String resolveCategory() {
+		CategoryDTO category = provider.getCategoryProvider().resolveData(updatedArticleType.getCategoryKey());
+		if (category == null) {
+			return textMessages.unknownCategory();
+		} else {
+			return category.getName();
+		}
+	}
+
+	private String resolveBrand() {
+		BrandDTO brand = provider.getBrandProvider().resolveData(updatedArticleType.getBrandKey());
+		if (brand == null) {
+			return textMessages.unknownBrand();
+		} else {
+			return brand.getName();
+		}
+	}
+
+	private String resolveStyleName() {
+		StyleDTO style = provider.getCategoryProvider().resolveStyle(updatedArticleType.getStyleKey());
+		if (style == null) {
+			return textMessages.unknownStyle();
+		} else {
+			return style.getName();
+		}
 	}
 
 	private void updateImage() {

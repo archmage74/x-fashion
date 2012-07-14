@@ -45,6 +45,7 @@ DONE - article-stock per user
 DONE - scanning of article and add immediately to notepad
 DONE - sell article (remove article from article-stock))
 DONE - sell-statistics (list of all single sells)
+------------ 
 DONE - show notepad and delivery-notice info in notepad-header
 DONE - show full EAN for delivery-notices (including checksum-digit)
 DONE - user management: shop -> shop-kuerzel, add shop-name, add seperate fields for strasse, hnr, plz, ort
@@ -58,20 +59,24 @@ DONE - show +1/+10 in article-panel in stock view
 DONE - show matrix in sell statistic
 DONE - filter for stock-view
 DONE - flyer-price administration and barcode print
+DONE - add username in set-password mail and in form
+DONE - do not allow deletion of assigned styles
+DONE - allow editing of articles with missing attributes
 
-TEST - add username in set-password mail and in form
-
-show real-sell price not current-sell in sell-statistic
+add percentage-based promos, show first euro based, then percentage based, plus seperator 
 
 show only activated promos and print-button for shops in promo-view
+
+show real-sell price not current-sell in sell-statistic
 
 price reduction management (see mail from roman)
 
 seperate sell-prices for DE and AT
 
-1-pixel difference problem between filter-icons and filter-border 
-
 show articles amount in stock for stock filters (extract superclass of articleTypeDatabase for filtering)
+
+sell statistic does not work for all users
+remove sold article during selling
 
 --------------------
 

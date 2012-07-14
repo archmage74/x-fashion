@@ -69,7 +69,7 @@ public abstract class ArticleTable<T> {
 				SafeHtmlBuilder sb = new SafeHtmlBuilder();
 				sb.appendHtmlConstant("<div class=\"articleUpLe\">");
 				CategoryDTO category = provider.getCategoryProvider().resolveData(at.getCategoryKey());
-				String name = "...";
+				String name = textMessages.unknownCategory();
 				if (category != null) {
 					name = category.getName();
 				}
@@ -77,7 +77,7 @@ public abstract class ArticleTable<T> {
 				sb.appendHtmlConstant("</div>");
 				sb.appendHtmlConstant("<div class=\"articleBoLe\">");
 				BrandDTO brand = provider.getBrandProvider().resolveData(at.getBrandKey());
-				name = "...";
+				name = textMessages.unknownBrand();
 				if (brand != null) {
 					name = brand.getName();
 				}
@@ -104,7 +104,7 @@ public abstract class ArticleTable<T> {
 				html.appendHtmlConstant("</div>");
 				html.appendHtmlConstant("<div class=\"articleBoCe\">");
 				StyleDTO dto = provider.getCategoryProvider().resolveStyle(at.getStyleKey());
-				String name = "...";
+				String name = textMessages.unknownStyle();
 				if (dto != null) {
 					name = dto.getName();
 				}
@@ -122,7 +122,7 @@ public abstract class ArticleTable<T> {
 				SafeHtmlBuilder sb = new SafeHtmlBuilder();
 				sb.appendHtmlConstant("<div class=\"articleUpLe\">");
 				ColorDTO color = provider.getColorProvider().resolveData(at.getColorKey());
-				String name = "...";
+				String name = textMessages.unknownColor();
 				if (color != null) {
 					name = color.getName();
 				}
@@ -130,7 +130,7 @@ public abstract class ArticleTable<T> {
 				sb.appendHtmlConstant("</div>");
 				sb.appendHtmlConstant("<div class=\"articleBoLe\">");
 				SizeDTO size = provider.getSizeProvider().resolveData(at.getSizeKey());
-				name = "...";
+				name = textMessages.unknownSize();
 				if (size != null) {
 					name = size.getName();
 				}

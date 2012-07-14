@@ -89,7 +89,9 @@ public class SellStatisticManagement implements ShowSellStatisticHandler, AddMor
 		if (UserManagement.hasRole(UserRole.SHOP)) {
 			currentShop = UserManagement.user.getShop();
 		}
-		readShops();
+		if (UserManagement.hasRole(UserRole.ADMIN, UserRole.DEVELOPER)) {
+			readShops();
+		}
 		readSoldArticles();
 	}
 	
@@ -118,7 +120,6 @@ public class SellStatisticManagement implements ShowSellStatisticHandler, AddMor
 	}
 	
 	protected void addSoldArticles(List<SoldArticleDTO> result) {
-//		sellStatisticPanel.addSoldArticles(result);
 		sellStatisticProvider.getList().addAll(result);
 		if (result.size() < CHUNK_SIZE) {
 			sellStatisticPanel.disableAddMore();

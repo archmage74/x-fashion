@@ -5,6 +5,7 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
+import javax.jdo.JDOObjectNotFoundException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -23,9 +24,11 @@ public class DeliveryNotice extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 
+	public static final String ARTICLE_ATTRIBUTE_NOT_AVAILABLE = "[n/a]";
+	
 	private ArticleTypeService articleTypeService;
 	private BarcodeHelper barcodeHelper;
-	
+
 	SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 	NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.GERMAN);
 
@@ -34,7 +37,7 @@ public class DeliveryNotice extends HttpServlet {
 		articleTypeService = new ArticleTypeServiceImpl();
 		barcodeHelper = new BarcodeHelper();
 	}
-	
+
 	@Override
 	public void destroy() {
 		articleTypeService = null;
@@ -43,12 +46,12 @@ public class DeliveryNotice extends HttpServlet {
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
 		DeliveryNoticeDTO dn = (DeliveryNoticeDTO) req.getSession().getAttribute(NotepadService.SESSION_DELIVERY_NOTICE);
-		
+
 		res.setContentType("text/html; charset=iso-8859-15");
 		res.setCharacterEncoding("iso-8859-15");
-		
+
 		ServletOutputStream out = res.getOutputStream();
-		
+
 		out.print(renderHeader(dn));
 		int sum = 0;
 		for (ArticleAmountDTO aa : dn.getNotepad().getArticles()) {
@@ -57,7 +60,7 @@ public class DeliveryNotice extends HttpServlet {
 		}
 		out.print(renderFooter(sum));
 	}
-	
+
 	public String renderHeader(DeliveryNoticeDTO dn) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<html><head>");
@@ -98,17 +101,17 @@ public class DeliveryNotice extends HttpServlet {
 		sb.append("<table class=\"articleTable\" width=\"100%\">\n");
 		return sb.toString();
 	}
-	
+
 	private StringBuffer renderAsAddress(ShopDTO shop) {
 		StringBuffer sb = new StringBuffer();
 
 		addAddressLine(sb, shop.getName(), null);
 		addAddressLine(sb, shop.getStreet(), shop.getHousenumber());
 		addAddressLine(sb, shop.getPostalcode(), shop.getCity());
-		
+
 		return sb;
 	}
-	
+
 	private StringBuffer addAddressLine(StringBuffer sb, String s1, String s2) {
 		boolean line = false;
 		if (s1 != null && s1.length() != 0) {
@@ -149,7 +152,7 @@ public class DeliveryNotice extends HttpServlet {
 		sb.append("</tr>\n");
 		return sb.toString();
 	}
-	
+
 	private String renderFooter(int sum) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<tr>\n");
@@ -298,29 +301,48 @@ public class DeliveryNotice extends HttpServlet {
 		return sb;
 	}
 
-	private ArticleTypeDTO readArticleType(String key) {
-		return articleTypeService.readArticleType(key);
+	private ArticleTypeDTO readArticleType(String id) {
+		return articleTypeService.readArticleType(id);
 	}
-	
+
 	private String readCategoryName(String id) {
-		return articleTypeService.readCategory(id).getName();
+		try {
+			return articleTypeService.readCategory(id).getName();
+		} catch (JDOObjectNotFoundException e) {
+			return ARTICLE_ATTRIBUTE_NOT_AVAILABLE;
+		}
 	}
-	
+
 	private String readStyleName(String id) {
-		return articleTypeService.readStyle(id).getName();
+		try {
+			return articleTypeService.readStyle(id).getName();
+		} catch (JDOObjectNotFoundException e) {
+			return ARTICLE_ATTRIBUTE_NOT_AVAILABLE;
+		}
 	}
-	
-	private String readBrandName(String key) {
-		return articleTypeService.readBrand(key).getName();
+
+	private String readBrandName(String id) {
+		try {
+			return articleTypeService.readBrand(id).getName();
+		} catch (JDOObjectNotFoundException e) {
+			return ARTICLE_ATTRIBUTE_NOT_AVAILABLE;
+		}
 	}
-	
-	private String readColorName(String key) {
-		return articleTypeService.readColor(key).getName();
+
+	private String readColorName(String id) {
+		try {
+			return articleTypeService.readColor(id).getName();
+		} catch (JDOObjectNotFoundException e) {
+			return ARTICLE_ATTRIBUTE_NOT_AVAILABLE;
+		}
 	}
-	
-	private String readSizeName(String key) {
-		return articleTypeService.readSize(key).getName();
+
+	private String readSizeName(String id) {
+		try {
+			return articleTypeService.readSize(id).getName();
+		} catch (JDOObjectNotFoundException e) {
+			return ARTICLE_ATTRIBUTE_NOT_AVAILABLE;
+		}
 	}
-	
 
 }

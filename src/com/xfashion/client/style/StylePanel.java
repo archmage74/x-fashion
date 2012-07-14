@@ -2,6 +2,7 @@ package com.xfashion.client.style;
 
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.view.client.ListDataProvider;
+import com.xfashion.client.ErrorEvent;
 import com.xfashion.client.ResizeableIconFilterPanel;
 import com.xfashion.client.Xfashion;
 import com.xfashion.shared.StyleDTO;
@@ -33,8 +34,12 @@ public class StylePanel extends ResizeableIconFilterPanel<StyleDTO> {
 	}
 
 	@Override
-	public void delete(StyleDTO item) {
-		Xfashion.eventBus.fireEvent(new DeleteStyleEvent(item));
+	public void delete(StyleDTO style) {
+		if (style.getArticleAmount() != null && style.getArticleAmount() > 0) {
+			Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.sizeIsNotEmpty(style.getName())));
+		} else {
+			Xfashion.eventBus.fireEvent(new DeleteStyleEvent(style));
+		}
 	}
 
 	@Override
