@@ -9,6 +9,9 @@ public class PromoDTO extends DTO {
 	/** price in cents */
 	protected Integer price;
 
+	/** reduction of price in percent */
+	protected Integer percent;
+
 	/** if this promo is activated to override article prices */
 	protected boolean activated;
 
@@ -16,12 +19,13 @@ public class PromoDTO extends DTO {
 
 	}
 	
-	public PromoDTO(Integer price, Long ean) {
-		this(price, ean, true);
+	public PromoDTO(Integer price, Integer percent, Long ean) {
+		this(price, percent, ean, true);
 	}
 
-	public PromoDTO(Integer price, Long ean, boolean activated) {
+	public PromoDTO(Integer price, Integer percent, Long ean, boolean activated) {
 		this.price = price;
+		this.percent = percent;
 		this.ean = ean;
 		this.activated = activated;
 	}
@@ -40,6 +44,14 @@ public class PromoDTO extends DTO {
 
 	public void setPrice(Integer price) {
 		this.price = price;
+	}
+
+	public Integer getPercent() {
+		return percent;
+	}
+
+	public void setPercent(Integer percent) {
+		this.percent = percent;
 	}
 
 	public boolean isActivated() {

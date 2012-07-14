@@ -1,5 +1,7 @@
 package com.xfashion.client.promo;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
@@ -110,7 +112,7 @@ public class PromoManagement implements ActivatePromoHandler, DeactivatePromoHan
 		AsyncCallback<List<PromoDTO>> callback = new AsyncCallback<List<PromoDTO>>() {
 			@Override
 			public void onSuccess(List<PromoDTO> result) {
-				promoPanel.setPromos(result);
+				showPromos(new ArrayList<PromoDTO>(result));
 			}
 			@Override
 			public void onFailure(Throwable caught) {
@@ -119,6 +121,14 @@ public class PromoManagement implements ActivatePromoHandler, DeactivatePromoHan
 		};
 		promoService.readAllPromos(callback);
 
+	}
+	
+	private void showPromos(List<PromoDTO> promos) {
+		promos.add(new PromoDTO(-1, null, null));
+		promos.add(new PromoDTO(null, -1, null));
+		PromoListComparator promoListComparator = new PromoListComparator();
+		Collections.sort(promos, promoListComparator);
+		promoPanel.setPromos(promos);
 	}
 
 	private void registerForEvents() {

@@ -23,6 +23,7 @@ public class CreatePromoPopup {
 	protected DialogBox dialogBox;
 	protected Grid inputGrid;
 	protected TextBox priceTextBox;
+	protected TextBox percentTextBox;
 
 	protected TextMessages textMessages;
 	protected ErrorMessages errorMessages;
@@ -88,33 +89,57 @@ public class CreatePromoPopup {
 	}
 
 	protected Grid createInputGrid() {
-		Grid promoGrid = new Grid(1, 2);
+		Grid promoGrid = new Grid(2, 2);
 
-		Label label = new Label(textMessages.sellPrice());
-		promoGrid.setWidget(0, 0, label);
+		Label priceLabel = new Label(textMessages.sellPrice());
+		promoGrid.setWidget(0, 0, priceLabel);
 
 		priceTextBox = new TextBox();
 		promoGrid.setWidget(0, 1, priceTextBox);
+
+		Label percentLabel = new Label(textMessages.percent());
+		promoGrid.setWidget(1, 0, percentLabel);
+
+		percentTextBox = new TextBox();
+		promoGrid.setWidget(1, 1, percentTextBox);
 
 		return promoGrid;
 	}
 
 	protected void createPromo() {
 		String priceString = priceTextBox.getValue();
+		String percentString = percentTextBox.getValue();
 		Integer price = null;
-		try {
-			price = formatter.parseEurToCents(priceString);
-		} catch (NumberFormatException e) {
-			Xfashion.fireError(errorMessages.invalidPrice());
+		Integer percent = null;
+		
+		if ((priceString.length() == 0 && percentString.length() == 0) ||
+				(priceString.length() > 0 && percentString.length() > 0)) {
+			Xfashion.fireError(errorMessages.bothPromoValueSpecified());
 			return;
 		}
-		PromoDTO promo = new PromoDTO(price, null);
+		if (priceString.length() > 0) {
+			try {
+				price = formatter.parseEurToCents(priceString);
+			} catch (NumberFormatException e) {
+				Xfashion.fireError(errorMessages.invalidPrice());
+				return;
+			}
+		} else {
+			try {
+				percent = Integer.parseInt(percentString);
+			} catch (NumberFormatException e) {
+				Xfashion.fireError(errorMessages.invalidPrice());
+				return;
+			}
+		}
+		PromoDTO promo = new PromoDTO(price, percent, null);
 		Xfashion.eventBus.fireEvent(new CreatePromoEvent(promo));
 		hide();
 	}
 
 	protected void reset() {
 		priceTextBox.setValue("");
+		percentTextBox.setValue("");
 	}
 
 }

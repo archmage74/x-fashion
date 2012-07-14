@@ -24,8 +24,10 @@ import com.xfashion.client.promo.event.OpenCreatePromoPopupEvent;
 import com.xfashion.client.promo.event.PrintPromosEvent;
 import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.resources.TextMessages;
+import com.xfashion.client.user.UserManagement;
 import com.xfashion.shared.BarcodeHelper;
 import com.xfashion.shared.PromoDTO;
+import com.xfashion.shared.UserRole;
 
 public class PromoPanel {
 
@@ -33,6 +35,7 @@ public class PromoPanel {
 
 	protected HorizontalPanel promoPanel;
 	protected ListBox promoListBox;
+	protected Button createButton;
 	protected Button activateButton;
 	protected Button deactivateButton;
 	protected Button printButton;
@@ -61,7 +64,9 @@ public class PromoPanel {
 		if (panel == null) {
 			panel = new VerticalPanel();
 			panel.add(createHeaderPanel());
-			panel.add(createFilterListBox());
+			if (UserManagement.hasRole(UserRole.ADMIN, UserRole.DEVELOPER)) {
+				panel.add(createFilterListBox());
+			}
 			panel.add(createPromoPanel());
 			refreshActionPanel();
 		}
@@ -111,12 +116,36 @@ public class PromoPanel {
 		shownPromos.clear();
 		for (PromoDTO promo : promos) {
 			if (showAll || promo.isActivated()) {
-				String price = formatter.formatCentsToCurrency(promo.getPrice());
-				String ean = barcodeHelper.generatePromoEan(promo.getEan());
-				if (promo.isActivated()) {
-					promoListBox.addItem(textMessages.promoListBoxLine(price, ean));
+				String ean = null;
+				if (promo.getEan() == null) {
+					if (promo.getPrice() != null && promo.getPrice().equals(-1)) {
+						promoListBox.addItem(textMessages.priceHeaderPromoListBoxLine());
+					} else if (promo.getPercent() != null && promo.getPercent().equals(-1)) {
+						promoListBox.addItem(textMessages.percentHeaderPromoListBoxLine());
+					} else {
+						promoListBox.addItem(textMessages.invalidPromoListBoxLine());
+					}
 				} else {
-					promoListBox.addItem(textMessages.promoDeactivatedListBoxLine(price, ean));
+					ean = barcodeHelper.generatePromoEan(promo.getEan());
+					if (promo.isActivated()) {
+						if (promo.getPrice() != null) {
+							String price = formatter.formatCentsToCurrency(promo.getPrice());
+							promoListBox.addItem(textMessages.pricePromoListBoxLine(price, ean));
+						} else if (promo.getPercent() != null) {
+							promoListBox.addItem(textMessages.percentPromoListBoxLine(promo.getPercent(), ean));
+						} else {
+							promoListBox.addItem(textMessages.invalidPromoListBoxLine());
+						}
+					} else {
+						if (promo.getPrice() != null) {
+							String price = formatter.formatCentsToCurrency(promo.getPrice());
+							promoListBox.addItem(textMessages.pricePromoDeactivatedListBoxLine(price, ean));
+						} else if (promo.getPercent() != null) {
+							promoListBox.addItem(textMessages.percentPromoDeactivatedListBoxLine(promo.getPercent(), ean));
+						} else {
+							promoListBox.addItem(textMessages.invalidPromoListBoxLine());
+						}
+					}
 				}
 				shownPromos.add(promo);
 			}
@@ -183,7 +212,7 @@ public class PromoPanel {
 
 	private Widget createPromoListBox() {
 		promoListBox = new ListBox();
-		promoListBox.setVisibleItemCount(20);
+		promoListBox.setVisibleItemCount(35);
 		promoListBox.setWidth("250px");
 		promoListBox.addChangeHandler(new ChangeHandler() {
 			@Override
@@ -196,9 +225,14 @@ public class PromoPanel {
 
 	private Widget createActionPanel() {
 		VerticalPanel actionPanel = new VerticalPanel();
-		actionPanel.add(createCreateButton());
-		actionPanel.add(createActivateButton());
-		actionPanel.add(createDeactivateButton());
+		createCreateButton();
+		createActivateButton();
+		createDeactivateButton();
+		if (UserManagement.hasRole(UserRole.ADMIN, UserRole.DEVELOPER)) {
+			actionPanel.add(createButton);
+			actionPanel.add(activateButton);
+			actionPanel.add(deactivateButton);
+		}
 		actionPanel.add(createPrintPanel());
 		return actionPanel;
 	}
@@ -218,7 +252,7 @@ public class PromoPanel {
 	}
 
 	private Widget createCreateButton() {
-		Button createButton = new Button(textMessages.createPromo());
+		createButton = new Button(textMessages.createPromo());
 		createButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {

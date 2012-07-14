@@ -62,10 +62,11 @@ DONE - flyer-price administration and barcode print
 DONE - add username in set-password mail and in form
 DONE - do not allow deletion of assigned styles
 DONE - allow editing of articles with missing attributes
+DONE - add percentage-based promos, show first euro based, then percentage based, plus seperator 
+DONE - show only activated promos and print-button for shops in promo-view
+DONE - bug: sell statistic does not work for all users
 
-add percentage-based promos, show first euro based, then percentage based, plus seperator 
-
-show only activated promos and print-button for shops in promo-view
+remove sold article during selling
 
 show real-sell price not current-sell in sell-statistic
 
@@ -75,8 +76,6 @@ seperate sell-prices for DE and AT
 
 show articles amount in stock for stock filters (extract superclass of articleTypeDatabase for filtering)
 
-sell statistic does not work for all users
-remove sold article during selling
 
 --------------------
 

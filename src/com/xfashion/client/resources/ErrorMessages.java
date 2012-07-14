@@ -51,5 +51,6 @@ public interface ErrorMessages extends Messages {
 
 	String noSellArticles();
 	String unknownPromo();
+	String bothPromoValueSpecified();
 
 }

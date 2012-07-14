@@ -83,6 +83,7 @@ public interface TextMessages extends Messages {
 	String intoStockResult(Long addedArticleNumber);
 	String sellStockResult(Long soldArticleNumber);
 	String sellArticles();
+	String sellRemoveArticle();
 	String sellStatisticHeader();
 	String allShops();
 	String sellStatisticDate(Date sellDate);
@@ -95,6 +96,13 @@ public interface TextMessages extends Messages {
 	String printPromo();
 	String showActivatedPromos();
 	String showAllPromos();
-	String promoListBoxLine(String price, String ean);
-	String promoDeactivatedListBoxLine(String price, String ean);
+	String pricePromoListBoxLine(String price, String ean);
+	String pricePromoDeactivatedListBoxLine(String price, String ean);
+	String percentPromoListBoxLine(Integer percent, String ean);
+	String percentPromoDeactivatedListBoxLine(Integer percent, String ean);
+	String priceHeaderPromoListBoxLine();
+	String percentHeaderPromoListBoxLine();
+	String percent();
+	String invalidPromoListBoxLine();
+
 }

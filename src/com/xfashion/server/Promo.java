@@ -23,6 +23,9 @@ public class Promo {
 	private Integer price;
 	
 	@Persistent
+	private Integer percent;
+	
+	@Persistent
 	private Boolean activated;
 	
 	public Promo() {
@@ -36,6 +39,7 @@ public class Promo {
 	public void updateFromDTO(PromoDTO dto) {
 		this.ean = dto.getEan();
 		this.price = dto.getPrice();
+		this.percent = dto.getPercent();
 		this.activated = dto.isActivated();
 	}
 	
@@ -44,6 +48,7 @@ public class Promo {
 		dto.setKey(getKeyString());
 		dto.setEan(ean);
 		dto.setPrice(price);
+		dto.setPercent(percent);
 		dto.setActivated(activated);
 		return dto;
 	}
@@ -76,6 +81,14 @@ public class Promo {
 		this.price = price;
 	}
 
+	public Integer getPercent() {
+		return percent;
+	}
+
+	public void setPercent(Integer percent) {
+		this.percent = percent;
+	}
+	
 	public Boolean getActivated() {
 		return activated;
 	}
@@ -83,5 +96,5 @@ public class Promo {
 	public void setActivated(Boolean activated) {
 		this.activated = activated;
 	}
-	
+
 }

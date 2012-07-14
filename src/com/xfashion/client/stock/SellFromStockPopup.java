@@ -37,7 +37,7 @@ public class SellFromStockPopup {
 	protected Map<Long, ArticleAmountDTO> articleAmounts;
 	protected ArticleAmountDataProvider stockProvider;
 	protected Map<String, ArticleAmountDTO> stock;
-	
+
 	protected Map<Long, PromoDTO> promos;
 
 	protected DialogBox dialogBox;
@@ -116,16 +116,16 @@ public class SellFromStockPopup {
 	}
 
 	protected Grid createArticleGrid() {
-		articleGrid = new Grid(1,2);
+		articleGrid = new Grid(1, 3);
 		articleGrid.setWidget(0, 1, createPriceSumLabel());
 		return articleGrid;
 	}
-	
+
 	protected Widget createPriceSumLabel() {
 		priceSumLabel = new Label();
 		return priceSumLabel;
 	}
-	
+
 	protected Widget createEanTextBox() {
 		eanTextBox = new TextBox();
 		eanTextBox.setWidth("120px");
@@ -146,7 +146,7 @@ public class SellFromStockPopup {
 
 		ArticleAmountDTO sellArticleAmount = articleAmounts.get(ean);
 		if (sellArticleAmount == null) {
-			sellArticleAmount = new ArticleAmountDTO(articleType.getKey(), 0); 
+			sellArticleAmount = new ArticleAmountDTO(articleType.getKey(), 0);
 			articleAmounts.put(articleType.getProductNumber(), sellArticleAmount);
 		}
 
@@ -156,11 +156,11 @@ public class SellFromStockPopup {
 		} else {
 			sellArticleAmount.increaseAmount();
 			sellArticles.add(sellArticle);
-			addArticleToGrid(articleType);
+			addArticleToGrid(sellArticle, articleType);
 			refreshPriceSum();
 		}
 	}
-	
+
 	protected void refreshPriceSum() {
 		Integer sum = 0;
 		for (SoldArticleDTO sellArticle : sellArticles) {
@@ -169,13 +169,27 @@ public class SellFromStockPopup {
 		priceSumLabel.setText(formatter.formatCentsToCurrency(sum));
 	}
 
-	protected void addArticleToGrid(ArticleTypeDTO articleType) {
+	protected void addArticleToGrid(SoldArticleDTO sellArticle, ArticleTypeDTO articleType) {
 		Label articleNameLabel = new Label(articleType.getName());
 		lastArticlePriceLabel = new Label(formatter.formatCentsToCurrency(articleType.getSellPrice()));
+		Button removeArticleButton = new Button(textMessages.sellRemoveArticle());
+		removeArticleButton.addClickHandler(new RemoveArticleFromSellListClickHandler(this, sellArticle));
 		articleGrid.resizeRows(sellArticles.size() + 1);
 		articleGrid.setWidget(sellArticles.size() - 1, 0, articleNameLabel);
 		articleGrid.setWidget(sellArticles.size() - 1, 1, lastArticlePriceLabel);
+		articleGrid.setWidget(sellArticles.size() - 1, 2, removeArticleButton);
 		articleGrid.setWidget(sellArticles.size(), 1, priceSumLabel);
+	}
+	
+	void removeArticle(SoldArticleDTO sellArticle) {
+		int listIndex = sellArticles.indexOf(sellArticle);
+		removeArticleFromGrid(listIndex);
+		sellArticles.remove(listIndex);
+		refreshPriceSum();
+	}
+
+	private void removeArticleFromGrid(int listIndex) {
+		articleGrid.removeRow(listIndex);
 	}
 
 	private void checkForEAN() {
@@ -209,10 +223,17 @@ public class SellFromStockPopup {
 			Xfashion.fireError(errorMessages.unknownPromo());
 			return;
 		}
-		
+
 		SoldArticleDTO soldArticle = sellArticles.get(sellArticles.size() - 1);
-		soldArticle.setSellPrice(promo.getPrice());
-		lastArticlePriceLabel.setText(formatter.formatCentsToCurrency(promo.getPrice()));
+		if (promo.getPrice() != null) {
+			soldArticle.setSellPrice(promo.getPrice());
+		} else {
+			Integer price = soldArticle.getSellPrice();
+			Integer newPrice = (price * 100 - price * promo.getPercent()) / 100;
+			soldArticle.setSellPrice(newPrice);
+		}
+
+		lastArticlePriceLabel.setText(formatter.formatCentsToCurrency(soldArticle.getSellPrice()));
 		refreshPriceSum();
 	}
 
