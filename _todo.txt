@@ -65,8 +65,7 @@ DONE - allow editing of articles with missing attributes
 DONE - add percentage-based promos, show first euro based, then percentage based, plus seperator 
 DONE - show only activated promos and print-button for shops in promo-view
 DONE - bug: sell statistic does not work for all users
-
-remove sold article during selling
+DONE - remove sold article during selling
 
 show real-sell price not current-sell in sell-statistic
 
