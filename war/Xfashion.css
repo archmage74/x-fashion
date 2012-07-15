@@ -271,6 +271,13 @@
 	height: 25px;
 	overflow-y: auto;
 }
+.articleTypePrice {
+	margin: 0px;
+	padding: 0px;
+	text-align: right;
+	width: 120px;
+	height: 25px;
+}
 .articlePrice {
 	text-align: right;
 	vertical-align: middle;
