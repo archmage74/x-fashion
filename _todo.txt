@@ -68,8 +68,7 @@ DONE - bug: sell statistic does not work for all users
 DONE - remove sold article during selling
 DONE - show real-sell price not current-sell in sell-statistic
 DONE - seperate sell-prices for DE and AT
-
-show articles amount in stock for stock filters (extract superclass of articleTypeDatabase for filtering)
+DONE - show articles amount in stock for stock filters (only stock or article-types filter work correctly)
 
 price reduction management (see mail from roman)
 
