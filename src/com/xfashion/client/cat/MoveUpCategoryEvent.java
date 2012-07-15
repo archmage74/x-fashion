@@ -1,9 +1,9 @@
 package com.xfashion.client.cat;
 
-import com.xfashion.client.FilterDataEvent2;
+import com.xfashion.client.FilterDataEvent;
 import com.xfashion.shared.CategoryDTO;
 
-public class MoveUpCategoryEvent extends FilterDataEvent2<MoveUpCategoryHandler, CategoryDTO> {
+public class MoveUpCategoryEvent extends FilterDataEvent<MoveUpCategoryHandler, CategoryDTO> {
 	
 	public static Type<MoveUpCategoryHandler> TYPE = new Type<MoveUpCategoryHandler>();
 

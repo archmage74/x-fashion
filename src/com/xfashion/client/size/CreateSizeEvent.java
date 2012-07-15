@@ -1,9 +1,9 @@
 package com.xfashion.client.size;
 
-import com.xfashion.client.FilterDataEvent2;
+import com.xfashion.client.FilterDataEvent;
 import com.xfashion.shared.SizeDTO;
 
-public class CreateSizeEvent extends FilterDataEvent2<CreateSizeHandler, SizeDTO> {
+public class CreateSizeEvent extends FilterDataEvent<CreateSizeHandler, SizeDTO> {
 
 	public static Type<CreateSizeHandler> TYPE = new Type<CreateSizeHandler>();
 	

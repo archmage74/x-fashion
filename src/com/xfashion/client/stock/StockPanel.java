@@ -13,12 +13,14 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTable;
+import com.xfashion.client.at.ArticleTypeManagement;
 import com.xfashion.client.brand.BrandPanel;
 import com.xfashion.client.cat.CategoryPanel;
 import com.xfashion.client.color.ColorPanel;
 import com.xfashion.client.db.ArticleTypeDatabase;
 import com.xfashion.client.name.NamePanel;
 import com.xfashion.client.notepad.ArticleAmountDataProvider;
+import com.xfashion.client.notepad.GetPriceFromArticleAmountStrategy;
 import com.xfashion.client.notepad.NotepadPanel;
 import com.xfashion.client.notepad.event.NotepadStartMaximizeEvent;
 import com.xfashion.client.notepad.event.NotepadStartMaximizeHandler;
@@ -34,11 +36,11 @@ import com.xfashion.shared.ArticleAmountDTO;
 
 public class StockPanel implements NotepadStartMinimizeHandler, NotepadStartMaximizeHandler {
 
-	public static final int PANEL_MAX_WIDTH = 550; 
+	public static final int PANEL_MAX_WIDTH = 550;
 	public static final int PANEL_MIN_WIDTH = 25;
-	
+
 	private ArticleTypeDatabase articleTypeDatabase;
-	
+
 	protected HorizontalPanel headerPanel;
 	protected HorizontalPanel panel;
 	protected ScrollPanel scrollPanel;
@@ -49,21 +51,21 @@ public class StockPanel implements NotepadStartMinimizeHandler, NotepadStartMaxi
 	protected SizePanel sizePanel;
 	protected ColorPanel colorPanel;
 	protected NamePanel namePanel;
-	
+
 	protected boolean minimized = false;
-	
+
 	protected TextMessages textMessages;
 	protected ImageResources images;
-	
-	public StockPanel(ArticleTypeDatabase articleTypeDatabase ) {
+
+	public StockPanel(ArticleTypeDatabase articleTypeDatabase) {
 		textMessages = GWT.create(TextMessages.class);
-		images = GWT.<ImageResources>create(ImageResources.class);
-		this.articleTypeDatabase = articleTypeDatabase ;
-		
+		images = GWT.<ImageResources> create(ImageResources.class);
+		this.articleTypeDatabase = articleTypeDatabase;
+
 		registerForEvents();
 	}
-	
-	public Panel createPanel(ArticleTypeDatabase articleTypeDatabase, ArticleAmountDataProvider stockProvider, 
+
+	public Panel createPanel(ArticleTypeDatabase articleTypeDatabase, ArticleAmountDataProvider stockProvider,
 			ArticleAmountDataProvider notepadArticleProvider) {
 
 		if (panel == null) {
@@ -80,29 +82,33 @@ public class StockPanel implements NotepadStartMinimizeHandler, NotepadStartMaxi
 		}
 		return panel;
 	}
-	
+
 	public void setWidth(int width) {
 		scrollPanel.setWidth(width + "px");
 	}
-	
+
 	@Override
 	public void onNotepadStartMaximize(NotepadStartMaximizeEvent event) {
-		brandPanel.minimize();
-		stylePanel.minimize();
-		sizePanel.minimize();
-		colorPanel.minimize();
-		namePanel.minimize();
+		if (panel != null) {
+			brandPanel.minimize();
+			stylePanel.minimize();
+			sizePanel.minimize();
+			colorPanel.minimize();
+			namePanel.minimize();
+		}
 	}
 
 	@Override
 	public void onNotepadStartMinimize(NotepadStartMinimizeEvent event) {
-		brandPanel.maximize();
-		stylePanel.maximize();
-		sizePanel.maximize();
-		colorPanel.maximize();
-		namePanel.maximize();
+		if (panel != null) {
+			brandPanel.maximize();
+			stylePanel.maximize();
+			sizePanel.maximize();
+			colorPanel.maximize();
+			namePanel.maximize();
+		}
 	}
-	
+
 	private Widget createCategoryPanel() {
 		categoryPanel = new CategoryPanel(articleTypeDatabase.getCategoryProvider());
 		return categoryPanel.createPanel();
@@ -112,12 +118,12 @@ public class StockPanel implements NotepadStartMinimizeHandler, NotepadStartMaxi
 		brandPanel = new BrandPanel(articleTypeDatabase.getBrandProvider());
 		return brandPanel.createPanel();
 	}
-	
+
 	private Widget createStylePanel() {
 		stylePanel = new StylePanel(articleTypeDatabase.getCategoryProvider().getStyleProvider());
 		return stylePanel.createPanel();
 	}
-	
+
 	private Widget createColorPanel() {
 		colorPanel = new ColorPanel(articleTypeDatabase.getColorProvider());
 		return colorPanel.createPanel();
@@ -130,7 +136,7 @@ public class StockPanel implements NotepadStartMinimizeHandler, NotepadStartMaxi
 
 	private Widget createSizePanel() {
 		sizePanel = new SizePanel(articleTypeDatabase.getSizeProvider());
-		return sizePanel.createPanel(new String[] {"sizePanel"});
+		return sizePanel.createPanel(new String[] { "sizePanel" });
 	}
 
 	protected Panel createArticlePanel(ArticleAmountDataProvider articleAmountProvider) {
@@ -139,8 +145,10 @@ public class StockPanel implements NotepadStartMinimizeHandler, NotepadStartMaxi
 
 		headerPanel = createHeaderPanel();
 		articlePanel.add(headerPanel);
-		
-		ArticleTable<ArticleAmountDTO> att = new StockArticleTable(articleTypeDatabase);
+
+		GetPriceFromArticleAmountStrategy priceStrategy = new GetPriceFromArticleAmountStrategy(articleAmountProvider,
+				ArticleTypeManagement.getArticleTypePriceStrategy);
+		ArticleTable<ArticleAmountDTO> att = new StockArticleTable(articleTypeDatabase, priceStrategy);
 		Panel atp = att.create(articleAmountProvider);
 		articlePanel.add(atp);
 
@@ -148,32 +156,32 @@ public class StockPanel implements NotepadStartMinimizeHandler, NotepadStartMaxi
 		scrollPanel.setStyleName("filterPanel");
 		setWidth(PANEL_MAX_WIDTH);
 		scrollPanel.add(articlePanel);
-		
+
 		return articlePanel;
 	}
-	
+
 	protected HorizontalPanel createHeaderPanel() {
 		headerPanel = new HorizontalPanel();
 		headerPanel.addStyleName("filterHeader");
 		headerPanel.setWidth(PANEL_MAX_WIDTH + "px");
 
 		headerPanel.add(createHeaderLabel());
-		
+
 		HorizontalPanel toolPanel = new HorizontalPanel();
 		toolPanel.add(createSellIcon());
 		toolPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		headerPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		headerPanel.add(toolPanel);
-		
+
 		return headerPanel;
 	}
-	
+
 	private Label createHeaderLabel() {
 		Label headerLabel = new Label(textMessages.stockManagementHeader());
 		headerLabel.addStyleName("filterLabel attributeFilterLabel");
 		return headerLabel;
 	}
-	
+
 	private Image createSellIcon() {
 		Image icon = Buttons.sell();
 		icon.setTitle(textMessages.sellHint());

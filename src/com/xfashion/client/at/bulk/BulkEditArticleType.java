@@ -15,7 +15,8 @@ public class BulkEditArticleType {
 	private String sourceSizeKey;
 	private String sourceColorKey;
 	private Integer sourceBuyPrice;
-	private Integer sourceSellPrice;
+	private Integer sourceSellPriceAt;
+	private Integer sourceSellPriceDe;
 	private String sourceImageKey;
 
 	private String targetName;
@@ -25,7 +26,8 @@ public class BulkEditArticleType {
 	private String targetSizeKey;
 	private String targetColorKey;
 	private Integer targetBuyPrice;
-	private Integer targetSellPrice;
+	private Integer targetSellPriceAt;
+	private Integer targetSellPriceDe;
 	private String targetImageKey;
 
 	public BulkEditArticleType(List<ArticleTypeDTO> articleTypes) {
@@ -88,12 +90,20 @@ public class BulkEditArticleType {
 		this.targetBuyPrice = targetBuyPrice;
 	}
 
-	public Integer getTargetSellPrice() {
-		return targetSellPrice;
+	public Integer getTargetSellPriceAt() {
+		return targetSellPriceAt;
 	}
 
-	public void setTargetSellPrice(Integer targetSellPrice) {
-		this.targetSellPrice = targetSellPrice;
+	public void setTargetSellPriceAt(Integer targetSellPriceAt) {
+		this.targetSellPriceAt = targetSellPriceAt;
+	}
+
+	public Integer getTargetSellPriceDe() {
+		return targetSellPriceDe;
+	}
+
+	public void setTargetSellPriceDe(Integer targetSellPriceDe) {
+		this.targetSellPriceDe = targetSellPriceDe;
 	}
 
 	public String getTargetImageKey() {
@@ -132,8 +142,12 @@ public class BulkEditArticleType {
 		return sourceBuyPrice;
 	}
 
-	public Integer getSourceSellPrice() {
-		return sourceSellPrice;
+	public Integer getSourceSellPriceAt() {
+		return sourceSellPriceAt;
+	}
+
+	public Integer getSourceSellPriceDe() {
+		return sourceSellPriceDe;
 	}
 
 	public String getSourceImageKey() {
@@ -148,7 +162,8 @@ public class BulkEditArticleType {
 		sourceColorKey = helper.extractSourceAttribute(articleTypes, new ColorKeyAccessor());
 		sourceImageKey = helper.extractSourceAttribute(articleTypes, new ImageKeyAccessor());
 		sourceName = helper.extractSourceAttribute(articleTypes, new NameAccessor());
-		sourceSellPrice = helper.extractSourceAttribute(articleTypes, new SellPriceAccessor());
+		sourceSellPriceAt = helper.extractSourceAttribute(articleTypes, new SellPriceAtAccessor());
+		sourceSellPriceDe = helper.extractSourceAttribute(articleTypes, new SellPriceDeAccessor());
 		sourceSizeKey = helper.extractSourceAttribute(articleTypes, new SizeKeyAccessor());
 		sourceStyleKey = helper.extractSourceAttribute(articleTypes, new StyleKeyAccessor());
 	}
@@ -161,7 +176,8 @@ public class BulkEditArticleType {
 		helper.saveAttribute(articleTypes, new ColorKeyAccessor(), targetColorKey);
 		helper.saveAttribute(articleTypes, new ImageKeyAccessor(), targetImageKey);
 		helper.saveAttribute(articleTypes, new NameAccessor(), targetName);
-		helper.saveAttribute(articleTypes, new SellPriceAccessor(), targetSellPrice);
+		helper.saveAttribute(articleTypes, new SellPriceAtAccessor(), targetSellPriceAt);
+		helper.saveAttribute(articleTypes, new SellPriceDeAccessor(), targetSellPriceDe);
 		helper.saveAttribute(articleTypes, new SizeKeyAccessor(), targetSizeKey);
 		helper.saveAttribute(articleTypes, new StyleKeyAccessor(), targetStyleKey);
 	}

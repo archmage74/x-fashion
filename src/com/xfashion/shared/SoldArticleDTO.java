@@ -28,14 +28,14 @@ public class SoldArticleDTO implements IsSerializable {
 		
 	}
 	
-	public SoldArticleDTO(ArticleTypeDTO articleTypeDTO, ShopDTO shopDTO, Integer amount) {
+	public SoldArticleDTO(ArticleTypeDTO articleTypeDTO, Integer sellPrice, ShopDTO shopDTO, Integer amount) {
 		this.articleTypeKey = articleTypeDTO.getKey();
 		this.articleName = articleTypeDTO.getName();
 		this.amount = amount;
 		this.shopKey = shopDTO.getKeyString();
 		this.shopName = shopDTO.getName();
 		this.buyPrice = articleTypeDTO.getBuyPrice();
-		this.sellPrice = articleTypeDTO.getSellPrice();
+		this.sellPrice = sellPrice;
 	}
 	
 	public String getKey() {

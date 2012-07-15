@@ -1,9 +1,9 @@
 package com.xfashion.client.brand;
 
-import com.xfashion.client.FilterDataEvent2;
+import com.xfashion.client.FilterDataEvent;
 import com.xfashion.shared.BrandDTO;
 
-public class CreateBrandEvent extends FilterDataEvent2<CreateBrandHandler, BrandDTO> {
+public class CreateBrandEvent extends FilterDataEvent<CreateBrandHandler, BrandDTO> {
 
 	public static Type<CreateBrandHandler> TYPE = new Type<CreateBrandHandler>();
 	

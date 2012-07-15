@@ -47,6 +47,9 @@ public class ArticleType implements IsSerializable {
 	private Integer sellPrice;
 	
 	@Persistent
+	private Integer sellPriceDe;
+	
+	@Persistent
 	private Key imageKey;
 
 	public ArticleType() {
@@ -65,7 +68,8 @@ public class ArticleType implements IsSerializable {
 		setSizeKey(KeyFactory.stringToKey(dto.getSizeKey()));
 		setColorKey(KeyFactory.stringToKey(dto.getColorKey()));
 		setBuyPrice(dto.getBuyPrice());
-		setSellPrice(dto.getSellPrice());
+		setSellPrice(dto.getSellPriceAt());
+		setSellPriceDe(dto.getSellPriceDe());
 		if (dto.getImageKey() != null) {
 			setImageKey(KeyFactory.stringToKey(dto.getImageKey()));
 		} else {
@@ -84,7 +88,16 @@ public class ArticleType implements IsSerializable {
 		dto.setSizeKey(KeyFactory.keyToString(getSizeKey()));
 		dto.setColorKey(KeyFactory.keyToString(getColorKey()));
 		dto.setBuyPrice(getBuyPrice());
-		dto.setSellPrice(getSellPrice());
+		if (getSellPrice() != null) {
+			dto.setSellPriceAt(getSellPrice());
+		} else {
+			dto.setSellPriceAt(0);
+		}
+		if (getSellPriceDe() != null) {
+			dto.setSellPriceDe(getSellPriceDe());
+		} else {
+			dto.setSellPriceDe(0);
+		}
 		if (getImageKey() != null) {
 			dto.setImageKey(KeyFactory.keyToString(getImageKey()));
 		} else {
@@ -177,6 +190,14 @@ public class ArticleType implements IsSerializable {
 		this.sellPrice = sellPrice;
 	}
 	
+	public Integer getSellPriceDe() {
+		return sellPriceDe;
+	}
+
+	public void setSellPriceDe(Integer sellPriceDe) {
+		this.sellPriceDe = sellPriceDe;
+	}
+
 	public Key getImageKey() {
 		return imageKey;
 	}
@@ -199,6 +220,7 @@ public class ArticleType implements IsSerializable {
 		equal &= attributeEquals(colorKey, s.getColorKey());
 		equal &= attributeEquals(buyPrice, s.getBuyPrice());
 		equal &= attributeEquals(sellPrice, s.getSellPrice());
+		equal &= attributeEquals(sellPriceDe, s.getSellPriceDe());
 		equal &= attributeEquals(imageKey, s.getImageKey());
 		return equal;
 	}

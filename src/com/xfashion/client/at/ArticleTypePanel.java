@@ -65,8 +65,8 @@ public class ArticleTypePanel {
 		headerPanel = createHeaderPanel(nameOracle);
 		panel.add(headerPanel);
 		
-		ArticleTypeTable att = new ArticleTypeTable(articleTypeDatabase);
-		Panel atp = att.create(articleTypeProvider);
+		ArticleTypeTable articleTypeTable = new ArticleTypeTable(articleTypeDatabase, ArticleTypeManagement.getArticleTypePriceStrategy);
+		Panel atp = articleTypeTable.create(articleTypeProvider);
 		panel.add(atp);
 		
 		return panel;

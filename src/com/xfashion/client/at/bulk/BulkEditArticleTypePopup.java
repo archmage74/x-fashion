@@ -76,8 +76,10 @@ public class BulkEditArticleTypePopup implements CloseHandler<PopupPanel>, Choos
 	private Label colorLabel;
 	private Grid buyPriceGrid;
 	private TextBox buyPriceTextBox;
-	private Grid sellPriceGrid;
-	private TextBox sellPriceTextBox;
+	private Grid sellPriceAtGrid;
+	private TextBox sellPriceAtTextBox;
+	private Grid sellPriceDeGrid;
+	private TextBox sellPriceDeTextBox;
 
 	private ProvidesArticleFilter provider;
 
@@ -165,10 +167,16 @@ public class BulkEditArticleTypePopup implements CloseHandler<PopupPanel>, Choos
 			buyPriceTextBox.setValue(formatter.formatCentsToValue(bulk.getSourceBuyPrice()));
 		}
 
-		if (bulk.getSourceSellPrice() == null) {
-			sellPriceTextBox.setValue(textMessages.bulkMultipleAttributes());
+		if (bulk.getSourceSellPriceAt() == null) {
+			sellPriceAtTextBox.setValue(textMessages.bulkMultipleAttributes());
 		} else {
-			sellPriceTextBox.setValue(formatter.formatCentsToValue(bulk.getSourceSellPrice()));
+			sellPriceAtTextBox.setValue(formatter.formatCentsToValue(bulk.getSourceSellPriceAt()));
+		}
+
+		if (bulk.getSourceSellPriceDe() == null) {
+			sellPriceDeTextBox.setValue(textMessages.bulkMultipleAttributes());
+		} else {
+			sellPriceDeTextBox.setValue(formatter.formatCentsToValue(bulk.getSourceSellPriceDe()));
 		}
 
 		articleTypeDetailPopup.setPopupPosition(500, 50);
@@ -417,11 +425,21 @@ public class BulkEditArticleTypePopup implements CloseHandler<PopupPanel>, Choos
 		}
 	}
 
-	public void onChangeSellPrice() {
+	public void onChangeSellPriceAt() {
 		try {
-			Integer price = formatter.parseEurToCents(sellPriceTextBox.getText());
-			bulk.setTargetSellPrice(price);
-			sellPriceTextBox.addStyleName("editBulkChanged");
+			Integer price = formatter.parseEurToCents(sellPriceAtTextBox.getText());
+			bulk.setTargetSellPriceAt(price);
+			sellPriceAtTextBox.addStyleName("editBulkChanged");
+		} catch (NumberFormatException e) {
+			Xfashion.fireError(errorMessages.invalidPrice());
+		}
+	}
+
+	public void onChangeSellPriceDe() {
+		try {
+			Integer price = formatter.parseEurToCents(sellPriceAtTextBox.getText());
+			bulk.setTargetSellPriceDe(price);
+			sellPriceDeTextBox.addStyleName("editBulkChanged");
 		} catch (NumberFormatException e) {
 			Xfashion.fireError(errorMessages.invalidPrice());
 		}
@@ -433,7 +451,7 @@ public class BulkEditArticleTypePopup implements CloseHandler<PopupPanel>, Choos
 	}
 
 	private Grid createDetailsGrid() {
-		Grid grid = new Grid(3, 2);
+		Grid grid = new Grid(4, 2);
 
 		buyPriceGrid = new Grid(1, 2);
 		Label buyPriceLabel = new Label(textMessages.buyPrice() + ":");
@@ -447,18 +465,29 @@ public class BulkEditArticleTypePopup implements CloseHandler<PopupPanel>, Choos
 		});
 		grid.setWidget(0, 1, buyPriceGrid);
 
-		sellPriceGrid = new Grid(1, 2);
-		Label sellPriceLabel = new Label(textMessages.sellPrice() + ":");
-		grid.setWidget(1, 0, sellPriceLabel);
-		sellPriceTextBox = createGridTextBoxRow(sellPriceGrid, 0, textMessages.currencySign());
-		sellPriceTextBox.addChangeHandler(new ChangeHandler() {
+		sellPriceAtGrid = new Grid(1, 2);
+		Label sellPriceAtLabel = new Label(textMessages.sellPriceAt() + ":");
+		grid.setWidget(1, 0, sellPriceAtLabel);
+		sellPriceAtTextBox = createGridTextBoxRow(sellPriceAtGrid, 0, textMessages.currencySign());
+		sellPriceAtTextBox.addChangeHandler(new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
-				onChangeSellPrice();
+				onChangeSellPriceAt();
 			}
 		});
+		grid.setWidget(1, 1, sellPriceAtGrid);
 
-		grid.setWidget(1, 1, sellPriceGrid);
+		sellPriceDeGrid = new Grid(1, 2);
+		Label sellPriceLabel = new Label(textMessages.sellPriceDe() + ":");
+		grid.setWidget(1, 0, sellPriceLabel);
+		sellPriceDeTextBox = createGridTextBoxRow(sellPriceDeGrid, 0, textMessages.currencySign());
+		sellPriceDeTextBox.addChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
+				onChangeSellPriceDe();
+			}
+		});
+		grid.setWidget(2, 1, sellPriceDeGrid);
 
 		return grid;
 	}

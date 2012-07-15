@@ -1,9 +1,9 @@
 package com.xfashion.client.brand;
 
-import com.xfashion.client.FilterDataEvent2;
+import com.xfashion.client.FilterDataEvent;
 import com.xfashion.shared.BrandDTO;
 
-public class MoveDownBrandEvent extends FilterDataEvent2<MoveDownBrandHandler, BrandDTO> {
+public class MoveDownBrandEvent extends FilterDataEvent<MoveDownBrandHandler, BrandDTO> {
 	
 	public static Type<MoveDownBrandHandler> TYPE = new Type<MoveDownBrandHandler>();
 

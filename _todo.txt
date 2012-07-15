@@ -66,15 +66,12 @@ DONE - add percentage-based promos, show first euro based, then percentage based
 DONE - show only activated promos and print-button for shops in promo-view
 DONE - bug: sell statistic does not work for all users
 DONE - remove sold article during selling
-
-show real-sell price not current-sell in sell-statistic
-
-price reduction management (see mail from roman)
-
-seperate sell-prices for DE and AT
+DONE - show real-sell price not current-sell in sell-statistic
+DONE - seperate sell-prices for DE and AT
 
 show articles amount in stock for stock filters (extract superclass of articleTypeDatabase for filtering)
 
+price reduction management (see mail from roman)
 
 --------------------
 

@@ -147,7 +147,7 @@ public class DeliveryNotice extends HttpServlet {
 		sb.append("</tr>\n");
 		sb.append("</table>\n");
 		sb.append("</td>\n");
-		sb.append("<td class=\"price\">").append(currencyFormat.format(((double) at.getSellPrice()) / 100)).append("</td>\n");
+		sb.append("<td class=\"price\">").append(currencyFormat.format(((double) at.getSellPriceAt()) / 100)).append("</td>\n");
 		sb.append("<td class=\"pieces\">").append(aa.getAmount()).append("</td><td class=\"piecesLabel\">Stk.</td>\n");
 		sb.append("</tr>\n");
 		return sb.toString();

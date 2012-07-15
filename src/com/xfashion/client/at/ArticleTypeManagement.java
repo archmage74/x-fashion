@@ -16,8 +16,13 @@ import com.xfashion.client.notepad.event.NotepadStartMinimizeEvent;
 import com.xfashion.client.notepad.event.NotepadStartMinimizeHandler;
 import com.xfashion.client.size.SizePanel;
 import com.xfashion.client.style.StylePanel;
+import com.xfashion.client.user.LoginEvent;
+import com.xfashion.client.user.LoginHandler;
+import com.xfashion.shared.UserDTO;
 
-public class ArticleTypeManagement implements NotepadStartMaximizeHandler, NotepadStartMinimizeHandler {
+public class ArticleTypeManagement implements NotepadStartMaximizeHandler, NotepadStartMinimizeHandler, LoginHandler {
+
+	public static GetAtPriceFromArticleTypeStrategy getArticleTypePriceStrategy;
 
 	HorizontalPanel panel;
 	
@@ -30,6 +35,10 @@ public class ArticleTypeManagement implements NotepadStartMaximizeHandler, Notep
 	NotepadPanel notepadPanel;
 	ArticleTypePanel articleTypePanel;
 
+	public ArticleTypeManagement() {
+		registerForEvents();
+	}
+	
 	public Panel getPanel(ArticleTypeDatabase articleTypeDatabase, ArticleAmountDataProvider notepadArticleProvider) {
 		if (panel == null) {
 			panel = new HorizontalPanel();
@@ -53,8 +62,6 @@ public class ArticleTypeManagement implements NotepadStartMaximizeHandler, Notep
 			panel.add(notepadPanel.createPanel(notepadArticleProvider, true));
 		}
 		
-		registerForEvents();
-		
 		return panel;
 	}
 
@@ -76,9 +83,23 @@ public class ArticleTypeManagement implements NotepadStartMaximizeHandler, Notep
 		namePanel.maximize();
 	}
 
+	@Override
+	public void onLogin(LoginEvent event) {
+		UserDTO user = event.getUser();
+		switch (user.getCountry()) {
+		case AT:
+			ArticleTypeManagement.getArticleTypePriceStrategy = new GetAtPriceFromArticleTypeStrategy();
+			break;
+		case DE:
+			Xfashion.fireError("DE price strategy missing, see ArticleTypeManagement.onLogin()");
+			break;
+		}
+	}
+	
 	private void registerForEvents() {
 		Xfashion.eventBus.addHandler(NotepadStartMaximizeEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(NotepadStartMinimizeEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(LoginEvent.TYPE, this);
 	}
 
 }

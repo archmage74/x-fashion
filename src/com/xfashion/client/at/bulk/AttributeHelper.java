@@ -17,6 +17,15 @@ public class AttributeHelper {
 
 		while (iterator.hasNext()) {
 			T nextKey = accessor.getAttribute(iterator.next());
+			if (key == null && nextKey != null) {
+				return null;
+			}
+			if (key != null && nextKey == null) {
+				return null;
+			}
+			if (key == null && nextKey == null) {
+				break;
+			}
 			if (!key.equals(nextKey)) {
 				return null;
 			}

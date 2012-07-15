@@ -5,6 +5,7 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.xfashion.client.Formatter;
 import com.xfashion.client.at.ArticleTable;
+import com.xfashion.client.at.GetSellPriceStrategy;
 import com.xfashion.client.at.ProvidesArticleFilter;
 import com.xfashion.shared.SoldArticleDTO;
 
@@ -12,8 +13,8 @@ public class SellStatisticArticleTable extends ArticleTable<SoldArticleDTO> {
 
 	protected Formatter formatter;
 
-	public SellStatisticArticleTable(ProvidesArticleFilter provider) {
-		super(provider);
+	public SellStatisticArticleTable(ProvidesArticleFilter provider, GetSellPriceStrategy getPriceStrategy) {
+		super(provider, getPriceStrategy);
 		formatter = new Formatter();
 	}
 

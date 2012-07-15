@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.xfashion.client.Formatter;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTable;
+import com.xfashion.client.at.GetSellPriceStrategy;
 import com.xfashion.client.at.ProvidesArticleFilter;
 import com.xfashion.client.resources.ImageResources;
 import com.xfashion.client.resources.TextMessages;
@@ -105,7 +106,7 @@ public class SellStatisticPanel {
 			panel.add(createShopList());
 		}
 
-		ArticleTable<SoldArticleDTO> att = new SellStatisticArticleTable(filterProvider);
+		ArticleTable<SoldArticleDTO> att = new SellStatisticArticleTable(filterProvider, new GetSellPriceStrategy());
 		Panel atp = att.create(articleAmountProvider);
 		panel.add(atp);
 

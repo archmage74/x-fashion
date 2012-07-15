@@ -22,7 +22,9 @@ public class ArticleTypeDTO extends DTO implements IsSerializable {
 
 	private Integer buyPrice;
 	
-	private Integer sellPrice;
+	private Integer sellPriceAt;
+	
+	private Integer sellPriceDe;
 	
 	private String imageKey;
 
@@ -90,12 +92,20 @@ public class ArticleTypeDTO extends DTO implements IsSerializable {
 		this.buyPrice = buyPrice;
 	}
 
-	public Integer getSellPrice() {
-		return sellPrice;
+	public Integer getSellPriceAt() {
+		return sellPriceAt;
 	}
 
-	public void setSellPrice(Integer sellPrice) {
-		this.sellPrice = sellPrice;
+	public void setSellPriceAt(Integer sellPriceAt) {
+		this.sellPriceAt = sellPriceAt;
+	}
+	
+	public Integer getSellPriceDe() {
+		return sellPriceDe;
+	}
+
+	public void setSellPriceDe(Integer sellPriceDe) {
+		this.sellPriceDe = sellPriceDe;
 	}
 	
 	public String getImageKey() {
@@ -116,7 +126,8 @@ public class ArticleTypeDTO extends DTO implements IsSerializable {
 		clone.setSizeKey(getSizeKey());
 		clone.setColorKey(getColorKey());
 		clone.setBuyPrice(getBuyPrice());
-		clone.setSellPrice(getSellPrice());
+		clone.setSellPriceAt(getSellPriceAt());
+		clone.setSellPriceDe(getSellPriceDe());
 		clone.setImageKey(getImageKey());
 		return clone;
 	}

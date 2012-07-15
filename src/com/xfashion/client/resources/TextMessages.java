@@ -36,6 +36,9 @@ public interface TextMessages extends Messages {
 	String unknownCategory();
 	String buyPrice();
 	String sellPrice();
+	String sellPriceAt();
+	String sellPriceDe();
+	String unknownPrice();
 	String ean();
 	String sticker();
 	String image();

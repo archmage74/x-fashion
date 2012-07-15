@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.xfashion.client.Formatter;
 import com.xfashion.client.Xfashion;
+import com.xfashion.client.at.ArticleTypeManagement;
 import com.xfashion.client.notepad.ArticleAmountDataProvider;
 import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.resources.TextMessages;
@@ -142,7 +143,8 @@ public class SellFromStockPopup {
 		Long ean = Long.parseLong(eanString);
 
 		ArticleTypeDTO articleType = stockProvider.retrieveArticleType(ean);
-		SoldArticleDTO sellArticle = new SoldArticleDTO(articleType, UserManagement.user.getShop(), 1);
+		Integer sellPrice = ArticleTypeManagement.getArticleTypePriceStrategy.getPrice(articleType);
+		SoldArticleDTO sellArticle = new SoldArticleDTO(articleType, sellPrice, UserManagement.user.getShop(), 1);
 
 		ArticleAmountDTO sellArticleAmount = articleAmounts.get(ean);
 		if (sellArticleAmount == null) {
@@ -171,7 +173,7 @@ public class SellFromStockPopup {
 
 	protected void addArticleToGrid(SoldArticleDTO sellArticle, ArticleTypeDTO articleType) {
 		Label articleNameLabel = new Label(articleType.getName());
-		lastArticlePriceLabel = new Label(formatter.formatCentsToCurrency(articleType.getSellPrice()));
+		lastArticlePriceLabel = new Label(formatter.formatCentsToCurrency(articleType.getSellPriceAt()));
 		Button removeArticleButton = new Button(textMessages.sellRemoveArticle());
 		removeArticleButton.addClickHandler(new RemoveArticleFromSellListClickHandler(this, sellArticle));
 		articleGrid.resizeRows(sellArticles.size() + 1);

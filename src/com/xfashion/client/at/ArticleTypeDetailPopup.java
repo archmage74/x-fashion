@@ -47,6 +47,7 @@ import com.xfashion.client.resources.TextMessages;
 import com.xfashion.client.size.ChooseSizeEvent;
 import com.xfashion.client.size.ChooseSizeHandler;
 import com.xfashion.client.size.ShowChooseSizePopupEvent;
+import com.xfashion.client.user.UserManagement;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.ArticleTypeImageDTO;
 import com.xfashion.shared.BarcodeHelper;
@@ -55,6 +56,7 @@ import com.xfashion.shared.CategoryDTO;
 import com.xfashion.shared.ColorDTO;
 import com.xfashion.shared.SizeDTO;
 import com.xfashion.shared.StyleDTO;
+import com.xfashion.shared.UserRole;
 
 public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseBrandHandler, ChooseSizeHandler, ChooseColorHandler,
 		ChooseCategoryAndStyleHandler {
@@ -86,9 +88,12 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 	private Grid buyPriceGrid;
 	private Label buyPrice;
 	private TextBox buyPriceTextBox;
-	private Grid sellPriceGrid;
-	private Label sellPrice;
-	private TextBox sellPriceTextBox;
+	private Grid sellPriceAtGrid;
+	private Label sellPriceAt;
+	private TextBox sellPriceAtTextBox;
+	private Grid sellPriceDeGrid;
+	private Label sellPriceDe;
+	private TextBox sellPriceDeTextBox;
 	private Label productNumber;
 
 	private Label errorLabel;
@@ -154,10 +159,24 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 		buyPriceTextBox.setValue(formatter.formatCentsToValue(updatedArticleType.getBuyPrice()));
 		buyPriceTextBox.setStyleName("baseInput");
 		buyPriceTextBox.setWidth("96px");
-		sellPrice.setText(formatter.formatCentsToValue(updatedArticleType.getSellPrice()));
-		sellPriceTextBox.setValue(formatter.formatCentsToValue(updatedArticleType.getSellPrice()));
-		sellPriceTextBox.setStyleName("baseInput");
-		sellPriceTextBox.setWidth("96px");
+		if (updatedArticleType.getSellPriceAt() != null) {
+			sellPriceAt.setText(formatter.formatCentsToValue(updatedArticleType.getSellPriceAt()));
+			sellPriceAtTextBox.setValue(formatter.formatCentsToValue(updatedArticleType.getSellPriceAt()));
+		} else {
+			sellPriceAt.setText(textMessages.unknownPrice());
+			sellPriceAtTextBox.setValue("");
+		}
+		sellPriceAtTextBox.setStyleName("baseInput");
+		sellPriceAtTextBox.setWidth("96px");
+		if (updatedArticleType.getSellPriceDe() != null) {
+			sellPriceDe.setText(formatter.formatCentsToValue(updatedArticleType.getSellPriceDe()));
+			sellPriceDeTextBox.setValue(formatter.formatCentsToValue(updatedArticleType.getSellPriceDe()));
+		} else {
+			sellPriceDe.setText(textMessages.unknownPrice());
+			sellPriceDeTextBox.setValue("");
+		}
+		sellPriceDeTextBox.setStyleName("baseInput");
+		sellPriceDeTextBox.setWidth("96px");
 		productNumber.setText(barcodeHelper.generateArticleEan(updatedArticleType));
 		printStickerLink.setHref(PRINT_STICKER_URL + updatedArticleType.getProductNumber());
 		articleTypeDetailPopup.setPopupPosition(500, 50);
@@ -454,7 +473,7 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 	}
 
 	private Grid createDetailsGrid() {
-		Grid grid = new Grid(3, 2);
+		Grid grid = new Grid(4, 2);
 
 		buyPriceGrid = new Grid(1, 2);
 		Label buyPriceLabel = new Label(textMessages.buyPrice() + ":");
@@ -464,15 +483,23 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 		buyPriceTextBox.setWidth("50px");
 		grid.setWidget(0, 1, buyPriceGrid);
 
-		sellPriceGrid = new Grid(1, 2);
-		Label sellPriceLabel = new Label(textMessages.sellPrice() + ":");
-		grid.setWidget(1, 0, sellPriceLabel);
-		sellPrice = createGridLabelRow(sellPriceGrid, 0, textMessages.currencySign());
-		sellPriceTextBox = new TextBox();
-		sellPriceTextBox.setWidth("50px");
-		grid.setWidget(1, 1, sellPriceGrid);
+		sellPriceAtGrid = new Grid(1, 2);
+		Label sellPriceAtLabel = new Label(textMessages.sellPriceAt() + ":");
+		grid.setWidget(1, 0, sellPriceAtLabel);
+		sellPriceAt = createGridLabelRow(sellPriceAtGrid, 0, textMessages.currencySign());
+		sellPriceAtTextBox = new TextBox();
+		sellPriceAtTextBox.setWidth("50px");
+		grid.setWidget(1, 1, sellPriceAtGrid);
 
-		productNumber = createGridLabelRow(grid, 2, textMessages.ean() + ":");
+		sellPriceDeGrid = new Grid(1, 2);
+		Label sellPriceDeLabel = new Label(textMessages.sellPriceDe() + ":");
+		grid.setWidget(2, 0, sellPriceDeLabel);
+		sellPriceDe = createGridLabelRow(sellPriceDeGrid, 0, textMessages.currencySign());
+		sellPriceDeTextBox = new TextBox();
+		sellPriceDeTextBox.setWidth("50px");
+		grid.setWidget(2, 1, sellPriceDeGrid);
+
+		productNumber = createGridLabelRow(grid, 3, textMessages.ean() + ":");
 
 		return grid;
 	}
@@ -495,25 +522,27 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 	private Panel createNavPanel() {
 		HorizontalPanel hp = new HorizontalPanel();
 
-		editArticleButton = new Button(textMessages.edit());
-		editArticleButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				editArticleType();
-			}
-		});
-		hp.add(editArticleButton);
-
-		hp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		Button deleteArticleButton = new Button(textMessages.deleteArticleTypeButton());
-		deleteArticleButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				showDeleteConfirmation();
-			}
-		});
-		hp.add(deleteArticleButton);
-
+		if (UserManagement.hasRole(UserRole.ADMIN, UserRole.DEVELOPER)) {
+			editArticleButton = new Button(textMessages.edit());
+			editArticleButton.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					editArticleType();
+				}
+			});
+			hp.add(editArticleButton);
+	
+			hp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+			Button deleteArticleButton = new Button(textMessages.deleteArticleTypeButton());
+			deleteArticleButton.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					showDeleteConfirmation();
+				}
+			});
+			hp.add(deleteArticleButton);
+		}
+		
 		hp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		cancelButton = new Button(textMessages.close());
 		cancelButton.addClickHandler(new ClickHandler() {
@@ -531,8 +560,21 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 		if (editMode) {
 			try {
 				updateArticleType();
-				buyPrice.setText(formatter.formatCentsToValue(updatedArticleType.getBuyPrice()));
-				sellPrice.setText(formatter.formatCentsToValue(updatedArticleType.getSellPrice()));
+				if (updatedArticleType.getBuyPrice() != null) {
+					buyPrice.setText(formatter.formatCentsToValue(updatedArticleType.getBuyPrice()));
+				} else {
+					buyPrice.setText("");
+				}
+				if (updatedArticleType.getSellPriceAt() != null) {
+					sellPriceAt.setText(formatter.formatCentsToValue(updatedArticleType.getSellPriceAt()));
+				} else {
+					sellPriceAt.setText("");
+				}
+				if (updatedArticleType.getSellPriceDe() != null) {
+					sellPriceDe.setText(formatter.formatCentsToValue(updatedArticleType.getSellPriceDe()));
+				} else {
+					sellPriceDe.setText("");
+				}
 				Xfashion.eventBus.fireEvent(new UpdateArticleTypeEvent(articleType));
 				resetEditArticleType();
 			} catch (CreateArticleException e) {
@@ -544,15 +586,22 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 			cancelButton.setText(textMessages.cancel());
 			productMatrix.setWidget(0, 1, nameTextBox);
 			buyPriceGrid.setWidget(0, 1, buyPriceTextBox);
-			sellPriceGrid.setWidget(0, 1, sellPriceTextBox);
+			sellPriceAtGrid.setWidget(0, 1, sellPriceAtTextBox);
+			sellPriceDeGrid.setWidget(0, 1, sellPriceDeTextBox);
 			editMode = true;
 		}
 	}
 
 	private void updateArticleType() throws CreateArticleException {
 		try {
-			Integer price = formatter.parseEurToCents(sellPriceTextBox.getText());
-			updatedArticleType.setSellPrice(price);
+			Integer price = formatter.parseEurToCents(sellPriceAtTextBox.getText());
+			updatedArticleType.setSellPriceAt(price);
+		} catch (Exception e) {
+			throw new CreateArticleException(errorMessages.invalidPrice());
+		}
+		try {
+			Integer price = formatter.parseEurToCents(sellPriceDeTextBox.getText());
+			updatedArticleType.setSellPriceDe(price);
 		} catch (Exception e) {
 			throw new CreateArticleException(errorMessages.invalidPrice());
 		}
@@ -574,7 +623,8 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 		articleType.setColorKey(updatedArticleType.getColorKey());
 		articleType.setName(updatedArticleType.getName());
 		articleType.setBuyPrice(updatedArticleType.getBuyPrice());
-		articleType.setSellPrice(updatedArticleType.getSellPrice());
+		articleType.setSellPriceAt(updatedArticleType.getSellPriceAt());
+		articleType.setSellPriceDe(updatedArticleType.getSellPriceDe());
 		articleType.setImageKey(updatedArticleType.getImageKey());
 	}
 
@@ -584,7 +634,8 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 		cancelButton.setText(textMessages.close());
 		productMatrix.setWidget(0, 1, nameLabel);
 		buyPriceGrid.setWidget(0, 1, buyPrice);
-		sellPriceGrid.setWidget(0, 1, sellPrice);
+		sellPriceAtGrid.setWidget(0, 1, sellPriceAt);
+		sellPriceDeGrid.setWidget(0, 1, sellPriceDe);
 		editMode = false;
 	}
 

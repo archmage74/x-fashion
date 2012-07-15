@@ -62,7 +62,7 @@ public class StickerRenderer {
 		sb.append("&type=ean13&imgtype=png\" />");
 		sb.append("</td>");
 		sb.append("<td class=\"articlePrice\">");
-		sb.append(nf.format(((double) articleType.getSellPrice()) / 100));
+		sb.append(nf.format(((double) articleType.getSellPriceAt()) / 100));
 		sb.append("</td>");
 		sb.append("</tr>");
 		sb.append("</table>");

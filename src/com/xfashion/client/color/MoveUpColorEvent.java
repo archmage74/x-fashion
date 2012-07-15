@@ -1,9 +1,9 @@
 package com.xfashion.client.color;
 
-import com.xfashion.client.FilterDataEvent2;
+import com.xfashion.client.FilterDataEvent;
 import com.xfashion.shared.ColorDTO;
 
-public class MoveUpColorEvent extends FilterDataEvent2<MoveUpColorHandler, ColorDTO> {
+public class MoveUpColorEvent extends FilterDataEvent<MoveUpColorHandler, ColorDTO> {
 	
 	public static Type<MoveUpColorHandler> TYPE = new Type<MoveUpColorHandler>();
 

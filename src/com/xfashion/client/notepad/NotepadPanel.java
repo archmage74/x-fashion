@@ -16,6 +16,7 @@ import com.xfashion.client.IsMinimizable;
 import com.xfashion.client.PanelWidthAnimation;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTable;
+import com.xfashion.client.at.ArticleTypeManagement;
 import com.xfashion.client.at.ProvidesArticleFilter;
 import com.xfashion.client.notepad.event.ClearNotepadEvent;
 import com.xfashion.client.notepad.event.DeliveryNoticeUpdatedEvent;
@@ -145,7 +146,9 @@ public class NotepadPanel implements IsMinimizable, OpenNotepadHandler, SaveNote
 		headerPanel = createHeaderPanel();
 		panel.add(headerPanel);
 
-		ArticleTable<ArticleAmountDTO> att = new NotepadArticleTable(provider);
+		GetPriceFromArticleAmountStrategy priceStrategy = new GetPriceFromArticleAmountStrategy(articleAmountProvider,
+				ArticleTypeManagement.getArticleTypePriceStrategy);
+		ArticleTable<ArticleAmountDTO> att = new NotepadArticleTable(provider, priceStrategy);
 		Panel atp = att.create(articleAmountProvider);
 		panel.add(atp);
 

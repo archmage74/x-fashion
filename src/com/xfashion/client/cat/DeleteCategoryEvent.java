@@ -1,9 +1,9 @@
 package com.xfashion.client.cat;
 
-import com.xfashion.client.FilterDataEvent2;
+import com.xfashion.client.FilterDataEvent;
 import com.xfashion.shared.CategoryDTO;
 
-public class DeleteCategoryEvent extends FilterDataEvent2<DeleteCategoryHandler, CategoryDTO> {
+public class DeleteCategoryEvent extends FilterDataEvent<DeleteCategoryHandler, CategoryDTO> {
 
 	public static Type<DeleteCategoryHandler> TYPE = new Type<DeleteCategoryHandler>();
 	

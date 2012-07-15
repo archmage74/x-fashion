@@ -14,8 +14,8 @@ import com.xfashion.shared.ArticleTypeDTO;
 
 public class NotepadArticleTable extends ArticleTable<ArticleAmountDTO> {
 
-	public NotepadArticleTable(ProvidesArticleFilter provider) {
-		super(provider);
+	public NotepadArticleTable(ProvidesArticleFilter provider, GetPriceFromArticleAmountStrategy priceStrategy) {
+		super(provider, priceStrategy);
 	}
 
 	protected void addNavColumns(CellTable<ArticleAmountDTO> cellTable) {

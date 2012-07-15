@@ -29,7 +29,8 @@ public class CreateArticleTypePopup {
 	
 	private TextBox nameTextBox = null;
 	private TextBox buyPriceTextBox = null;
-	private TextBox sellPriceTextBox = null;
+	private TextBox sellPriceAtTextBox = null;
+	private TextBox sellPriceDeTextBox = null;
 	private Label categoryLabel = null;
 	private Label styleLabel = null;
 	private Label brandLabel = null;
@@ -84,7 +85,8 @@ public class CreateArticleTypePopup {
 		}
 
 		nameTextBox.setText("");
-		sellPriceTextBox.setText("");
+		sellPriceAtTextBox.setText("");
+		sellPriceDeTextBox.setText("");
 		buyPriceTextBox.setText("");
 		errorLabel.setText(" ");
 		popup.show();
@@ -181,8 +183,14 @@ public class CreateArticleTypePopup {
 	
 	private void updateArticleType(ArticleTypeDTO at) throws CreateArticleException {
 		try {
-			Integer price = formatter.parseEurToCents(sellPriceTextBox.getText());
-			currentArticleType.setSellPrice(price);
+			Integer price = formatter.parseEurToCents(sellPriceAtTextBox.getText());
+			currentArticleType.setSellPriceAt(price);
+		} catch (Exception e) {
+			throw new CreateArticleException(errorMessages.invalidPrice());
+		}
+		try {
+			Integer price = formatter.parseEurToCents(sellPriceDeTextBox.getText());
+			currentArticleType.setSellPriceDe(price);
 		} catch (Exception e) {
 			throw new CreateArticleException(errorMessages.invalidPrice());
 		}
@@ -200,7 +208,7 @@ public class CreateArticleTypePopup {
 	}
 	
 	private Grid createMainGrid() {
-		Grid grid = new Grid(9, 2);
+		Grid grid = new Grid(10, 2);
 		categoryLabel = createLabelGridRow(grid, 0, textMessages.category() + ":");
 		brandLabel = createLabelGridRow(grid, 1, textMessages.brand() + ":");
 		styleLabel = createLabelGridRow(grid, 2, textMessages.style() + ":");
@@ -208,7 +216,8 @@ public class CreateArticleTypePopup {
 		colorLabel = createLabelGridRow(grid, 4, textMessages.color() + ":");
 		nameTextBox = createTextBoxGridRow(grid, 5, textMessages.name() + ":");
 		buyPriceTextBox = createPriceTextBoxGridRow(grid, 6, textMessages.buyPrice() + ":");
-		sellPriceTextBox = createPriceTextBoxGridRow(grid, 7, textMessages.sellPrice() + ":");
+		sellPriceAtTextBox = createPriceTextBoxGridRow(grid, 7, textMessages.sellPriceAt() + ":");
+		sellPriceDeTextBox = createPriceTextBoxGridRow(grid, 7, textMessages.sellPriceDe() + ":");
 		imageLabel = createLabelGridRow(grid, 8, textMessages.image() + ":");
 		return grid;
 	}

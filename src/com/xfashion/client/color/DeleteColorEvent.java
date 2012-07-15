@@ -1,9 +1,9 @@
 package com.xfashion.client.color;
 
-import com.xfashion.client.FilterDataEvent2;
+import com.xfashion.client.FilterDataEvent;
 import com.xfashion.shared.ColorDTO;
 
-public class DeleteColorEvent extends FilterDataEvent2<DeleteColorHandler, ColorDTO> {
+public class DeleteColorEvent extends FilterDataEvent<DeleteColorHandler, ColorDTO> {
 
 	public static Type<DeleteColorHandler> TYPE = new Type<DeleteColorHandler>();
 	
