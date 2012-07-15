@@ -7,6 +7,7 @@ import com.xfashion.client.brand.BrandPanel;
 import com.xfashion.client.cat.CategoryPanel;
 import com.xfashion.client.color.ColorPanel;
 import com.xfashion.client.db.ArticleTypeDatabase;
+import com.xfashion.client.db.event.RefreshFilterEvent;
 import com.xfashion.client.name.NamePanel;
 import com.xfashion.client.notepad.ArticleAmountDataProvider;
 import com.xfashion.client.notepad.NotepadPanel;
@@ -18,22 +19,23 @@ import com.xfashion.client.size.SizePanel;
 import com.xfashion.client.style.StylePanel;
 import com.xfashion.client.user.LoginEvent;
 import com.xfashion.client.user.LoginHandler;
+import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.UserDTO;
 
 public class ArticleTypeManagement implements NotepadStartMaximizeHandler, NotepadStartMinimizeHandler, LoginHandler {
 
-	public static GetAtPriceFromArticleTypeStrategy getArticleTypePriceStrategy;
+	public static IGetPriceStrategy<ArticleTypeDTO> getArticleTypePriceStrategy;
 
-	HorizontalPanel panel;
+	protected HorizontalPanel panel;
 	
-	CategoryPanel categoryPanel;
-	BrandPanel brandPanel;
-	StylePanel stylePanel;
-	SizePanel sizePanel;
-	ColorPanel colorPanel;
-	NamePanel namePanel;
-	NotepadPanel notepadPanel;
-	ArticleTypePanel articleTypePanel;
+	protected CategoryPanel categoryPanel;
+	protected BrandPanel brandPanel;
+	protected StylePanel stylePanel;
+	protected SizePanel sizePanel;
+	protected ColorPanel colorPanel;
+	protected NamePanel namePanel;
+	protected NotepadPanel notepadPanel;
+	protected ArticleTypePanel articleTypePanel;
 
 	public ArticleTypeManagement() {
 		registerForEvents();
@@ -91,9 +93,10 @@ public class ArticleTypeManagement implements NotepadStartMaximizeHandler, Notep
 			ArticleTypeManagement.getArticleTypePriceStrategy = new GetAtPriceFromArticleTypeStrategy();
 			break;
 		case DE:
-			Xfashion.fireError("DE price strategy missing, see ArticleTypeManagement.onLogin()");
+			ArticleTypeManagement.getArticleTypePriceStrategy = new GetDePriceFromArticleTypeStrategy();
 			break;
 		}
+		Xfashion.eventBus.fireEvent(new RefreshFilterEvent());
 	}
 	
 	private void registerForEvents() {

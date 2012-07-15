@@ -27,6 +27,7 @@ import com.xfashion.client.style.SelectStyleEvent;
 import com.xfashion.client.style.SelectStyleHandler;
 import com.xfashion.client.style.UpdateStyleEvent;
 import com.xfashion.client.style.UpdateStyleHandler;
+import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.CategoryDTO;
 import com.xfashion.shared.FilterCellData;
@@ -83,7 +84,7 @@ public class CategoryDataProvider extends FilterDataProvider<CategoryDTO> implem
 		this.categoryFilter = categoryFilter;
 	}
 
-	public void updateStyles(List<ArticleTypeDTO> articleTypes) {
+	public void updateStyles(List<ArticleTypeDTO> articleTypes, HashMap<String, ArticleAmountDTO> articleAmounts) {
 		if (categoryFilter != null) {
 			styleProvider.setList(new ArrayList<StyleDTO>(categoryFilter.getStyles()));
 			HashMap<String, Integer> articleAmountPerAttribute = new HashMap<String, Integer>();
@@ -92,9 +93,15 @@ public class CategoryDataProvider extends FilterDataProvider<CategoryDTO> implem
 				if (styleId != null) {
 					Integer availableArticles = articleAmountPerAttribute.get(styleId);
 					if (availableArticles == null) {
-						availableArticles = new Integer(1);
-					} else {
-						availableArticles++;
+						availableArticles = new Integer(0);
+					}
+					if (articleAmounts != null) {
+						ArticleAmountDTO articleAmount = articleAmounts.get(at.getKey());
+						if (articleAmount != null) {
+							availableArticles += articleAmount.getAmount();
+						} else {
+							availableArticles += 0;
+						}
 					}
 					articleAmountPerAttribute.put(styleId, availableArticles);
 				}

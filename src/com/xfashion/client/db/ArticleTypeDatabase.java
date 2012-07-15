@@ -3,6 +3,7 @@ package com.xfashion.client.db;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -31,6 +32,7 @@ import com.xfashion.client.db.event.RefreshFilterHandler;
 import com.xfashion.client.name.NameFilterEvent;
 import com.xfashion.client.name.NameFilterHandler;
 import com.xfashion.client.size.SizeDataProvider;
+import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.CategoryDTO;
 
@@ -39,18 +41,18 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 
 	private ArticleTypeServiceAsync articleTypeService = (ArticleTypeServiceAsync) GWT.create(ArticleTypeService.class);
 
-	public String[] categories = null;
 
-	private ArrayList<ArticleTypeDTO> articleTypes;
-	private List<ArticleTypeDTO> filteredArticleTypes;
+	protected ArrayList<ArticleTypeDTO> articleTypes;
+	protected List<ArticleTypeDTO> filteredArticleTypes;
 
-	private CategoryDataProvider categoryProvider;
-	private BrandDataProvider brandProvider;
-	private ColorDataProvider colorProvider;
-	private SizeDataProvider sizeProvider;
-	private ListDataProvider<String> nameProvider;
-	private MultiWordSuggestOracle nameOracle;
-	private ArticleTypeDataProvider articleTypeProvider;
+	protected CategoryDataProvider categoryProvider;
+	protected BrandDataProvider brandProvider;
+	protected ColorDataProvider colorProvider;
+	protected SizeDataProvider sizeProvider;
+	protected ListDataProvider<String> nameProvider;
+	protected MultiWordSuggestOracle nameOracle;
+	protected ArticleTypeDataProvider articleTypeProvider;
+	protected HashMap<String, ArticleAmountDTO> articleAmounts;
 
 	private String nameFilter = null;
 
@@ -60,8 +62,51 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 
 	}
 
+	public CategoryDataProvider getCategoryProvider() {
+		return categoryProvider;
+	}
+
+	public BrandDataProvider getBrandProvider() {
+		return brandProvider;
+	}
+
+	public SizeDataProvider getSizeProvider() {
+		return sizeProvider;
+	}
+
+	public ColorDataProvider getColorProvider() {
+		return colorProvider;
+	}
+
+	public ArticleTypeDataProvider getArticleTypeProvider() {
+		return articleTypeProvider;
+	}
+
+	public MultiWordSuggestOracle getNameOracle() {
+		return nameOracle;
+	}
+
+	public void setNameOracle(MultiWordSuggestOracle nameOracle) {
+		this.nameOracle = nameOracle;
+	}
+
+	public ListDataProvider<String> getNameProvider() {
+		return nameProvider;
+	}
+
+	public void setNameProvider(ListDataProvider<String> nameProvider) {
+		this.nameProvider = nameProvider;
+	}
+
+	public HashMap<String, ArticleAmountDTO> getArticleAmounts() {
+		return articleAmounts;
+	}
+
+	public void setArticleAmounts(HashMap<String, ArticleAmountDTO> articleAmounts) {
+		this.articleAmounts = articleAmounts;
+	}
+
 	public void init() {
-		registerForEvents();
 		articleTypes = new ArrayList<ArticleTypeDTO>();
 
 		articleTypeProvider = new ArticleTypeDataProvider();
@@ -77,6 +122,8 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 		sizeProvider.readSizes();
 		colorProvider.readColors();
 		readArticleTypes();
+
+		registerForEvents();
 	}
 
 	private void readArticleTypes() {
@@ -184,7 +231,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 		temp = sizeProvider.applyFilter(temp);
 		temp = colorProvider.applyFilter(temp);
 		temp = applyNameFilter(nameFilter, temp);
-		categoryProvider.updateStyles(temp);
+		categoryProvider.updateStyles(temp, articleAmounts);
 	}
 
 	public void updateBrandProvider() {
@@ -194,7 +241,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 		temp = sizeProvider.applyFilter(temp);
 		temp = colorProvider.applyFilter(temp);
 		temp = applyNameFilter(nameFilter, temp);
-		brandProvider.update(temp);
+		brandProvider.update(temp, articleAmounts);
 	}
 
 	public void updateSizeProvider() {
@@ -204,7 +251,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 		temp = brandProvider.applyFilter(temp);
 		temp = colorProvider.applyFilter(temp);
 		temp = applyNameFilter(nameFilter, temp);
-		sizeProvider.update(temp);
+		sizeProvider.update(temp, articleAmounts);
 	}
 
 	public void updateColorProvider() {
@@ -214,31 +261,11 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 		temp = brandProvider.applyFilter(temp);
 		temp = sizeProvider.applyFilter(temp);
 		temp = applyNameFilter(nameFilter, temp);
-		colorProvider.update(temp);
+		colorProvider.update(temp, articleAmounts);
 	}
 
 	public void addArticleTypeDisplay(HasData<ArticleTypeDTO> display) {
 		articleTypeProvider.addDataDisplay(display);
-	}
-
-	public CategoryDataProvider getCategoryProvider() {
-		return categoryProvider;
-	}
-
-	public BrandDataProvider getBrandProvider() {
-		return brandProvider;
-	}
-
-	public SizeDataProvider getSizeProvider() {
-		return sizeProvider;
-	}
-
-	public ColorDataProvider getColorProvider() {
-		return colorProvider;
-	}
-
-	public ArticleTypeDataProvider getArticleTypeProvider() {
-		return articleTypeProvider;
 	}
 
 	public void createArticleType(final ArticleTypeDTO articleType) {
@@ -318,23 +345,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 		};
 		articleTypeService.deleteArticleType(articleType, callback);
 	}
-
-	public MultiWordSuggestOracle getNameOracle() {
-		return nameOracle;
-	}
-
-	public void setNameOracle(MultiWordSuggestOracle nameOracle) {
-		this.nameOracle = nameOracle;
-	}
-
-	public ListDataProvider<String> getNameProvider() {
-		return nameProvider;
-	}
-
-	public void setNameProvider(ListDataProvider<String> nameProvider) {
-		this.nameProvider = nameProvider;
-	}
-
+	
 	private void registerForEvents() {
 		Xfashion.eventBus.addHandler(RefreshFilterEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(NameFilterEvent.TYPE, this);

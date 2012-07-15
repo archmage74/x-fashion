@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.xfashion.client.at.ArticleTypeDataProvider;
+import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.FilterCellData;
 
@@ -60,20 +61,25 @@ public abstract class SimpleFilterDataProvider<T extends FilterCellData> extends
 		return articleTypes;
 	}
 
-	public void update(List<ArticleTypeDTO> articleTypes) {
+	public void update(List<ArticleTypeDTO> articleTypes, HashMap<String, ArticleAmountDTO> articleAmounts) {
 		HashMap<String, Integer> articleAmountPerAttribute = new HashMap<String, Integer>();
 		for (ArticleTypeDTO at : articleTypes) {
-			String attributeContent = this.getAttributeContent(at);
-			if (attributeContent != null) {
-				Integer availableArticles = articleAmountPerAttribute.get(attributeContent);
-				if (availableArticles == null) {
-					availableArticles = new Integer(1);
+			int amount = 1;
+			if (articleAmounts != null) {
+				ArticleAmountDTO articleAmount = articleAmounts.get(at.getKey());
+				if (articleAmount != null) {
+					amount = articleAmount.getAmount();
 				} else {
-					availableArticles++;
+					amount = 0;
 				}
-				articleAmountPerAttribute.put(attributeContent, availableArticles);
 			}
+			increaseAmountCounter(articleAmountPerAttribute, at, amount);
 		}
+		updateCellDataList(articleAmountPerAttribute);
+		refresh();
+	}
+	
+	private void updateCellDataList(HashMap<String, Integer> articleAmountPerAttribute) {
 		List<? extends FilterCellData> cellDataList = getList();
 		for (FilterCellData fcd : cellDataList) {
 			Integer availableArticles = articleAmountPerAttribute.get(fcd.getKey());
@@ -83,7 +89,18 @@ public abstract class SimpleFilterDataProvider<T extends FilterCellData> extends
 			fcd.setArticleAmount(availableArticles);
 			fcd.setSelected(getFilter().contains(fcd.getKey()));
 		}
-		refresh();
+	}
+
+	private void increaseAmountCounter(HashMap<String, Integer> articleAmountPerAttribute, ArticleTypeDTO articleType, int amount) {
+		String attributeContent = this.getAttributeContent(articleType);
+		if (attributeContent != null) {
+			Integer availableArticles = articleAmountPerAttribute.get(attributeContent);
+			if (availableArticles == null) {
+				availableArticles = new Integer(0);
+			}
+			availableArticles += amount;
+			articleAmountPerAttribute.put(attributeContent, availableArticles);
+		}
 	}
 
 }

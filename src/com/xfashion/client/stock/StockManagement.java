@@ -13,6 +13,7 @@ import com.xfashion.client.Xfashion;
 import com.xfashion.client.db.ArticleTypeDatabase;
 import com.xfashion.client.db.event.FilterRefreshedEvent;
 import com.xfashion.client.db.event.FilterRefreshedHandler;
+import com.xfashion.client.db.event.RefreshFilterEvent;
 import com.xfashion.client.notepad.ArticleAmountDataProvider;
 import com.xfashion.client.notepad.event.ClearNotepadEvent;
 import com.xfashion.client.notepad.event.IntoStockEvent;
@@ -26,12 +27,14 @@ import com.xfashion.client.stock.event.SellFromStockEvent;
 import com.xfashion.client.stock.event.SellFromStockHandler;
 import com.xfashion.client.user.LoginEvent;
 import com.xfashion.client.user.LoginHandler;
+import com.xfashion.client.user.UserManagement;
 import com.xfashion.client.user.UserService;
 import com.xfashion.client.user.UserServiceAsync;
 import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.PromoDTO;
 import com.xfashion.shared.SoldArticleDTO;
+import com.xfashion.shared.UserRole;
 
 public class StockManagement implements IntoStockHandler, SellFromStockHandler, RequestOpenSellPopupHandler, LoginHandler, FilterRefreshedHandler {
 
@@ -117,7 +120,9 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 
 	@Override
 	public void onLogin(LoginEvent event) {
-		readStock();
+		if (UserManagement.hasRole(UserRole.SHOP)) {
+			readStock();
+		}
 	}
 
 	@Override
@@ -140,6 +145,8 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 			stock.put(aa.getArticleTypeKey(), aa);
 			list.add(aa);
 		}
+		articleTypeDatabase.setArticleAmounts(stock);
+		Xfashion.eventBus.fireEvent(new RefreshFilterEvent());
 		refresh();
 	}
 

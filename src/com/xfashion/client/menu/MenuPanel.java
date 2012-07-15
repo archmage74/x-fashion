@@ -64,7 +64,9 @@ public class MenuPanel implements LoginHandler {
 			menu.addItem(createArticleTypeMenuItem());
 		}
 
-		menu.addItem(createStockMenuItem());
+		if (UserManagement.hasRole(UserRole.SHOP)) {
+			menu.addItem(createStockMenuItem());
+		}
 		menu.addItem(createUserProfileMenuItem());
 		menu.addItem(createSellStatisticMenuItem());
 		menu.addItem(createPromoMenuItem());
