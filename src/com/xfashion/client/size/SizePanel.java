@@ -31,6 +31,13 @@ public class SizePanel extends ResizeableIconFilterPanel<SizeDTO> {
 	}
 
 	@Override
+	public Panel createPanel(String [] styles) {
+		Panel panel = super.createPanel(styles);
+		panel.setWidth(getMaxWidth() + "px");
+		return panel;
+	}
+	
+	@Override
 	public Panel createTablePanel() {
 		VerticalPanel panel = new VerticalPanel();
 		Panel headerPanel = createHeaderPanel(getPanelTitle());
@@ -161,7 +168,7 @@ public class SizePanel extends ResizeableIconFilterPanel<SizeDTO> {
 
 	@Override
 	protected int getMaxWidth() {
-		return 220;		
+		return 240;	
 	}
 	
 	public SizeDataProvider getDataProvider() {

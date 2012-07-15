@@ -205,8 +205,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 	@Override
 	public void onNameFilter(NameFilterEvent event) {
 		nameFilter = event.getName();
-		applyFilters();
-		updateProviders();
+		Xfashion.eventBus.fireEvent(new RefreshFilterEvent());
 	}
 
 	public void setCategoryFilter(CategoryDTO category) {
