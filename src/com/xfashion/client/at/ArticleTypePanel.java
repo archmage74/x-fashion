@@ -61,7 +61,8 @@ public class ArticleTypePanel {
 		createArticleTypePopup = new CreateArticleTypePopup(articleTypeDatabase);
 
 		VerticalPanel panel = new VerticalPanel();
-
+		panel.setWidth("570px");
+		
 		headerPanel = createHeaderPanel(nameOracle);
 		panel.add(headerPanel);
 		
