@@ -16,19 +16,25 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTypeDataProvider;
 import com.xfashion.client.at.ArticleTypeDetailPopup;
-import com.xfashion.client.at.DeleteArticleTypeEvent;
-import com.xfashion.client.at.DeleteArticleTypeHandler;
 import com.xfashion.client.at.ProvidesArticleFilter;
-import com.xfashion.client.at.UpdateArticleTypeEvent;
-import com.xfashion.client.at.UpdateArticleTypeHandler;
 import com.xfashion.client.at.bulk.UpdateArticleTypesEvent;
 import com.xfashion.client.at.bulk.UpdateArticleTypesHandler;
+import com.xfashion.client.at.event.DeleteArticleTypeEvent;
+import com.xfashion.client.at.event.DeleteArticleTypeHandler;
+import com.xfashion.client.at.event.UpdateArticleTypeEvent;
+import com.xfashion.client.at.event.UpdateArticleTypeHandler;
 import com.xfashion.client.brand.BrandDataProvider;
 import com.xfashion.client.cat.CategoryDataProvider;
 import com.xfashion.client.color.ColorDataProvider;
+import com.xfashion.client.db.event.ArticlesLoadedEvent;
 import com.xfashion.client.db.event.FilterRefreshedEvent;
 import com.xfashion.client.db.event.RefreshFilterEvent;
 import com.xfashion.client.db.event.RefreshFilterHandler;
+import com.xfashion.client.db.event.RequestShowArticleTypeDetailsEvent;
+import com.xfashion.client.db.event.RequestShowArticleTypeDetailsHandler;
+import com.xfashion.client.db.event.SortArticlesEvent;
+import com.xfashion.client.db.event.SortArticlesHandler;
+import com.xfashion.client.db.sort.IArticleTypeComparator;
 import com.xfashion.client.name.NameFilterEvent;
 import com.xfashion.client.name.NameFilterHandler;
 import com.xfashion.client.size.SizeDataProvider;
@@ -37,10 +43,9 @@ import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.CategoryDTO;
 
 public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHandler, RefreshFilterHandler, UpdateArticleTypesHandler,
-		RequestShowArticleTypeDetailsHandler, UpdateArticleTypeHandler, DeleteArticleTypeHandler {
+		RequestShowArticleTypeDetailsHandler, UpdateArticleTypeHandler, DeleteArticleTypeHandler, SortArticlesHandler {
 
 	private ArticleTypeServiceAsync articleTypeService = (ArticleTypeServiceAsync) GWT.create(ArticleTypeService.class);
-
 
 	protected ArrayList<ArticleTypeDTO> articleTypes;
 	protected List<ArticleTypeDTO> filteredArticleTypes;
@@ -53,6 +58,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 	protected MultiWordSuggestOracle nameOracle;
 	protected ArticleTypeDataProvider articleTypeProvider;
 	protected HashMap<String, ArticleAmountDTO> articleAmounts;
+	protected IArticleTypeComparator sortStrategy;
 
 	private String nameFilter = null;
 
@@ -106,6 +112,14 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 		this.articleAmounts = articleAmounts;
 	}
 
+	public IArticleTypeComparator getSortStrategy() {
+		return sortStrategy;
+	}
+
+	public void setSortStrategy(IArticleTypeComparator sortStrategy) {
+		this.sortStrategy = sortStrategy;
+	}
+
 	public void init() {
 		articleTypes = new ArrayList<ArticleTypeDTO>();
 
@@ -132,19 +146,23 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 			public void onFailure(Throwable caught) {
 				Xfashion.fireError(caught.getMessage());
 			}
-
 			@Override
 			public void onSuccess(Set<ArticleTypeDTO> result) {
-				articleTypeProvider.getList().clear();
-				articleTypes = new ArrayList<ArticleTypeDTO>(result);
-				articleTypeProvider.getList().addAll(result);
-				articleTypeProvider.refreshResolver();
-				updateAvailableArticleNames();
+				storeArticles(result);
 			}
 		};
 		articleTypeService.readArticleTypes(callback);
 	}
 
+	private void storeArticles(Set<ArticleTypeDTO> result) {
+		articleTypeProvider.getList().clear();
+		articleTypes = new ArrayList<ArticleTypeDTO>(result);
+		articleTypeProvider.getList().addAll(result);
+		articleTypeProvider.refreshResolver();
+		updateAvailableArticleNames();
+		Xfashion.eventBus.fireEvent(new ArticlesLoadedEvent());
+	}
+	
 	public Collection<String> getArticleNames(List<ArticleTypeDTO> articleTypes) {
 		HashSet<String> names = new HashSet<String>();
 		for (ArticleTypeDTO at : articleTypes) {
@@ -157,6 +175,9 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 	public void onRefreshFilter(RefreshFilterEvent event) {
 		applyFilters();
 		updateProviders();
+		if (sortStrategy != null) {
+			Collections.sort(articleTypeProvider.getList(), sortStrategy);
+		}
 		Xfashion.eventBus.fireEvent(new FilterRefreshedEvent());
 	}
 
@@ -281,6 +302,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 				articleTypeProvider.refreshResolver();
 				updateAvailableArticleNames();
 				applyFilters();
+				sortArticles();
 			}
 		};
 		articleTypeService.createArticleType(articleType, callback);
@@ -345,6 +367,18 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 		articleTypeService.deleteArticleType(articleType, callback);
 	}
 	
+	@Override
+	public void onSortArticles(SortArticlesEvent event) {
+		if (event.getArticleTypeComparator() != null) {
+			this.sortStrategy = event.getArticleTypeComparator();
+		}
+		sortArticles();
+	}
+	
+	private void sortArticles() {
+		Collections.sort(articleTypeProvider.getList(), sortStrategy);
+	}
+
 	private void registerForEvents() {
 		Xfashion.eventBus.addHandler(RefreshFilterEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(NameFilterEvent.TYPE, this);
@@ -352,6 +386,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 		Xfashion.eventBus.addHandler(UpdateArticleTypeEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(DeleteArticleTypeEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(RequestShowArticleTypeDetailsEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(SortArticlesEvent.TYPE, this);
 	}
 
 }

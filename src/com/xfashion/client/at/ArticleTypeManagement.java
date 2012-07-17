@@ -8,6 +8,7 @@ import com.xfashion.client.cat.CategoryPanel;
 import com.xfashion.client.color.ColorPanel;
 import com.xfashion.client.db.ArticleTypeDatabase;
 import com.xfashion.client.db.event.RefreshFilterEvent;
+import com.xfashion.client.db.sort.DefaultArticleTypeComparator;
 import com.xfashion.client.name.NamePanel;
 import com.xfashion.client.notepad.ArticleAmountDataProvider;
 import com.xfashion.client.notepad.NotepadPanel;
@@ -36,12 +37,17 @@ public class ArticleTypeManagement implements NotepadStartMaximizeHandler, Notep
 	protected NamePanel namePanel;
 	protected NotepadPanel notepadPanel;
 	protected ArticleTypePanel articleTypePanel;
+	
+	protected DefaultArticleTypeComparator sortStrategy;
 
-	public ArticleTypeManagement() {
+	protected ArticleTypeDatabase articleTypeDatabase;
+	
+	public ArticleTypeManagement(ArticleTypeDatabase articleTypeDatabase) {
+		this.articleTypeDatabase = articleTypeDatabase;
 		registerForEvents();
 	}
 	
-	public Panel getPanel(ArticleTypeDatabase articleTypeDatabase, ArticleAmountDataProvider notepadArticleProvider) {
+	public Panel getPanel(ArticleAmountDataProvider notepadArticleProvider) {
 		if (panel == null) {
 			panel = new HorizontalPanel();
 			
@@ -54,6 +60,13 @@ public class ArticleTypeManagement implements NotepadStartMaximizeHandler, Notep
 			articleTypePanel = new ArticleTypePanel(articleTypeDatabase);
 			notepadPanel = new NotepadPanel(articleTypeDatabase);
 			
+			sortStrategy = new DefaultArticleTypeComparator();
+			sortStrategy.setCategoryProvider(articleTypeDatabase.getCategoryProvider());
+			sortStrategy.setBrandProvider(articleTypeDatabase.getBrandProvider());
+			sortStrategy.setColorProvider(articleTypeDatabase.getColorProvider());
+			sortStrategy.setSizeProvider(articleTypeDatabase.getSizeProvider());
+			articleTypeDatabase.setSortStrategy(sortStrategy);			
+
 			panel.add(categoryPanel.createPanel());
 			panel.add(brandPanel.createPanel());
 			panel.add(stylePanel.createPanel());
@@ -63,7 +76,8 @@ public class ArticleTypeManagement implements NotepadStartMaximizeHandler, Notep
 			panel.add(articleTypePanel.createPanel(articleTypeDatabase.getArticleTypeProvider(), articleTypeDatabase.getNameOracle()));
 			panel.add(notepadPanel.createPanel(notepadArticleProvider, true));
 		}
-		
+
+		Xfashion.eventBus.fireEvent(new RefreshFilterEvent());
 		return panel;
 	}
 

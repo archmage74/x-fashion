@@ -2,6 +2,7 @@ package com.xfashion.client.stock;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -14,6 +15,8 @@ import com.xfashion.client.db.ArticleTypeDatabase;
 import com.xfashion.client.db.event.FilterRefreshedEvent;
 import com.xfashion.client.db.event.FilterRefreshedHandler;
 import com.xfashion.client.db.event.RefreshFilterEvent;
+import com.xfashion.client.db.sort.DefaultArticleAmountComparator;
+import com.xfashion.client.db.sort.IArticleAmountComparator;
 import com.xfashion.client.notepad.ArticleAmountDataProvider;
 import com.xfashion.client.notepad.event.ClearNotepadEvent;
 import com.xfashion.client.notepad.event.IntoStockEvent;
@@ -46,6 +49,7 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 
 	protected ArticleAmountDataProvider stockProvider;
 	protected ArticleTypeDatabase articleTypeDatabase;
+	protected IArticleAmountComparator sortStrategy;
 
 	private StockPanel stockPanel;
 	private Panel panel;
@@ -133,6 +137,7 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 	public Panel getPanel(ArticleAmountDataProvider notepadArticleProvider) {
 		if (panel == null) {
 			panel = stockPanel.createPanel(articleTypeDatabase, stockProvider, notepadArticleProvider);
+			sortStrategy = new DefaultArticleAmountComparator(articleTypeDatabase);
 		}
 		readPromos();
 		return panel;
@@ -193,6 +198,9 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 			if (stockArticle != null) {
 				filteredStockItems.add(stockArticle);
 			}
+		}
+		if (sortStrategy != null) {
+			Collections.sort(filteredStockItems, sortStrategy);
 		}
 		stockProvider.setList(filteredStockItems);
 	}

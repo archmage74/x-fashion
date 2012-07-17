@@ -4,6 +4,13 @@ import com.google.gwt.resources.client.ImageResource;
 import com.xfashion.client.ResizeableIconFilterPanel;
 import com.xfashion.client.SimpleFilterDataProvider;
 import com.xfashion.client.Xfashion;
+import com.xfashion.client.color.event.ClearColorSelectionEvent;
+import com.xfashion.client.color.event.CreateColorEvent;
+import com.xfashion.client.color.event.DeleteColorEvent;
+import com.xfashion.client.color.event.MoveDownColorEvent;
+import com.xfashion.client.color.event.MoveUpColorEvent;
+import com.xfashion.client.color.event.SelectColorEvent;
+import com.xfashion.client.color.event.UpdateColorEvent;
 import com.xfashion.shared.ColorDTO;
 
 public class ColorPanel extends ResizeableIconFilterPanel<ColorDTO> {

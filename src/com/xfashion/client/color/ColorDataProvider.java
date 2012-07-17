@@ -8,6 +8,22 @@ import com.xfashion.client.ErrorEvent;
 import com.xfashion.client.SimpleFilterDataProvider;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTypeDataProvider;
+import com.xfashion.client.color.event.ClearColorSelectionEvent;
+import com.xfashion.client.color.event.ClearColorSelectionHandler;
+import com.xfashion.client.color.event.CreateColorEvent;
+import com.xfashion.client.color.event.CreateColorHandler;
+import com.xfashion.client.color.event.DeleteColorEvent;
+import com.xfashion.client.color.event.DeleteColorHandler;
+import com.xfashion.client.color.event.MoveDownColorEvent;
+import com.xfashion.client.color.event.MoveDownColorHandler;
+import com.xfashion.client.color.event.MoveUpColorEvent;
+import com.xfashion.client.color.event.MoveUpColorHandler;
+import com.xfashion.client.color.event.SelectColorEvent;
+import com.xfashion.client.color.event.SelectColorHandler;
+import com.xfashion.client.color.event.ShowChooseColorPopupEvent;
+import com.xfashion.client.color.event.ShowChooseColorPopupHandler;
+import com.xfashion.client.color.event.UpdateColorEvent;
+import com.xfashion.client.color.event.UpdateColorHandler;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.ColorDTO;
 
@@ -105,6 +121,20 @@ public class ColorDataProvider extends SimpleFilterDataProvider<ColorDTO> implem
 		saveList();
 	}
 
+	public void readColors() {
+		AsyncCallback<List<ColorDTO>> callback = new AsyncCallback<List<ColorDTO>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
+			}
+			@Override
+			public void onSuccess(List<ColorDTO> result) {
+				storeColors(result);
+			}
+		};
+		articleTypeService.readColors(callback);
+	}
+
 	@Override
 	protected void saveItem(ColorDTO dto) {
 		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
@@ -112,7 +142,6 @@ public class ColorDataProvider extends SimpleFilterDataProvider<ColorDTO> implem
 			public void onFailure(Throwable caught) {
 				Xfashion.fireError(caught.getMessage());
 			}
-
 			@Override
 			public void onSuccess(Void result) {
 				fireRefreshEvent();
@@ -128,40 +157,26 @@ public class ColorDataProvider extends SimpleFilterDataProvider<ColorDTO> implem
 			public void onFailure(Throwable caught) {
 				Xfashion.fireError("Could not save colors: " + caught.getMessage());
 			}
-
 			@Override
 			public void onSuccess(List<ColorDTO> result) {
-				getList().clear();
-				getList().addAll(result);
-				fireRefreshEvent();
+				storeColors(result);
 			}
 		};
 		articleTypeService.updateColors(new ArrayList<ColorDTO>(getList()), callback);
 	}
 
+	private void storeColors(List<ColorDTO> result) {
+		List<ColorDTO> list = getList();
+		list.clear();
+		list.addAll(result);
+		refreshResolver();
+		fireRefreshEvent();
+	}
 
 	@Override
 	public void onShowChooseColorPopup(ShowChooseColorPopupEvent event) {
 		ChooseColorPopup colorPopup = new ChooseColorPopup(this);
 		colorPopup.show();
-	}
-
-	public void readColors() {
-		AsyncCallback<List<ColorDTO>> callback = new AsyncCallback<List<ColorDTO>>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				Xfashion.fireError(caught.getMessage());
-			}
-			@Override
-			public void onSuccess(List<ColorDTO> result) {
-				List<ColorDTO> list = getList();
-				list.clear();
-				list.addAll(result);
-				refreshResolver();
-				fireRefreshEvent();
-			}
-		};
-		articleTypeService.readColors(callback);
 	}
 
 }

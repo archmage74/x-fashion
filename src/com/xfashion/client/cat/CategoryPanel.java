@@ -13,6 +13,12 @@ import com.google.gwt.view.client.CellPreviewEvent;
 import com.google.gwt.view.client.ListDataProvider;
 import com.xfashion.client.SimpleFilterPanel;
 import com.xfashion.client.Xfashion;
+import com.xfashion.client.cat.event.CreateCategoryEvent;
+import com.xfashion.client.cat.event.DeleteCategoryEvent;
+import com.xfashion.client.cat.event.MoveDownCategoryEvent;
+import com.xfashion.client.cat.event.MoveUpCategoryEvent;
+import com.xfashion.client.cat.event.SelectCategoryEvent;
+import com.xfashion.client.cat.event.UpdateCategoryEvent;
 import com.xfashion.client.resources.FilterTableResources;
 import com.xfashion.shared.CategoryDTO;
 

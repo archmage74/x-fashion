@@ -16,6 +16,13 @@ import com.xfashion.client.ErrorEvent;
 import com.xfashion.client.ResizeableIconFilterPanel;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.resources.FilterTableResources;
+import com.xfashion.client.size.event.ClearSizeSelectionEvent;
+import com.xfashion.client.size.event.CreateSizeEvent;
+import com.xfashion.client.size.event.DeleteSizeEvent;
+import com.xfashion.client.size.event.MoveDownSizeEvent;
+import com.xfashion.client.size.event.MoveUpSizeEvent;
+import com.xfashion.client.size.event.SelectSizeEvent;
+import com.xfashion.client.size.event.UpdateSizeEvent;
 import com.xfashion.shared.SizeDTO;
 
 public class SizePanel extends ResizeableIconFilterPanel<SizeDTO> {

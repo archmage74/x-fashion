@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.xfashion.client.Xfashion;
+import com.xfashion.client.cat.event.ChooseCategoryAndStyleEvent;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.shared.CategoryDTO;
 import com.xfashion.shared.StyleDTO;

@@ -3,6 +3,7 @@ package com.xfashion.client.color;
 import com.google.gwt.view.client.ListDataProvider;
 import com.xfashion.client.ChooseAttributePopup;
 import com.xfashion.client.Xfashion;
+import com.xfashion.client.color.event.ChooseColorEvent;
 import com.xfashion.shared.ColorDTO;
 
 public class ChooseColorPopup extends ChooseAttributePopup<ColorDTO> {

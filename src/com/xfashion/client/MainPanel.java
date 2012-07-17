@@ -54,7 +54,7 @@ public class MainPanel implements ErrorHandler {
 
 		contentPanel = new SimplePanel();
 		RootPanel.get("mainPanelContainer").add(contentPanel);
-		articleTypeManagement = new ArticleTypeManagement(); 
+		articleTypeManagement = new ArticleTypeManagement(articleTypeDatabase); 
 		userProfile = new UserProfile();
 
 		Xfashion.eventBus.addHandler(ErrorEvent.TYPE, this);
@@ -65,7 +65,7 @@ public class MainPanel implements ErrorHandler {
 			showUserProfilePanel();
 		} else {
 			contentPanel.clear();
-			Panel panel = articleTypeManagement.getPanel(articleTypeDatabase, notepadManagement.getArticleProvider());
+			Panel panel = articleTypeManagement.getPanel(notepadManagement.getArticleProvider());
 			contentPanel.add(panel);
 		}
 	}

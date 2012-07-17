@@ -10,6 +10,22 @@ import com.xfashion.client.ErrorEvent;
 import com.xfashion.client.SimpleFilterDataProvider;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTypeDataProvider;
+import com.xfashion.client.size.event.ClearSizeSelectionEvent;
+import com.xfashion.client.size.event.ClearSizeSelectionHandler;
+import com.xfashion.client.size.event.CreateSizeEvent;
+import com.xfashion.client.size.event.CreateSizeHandler;
+import com.xfashion.client.size.event.DeleteSizeEvent;
+import com.xfashion.client.size.event.DeleteSizeHandler;
+import com.xfashion.client.size.event.MoveDownSizeEvent;
+import com.xfashion.client.size.event.MoveDownSizeHandler;
+import com.xfashion.client.size.event.MoveUpSizeEvent;
+import com.xfashion.client.size.event.MoveUpSizeHandler;
+import com.xfashion.client.size.event.SelectSizeEvent;
+import com.xfashion.client.size.event.SelectSizeHandler;
+import com.xfashion.client.size.event.ShowChooseSizePopupEvent;
+import com.xfashion.client.size.event.ShowChooseSizePopupHandler;
+import com.xfashion.client.size.event.UpdateSizeEvent;
+import com.xfashion.client.size.event.UpdateSizeHandler;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.SizeDTO;
 
@@ -30,17 +46,6 @@ public class SizeDataProvider extends SimpleFilterDataProvider<SizeDTO> implemen
 		rightProvider.setList(sizeList.getSecond());
 
 		registerForEvents();
-	}
-
-	private void registerForEvents() {
-		Xfashion.eventBus.addHandler(SelectSizeEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(ClearSizeSelectionEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(DeleteSizeEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(CreateSizeEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(UpdateSizeEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(MoveUpSizeEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(MoveDownSizeEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(ShowChooseSizePopupEvent.TYPE, this);
 	}
 
 	public String getAttributeContent(ArticleTypeDTO articleType) {
@@ -120,38 +125,6 @@ public class SizeDataProvider extends SimpleFilterDataProvider<SizeDTO> implemen
 	}
 
 	@Override
-	protected void saveItem(SizeDTO dto) {
-		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				Xfashion.fireError(caught.getMessage());
-			}
-			@Override
-			public void onSuccess(Void result) {
-				fireRefreshEvent();
-			}
-		};
-		articleTypeService.updateSize(dto, callback);
-	}
-
-	@Override
-	protected void saveList() {
-		AsyncCallback<List<SizeDTO>> callback = new AsyncCallback<List<SizeDTO>>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				Xfashion.fireError("Could not save sizes: " + caught.getMessage());
-			}
-			@Override
-			public void onSuccess(List<SizeDTO> result) {
-				sizeList.clear();
-				sizeList.addAll(result);
-				fireRefreshEvent();
-			}
-		};
-		articleTypeService.updateSizes(new ArrayList<SizeDTO>(sizeList), callback);
-	}
-
-	@Override
 	public List<SizeDTO> getList() {
 		return sizeList;
 	}
@@ -205,17 +178,62 @@ public class SizeDataProvider extends SimpleFilterDataProvider<SizeDTO> implemen
 
 			@Override
 			public void onSuccess(List<SizeDTO> result) {
-				if (result == null) {
-					result = new ArrayList<SizeDTO>();
-				}
-				List<SizeDTO> list = getList();
-				list.clear();
-				list.addAll(result);
-				refreshResolver();
-				fireRefreshEvent();
+				storeSizes(result);
 			}
 		};
 		articleTypeService.readSizes(callback);
+	}
+
+	@Override
+	protected void saveItem(SizeDTO dto) {
+		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
+			}
+			@Override
+			public void onSuccess(Void result) {
+				fireRefreshEvent();
+			}
+		};
+		articleTypeService.updateSize(dto, callback);
+	}
+
+	@Override
+	protected void saveList() {
+		AsyncCallback<List<SizeDTO>> callback = new AsyncCallback<List<SizeDTO>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				Xfashion.fireError("Could not save sizes: " + caught.getMessage());
+			}
+			@Override
+			public void onSuccess(List<SizeDTO> result) {
+				storeSizes(result);
+			}
+		};
+		articleTypeService.updateSizes(new ArrayList<SizeDTO>(sizeList), callback);
+	}
+	
+	private void storeSizes(List<SizeDTO> result) {
+		if (result == null) {
+			result = new ArrayList<SizeDTO>();
+		}
+		List<SizeDTO> list = getList();
+		list.clear();
+		list.addAll(result);
+		refreshResolver();
+		fireRefreshEvent();
+	}
+
+	private void registerForEvents() {
+		Xfashion.eventBus.addHandler(SelectSizeEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(ClearSizeSelectionEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(DeleteSizeEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(CreateSizeEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(UpdateSizeEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(MoveUpSizeEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(MoveDownSizeEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(ShowChooseSizePopupEvent.TYPE, this);
 	}
 
 }

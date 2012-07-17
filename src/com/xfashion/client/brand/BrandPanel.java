@@ -4,6 +4,13 @@ import com.google.gwt.resources.client.ImageResource;
 import com.xfashion.client.ResizeableIconFilterPanel;
 import com.xfashion.client.SimpleFilterDataProvider;
 import com.xfashion.client.Xfashion;
+import com.xfashion.client.brand.event.ClearBrandSelectionEvent;
+import com.xfashion.client.brand.event.CreateBrandEvent;
+import com.xfashion.client.brand.event.DeleteBrandEvent;
+import com.xfashion.client.brand.event.MoveDownBrandEvent;
+import com.xfashion.client.brand.event.MoveUpBrandEvent;
+import com.xfashion.client.brand.event.SelectBrandEvent;
+import com.xfashion.client.brand.event.UpdateBrandEvent;
 import com.xfashion.shared.BrandDTO;
 
 public class BrandPanel extends ResizeableIconFilterPanel<BrandDTO> {
