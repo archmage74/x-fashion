@@ -479,7 +479,7 @@ public class BulkEditArticleTypePopup implements CloseHandler<PopupPanel>, Choos
 
 		sellPriceDeGrid = new Grid(1, 2);
 		Label sellPriceLabel = new Label(textMessages.sellPriceDe() + ":");
-		grid.setWidget(1, 0, sellPriceLabel);
+		grid.setWidget(2, 0, sellPriceLabel);
 		sellPriceDeTextBox = createGridTextBoxRow(sellPriceDeGrid, 0, textMessages.currencySign());
 		sellPriceDeTextBox.addChangeHandler(new ChangeHandler() {
 			@Override

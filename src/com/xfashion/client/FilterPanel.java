@@ -273,10 +273,6 @@ public abstract class FilterPanel<T extends FilterCellData> implements IsMinimiz
 		return sb.toSafeHtml();
 	}
 
-	protected ImageResource getNotAvailableIcon() {
-		return images.iconNotAvailable();
-	}
-
 	protected Widget createCreatePanel() {
 		Grid createGrid = new Grid(2, 1);
 

@@ -103,7 +103,7 @@ public class CategoryDataProvider extends FilterDataProvider<CategoryDTO> implem
 							availableArticles += 0;
 						}
 					} else {
-						availableArticles = 1;
+						availableArticles++;
 					}
 					articleAmountPerAttribute.put(styleId, availableArticles);
 				}

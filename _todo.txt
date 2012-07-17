@@ -69,8 +69,14 @@ DONE - remove sold article during selling
 DONE - show real-sell price not current-sell in sell-statistic
 DONE - seperate sell-prices for DE and AT
 DONE - show articles amount in stock for stock filters (only stock or article-types filter work correctly)
+DONE - fix bulk editing
+
+remove style and name filter when changing category
+
+sorting article types alphabetically by: category, ..., but size like size-filter list
 
 price reduction management (see mail from roman)
+(new delivery, which prices on sticker?, which prices during selling?)
 
 --------------------
 

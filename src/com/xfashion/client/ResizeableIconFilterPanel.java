@@ -56,6 +56,11 @@ public abstract class ResizeableIconFilterPanel<T extends FilterCellData> extend
 		return panel;
 	}
 
+	protected ImageResource getNotAvailableIcon() {
+		// return images.iconNotAvailable();
+		return getAvailableIcon();
+	}
+
 	protected Column<T, ImageResource> createIconColumn() {
 		Column<T, ImageResource> column = new Column<T, ImageResource>(new ImageResourceCell()) {
 			@Override
