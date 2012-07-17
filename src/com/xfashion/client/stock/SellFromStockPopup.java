@@ -153,7 +153,7 @@ public class SellFromStockPopup {
 		}
 
 		ArticleAmountDTO stockEntry = stock.get(articleType.getKey());
-		if (stockEntry == null || stockEntry.getAmount() <= sellArticle.getAmount()) {
+		if (stockEntry == null || stockEntry.getAmount() <= sellArticleAmount.getAmount()) {
 			Xfashion.fireError(errorMessages.notEnoughArticlesInStock());
 		} else {
 			sellArticleAmount.increaseAmount();

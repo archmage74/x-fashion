@@ -168,7 +168,7 @@ public class SizePanel extends ResizeableIconFilterPanel<SizeDTO> {
 
 	@Override
 	protected int getMaxWidth() {
-		return 240;	
+		return 250;	
 	}
 	
 	public SizeDataProvider getDataProvider() {

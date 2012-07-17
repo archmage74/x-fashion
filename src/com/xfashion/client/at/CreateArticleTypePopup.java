@@ -217,8 +217,8 @@ public class CreateArticleTypePopup {
 		nameTextBox = createTextBoxGridRow(grid, 5, textMessages.name() + ":");
 		buyPriceTextBox = createPriceTextBoxGridRow(grid, 6, textMessages.buyPrice() + ":");
 		sellPriceAtTextBox = createPriceTextBoxGridRow(grid, 7, textMessages.sellPriceAt() + ":");
-		sellPriceDeTextBox = createPriceTextBoxGridRow(grid, 7, textMessages.sellPriceDe() + ":");
-		imageLabel = createLabelGridRow(grid, 8, textMessages.image() + ":");
+		sellPriceDeTextBox = createPriceTextBoxGridRow(grid, 8, textMessages.sellPriceDe() + ":");
+		imageLabel = createLabelGridRow(grid, 9, textMessages.image() + ":");
 		return grid;
 	}
 	
