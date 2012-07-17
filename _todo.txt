@@ -70,8 +70,7 @@ DONE - show real-sell price not current-sell in sell-statistic
 DONE - seperate sell-prices for DE and AT
 DONE - show articles amount in stock for stock filters (only stock or article-types filter work correctly)
 DONE - fix bulk editing
-
-remove style and name filter when changing category
+DONE - remove style and name filter when changing category
 
 sorting article types alphabetically by: category, ..., but size like size-filter list
 

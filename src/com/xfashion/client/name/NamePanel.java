@@ -24,7 +24,7 @@ import com.xfashion.client.resources.FilterTableResources;
 import com.xfashion.client.resources.ImageResources;
 import com.xfashion.client.resources.TextMessages;
 
-public class NamePanel implements IsMinimizable {
+public class NamePanel implements IsMinimizable, NameFilterHandler {
 
 	protected Panel listPanel;
 	protected Panel scrollPanel;
@@ -44,6 +44,16 @@ public class NamePanel implements IsMinimizable {
 		this.dataProvider = dataProvider;
 		textMessages = GWT.create(TextMessages.class);
 		images = GWT.create(ImageResources.class);
+		
+		registerForEvents();
+	}
+	
+	public String getSelectedName() {
+		return selectedName;
+	}
+
+	public void setSelectedName(String selectedName) {
+		this.selectedName = selectedName;
 	}
 	
 	public Panel createPanel() {
@@ -78,7 +88,6 @@ public class NamePanel implements IsMinimizable {
 				return sb.toSafeHtml();
 			}
 		};
-		// price.setCellStyleNames("articlePrice");
 		cellTable.addColumn(price);
 
 		CellPreviewEvent.Handler<String> cellPreviewHandler = new CellPreviewEvent.Handler<String>() {
@@ -101,44 +110,9 @@ public class NamePanel implements IsMinimizable {
 		return sp;
 	}
 	
-	protected Panel createHeaderPanel() {
-		headerPanel = new HorizontalPanel();
-		headerPanel.addStyleName("filterHeader");
-		headerPanel.setWidth("160px");
-
-		minmaxButton = new Image();
-		if (isMinimized()) {
-			minmaxButton.setResource(images.iconMaximize());
-		} else {
-			minmaxButton.setResource(images.iconMinimize());
-		}
-		minmaxButton.setStyleName("buttonMinMax");
-		ClickHandler minmaxClickHandler = new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				minmax();
-			}
-		};
-		minmaxButton.addClickHandler(minmaxClickHandler);
-		
-		headerPanel.add(minmaxButton);
-
-		Label label = new Label(textMessages.name());
-		label.addStyleName("filterLabel attributeFilterLabel");
-		headerPanel.add(label);
-		label.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				clearSelection();
-			}
-		});
-
-		return headerPanel;
-	}
-
-	protected void select(String name) {
-		selectedName = name;
-		Xfashion.eventBus.fireEvent(new NameFilterEvent(selectedName));		
+	@Override
+	public void onNameFilter(NameFilterEvent event) {
+		selectedName = event.getName();
 	}
 	
 	public void clearSelection() {
@@ -189,12 +163,47 @@ public class NamePanel implements IsMinimizable {
 		scrollPanel.setWidth(width + "px");
 	}
 
-	public String getSelectedName() {
-		return selectedName;
+	protected Panel createHeaderPanel() {
+		headerPanel = new HorizontalPanel();
+		headerPanel.addStyleName("filterHeader");
+		headerPanel.setWidth("160px");
+
+		minmaxButton = new Image();
+		if (isMinimized()) {
+			minmaxButton.setResource(images.iconMaximize());
+		} else {
+			minmaxButton.setResource(images.iconMinimize());
+		}
+		minmaxButton.setStyleName("buttonMinMax");
+		ClickHandler minmaxClickHandler = new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				minmax();
+			}
+		};
+		minmaxButton.addClickHandler(minmaxClickHandler);
+		
+		headerPanel.add(minmaxButton);
+
+		Label label = new Label(textMessages.name());
+		label.addStyleName("filterLabel attributeFilterLabel");
+		headerPanel.add(label);
+		label.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				clearSelection();
+			}
+		});
+
+		return headerPanel;
 	}
 
-	public void setSelectedName(String selectedName) {
-		this.selectedName = selectedName;
+	protected void select(String name) {
+		Xfashion.eventBus.fireEvent(new NameFilterEvent(name));		
+	}
+
+	private void registerForEvents() {
+		Xfashion.eventBus.addHandler(NameFilterEvent.TYPE, this);
 	}
 	
 }

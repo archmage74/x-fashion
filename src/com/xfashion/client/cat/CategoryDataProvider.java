@@ -13,6 +13,7 @@ import com.xfashion.client.ErrorEvent;
 import com.xfashion.client.FilterDataProvider;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTypeDataProvider;
+import com.xfashion.client.name.NameFilterEvent;
 import com.xfashion.client.style.ClearStyleSelectionEvent;
 import com.xfashion.client.style.ClearStyleSelectionHandler;
 import com.xfashion.client.style.CreateStyleEvent;
@@ -272,6 +273,7 @@ public class CategoryDataProvider extends FilterDataProvider<CategoryDTO> implem
 		}
 		getList().remove(category);
 		saveCategoryList();
+		clearNameAndStyleFilters();
 	}
 
 	public boolean doesCategoryHaveArticles(CategoryDTO category) {
@@ -294,6 +296,7 @@ public class CategoryDataProvider extends FilterDataProvider<CategoryDTO> implem
 			dto.setSelected(true);
 		}
 		fireRefreshEvent();
+		clearNameAndStyleFilters();
 	}
 
 	@Override
@@ -338,8 +341,7 @@ public class CategoryDataProvider extends FilterDataProvider<CategoryDTO> implem
 
 	@Override
 	public void onClearStyleSelection(ClearStyleSelectionEvent event) {
-		getStyleFilter().clear();
-		fireRefreshEvent();
+		clearStyleSelection();
 	}
 
 	@Override
@@ -409,4 +411,14 @@ public class CategoryDataProvider extends FilterDataProvider<CategoryDTO> implem
 		popup.show();
 	}
 
+	private void clearNameAndStyleFilters() {
+		clearStyleSelection();
+		Xfashion.eventBus.fireEvent(new NameFilterEvent(null));
+	}
+	
+	private void clearStyleSelection() {
+		getStyleFilter().clear();
+		fireRefreshEvent();
+	}
 }
+
