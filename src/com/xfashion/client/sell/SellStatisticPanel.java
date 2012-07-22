@@ -55,10 +55,10 @@ public class SellStatisticPanel {
 	protected Formatter formatter;
 	
 	public SellStatisticPanel(ProvidesArticleFilter filterProvider) {
-		knownShops = new ArrayList<ShopDTO>();
-		textMessages = GWT.create(TextMessages.class);
-		images = GWT.<ImageResources>create(ImageResources.class);
-		formatter = new Formatter();
+		this.knownShops = new ArrayList<ShopDTO>();
+		this.textMessages = GWT.create(TextMessages.class);
+		this.images = GWT.<ImageResources>create(ImageResources.class);
+		this.formatter = Formatter.getInstance();
 
 		this.filterProvider = filterProvider;
 	}

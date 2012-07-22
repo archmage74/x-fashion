@@ -21,8 +21,6 @@ import com.xfashion.client.at.bulk.UpdateArticleTypesEvent;
 import com.xfashion.client.at.bulk.UpdateArticleTypesHandler;
 import com.xfashion.client.at.event.DeleteArticleTypeEvent;
 import com.xfashion.client.at.event.DeleteArticleTypeHandler;
-import com.xfashion.client.at.event.UpdateArticleTypeEvent;
-import com.xfashion.client.at.event.UpdateArticleTypeHandler;
 import com.xfashion.client.brand.BrandDataProvider;
 import com.xfashion.client.cat.CategoryDataProvider;
 import com.xfashion.client.color.ColorDataProvider;
@@ -41,9 +39,10 @@ import com.xfashion.client.size.SizeDataProvider;
 import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.CategoryDTO;
+import com.xfashion.shared.PriceChangeDTO;
 
 public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHandler, RefreshFilterHandler, UpdateArticleTypesHandler,
-		RequestShowArticleTypeDetailsHandler, UpdateArticleTypeHandler, DeleteArticleTypeHandler, SortArticlesHandler {
+		RequestShowArticleTypeDetailsHandler, DeleteArticleTypeHandler, SortArticlesHandler {
 
 	private ArticleTypeServiceAsync articleTypeService = (ArticleTypeServiceAsync) GWT.create(ArticleTypeService.class);
 
@@ -313,13 +312,23 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 		for (ArticleTypeDTO at : event.getArticleTypes()) {
 			updateArticleType(at);
 		}
+		createPriceChanges(event.getPriceChanges());
 	}
 
-	@Override
-	public void onUpdateArticleType(UpdateArticleTypeEvent event) {
-		updateArticleType(event.getArticleType());
+	public void createPriceChanges(Collection<PriceChangeDTO> priceChanges) {
+		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
+			}
+			@Override
+			public void onSuccess(Void result) {
+				
+			}
+		};
+		articleTypeService.createPriceChanges(priceChanges, callback);
 	}
-
+		
 	@Override
 	public void onRequestShowArticleTypeDetails(RequestShowArticleTypeDetailsEvent event) {
 		if (articleTypeDetailPopup == null) {
@@ -334,7 +343,6 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 			public void onFailure(Throwable caught) {
 				Xfashion.fireError(caught.getMessage());
 			}
-
 			@Override
 			public void onSuccess(Void result) {
 				articleTypeProvider.refresh();
@@ -383,7 +391,6 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 		Xfashion.eventBus.addHandler(RefreshFilterEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(NameFilterEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(UpdateArticleTypesEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(UpdateArticleTypeEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(DeleteArticleTypeEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(RequestShowArticleTypeDetailsEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(SortArticlesEvent.TYPE, this);

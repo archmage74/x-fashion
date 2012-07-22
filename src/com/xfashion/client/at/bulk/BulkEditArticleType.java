@@ -1,8 +1,12 @@
 package com.xfashion.client.at.bulk;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import com.xfashion.shared.ArticleTypeDTO;
+import com.xfashion.shared.PriceChangeDTO;
 
 public class BulkEditArticleType {
 
@@ -168,7 +172,8 @@ public class BulkEditArticleType {
 		sourceStyleKey = helper.extractSourceAttribute(articleTypes, new StyleKeyAccessor());
 	}
 
-	public void applyChanges(List<ArticleTypeDTO> articleTypes) {
+	public Collection<PriceChangeDTO> applyChanges(List<ArticleTypeDTO> articleTypes) {
+		HashMap<String, PriceChangeDTO> priceChanges = new HashMap<String, PriceChangeDTO>();
 		AttributeHelper helper = new AttributeHelper();
 		helper.saveAttribute(articleTypes, new BrandKeyAccessor(), targetBrandKey);
 		helper.saveAttribute(articleTypes, new BuyPriceAccessor(), targetBuyPrice);
@@ -176,10 +181,11 @@ public class BulkEditArticleType {
 		helper.saveAttribute(articleTypes, new ColorKeyAccessor(), targetColorKey);
 		helper.saveAttribute(articleTypes, new ImageKeyAccessor(), targetImageKey);
 		helper.saveAttribute(articleTypes, new NameAccessor(), targetName);
-		helper.saveAttribute(articleTypes, new SellPriceAtAccessor(), targetSellPriceAt);
-		helper.saveAttribute(articleTypes, new SellPriceDeAccessor(), targetSellPriceDe);
+		helper.saveAttribute(articleTypes, priceChanges, new SellPriceAtAccessor(), targetSellPriceAt);
+		helper.saveAttribute(articleTypes, priceChanges, new SellPriceDeAccessor(), targetSellPriceDe);
 		helper.saveAttribute(articleTypes, new SizeKeyAccessor(), targetSizeKey);
 		helper.saveAttribute(articleTypes, new StyleKeyAccessor(), targetStyleKey);
+		return new ArrayList<PriceChangeDTO>(priceChanges.values());
 	}
 	
 }

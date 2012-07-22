@@ -1,6 +1,7 @@
 package com.xfashion.client.at.bulk;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
@@ -52,6 +53,7 @@ import com.xfashion.shared.ArticleTypeImageDTO;
 import com.xfashion.shared.BrandDTO;
 import com.xfashion.shared.CategoryDTO;
 import com.xfashion.shared.ColorDTO;
+import com.xfashion.shared.PriceChangeDTO;
 import com.xfashion.shared.SizeDTO;
 import com.xfashion.shared.StyleDTO;
 
@@ -536,8 +538,8 @@ public class BulkEditArticleTypePopup implements CloseHandler<PopupPanel>, Choos
 
 	private void saveArticleType() {
 		validate();
-		bulk.applyChanges(articleTypes);
-		Xfashion.eventBus.fireEvent(new UpdateArticleTypesEvent(articleTypes));
+		Collection<PriceChangeDTO> priceChanges = bulk.applyChanges(articleTypes);
+		Xfashion.eventBus.fireEvent(new UpdateArticleTypesEvent(articleTypes, priceChanges));
 		hide();
 	}
 

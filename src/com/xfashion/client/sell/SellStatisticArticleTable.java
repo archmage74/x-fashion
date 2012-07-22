@@ -15,7 +15,7 @@ public class SellStatisticArticleTable extends ArticleTable<SoldArticleDTO> {
 
 	public SellStatisticArticleTable(ProvidesArticleFilter provider, GetSellPriceStrategy getPriceStrategy) {
 		super(provider, getPriceStrategy);
-		formatter = new Formatter();
+		this.formatter = Formatter.getInstance();
 	}
 
 	protected void addNavColumns(CellTable<SoldArticleDTO> cellTable) {

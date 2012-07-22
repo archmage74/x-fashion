@@ -8,6 +8,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.DeliveryNoticeDTO;
 import com.xfashion.shared.NotepadDTO;
+import com.xfashion.shared.PriceChangeDTO;
 import com.xfashion.shared.ResetPasswordDTO;
 import com.xfashion.shared.SoldArticleDTO;
 import com.xfashion.shared.UserDTO;
@@ -50,8 +51,10 @@ public interface UserServiceAsync {
 
 	void createStockEntry(ArticleAmountDTO articleAmount, AsyncCallback<ArticleAmountDTO> callback);
 
-	void readStock(AsyncCallback<Set<ArticleAmountDTO>> callback);
+	void readOwnStock(AsyncCallback<Set<ArticleAmountDTO>> callback);
 
+	void readStockOfUser(String shopKey, AsyncCallback<Set<ArticleAmountDTO>> callback);
+	
 	void addStockEntries(Collection<ArticleAmountDTO> dtos, AsyncCallback<Collection<ArticleAmountDTO>> callback);
 	
 	void updateStockEntry(ArticleAmountDTO articleAmount, AsyncCallback<Void> callback);
@@ -65,5 +68,13 @@ public interface UserServiceAsync {
 	void readSoldArticlesOfShop(String shopKey, long from, long to, AsyncCallback<List<SoldArticleDTO>> callback);
 
 	void readOwnSoldArticles(long from, long to, AsyncCallback<List<SoldArticleDTO>> callback);
-	
+
+	void createPriceChangeForShop(String shopKey, PriceChangeDTO dto, AsyncCallback<Void> callback);
+
+	void readOwnPriceChanges(AsyncCallback<Collection<PriceChangeDTO>> callback);
+
+	void updatePriceChanges(Collection<PriceChangeDTO> dtos, AsyncCallback<Collection<PriceChangeDTO>> callback);
+
+	void deletePriceChanges(Collection<PriceChangeDTO> dtos, AsyncCallback<Void> callback);
+
 }

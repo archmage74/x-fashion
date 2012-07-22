@@ -7,7 +7,7 @@ import com.xfashion.shared.ArticleTypeDTO;
 
 public class ArticleAmountDataProvider extends ArticleDataProvider<ArticleAmountDTO> {
 
-	private ArticleTypeDatabase articleTypeDatabase;
+	protected ArticleTypeDatabase articleTypeDatabase;
 	
 	public ArticleAmountDataProvider(ArticleTypeDatabase articleTypeDatabase) {
 		this.articleTypeDatabase = articleTypeDatabase;

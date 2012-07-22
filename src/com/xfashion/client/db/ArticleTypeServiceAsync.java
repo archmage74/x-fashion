@@ -1,5 +1,6 @@
 package com.xfashion.client.db;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -8,6 +9,7 @@ import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.BrandDTO;
 import com.xfashion.shared.CategoryDTO;
 import com.xfashion.shared.ColorDTO;
+import com.xfashion.shared.PriceChangeDTO;
 import com.xfashion.shared.SizeDTO;
 import com.xfashion.shared.StyleDTO;
 
@@ -83,5 +85,13 @@ public interface ArticleTypeServiceAsync {
 	void updateArticleType(ArticleTypeDTO articleType, AsyncCallback<Void> callback);
 
 	void deleteArticleType(ArticleTypeDTO articleType, AsyncCallback<Void> callback);
+
+	
+	// price-changes
+	void createPriceChanges(Collection<PriceChangeDTO> articles, AsyncCallback<Void> callback);
+
+	void readPriceChange(String priceChangeKey, AsyncCallback<PriceChangeDTO> callback);
+
+	void deletePriceChange(PriceChangeDTO priceChange, AsyncCallback<Void> callback);
 
 }

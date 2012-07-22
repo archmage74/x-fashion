@@ -43,7 +43,7 @@ public class SoldArticle {
 	protected Date sellDate;
 	
 	public SoldArticle() {
-		
+		this.sellDate = new Date();
 	}
 	
 	public SoldArticle(SoldArticleDTO dto) {

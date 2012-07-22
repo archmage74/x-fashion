@@ -1,8 +1,9 @@
 package com.xfashion.client.at.bulk;
 
 import com.xfashion.shared.ArticleTypeDTO;
+import com.xfashion.shared.PriceChangeDTO;
 
-public class SellPriceAtAccessor implements AttributeAccessor<Integer> {
+public class SellPriceAtAccessor implements PriceAttributeAccessor {
 
 	@Override
 	public Integer getAttribute(ArticleTypeDTO articleType) {
@@ -14,4 +15,9 @@ public class SellPriceAtAccessor implements AttributeAccessor<Integer> {
 		articleType.setSellPriceAt(value);
 	}
 	
+	@Override
+	public void setOldPrice(PriceChangeDTO priceChange, Integer value) {
+		priceChange.setSellPriceAt(value);
+	}	
+
 }

@@ -1,5 +1,6 @@
 package com.xfashion.client.db;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -9,6 +10,7 @@ import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.BrandDTO;
 import com.xfashion.shared.CategoryDTO;
 import com.xfashion.shared.ColorDTO;
+import com.xfashion.shared.PriceChangeDTO;
 import com.xfashion.shared.SizeDTO;
 import com.xfashion.shared.StyleDTO;
 
@@ -89,5 +91,12 @@ public interface ArticleTypeService extends RemoteService {
 	
 	void deleteArticleType(ArticleTypeDTO articleType) throws IllegalArgumentException;
 
+	
+	// price-changes
+	void createPriceChanges(Collection<PriceChangeDTO> articles) throws IllegalArgumentException;
 
+	PriceChangeDTO readPriceChange(String priceChangeKey) throws IllegalArgumentException;
+	
+	void deletePriceChange(PriceChangeDTO priceChange) throws IllegalArgumentException;
+	
 }

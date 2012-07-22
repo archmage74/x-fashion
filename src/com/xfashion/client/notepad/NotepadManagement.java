@@ -3,7 +3,6 @@ package com.xfashion.client.notepad;
 import java.util.Date;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.db.ArticleTypeDatabase;
@@ -45,40 +44,35 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 		OpenNotepadHandler, OpenDeliveryNoticeHandler, RequestOpenNotepadHandler, SaveDeliveryNoticeHandler, SaveNotepadHandler, 
 		RequestSaveNotepadHandler, PrintDeliveryNoticeHandler, RecordArticlesHandler, RequestIntoStockHandler {
 
-	public static final String PRINT_STICKER_URL = "/pdf/multisticker";
-
-	public static final String PRINT_DELIVERY_NOTICE_URL = "/pdf/deliverynotice";
-
 	private UserServiceAsync userService = (UserServiceAsync) GWT.create(UserService.class);
 	
-	private NotepadServiceAsync notepadService;
-
 	private ErrorMessages errorMessages;
 
 	private NotepadDTO currentNotepad;
 	private DeliveryNoticeDTO currentDeliveryNotice;
 
 	private ArticleAmountDataProvider articleProvider;
+	protected NotepadPrinter notepadPrinter;
 
 	protected SaveNotepadPopup saveNotepadPopup;
 	protected OpenNotepadPopup openNotepadPopup;
 	protected ScanArticlePopup scanArticlePopup;
 
 	public NotepadManagement(ArticleTypeDatabase articleTypeDatabase) {
-		articleProvider = new ArticleAmountDataProvider(articleTypeDatabase);
-		errorMessages = GWT.create(ErrorMessages.class);
-		notepadService = (NotepadServiceAsync) GWT.create(NotepadService.class);
-		currentNotepad = new NotepadDTO();
-		saveNotepadPopup = new SaveNotepadPopup();
-		openNotepadPopup = new OpenNotepadPopup();
-		scanArticlePopup = new ScanArticlePopup(articleProvider);
+		this.articleProvider = new ArticleAmountDataProvider(articleTypeDatabase);
+		this.notepadPrinter = new NotepadPrinter();
+		this.errorMessages = GWT.create(ErrorMessages.class);
+		this.currentNotepad = new NotepadDTO();
+		this.saveNotepadPopup = new SaveNotepadPopup();
+		this.openNotepadPopup = new OpenNotepadPopup();
+		this.scanArticlePopup = new ScanArticlePopup(articleProvider);
 		registerForEvents();
 	}
 
 	@Override
 	public void onPrintNotepadStickers(PrintNotepadStickersEvent event) {
 		if (currentNotepad.getArticles().size() > 0) {
-			sendNotepadPrintAction(createPrintStickerCallback());
+			notepadPrinter.printNotepad(currentNotepad);
 		} else {
 			Xfashion.fireError(errorMessages.noArticlesInNotepad());
 		}
@@ -113,7 +107,7 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 		} else if (currentDeliveryNotice == null) {
 			Xfashion.fireError(errorMessages.noDeliveryNotice());
 		} else {
-			sendDeliveryNoticePrintAction(createPrintDeliveryNoticeCallback());
+			notepadPrinter.printDeliveryNotice(currentDeliveryNotice);
 		}
 	}
 
@@ -180,42 +174,6 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 
 	public void setArticleProvider(ArticleAmountDataProvider articleProvider) {
 		this.articleProvider = articleProvider;
-	}
-
-	protected void sendNotepadPrintAction(AsyncCallback<Void> printCallback) {
-		notepadService.saveNotepadInSession(currentNotepad, printCallback);
-	}
-	
-	protected void sendDeliveryNoticePrintAction(AsyncCallback<Void> printCallback) {
-		notepadService.saveDeliveryNoticeInSession(currentDeliveryNotice, printCallback);
-	}
-	
-	protected AsyncCallback<Void> createPrintStickerCallback() {
-		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
-			@Override
-			public void onSuccess(Void result) {
-				Window.open(PRINT_STICKER_URL, "_blank", "");
-			}
-			@Override
-			public void onFailure(Throwable caught) {
-				Xfashion.fireError(caught.getMessage());
-			}
-		};
-		return callback;
-	}
-
-	protected AsyncCallback<Void> createPrintDeliveryNoticeCallback() {
-		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
-			@Override
-			public void onSuccess(Void result) {
-				Window.open(PRINT_DELIVERY_NOTICE_URL, "_blank", "");
-			}
-			@Override
-			public void onFailure(Throwable caught) {
-				Xfashion.fireError(caught.getMessage());
-			}
-		};
-		return callback;
 	}
 
 	private void createNotepad(NotepadDTO notepad) {

@@ -72,9 +72,13 @@ DONE - show articles amount in stock for stock filters (only stock or article-ty
 DONE - fix bulk editing
 DONE - remove style and name filter when changing category
 DONE - sorting article types alphabetically by: category, ..., but size sorted like size-filter list order
+DONE - price reduction management (see mail from roman) (new delivery, which prices on sticker?, which prices during selling?, realtime-distribution?, concurrent: price changes while deleting all pending changes -> what should happen?, only for enabled users, accepted changes: orange?)
 
-price reduction management (see mail from roman)
-(new delivery, which prices on sticker?, which prices during selling?)
+DONE - colors for printed price changes
+
+??? store promo code to sold articles to show in statistic
+
+forbid removing of used article-types
 
 --------------------
 

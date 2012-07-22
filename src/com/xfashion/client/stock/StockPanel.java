@@ -58,16 +58,14 @@ public class StockPanel implements NotepadStartMinimizeHandler, NotepadStartMaxi
 	protected ImageResources images;
 
 	public StockPanel(ArticleTypeDatabase articleTypeDatabase) {
-		textMessages = GWT.create(TextMessages.class);
-		images = GWT.<ImageResources> create(ImageResources.class);
+		this.textMessages = GWT.create(TextMessages.class);
+		this.images = GWT.<ImageResources> create(ImageResources.class);
 		this.articleTypeDatabase = articleTypeDatabase;
 
 		registerForEvents();
 	}
 
-	public Panel createPanel(ArticleTypeDatabase articleTypeDatabase, ArticleAmountDataProvider stockProvider,
-			ArticleAmountDataProvider notepadArticleProvider) {
-
+	public Panel createPanel(ArticleAmountDataProvider stockProvider, ArticleAmountDataProvider notepadArticleProvider) {
 		if (panel == null) {
 			panel = new HorizontalPanel();
 			panel.add(createCategoryPanel());

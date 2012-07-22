@@ -10,6 +10,7 @@ import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.xfashion.server.PriceChange;
 import com.xfashion.server.SoldArticle;
 import com.xfashion.server.notepad.ArticleAmount;
 import com.xfashion.server.notepad.Notepad;
@@ -57,6 +58,9 @@ public class Shop {
 	
 	@Persistent
 	Set<SoldArticle> soldArticles;
+	
+	@Persistent
+	Set<PriceChange> priceChanges;
 	
 	public Shop() {
 		notepads = new HashSet<Notepad>();
@@ -144,6 +148,14 @@ public class Shop {
 	
 	public Set<SoldArticle> getSoldArticles() {
 		return soldArticles;
+	}
+
+	public Set<PriceChange> getPriceChanges() {
+		return priceChanges;
+	}
+
+	public void setPriceChanges(Set<PriceChange> priceChanges) {
+		this.priceChanges = priceChanges;
 	}
 
 	public ShopDTO createDTO() {

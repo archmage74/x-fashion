@@ -425,3 +425,6 @@ table.toolGrid * td {
 	font-size: 12px;
 	color: #ffffff;
 }
+.priceChangeAccepted {
+	background-color: #F1DDC5;
+}

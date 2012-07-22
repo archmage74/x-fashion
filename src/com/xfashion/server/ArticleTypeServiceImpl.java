@@ -1,6 +1,7 @@
 package com.xfashion.server;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -9,12 +10,17 @@ import javax.jdo.Query;
 import javax.jdo.Transaction;
 
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.taskqueue.Queue;
+import com.google.appengine.api.taskqueue.QueueFactory;
+import com.google.appengine.api.taskqueue.TaskOptions;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.xfashion.client.db.ArticleTypeService;
+import com.xfashion.server.task.DistributePriceChangeServlet;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.BrandDTO;
 import com.xfashion.shared.CategoryDTO;
 import com.xfashion.shared.ColorDTO;
+import com.xfashion.shared.PriceChangeDTO;
 import com.xfashion.shared.SizeDTO;
 import com.xfashion.shared.StyleDTO;
 
@@ -640,4 +646,78 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 		ArticleType item = readArticleType(pm, dto.getKey());
 		pm.deletePersistent(item);
 	}
+
+	@Override
+	public void createPriceChanges(Collection<PriceChangeDTO> dtos) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			dtos = createPriceChanges(pm, dtos);
+			Queue queue = QueueFactory.getDefaultQueue();
+			for (PriceChangeDTO dto : dtos) {
+				queue.add(TaskOptions.Builder.withUrl("/task/distributepricechange").param(DistributePriceChangeServlet.PARAM_PRICE_CHANGE_KEY,
+						dto.getKeyString()));
+			}
+		} finally {
+			pm.close();
+		}
+	}
+
+	private Collection<PriceChangeDTO> createPriceChanges(PersistenceManager pm, Collection<PriceChangeDTO> dtos) {
+		PriceChanges priceChanges = readPriceChanges(pm);
+		Collection<PriceChangeDTO> stored = new ArrayList<PriceChangeDTO>();
+		for (PriceChangeDTO dto : dtos) {
+			PriceChange priceChange = new PriceChange(dto);
+			priceChanges.getPriceChanges().add(priceChange);
+			stored.add(priceChange.createDTO());
+		}
+		return stored;
+	}
+
+	@SuppressWarnings("unchecked")
+	private PriceChanges readPriceChanges(PersistenceManager pm) {
+		Query query = pm.newQuery(PriceChanges.class);
+		PriceChanges item;
+		List<PriceChanges> items = (List<PriceChanges>) query.execute();
+		if (items.size() == 0) {
+			item = new PriceChanges();
+			item = pm.makePersistent(item);
+		} else {
+			item = items.get(0);
+		}
+		return item;
+	}
+	
+	@Override
+	public PriceChangeDTO readPriceChange(String priceChangeKey) throws IllegalArgumentException {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		PriceChangeDTO dto = null;
+		try {
+			PriceChange priceChange = readPriceChange(pm, priceChangeKey);
+			dto = priceChange.createDTO();
+		} finally {
+			pm.close();
+		}
+		return dto;
+	}
+	
+	private PriceChange readPriceChange(PersistenceManager pm, String priceChangeKey) {
+		PriceChange priceChange = pm.getObjectById(PriceChange.class, KeyFactory.stringToKey(priceChangeKey));
+		return priceChange;
+	}
+
+	@Override
+	public void deletePriceChange(PriceChangeDTO dto) throws IllegalArgumentException {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			deletePriceChange(pm, dto);
+		} finally {
+			pm.close();
+		}
+	}
+
+	private void deletePriceChange(PersistenceManager pm, PriceChangeDTO dto) {
+		PriceChange item = readPriceChange(pm, dto.getKeyString());
+		pm.deletePersistent(item);
+	}
+	
 }

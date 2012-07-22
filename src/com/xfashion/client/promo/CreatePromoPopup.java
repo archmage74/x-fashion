@@ -32,7 +32,7 @@ public class CreatePromoPopup {
 	public CreatePromoPopup() {
 		this.textMessages = GWT.create(TextMessages.class);
 		this.errorMessages = GWT.create(ErrorMessages.class);
-		this.formatter = new Formatter();
+		this.formatter = Formatter.getInstance();
 	}
 
 	public void show() {

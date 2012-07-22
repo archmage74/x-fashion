@@ -28,6 +28,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.xfashion.client.user.UserService;
 import com.xfashion.client.util.IdCounterService;
 import com.xfashion.server.PMF;
+import com.xfashion.server.PriceChange;
 import com.xfashion.server.SoldArticle;
 import com.xfashion.server.notepad.ArticleAmount;
 import com.xfashion.server.notepad.Notepad;
@@ -36,6 +37,7 @@ import com.xfashion.server.util.IdCounterType;
 import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.DeliveryNoticeDTO;
 import com.xfashion.shared.NotepadDTO;
+import com.xfashion.shared.PriceChangeDTO;
 import com.xfashion.shared.ResetPasswordDTO;
 import com.xfashion.shared.SoldArticleDTO;
 import com.xfashion.shared.UserCountry;
@@ -343,6 +345,11 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		return user.getShop();
 	}
 
+	public Shop readShop(PersistenceManager pm, String shopKey) {
+		Shop shop = pm.getObjectById(Shop.class, KeyFactory.stringToKey(shopKey));
+		return shop;
+	}
+	
 	@Override
 	public NotepadDTO updateOwnNotepad(NotepadDTO dto) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
@@ -499,7 +506,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 	}
 
 	@Override
-	public Set<ArticleAmountDTO> readStock() {
+	public Set<ArticleAmountDTO> readOwnStock() {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		Set<ArticleAmountDTO> dtos = null;
 		try {
@@ -516,6 +523,20 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		return articleAmount;
 	}
 
+	@Override 
+	public Set<ArticleAmountDTO> readStockOfUser(String userKey) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		Set<ArticleAmountDTO> dtos = null;
+		try {
+			User user = readUser(pm, userKey);
+			Shop shop = user.getShop();
+			dtos = shop.createStock();
+		} finally {
+			pm.close();
+		}
+		return dtos;
+	}
+	
 	@Override
 	public void updateStockEntry(ArticleAmountDTO dto) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
@@ -712,4 +733,80 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		return readSoldArticlesOfShop(userDTO.getShop().getKeyString(), from, to);
 	}
 
+	@Override
+	public void createPriceChangeForShop(String shopKey, PriceChangeDTO dto) throws IllegalArgumentException {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			Shop shop = readShop(pm, shopKey);
+			PriceChange priceChange = new PriceChange(dto);
+			priceChange.setAccepted(false);
+			priceChange.setChangeDate(dto.getChangeDate());
+			shop.getPriceChanges().add(priceChange);
+			pm.makePersistent(shop);
+			// dto = priceChange.createDTO();
+		} finally {
+			pm.close();
+		}
+	}
+
+	@Override
+	public Collection<PriceChangeDTO> readOwnPriceChanges() throws IllegalArgumentException {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		Collection<PriceChangeDTO> dtos = new ArrayList<PriceChangeDTO>();
+		try {
+			Shop shop = readOwnShop(pm);
+			for (PriceChange priceChange : shop.getPriceChanges()) {
+				dtos.add(priceChange.createDTO());
+			}
+		} finally {
+			pm.close();
+		}
+		return dtos;
+	}
+	
+	@Override
+	public Collection<PriceChangeDTO> updatePriceChanges(Collection<PriceChangeDTO> dtos) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		Collection<PriceChangeDTO> storedDtos = new ArrayList<PriceChangeDTO>();
+		try {
+			for (PriceChangeDTO dto : dtos) {
+				PriceChange priceChange = readPriceChange(pm, dto.getKeyString());
+				priceChange.updateFromDTO(dto);
+				storedDtos.add(priceChange.createDTO());
+			}
+		} finally {
+			pm.close();
+		}
+		return storedDtos;
+	}
+
+	private PriceChange readPriceChange(PersistenceManager pm, String keyString) {
+		PriceChange priceChange = pm.getObjectById(PriceChange.class, keyString);
+		return priceChange;
+	}
+
+	@Override
+	public void deletePriceChanges(Collection<PriceChangeDTO> dtos) throws IllegalArgumentException {
+		Set<String> keys = new HashSet<String>();
+		for (PriceChangeDTO dto : dtos) {
+			keys.add(dto.getKeyString());
+		}
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			deletePriceChanges(pm, keys);
+		} finally {
+			pm.close();
+		}
+	}
+	
+	private void deletePriceChanges(PersistenceManager pm, Set<String> deleteKeys) {
+		ArrayList<PriceChange> toRemove = new ArrayList<PriceChange>();
+		Shop shop = readOwnShop(pm);
+		for (PriceChange priceChange : shop.getPriceChanges()) {
+			if (deleteKeys.contains(priceChange.getKeyString())) {
+				toRemove.add(priceChange);
+			}
+		}
+		shop.getPriceChanges().removeAll(toRemove);
+	}
 }

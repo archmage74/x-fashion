@@ -33,7 +33,7 @@ public abstract class ArticleTable<T> {
 	
 	public ArticleTable(ProvidesArticleFilter provider, IGetPriceStrategy<T> getPriceStrategy) {
 		this.textMessages = GWT.create(TextMessages.class);
-		this.formatter = new Formatter();
+		this.formatter = Formatter.getInstance();
 		this.provider = provider;
 		this.getPriceStrategy = getPriceStrategy;
 	}
@@ -72,6 +72,10 @@ public abstract class ArticleTable<T> {
 		return articleTypePanel;
 	}
 
+	protected String getAdditionalStyles(T a) {
+		return null;
+	}
+	
 	protected Column<T, SafeHtml> createPriceColumn(final ArticleDataProvider<T> ap) {
 		Column<T, SafeHtml> price = new Column<T, SafeHtml>(new SafeHtmlCell()) {
 			@Override
@@ -91,7 +95,8 @@ public abstract class ArticleTable<T> {
 			public SafeHtml getValue(T a) {
 				ArticleTypeDTO at = ap.retrieveArticleType(a);
 				SafeHtmlBuilder sb = new SafeHtmlBuilder();
-				sb.appendHtmlConstant("<div class=\"articleUpLe\">");
+				String styles = concatStyles("articleUpLe", getAdditionalStyles(a));
+				sb.appendHtmlConstant("<div class=\"" + styles + "\">");
 				ColorDTO color = provider.getColorProvider().resolveData(at.getColorKey());
 				String name = textMessages.unknownColor();
 				if (color != null) {
@@ -99,7 +104,8 @@ public abstract class ArticleTable<T> {
 				}
 				sb.appendEscaped(name);
 				sb.appendHtmlConstant("</div>");
-				sb.appendHtmlConstant("<div class=\"articleBoLe\">");
+				styles = concatStyles("articleBoLe", getAdditionalStyles(a));
+				sb.appendHtmlConstant("<div class=\"" + styles + "\">");
 				SizeDTO size = provider.getSizeProvider().resolveData(at.getSizeKey());
 				name = textMessages.unknownSize();
 				if (size != null) {
@@ -120,7 +126,8 @@ public abstract class ArticleTable<T> {
 				ArticleTypeDTO at = ap.retrieveArticleType(a);
 				SafeHtmlBuilder html = new SafeHtmlBuilder();
 				StringBuffer sb = new StringBuffer();
-				sb.append("<div class=\"articleUpCe\"");
+				String styles = concatStyles("articleUpCe", getAdditionalStyles(a));
+				sb.append("<div class=\"" + styles + "\"");
 				if (at.getName().length() > 14) {
 					sb.append(" style=\"font-size: 10px;\"");
 				}
@@ -128,7 +135,8 @@ public abstract class ArticleTable<T> {
 				html.appendHtmlConstant(sb.toString());
 				html.appendEscaped(at.getName());
 				html.appendHtmlConstant("</div>");
-				html.appendHtmlConstant("<div class=\"articleBoCe\">");
+				styles = concatStyles("articleBoCe", getAdditionalStyles(a));
+				html.appendHtmlConstant("<div class=\"" + styles + "\">");
 				StyleDTO dto = provider.getCategoryProvider().resolveStyle(at.getStyleKey());
 				String name = textMessages.unknownStyle();
 				if (dto != null) {
@@ -148,7 +156,8 @@ public abstract class ArticleTable<T> {
 			public SafeHtml getValue(T a) {
 				ArticleTypeDTO at = ap.retrieveArticleType(a);
 				SafeHtmlBuilder sb = new SafeHtmlBuilder();
-				sb.appendHtmlConstant("<div class=\"articleUpLe\">");
+				String styles = concatStyles("articleUpLe", getAdditionalStyles(a));
+				sb.appendHtmlConstant("<div class=\"" + styles + "\">");
 				CategoryDTO category = provider.getCategoryProvider().resolveData(at.getCategoryKey());
 				String name = textMessages.unknownCategory();
 				if (category != null) {
@@ -156,7 +165,8 @@ public abstract class ArticleTable<T> {
 				}
 				sb.appendEscaped(name);
 				sb.appendHtmlConstant("</div>");
-				sb.appendHtmlConstant("<div class=\"articleBoLe\">");
+				styles = concatStyles("articleBoLe", getAdditionalStyles(a));
+				sb.appendHtmlConstant("<div class=\"" + styles + "\">");
 				BrandDTO brand = provider.getBrandProvider().resolveData(at.getBrandKey());
 				name = textMessages.unknownBrand();
 				if (brand != null) {
@@ -192,4 +202,12 @@ public abstract class ArticleTable<T> {
 		return image;
 	}
 
+	private String concatStyles(String baseStyles, String additionalStyles) {
+		StringBuffer sb = new StringBuffer(baseStyles);
+		if (additionalStyles != null && additionalStyles.length() > 0) {
+			sb.append(" ").append(additionalStyles);
+		}
+		return sb.toString();
+	}
+	
 }

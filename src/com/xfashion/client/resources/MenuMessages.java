@@ -31,4 +31,8 @@ public interface MenuMessages extends Messages {
 
 	@DefaultMessage("Aktionen")
 	SafeHtml promo();
+	
+	@DefaultMessage("VK Preis Änderungen ({0,number})")
+	SafeHtml priceChanges(int priceChangeAmount);
+
 }

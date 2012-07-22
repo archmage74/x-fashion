@@ -1,24 +1,31 @@
 package com.xfashion.client.at.bulk;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.google.web.bindery.event.shared.Event;
 import com.xfashion.shared.ArticleTypeDTO;
+import com.xfashion.shared.PriceChangeDTO;
 
 public class UpdateArticleTypesEvent extends Event<UpdateArticleTypesHandler> {
 	
 	public static Type<UpdateArticleTypesHandler> TYPE = new Type<UpdateArticleTypesHandler>();
 	
 	private List<ArticleTypeDTO> articleTypes;
+	
+	private Collection<PriceChangeDTO> priceChanges;
 
-	public UpdateArticleTypesEvent(ArticleTypeDTO articleType) {
-		articleTypes = new ArrayList<ArticleTypeDTO>();
-		articleTypes.add(articleType);
+	public UpdateArticleTypesEvent(ArticleTypeDTO articleType, PriceChangeDTO priceChange) {
+		this.articleTypes = new ArrayList<ArticleTypeDTO>();
+		this.articleTypes.add(articleType);
+		this.priceChanges = new ArrayList<PriceChangeDTO>();
+		this.priceChanges.add(priceChange);
 	}
 	
-	public UpdateArticleTypesEvent(List<ArticleTypeDTO> articleTypes) {
+	public UpdateArticleTypesEvent(List<ArticleTypeDTO> articleTypes, Collection<PriceChangeDTO> priceChanges) {
 		this.articleTypes = new ArrayList<ArticleTypeDTO>(articleTypes);
+		this.priceChanges = priceChanges;
 	}
 	
 	@Override
@@ -33,6 +40,10 @@ public class UpdateArticleTypesEvent extends Event<UpdateArticleTypesHandler> {
 
 	public List<ArticleTypeDTO> getArticleTypes() {
 		return articleTypes;
+	}
+
+	public Collection<PriceChangeDTO> getPriceChanges() {
+		return priceChanges;
 	}
 
 }

@@ -12,13 +12,15 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.xfashion.client.MainPanel;
 import com.xfashion.client.Xfashion;
+import com.xfashion.client.pricechange.event.PriceChangesUpdatedEvent;
+import com.xfashion.client.pricechange.event.PriceChangesUpdatedHandler;
 import com.xfashion.client.resources.MenuMessages;
 import com.xfashion.client.user.LoginEvent;
 import com.xfashion.client.user.LoginHandler;
 import com.xfashion.client.user.UserManagement;
 import com.xfashion.shared.UserRole;
 
-public class MenuPanel implements LoginHandler {
+public class MenuPanel implements LoginHandler, PriceChangesUpdatedHandler {
 
 	private MenuMessages menuMessages;
 	
@@ -28,10 +30,12 @@ public class MenuPanel implements LoginHandler {
 	
 	private Label loggedInLabel;
 	
+	private MenuItem priceChangeItem;
+	
 	public MenuPanel(MainPanel mainPanel) {
-		menuMessages = GWT.create(MenuMessages.class);
+		this.menuMessages = GWT.create(MenuMessages.class);
 		this.mainPanel = mainPanel;
-		Xfashion.eventBus.addHandler(LoginEvent.TYPE, this);
+		registerForEvents();
 	}
 	
 	@Override
@@ -40,6 +44,11 @@ public class MenuPanel implements LoginHandler {
 		if (loggedInLabel != null) {
 			loggedInLabel.setText(event.getUser().getUsername());
 		}
+	}
+	
+	@Override
+	public void onPriceChangesUpdated(PriceChangesUpdatedEvent event) {
+		priceChangeItem.setHTML(menuMessages.priceChanges(event.getPriceChangesAmount()));
 	}
 	
 	public void addMenuPanel() {
@@ -70,6 +79,10 @@ public class MenuPanel implements LoginHandler {
 		menu.addItem(createUserProfileMenuItem());
 		menu.addItem(createSellStatisticMenuItem());
 		menu.addItem(createPromoMenuItem());
+		
+		if(UserManagement.hasRole(UserRole.SHOP)) {
+			menu.addItem(createPriceChangeMenuItem());
+		}
 
 		if (UserManagement.hasRole(UserRole.DEVELOPER, UserRole.ADMIN)) {
 			menu.addItem(createUserManagementMenuItem());
@@ -160,4 +173,19 @@ public class MenuPanel implements LoginHandler {
 		return promoItem;
 	}
 
+	private MenuItem createPriceChangeMenuItem() {
+		Command showPriceChange = new Command() {
+			public void execute() {
+				mainPanel.showPriceChangePanel();
+			}
+		};
+		priceChangeItem = new MenuItem(menuMessages.priceChanges(0), showPriceChange);
+		return priceChangeItem;
+	}
+
+	private void registerForEvents() {
+		Xfashion.eventBus.addHandler(LoginEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(PriceChangesUpdatedEvent.TYPE, this);
+	}
+	
 }

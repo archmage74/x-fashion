@@ -64,6 +64,11 @@
 		<servlet-name>showimage</servlet-name>
 		<servlet-class>com.xfashion.server.img.ShowImage</servlet-class>
 	</servlet>
+	
+	<servlet>
+		<servlet-name>distributepricechange</servlet-name>
+		<servlet-class>com.xfashion.server.task.DistributePriceChangeServlet</servlet-class>	
+	</servlet>
   
   	<servlet-mapping>
 		<servlet-name>articleTypeServlet</servlet-name>
@@ -123,6 +128,11 @@
 	<servlet-mapping>
 		<servlet-name>showimage</servlet-name>
 		<url-pattern>/img/showimage</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>distributepricechange</servlet-name>
+		<url-pattern>/task/distributepricechange</url-pattern>
 	</servlet-mapping>
 
 	<!-- Default page to serve -->

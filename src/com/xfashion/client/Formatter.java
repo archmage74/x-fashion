@@ -9,7 +9,7 @@ public class Formatter {
 	private NumberFormat currencyFormat;
 	private NumberFormat currencyValueFormat;
 	
-	public Formatter() {
+	protected Formatter() {
 		currencyFormat = NumberFormat.getCurrencyFormat("EUR");
 		currencyValueFormat = NumberFormat.getDecimalFormat();
 	}

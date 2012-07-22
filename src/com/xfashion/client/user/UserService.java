@@ -9,6 +9,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.DeliveryNoticeDTO;
 import com.xfashion.shared.NotepadDTO;
+import com.xfashion.shared.PriceChangeDTO;
 import com.xfashion.shared.ResetPasswordDTO;
 import com.xfashion.shared.SoldArticleDTO;
 import com.xfashion.shared.UserDTO;
@@ -42,6 +43,7 @@ public interface UserService extends RemoteService {
 	ResetPasswordDTO readResetPassword(String keyString);
 	
 	void deleteResetPassword(ResetPasswordDTO resetPassword);
+
 	
 	// Notepad
 	NotepadDTO createNotepad(NotepadDTO notepad); 
@@ -52,6 +54,7 @@ public interface UserService extends RemoteService {
 		
 	NotepadDTO updateOwnNotepad(NotepadDTO notepad);
 
+	
 	// DeliveryNotice
 	DeliveryNoticeDTO createDeliveryNotice(DeliveryNoticeDTO deliverNotice);
 	
@@ -59,10 +62,13 @@ public interface UserService extends RemoteService {
 	
 	DeliveryNoticeDTO updateDeliveryNotice(DeliveryNoticeDTO deliveryNotice);
 
+	
 	// Shop-Stock
 	ArticleAmountDTO createStockEntry(ArticleAmountDTO articleAmount) throws IllegalArgumentException;
 	
-	Set<ArticleAmountDTO> readStock() throws IllegalArgumentException;
+	Set<ArticleAmountDTO> readOwnStock() throws IllegalArgumentException;
+	
+	Set<ArticleAmountDTO> readStockOfUser(String userKey) throws IllegalArgumentException;
 	
 	Collection<ArticleAmountDTO> addStockEntries(Collection<ArticleAmountDTO> dtos) throws IllegalArgumentException;
 		
@@ -77,4 +83,15 @@ public interface UserService extends RemoteService {
 	List<SoldArticleDTO> readSoldArticlesOfShop(String shopKey, long from, long to) throws IllegalArgumentException;
 
 	List<SoldArticleDTO> readOwnSoldArticles(long from, long to) throws IllegalArgumentException;
+
+	
+	// Shop-PriceChanges
+	void createPriceChangeForShop(String shopKey, PriceChangeDTO dto) throws IllegalArgumentException;
+	
+	Collection<PriceChangeDTO> readOwnPriceChanges() throws IllegalArgumentException;
+
+	Collection<PriceChangeDTO> updatePriceChanges(Collection<PriceChangeDTO> dtos) throws IllegalArgumentException;
+
+	void deletePriceChanges(Collection<PriceChangeDTO> dtos) throws IllegalArgumentException;
+	
 }

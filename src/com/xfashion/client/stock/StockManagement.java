@@ -28,6 +28,7 @@ import com.xfashion.client.stock.event.RequestOpenSellPopupEvent;
 import com.xfashion.client.stock.event.RequestOpenSellPopupHandler;
 import com.xfashion.client.stock.event.SellFromStockEvent;
 import com.xfashion.client.stock.event.SellFromStockHandler;
+import com.xfashion.client.stock.event.StockLoadedEvent;
 import com.xfashion.client.user.LoginEvent;
 import com.xfashion.client.user.LoginHandler;
 import com.xfashion.client.user.UserManagement;
@@ -44,10 +45,9 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 	private UserServiceAsync userService = (UserServiceAsync) GWT.create(UserService.class);
 	private PromoServiceAsync promoService = (PromoServiceAsync) GWT.create(PromoService.class);
 	
-	private HashMap<String, ArticleAmountDTO> stock;
 	private HashMap<Long, PromoDTO> promos;
 
-	protected ArticleAmountDataProvider stockProvider;
+	protected StockDataProvider stockProvider;
 	protected ArticleTypeDatabase articleTypeDatabase;
 	protected IArticleAmountComparator sortStrategy;
 
@@ -58,10 +58,9 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 	TextMessages textMessages;
 
 	public StockManagement(ArticleTypeDatabase articleTypeDatabase) {
-		this.stock = new HashMap<String, ArticleAmountDTO>();
 		this.promos = new HashMap<Long, PromoDTO>();
 		this.articleTypeDatabase = articleTypeDatabase;
-		this.stockProvider = new ArticleAmountDataProvider(articleTypeDatabase);
+		this.stockProvider = new StockDataProvider(articleTypeDatabase);
 		this.stockPanel = new StockPanel(articleTypeDatabase);
 
 		this.textMessages = GWT.create(TextMessages.class);
@@ -95,7 +94,7 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 	@Override
 	public void onRequestOpenSellPopup(RequestOpenSellPopupEvent event) {
 		if (sellFromStockPopup == null) {
-			sellFromStockPopup = new SellFromStockPopup(stockProvider, stock);
+			sellFromStockPopup = new SellFromStockPopup(stockProvider);
 		}
 		sellFromStockPopup.show(promos);
 	}
@@ -136,7 +135,7 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 
 	public Panel getPanel(ArticleAmountDataProvider notepadArticleProvider) {
 		if (panel == null) {
-			panel = stockPanel.createPanel(articleTypeDatabase, stockProvider, notepadArticleProvider);
+			panel = stockPanel.createPanel(stockProvider, notepadArticleProvider);
 			sortStrategy = new DefaultArticleAmountComparator(articleTypeDatabase);
 		}
 		readPromos();
@@ -144,14 +143,15 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 	}
 
 	protected void storeStock(Collection<ArticleAmountDTO> result) {
-		stock.clear();
+		stockProvider.getStock().clear();
 		List<ArticleAmountDTO> list = new ArrayList<ArticleAmountDTO>();
 		for (ArticleAmountDTO aa : result) {
-			stock.put(aa.getArticleTypeKey(), aa);
+			stockProvider.getStock().put(aa.getArticleTypeKey(), aa);
 			list.add(aa);
 		}
-		articleTypeDatabase.setArticleAmounts(stock);
+		articleTypeDatabase.setArticleAmounts(stockProvider.getStock());
 		Xfashion.eventBus.fireEvent(new RefreshFilterEvent());
+		Xfashion.eventBus.fireEvent(new StockLoadedEvent(stockProvider));
 		refresh();
 	}
 
@@ -166,7 +166,7 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 				storeStock(result);
 			}
 		};
-		userService.readStock(callback);
+		userService.readOwnStock(callback);
 	}
 
 	private void readPromos() {
@@ -194,7 +194,7 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 		List<ArticleTypeDTO> filteredArticleTypes = articleTypeDatabase.getArticleTypeProvider().getList();
 		List<ArticleAmountDTO> filteredStockItems = new ArrayList<ArticleAmountDTO>();
 		for (ArticleTypeDTO articleType : filteredArticleTypes) {
-			ArticleAmountDTO stockArticle = stock.get(articleType.getKey());
+			ArticleAmountDTO stockArticle = stockProvider.getStock().get(articleType.getKey());
 			if (stockArticle != null) {
 				filteredStockItems.add(stockArticle);
 			}

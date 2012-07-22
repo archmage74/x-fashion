@@ -108,4 +108,8 @@ public interface TextMessages extends Messages {
 	String percent();
 	String invalidPromoListBoxLine();
 
+	String acceptAllPriceChanges();
+	String priceChangeManagementHeader();
+	String printChangePriceStickers();
+
 }

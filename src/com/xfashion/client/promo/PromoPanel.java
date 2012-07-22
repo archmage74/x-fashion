@@ -51,13 +51,13 @@ public class PromoPanel {
 	protected BarcodeHelper barcodeHelper;
 
 	public PromoPanel() {
-		textMessages = GWT.create(TextMessages.class);
-		errorMessages = GWT.create(ErrorMessages.class);
-		formatter = new Formatter();
-		barcodeHelper = new BarcodeHelper();
+		this.textMessages = GWT.create(TextMessages.class);
+		this.errorMessages = GWT.create(ErrorMessages.class);
+		this.formatter = Formatter.getInstance();
+		this.barcodeHelper = new BarcodeHelper();
 		
-		promos = new ArrayList<PromoDTO>();
-		shownPromos = new ArrayList<PromoDTO>();
+		this.promos = new ArrayList<PromoDTO>();
+		this.shownPromos = new ArrayList<PromoDTO>();
 	}
 
 	public Panel createPanel() {

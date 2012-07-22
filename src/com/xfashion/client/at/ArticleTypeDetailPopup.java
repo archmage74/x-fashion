@@ -29,8 +29,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.web.bindery.event.shared.HandlerRegistration;
 import com.xfashion.client.Formatter;
 import com.xfashion.client.Xfashion;
+import com.xfashion.client.at.bulk.UpdateArticleTypesEvent;
 import com.xfashion.client.at.event.DeleteArticleTypeEvent;
-import com.xfashion.client.at.event.UpdateArticleTypeEvent;
 import com.xfashion.client.brand.event.ChooseBrandEvent;
 import com.xfashion.client.brand.event.ChooseBrandHandler;
 import com.xfashion.client.brand.event.ShowChooseBrandPopupEvent;
@@ -56,6 +56,7 @@ import com.xfashion.shared.BarcodeHelper;
 import com.xfashion.shared.BrandDTO;
 import com.xfashion.shared.CategoryDTO;
 import com.xfashion.shared.ColorDTO;
+import com.xfashion.shared.PriceChangeDTO;
 import com.xfashion.shared.SizeDTO;
 import com.xfashion.shared.StyleDTO;
 import com.xfashion.shared.UserRole;
@@ -73,6 +74,7 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 
 	private ArticleTypeDTO articleType;
 	private ArticleTypeDTO updatedArticleType;
+	private PriceChangeDTO priceChange;
 
 	private boolean editMode = false;
 
@@ -106,16 +108,18 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 
 	private ProvidesArticleFilter provider;
 
-	private Formatter formatter = Formatter.getInstance();
-
+	protected PriceChangeDetector priceChangeDetector;
+	private Formatter formatter;
 	private TextMessages textMessages;
 	private ErrorMessages errorMessages;
 
 	protected List<HandlerRegistration> handlerRegistrations = new ArrayList<HandlerRegistration>();
 
 	public ArticleTypeDetailPopup(ProvidesArticleFilter provider) {
-		this.provider = provider; 
-		textMessages = GWT.create(TextMessages.class);
+		this.provider = provider;
+		this.formatter = Formatter.getInstance();
+		this.textMessages = GWT.create(TextMessages.class);
+		this.priceChangeDetector = PriceChangeDetector.getInstance();
 		registerForEvents();
 	}
 
@@ -577,7 +581,7 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 				} else {
 					sellPriceDe.setText("");
 				}
-				Xfashion.eventBus.fireEvent(new UpdateArticleTypeEvent(articleType));
+				Xfashion.eventBus.fireEvent(new UpdateArticleTypesEvent(articleType, priceChange));
 				resetEditArticleType();
 			} catch (CreateArticleException e) {
 				errorLabel.setText(e.getMessage());
@@ -618,6 +622,9 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 		} else {
 			updatedArticleType.setName(nameTextBox.getText());
 		}
+		
+		priceChange = priceChangeDetector.detectSellPriceChange(articleType, updatedArticleType);
+		
 		articleType.setCategoryKey(updatedArticleType.getCategoryKey());
 		articleType.setBrandKey(updatedArticleType.getBrandKey());
 		articleType.setStyleKey(updatedArticleType.getStyleKey());
