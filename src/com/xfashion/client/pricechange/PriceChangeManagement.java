@@ -2,6 +2,7 @@ package com.xfashion.client.pricechange;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -10,7 +11,6 @@ import com.xfashion.client.Xfashion;
 import com.xfashion.client.db.ArticleTypeDatabase;
 import com.xfashion.client.db.sort.DefaultArticleAmountComparator;
 import com.xfashion.client.db.sort.IArticleAmountComparator;
-import com.xfashion.client.notepad.ArticleAmountDataProvider;
 import com.xfashion.client.notepad.NotepadPrinter;
 import com.xfashion.client.pricechange.event.AcceptPriceChangesEvent;
 import com.xfashion.client.pricechange.event.AcceptPriceChangesHandler;
@@ -31,9 +31,8 @@ public class PriceChangeManagement implements StockLoadedHandler, PrintChangePri
 
 	protected UserServiceAsync userService = (UserServiceAsync) GWT.create(UserService.class);
 	
-	protected Collection<PriceChangeDTO> priceChanges;
 	protected ArticleTypeDatabase articleTypeDatabase;
-	protected ArticleAmountDataProvider changeArticleTypesProvider;
+	protected PriceChangeArticleAmountDataProvider changeArticleTypesProvider;
 	protected StockDataProvider stockProvider;
 	
 	protected IArticleAmountComparator sortStrategy;
@@ -44,10 +43,9 @@ public class PriceChangeManagement implements StockLoadedHandler, PrintChangePri
 	
 	public PriceChangeManagement(ArticleTypeDatabase articleTypeDatabase) {
 		this.articleTypeDatabase = articleTypeDatabase;
-		this.changeArticleTypesProvider = new ArticleAmountDataProvider(articleTypeDatabase);
+		this.changeArticleTypesProvider = new PriceChangeArticleAmountDataProvider(articleTypeDatabase);
 		this.priceChangePanel = new PriceChangePanel(articleTypeDatabase);
 		this.notepadPrinter = new NotepadPrinter();
-		this.priceChanges = new ArrayList<PriceChangeDTO>();
 		registerForEvents();
 	}
 
@@ -84,7 +82,7 @@ public class PriceChangeManagement implements StockLoadedHandler, PrintChangePri
 				refreshProvider();
 			}
 		};
-		userService.deletePriceChanges(priceChanges, callback);
+		userService.deletePriceChanges(changeArticleTypesProvider.getPriceChanges(), callback);
 	}
 	
 	private void refreshProvider() {
@@ -107,11 +105,13 @@ public class PriceChangeManagement implements StockLoadedHandler, PrintChangePri
 	}
 
 	protected void providePriceChanges(Collection<PriceChangeDTO> priceChanges) {
-		this.priceChanges = new ArrayList<PriceChangeDTO>(priceChanges);
+		this.changeArticleTypesProvider.setPriceChanges(priceChanges);
+		HashSet<String> alreadyAdded = new HashSet<String>();
 		for (PriceChangeDTO priceChange : priceChanges) {
 			ArticleAmountDTO stockItem = stockProvider.getStock().get(priceChange.getArticleTypeKey());
-			if (stockItem != null) {
+			if (stockItem != null && !alreadyAdded.contains(stockItem.getArticleTypeKey())) {
 				changeArticleTypesProvider.getList().add(stockItem);
+				alreadyAdded.add(stockItem.getArticleTypeKey());
 			}
 		}
 		Xfashion.eventBus.fireEvent(new PriceChangesUpdatedEvent(changeArticleTypesProvider.getList().size()));
@@ -119,7 +119,7 @@ public class PriceChangeManagement implements StockLoadedHandler, PrintChangePri
 
 	private void acceptPriceChange(ArticleAmountDTO articleAmount) {
 		Collection<PriceChangeDTO> updatedPriceChanges = new ArrayList<PriceChangeDTO>();
-		for (PriceChangeDTO priceChange : priceChanges) {
+		for (PriceChangeDTO priceChange : changeArticleTypesProvider.getPriceChanges()) {
 			if (priceChange.getArticleTypeKey().equals(articleAmount.getArticleTypeKey())) {
 				priceChange.setAccepted(true);
 				updatedPriceChanges.add(priceChange);

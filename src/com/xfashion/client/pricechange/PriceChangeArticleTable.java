@@ -2,7 +2,10 @@ package com.xfashion.client.pricechange;
 
 import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.cell.client.TextCell;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.xfashion.client.Xfashion;
@@ -11,21 +14,30 @@ import com.xfashion.client.at.IGetPriceStrategy;
 import com.xfashion.client.at.ProvidesArticleFilter;
 import com.xfashion.client.pricechange.event.PrintChangePriceStickersEvent;
 import com.xfashion.shared.ArticleAmountDTO;
+import com.xfashion.shared.PriceChangeDTO;
 
 public class PriceChangeArticleTable extends ArticleTable<ArticleAmountDTO> {
 
-	public PriceChangeArticleTable(ProvidesArticleFilter provider, IGetPriceStrategy<ArticleAmountDTO> getPriceStrategy) {
+	protected PriceChangeArticleAmountDataProvider priceChangeProvider;
+	
+	public PriceChangeArticleTable(ProvidesArticleFilter provider, IGetPriceStrategy<ArticleAmountDTO> getPriceStrategy,
+			PriceChangeArticleAmountDataProvider priceChangeProvider) {
 		super(provider, getPriceStrategy);
+		this.priceChangeProvider = priceChangeProvider;
 	}
 
 	protected void addNavColumns(CellTable<ArticleAmountDTO> cellTable) {
-		Column<ArticleAmountDTO, String> amount = new Column<ArticleAmountDTO, String>(new TextCell()) {
+		Column<ArticleAmountDTO, SafeHtml> amount = new Column<ArticleAmountDTO, SafeHtml>(new SafeHtmlCell()) {
 			@Override
-			public String getValue(ArticleAmountDTO a) {
-				return a.getAmount().toString();
+			public SafeHtml getValue(ArticleAmountDTO a) {
+				SafeHtmlBuilder sb = new SafeHtmlBuilder();
+				String styles = concatStyles("articleAmount", getAdditionalPriceStyles(a));
+				sb.appendHtmlConstant("<div class=\"" + styles + "\">");
+				sb.appendEscaped(a.getAmount().toString());
+				sb.appendHtmlConstant("</div>");
+				return sb.toSafeHtml();
 			}
 		};
-		amount.setCellStyleNames("articleAmount");
 		cellTable.addColumn(amount);
 
 		Column<ArticleAmountDTO, String> notepadButton = new Column<ArticleAmountDTO, String>(new ButtonCell()) {
@@ -43,9 +55,32 @@ public class PriceChangeArticleTable extends ArticleTable<ArticleAmountDTO> {
 		});
 
 	}
-	
+
 	@Override
-	protected String getAdditionalStyles(ArticleAmountDTO am) {
-		return "priceChangeAccepted";
+	protected String getAdditionalMatrixStyles(ArticleAmountDTO am) {
+		if (isPriceChangeAccepted(am)) {
+			return null;
+		} else {
+			return "priceChangeNotAcceptedMatrix";
+		}
 	}
+
+	@Override
+	protected String getAdditionalPriceStyles(ArticleAmountDTO am) {
+		if (isPriceChangeAccepted(am)) {
+			return null;
+		} else {
+			return "priceChangeNotAcceptedColumn";
+		}
+	}
+
+	private boolean isPriceChangeAccepted(ArticleAmountDTO am) {
+		for (PriceChangeDTO priceChange : priceChangeProvider.getPriceChanges()) {
+			if (!priceChange.getAccepted() && priceChange.getArticleTypeKey().equals(am.getArticleTypeKey())) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
 }

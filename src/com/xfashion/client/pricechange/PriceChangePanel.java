@@ -14,7 +14,6 @@ import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTable;
 import com.xfashion.client.at.ArticleTypeManagement;
 import com.xfashion.client.db.ArticleTypeDatabase;
-import com.xfashion.client.notepad.ArticleAmountDataProvider;
 import com.xfashion.client.notepad.GetPriceFromArticleAmountStrategy;
 import com.xfashion.client.pricechange.event.AcceptPriceChangesEvent;
 import com.xfashion.client.resources.TextMessages;
@@ -37,7 +36,7 @@ public class PriceChangePanel {
 		this.articleTypeDatabase = articleTypeDatabase;
 	}
 
-	public Panel createPanel(ArticleAmountDataProvider changedArticleTypesProvider) {
+	public Panel createPanel(PriceChangeArticleAmountDataProvider changedArticleTypesProvider) {
 		
 		if (panel == null) {
 			panel = new HorizontalPanel();
@@ -50,7 +49,7 @@ public class PriceChangePanel {
 		scrollPanel.setWidth(width + "px");
 	}
 
-	protected Panel createArticlePanel(ArticleAmountDataProvider articleAmountProvider) {
+	protected Panel createArticlePanel(PriceChangeArticleAmountDataProvider articleAmountProvider) {
 
 		VerticalPanel articlePanel = new VerticalPanel();
 
@@ -59,7 +58,7 @@ public class PriceChangePanel {
 
 		GetPriceFromArticleAmountStrategy priceStrategy = new GetPriceFromArticleAmountStrategy(articleAmountProvider,
 				ArticleTypeManagement.getArticleTypePriceStrategy);
-		ArticleTable<ArticleAmountDTO> att = new PriceChangeArticleTable(articleTypeDatabase, priceStrategy);
+		ArticleTable<ArticleAmountDTO> att = new PriceChangeArticleTable(articleTypeDatabase, priceStrategy, articleAmountProvider);
 		Panel atp = att.create(articleAmountProvider);
 		articlePanel.add(atp);
 

@@ -1,6 +1,7 @@
 package com.xfashion.server;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
@@ -17,8 +18,12 @@ public class PriceChanges {
     private Key key;
 	
 	@Persistent
-	private List<PriceChange> priceChanges;
+	private Set<PriceChange> priceChanges;
 
+	public PriceChanges() {
+		priceChanges = new HashSet<PriceChange>();
+	}
+	
 	public Key getKey() {
 		return key;
 	}
@@ -27,11 +32,11 @@ public class PriceChanges {
 		this.key = key;
 	}
 
-	public List<PriceChange> getPriceChanges() {
+	public Set<PriceChange> getPriceChanges() {
 		return priceChanges;
 	}
 
-	public void setPriceChanges(List<PriceChange> priceChanges) {
+	public void setPriceChanges(Set<PriceChange> priceChanges) {
 		this.priceChanges = priceChanges;
 	}
 

@@ -72,7 +72,11 @@ public abstract class ArticleTable<T> {
 		return articleTypePanel;
 	}
 
-	protected String getAdditionalStyles(T a) {
+	protected String getAdditionalMatrixStyles(T a) {
+		return null;
+	}
+	
+	protected String getAdditionalPriceStyles(T a) {
 		return null;
 	}
 	
@@ -81,11 +85,13 @@ public abstract class ArticleTable<T> {
 			@Override
 			public SafeHtml getValue(T a) {
 				SafeHtmlBuilder sb = new SafeHtmlBuilder();
+				String styles = concatStyles("articlePrice", getAdditionalPriceStyles(a));
+				sb.appendHtmlConstant("<div class=\"" + styles + "\">");
 				sb.appendEscaped(formatter.formatCentsToCurrency(getPriceStrategy.getPrice(a)));
+				sb.appendHtmlConstant("</div>");
 				return sb.toSafeHtml();
 			}
 		};
-		price.setCellStyleNames("articlePrice");
 		return price;
 	}
 
@@ -95,7 +101,7 @@ public abstract class ArticleTable<T> {
 			public SafeHtml getValue(T a) {
 				ArticleTypeDTO at = ap.retrieveArticleType(a);
 				SafeHtmlBuilder sb = new SafeHtmlBuilder();
-				String styles = concatStyles("articleUpLe", getAdditionalStyles(a));
+				String styles = concatStyles("articleUpLe", getAdditionalMatrixStyles(a));
 				sb.appendHtmlConstant("<div class=\"" + styles + "\">");
 				ColorDTO color = provider.getColorProvider().resolveData(at.getColorKey());
 				String name = textMessages.unknownColor();
@@ -104,7 +110,7 @@ public abstract class ArticleTable<T> {
 				}
 				sb.appendEscaped(name);
 				sb.appendHtmlConstant("</div>");
-				styles = concatStyles("articleBoLe", getAdditionalStyles(a));
+				styles = concatStyles("articleBoLe", getAdditionalMatrixStyles(a));
 				sb.appendHtmlConstant("<div class=\"" + styles + "\">");
 				SizeDTO size = provider.getSizeProvider().resolveData(at.getSizeKey());
 				name = textMessages.unknownSize();
@@ -126,7 +132,7 @@ public abstract class ArticleTable<T> {
 				ArticleTypeDTO at = ap.retrieveArticleType(a);
 				SafeHtmlBuilder html = new SafeHtmlBuilder();
 				StringBuffer sb = new StringBuffer();
-				String styles = concatStyles("articleUpCe", getAdditionalStyles(a));
+				String styles = concatStyles("articleUpCe", getAdditionalMatrixStyles(a));
 				sb.append("<div class=\"" + styles + "\"");
 				if (at.getName().length() > 14) {
 					sb.append(" style=\"font-size: 10px;\"");
@@ -135,7 +141,7 @@ public abstract class ArticleTable<T> {
 				html.appendHtmlConstant(sb.toString());
 				html.appendEscaped(at.getName());
 				html.appendHtmlConstant("</div>");
-				styles = concatStyles("articleBoCe", getAdditionalStyles(a));
+				styles = concatStyles("articleBoCe", getAdditionalMatrixStyles(a));
 				html.appendHtmlConstant("<div class=\"" + styles + "\">");
 				StyleDTO dto = provider.getCategoryProvider().resolveStyle(at.getStyleKey());
 				String name = textMessages.unknownStyle();
@@ -156,7 +162,7 @@ public abstract class ArticleTable<T> {
 			public SafeHtml getValue(T a) {
 				ArticleTypeDTO at = ap.retrieveArticleType(a);
 				SafeHtmlBuilder sb = new SafeHtmlBuilder();
-				String styles = concatStyles("articleUpLe", getAdditionalStyles(a));
+				String styles = concatStyles("articleUpLe", getAdditionalMatrixStyles(a));
 				sb.appendHtmlConstant("<div class=\"" + styles + "\">");
 				CategoryDTO category = provider.getCategoryProvider().resolveData(at.getCategoryKey());
 				String name = textMessages.unknownCategory();
@@ -165,7 +171,7 @@ public abstract class ArticleTable<T> {
 				}
 				sb.appendEscaped(name);
 				sb.appendHtmlConstant("</div>");
-				styles = concatStyles("articleBoLe", getAdditionalStyles(a));
+				styles = concatStyles("articleBoLe", getAdditionalMatrixStyles(a));
 				sb.appendHtmlConstant("<div class=\"" + styles + "\">");
 				BrandDTO brand = provider.getBrandProvider().resolveData(at.getBrandKey());
 				name = textMessages.unknownBrand();
@@ -202,7 +208,7 @@ public abstract class ArticleTable<T> {
 		return image;
 	}
 
-	private String concatStyles(String baseStyles, String additionalStyles) {
+	protected String concatStyles(String baseStyles, String additionalStyles) {
 		StringBuffer sb = new StringBuffer(baseStyles);
 		if (additionalStyles != null && additionalStyles.length() > 0) {
 			sb.append(" ").append(additionalStyles);

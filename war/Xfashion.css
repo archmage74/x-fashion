@@ -425,6 +425,10 @@ table.toolGrid * td {
 	font-size: 12px;
 	color: #ffffff;
 }
-.priceChangeAccepted {
+.priceChangeNotAcceptedMatrix {
 	background-color: #F1DDC5;
+}
+.priceChangeNotAcceptedColumn {
+	background-color: #F1DDC5;
+	height: 51px;
 }
