@@ -81,12 +81,9 @@ DONE - add label to load and save notepad/deliverynotice: "Lieferschein scannen:
 DONE - jump to article-types or stock after login
 DONE - user-details: email may only changed by admin
 DONE - remove "+" (add to notepad) from article-details
-
-report correct error when entering wrong username
-
-sorting of stock (maybe even article-types after adding an article)
-
-adapt change password email and workflow texts
+DONE - report correct error when entering wrong username
+DONE - adapt change password email and workflow texts
+DONE - sorting of stock (maybe even article-types after adding an article)
 
 do not allow do delete attribute of filter (currently allowed when filters are set so that 0 is shown as amount)
 
