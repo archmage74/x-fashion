@@ -43,7 +43,6 @@ import com.xfashion.client.color.event.ShowChooseColorPopupEvent;
 import com.xfashion.client.img.ImageManagementPopup;
 import com.xfashion.client.img.ImageUploadService;
 import com.xfashion.client.img.ImageUploadServiceAsync;
-import com.xfashion.client.notepad.event.NotepadAddArticleEvent;
 import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.client.size.event.ChooseSizeEvent;
@@ -301,16 +300,6 @@ public class ArticleTypeDetailPopup implements CloseHandler<PopupPanel>, ChooseB
 		headerLabel = new Label();
 		headerLabel.setStyleName("dialogHeader");
 		hp.add(headerLabel);
-
-		hp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		Button addToNotepadButton = new Button("+");
-		addToNotepadButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				Xfashion.eventBus.fireEvent(new NotepadAddArticleEvent(articleType));
-			}
-		});
-		hp.add(addToNotepadButton);
 
 		hp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		printStickerLink = new Anchor(textMessages.sticker(), false, "", "xfashion_sticker");

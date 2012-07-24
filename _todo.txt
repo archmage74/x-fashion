@@ -80,8 +80,7 @@ DONE - add promo-information to promo-sticker
 DONE - add label to load and save notepad/deliverynotice: "Lieferschein scannen:", "Name"
 DONE - jump to article-types or stock after login
 DONE - user-details: email may only changed by admin
-
-remove "+" (add to notepad) from article-details
+DONE - remove "+" (add to notepad) from article-details
 
 report correct error when entering wrong username
 
