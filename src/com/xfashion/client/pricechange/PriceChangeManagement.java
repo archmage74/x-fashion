@@ -11,12 +11,15 @@ import com.xfashion.client.Xfashion;
 import com.xfashion.client.db.ArticleTypeDatabase;
 import com.xfashion.client.db.sort.DefaultArticleAmountComparator;
 import com.xfashion.client.db.sort.IArticleAmountComparator;
+import com.xfashion.client.dialog.YesNoCallback;
+import com.xfashion.client.dialog.YesNoPopup;
 import com.xfashion.client.notepad.NotepadPrinter;
 import com.xfashion.client.pricechange.event.AcceptPriceChangesEvent;
 import com.xfashion.client.pricechange.event.AcceptPriceChangesHandler;
 import com.xfashion.client.pricechange.event.PriceChangesUpdatedEvent;
 import com.xfashion.client.pricechange.event.PrintChangePriceStickersEvent;
 import com.xfashion.client.pricechange.event.PrintChangePriceStickersHandler;
+import com.xfashion.client.resources.TextMessages;
 import com.xfashion.client.stock.StockDataProvider;
 import com.xfashion.client.stock.event.StockLoadedEvent;
 import com.xfashion.client.stock.event.StockLoadedHandler;
@@ -30,22 +33,25 @@ import com.xfashion.shared.PriceChangeDTO;
 public class PriceChangeManagement implements StockLoadedHandler, PrintChangePriceStickersHandler, AcceptPriceChangesHandler {
 
 	protected UserServiceAsync userService = (UserServiceAsync) GWT.create(UserService.class);
-	
+
 	protected ArticleTypeDatabase articleTypeDatabase;
 	protected PriceChangeArticleAmountDataProvider changeArticleTypesProvider;
 	protected StockDataProvider stockProvider;
-	
+
 	protected IArticleAmountComparator sortStrategy;
 	protected NotepadPrinter notepadPrinter;
 
 	protected PriceChangePanel priceChangePanel;
 	protected Panel panel;
-	
+
+	protected TextMessages textMessages;
+
 	public PriceChangeManagement(ArticleTypeDatabase articleTypeDatabase) {
 		this.articleTypeDatabase = articleTypeDatabase;
 		this.changeArticleTypesProvider = new PriceChangeArticleAmountDataProvider(articleTypeDatabase);
 		this.priceChangePanel = new PriceChangePanel(articleTypeDatabase);
 		this.notepadPrinter = new NotepadPrinter();
+		this.textMessages = GWT.create(TextMessages.class);
 		registerForEvents();
 	}
 
@@ -72,11 +78,25 @@ public class PriceChangeManagement implements StockLoadedHandler, PrintChangePri
 
 	@Override
 	public void onAcceptPriceChanges(AcceptPriceChangesEvent event) {
+		YesNoPopup yesNoPopup = new YesNoPopup(textMessages.acceptChangesPopupQuestion(), new YesNoCallback() {
+			@Override
+			public void yes() {
+				removeAllPriceChanges();
+			}
+			@Override
+			public void no() {
+			}
+		});
+		yesNoPopup.show();
+	}
+
+	private void removeAllPriceChanges() {
 		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				Xfashion.fireError("Error while accepting price-changes: " + caught.getMessage());
 			}
+
 			@Override
 			public void onSuccess(Void result) {
 				refreshProvider();
@@ -84,18 +104,19 @@ public class PriceChangeManagement implements StockLoadedHandler, PrintChangePri
 		};
 		userService.deletePriceChanges(changeArticleTypesProvider.getPriceChanges(), callback);
 	}
-	
+
 	private void refreshProvider() {
 		changeArticleTypesProvider.getList().clear();
 		readPriceChanges();
 	}
-	
+
 	private void readPriceChanges() {
 		AsyncCallback<Collection<PriceChangeDTO>> callback = new AsyncCallback<Collection<PriceChangeDTO>>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				Xfashion.fireError("Error while reading price-changes: " + caught.getMessage());
 			}
+
 			@Override
 			public void onSuccess(Collection<PriceChangeDTO> result) {
 				providePriceChanges(result);
@@ -134,6 +155,7 @@ public class PriceChangeManagement implements StockLoadedHandler, PrintChangePri
 			public void onFailure(Throwable caught) {
 				Xfashion.fireError("Error while accepting price-changes: " + caught.getMessage());
 			}
+
 			@Override
 			public void onSuccess(Collection<PriceChangeDTO> result) {
 				changeArticleTypesProvider.refresh();
@@ -148,11 +170,11 @@ public class PriceChangeManagement implements StockLoadedHandler, PrintChangePri
 		notepad.addArticle(articleType, articleAmount.getAmount());
 		notepadPrinter.printNotepad(notepad);
 	}
-	
+
 	private void registerForEvents() {
 		Xfashion.eventBus.addHandler(StockLoadedEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(PrintChangePriceStickersEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(AcceptPriceChangesEvent.TYPE, this);
 	}
-	
+
 }

@@ -1,5 +1,8 @@
 package com.xfashion.pdf;
 
+import java.text.NumberFormat;
+import java.util.Locale;
+
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -15,11 +18,13 @@ public class PromoSticker extends HttpServlet {
 	
 	protected PromoServiceImpl promoService;
 	protected BarcodeHelper barcodeHelper;
+	NumberFormat currencyFormat;
 	
 	@Override
 	public void init() {
-		barcodeHelper = new BarcodeHelper();
-		promoService = new PromoServiceImpl();
+		this.barcodeHelper = new BarcodeHelper();
+		this.promoService = new PromoServiceImpl();
+		this.currencyFormat = NumberFormat.getCurrencyInstance(Locale.GERMAN);
 	}
 	
 	@Override
@@ -80,10 +85,15 @@ public class PromoSticker extends HttpServlet {
 		
 		if (!firstPage) {
 			sb.append("<div style=\"page-break-before:always;\" />");
-		} else {
-			// sb.append("<div />");
 		}
-
+		
+		sb.append("<div style=\"width:120px; font-size:12px; text-align:center;\" >");
+		if (promo.getPrice() != null) {
+			sb.append(currencyFormat.format(((double) promo.getPrice()) / 100));
+		} else {
+			sb.append(promo.getPercent()).append("%");
+		}
+		sb.append("</div>");
 		sb.append("<img width=\"120\" height=\"46\" src=\"http://intern.spielemarkt.at/spielemarkt_at/barcode.php?num=");
 		sb.append(barcodeHelper.generatePromoEan(promo.getEan()));
 		sb.append("&type=ean13&imgtype=png\" />");

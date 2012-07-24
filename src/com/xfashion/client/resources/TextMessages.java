@@ -46,6 +46,7 @@ public interface TextMessages extends Messages {
 	String currencySign();
 	String yes();
 	String no();
+	String ok();
 	String save();
 	String cancel();
 	String edit();
@@ -111,5 +112,6 @@ public interface TextMessages extends Messages {
 	String acceptAllPriceChanges();
 	String priceChangeManagementHeader();
 	String printChangePriceStickers();
+	String acceptChangesPopupQuestion();
 
 }
