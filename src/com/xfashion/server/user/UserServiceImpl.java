@@ -86,10 +86,12 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		UserDTO dto = null;
 		try {
 			User user = readUserByUsername(pm, username);
-			if (user.validatePassword(password)) {
+			if (user != null && user.validatePassword(password)) {
 				dto = user.createDTO();
 			}
 			this.getThreadLocalRequest().getSession().setAttribute(SESSION_USER, dto);
+		} catch (UserNotFoundException e) {
+			dto = null;
 		} finally {
 			pm.close();
 		}
@@ -107,6 +109,8 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 			} else {
 				dto = user.createDTO();
 			}
+		} catch (UserNotFoundException e) {
+			dto = null;
 		} finally {
 			pm.close();
 		}
@@ -114,7 +118,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 	}
 
 	@SuppressWarnings("unchecked")
-	private User readUserByUsername(PersistenceManager pm, String username) {
+	private User readUserByUsername(PersistenceManager pm, String username) throws UserNotFoundException {
 		User user;
 		Query userQuery = pm.newQuery(User.class);
 		userQuery.setFilter("username == usernameParam");
@@ -126,7 +130,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 			if (adminUser.getUsername().equals(username)) {
 				user = pm.makePersistent(adminUser);
 			} else {
-				throw new RuntimeException("Could not read user '" + username + "', query returned " + users.size() + " entities");
+				throw new UserNotFoundException();
 			}
 		}
 		return user;

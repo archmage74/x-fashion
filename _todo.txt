@@ -74,13 +74,12 @@ DONE - remove style and name filter when changing category
 DONE - sorting article types alphabetically by: category, ..., but size sorted like size-filter list order
 DONE - price reduction management (see mail from roman) (new delivery, which prices on sticker?, which prices during selling?, realtime-distribution?, concurrent: price changes while deleting all pending changes -> what should happen?, only for enabled users, accepted changes: orange?)
 DONE - colors for printed price changes
+------ phone call, 2012-07-23 about bug fixes and minor extensions
 DONE - popup for remove all price changes
 DONE - add promo-information to promo-sticker
 DONE - add label to load and save notepad/deliverynotice: "Lieferschein scannen:", "Name"
-
-jump to article-types or stock after login
-
-user-details: email may only changed by admin
+DONE - jump to article-types or stock after login
+DONE - user-details: email may only changed by admin
 
 remove "+" (add to notepad) from article-details
 

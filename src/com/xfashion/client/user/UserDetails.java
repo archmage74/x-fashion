@@ -160,6 +160,9 @@ public class UserDetails {
 
 	private void addEmailLine(Grid grid, int row) {
 		emailTextBox = addLine(grid, row, userMessages.email());
+		if (!UserManagement.hasRole(UserRole.ADMIN, UserRole.DEVELOPER)) {
+			emailTextBox.setEnabled(false);
+		}
 	}
 
 	private TextBox addLine(Grid grid, int row, String labelText) {

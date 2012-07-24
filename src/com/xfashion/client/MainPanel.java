@@ -16,11 +16,14 @@ import com.xfashion.client.pricechange.PriceChangeManagement;
 import com.xfashion.client.promo.PromoManagement;
 import com.xfashion.client.sell.SellStatisticManagement;
 import com.xfashion.client.stock.StockManagement;
+import com.xfashion.client.user.LoginEvent;
+import com.xfashion.client.user.LoginHandler;
 import com.xfashion.client.user.UserManagement;
 import com.xfashion.client.user.UserProfile;
 import com.xfashion.shared.SizeDTO;
+import com.xfashion.shared.UserRole;
 
-public class MainPanel implements ErrorHandler {
+public class MainPanel implements ErrorHandler, LoginHandler {
 
 	private boolean DEV_MODE = false;
 	
@@ -60,8 +63,8 @@ public class MainPanel implements ErrorHandler {
 		RootPanel.get("mainPanelContainer").add(contentPanel);
 		articleTypeManagement = new ArticleTypeManagement(articleTypeDatabase); 
 		userProfile = new UserProfile();
-
-		Xfashion.eventBus.addHandler(ErrorEvent.TYPE, this);
+		
+		registerEventHandlers();
 	}
 
 	public void showArticleTypePanel() {
@@ -113,7 +116,16 @@ public class MainPanel implements ErrorHandler {
 		Panel panel = priceChangeManagement.getPanel();
 		contentPanel.add(panel);
 	}
-
+	
+	@Override
+	public void onLogin(LoginEvent event) {
+		if (UserManagement.hasRole(UserRole.SHOP)) {
+			showStockPanel();
+		} else {
+			showArticleTypePanel();
+		}
+	}
+	
 	@Override
 	public void onError(ErrorEvent event) {
 		if (errorPopup == null) {
@@ -139,6 +151,11 @@ public class MainPanel implements ErrorHandler {
 			}
 		};
 		articleTypeService.readSizes(callback);
+	}
+
+	private void registerEventHandlers() {
+		Xfashion.eventBus.addHandler(ErrorEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(LoginEvent.TYPE, this);
 	}
 
 }
