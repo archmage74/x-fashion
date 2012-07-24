@@ -15,8 +15,11 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -47,6 +50,7 @@ public abstract class NotepadActionPopup {
 
 	protected DialogBox dialogBox;
 	protected ListBox notepadListBox;
+	protected Label nameLabel;
 	protected TextBox nameTextBox;
 	protected ListBox userListBox;
 
@@ -92,7 +96,7 @@ public abstract class NotepadActionPopup {
 		VerticalPanel vp = new VerticalPanel();
 
 		vp.add(createListBox());
-		vp.add(createNameTextBox());
+		vp.add(createNamePanel());
 		vp.add(createTypeListBox());
 		vp.add(createUserListBox());
 
@@ -162,6 +166,19 @@ public abstract class NotepadActionPopup {
 		return userListBox;
 	}
 
+	protected Panel createNamePanel() {
+		HorizontalPanel hp = new HorizontalPanel();
+		hp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		hp.add(createNameLabel());
+		hp.add(createNameTextBox());
+		return hp;
+	}
+	
+	protected Label createNameLabel() {
+		nameLabel = new Label(textMessages.notepadDefaultNameLabel() + ":");
+		return nameLabel;
+	}
+	
 	protected Widget createNameTextBox() {
 		nameTextBox = new TextBox();
 		nameTextBox.setWidth("120px");

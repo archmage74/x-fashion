@@ -33,6 +33,7 @@ public class OpenNotepadPopup extends NotepadActionPopup {
 	
 	@Override
 	protected void postCreate() {
+		nameLabel.setText(textMessages.notepadScanNameLabel() + ":");
 		nameTextBox.addKeyUpHandler(new KeyUpHandler() {
 			@Override
 			public void onKeyUp(KeyUpEvent event) {

@@ -68,6 +68,8 @@ public interface TextMessages extends Messages {
 	String notepadInfo2(Date creationDate);
 	String deliveryNoticeInfo1(String deliveryNoticeEan); 
 	String deliveryNoticeInfo2(String shopName, Date creationDate);
+	String notepadDefaultNameLabel();
+	String notepadScanNameLabel();
 	
 	String createArticle();
 	String clearNameSuggestFilter();

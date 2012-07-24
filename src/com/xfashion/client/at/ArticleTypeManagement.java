@@ -83,20 +83,24 @@ public class ArticleTypeManagement implements NotepadStartMaximizeHandler, Notep
 
 	@Override
 	public void onNotepadStartMaximize(NotepadStartMaximizeEvent event) {
-		brandPanel.minimize();
-		stylePanel.minimize();
-		sizePanel.minimize();
-		colorPanel.minimize();
-		namePanel.minimize();
+		if (panel != null) {
+			brandPanel.minimize();
+			stylePanel.minimize();
+			sizePanel.minimize();
+			colorPanel.minimize();
+			namePanel.minimize();
+		}
 	}
 
 	@Override
 	public void onNotepadStartMinimize(NotepadStartMinimizeEvent event) {
-		brandPanel.maximize();
-		stylePanel.maximize();
-		sizePanel.maximize();
-		colorPanel.maximize();
-		namePanel.maximize();
+		if (panel != null) {
+			brandPanel.maximize();
+			stylePanel.maximize();
+			sizePanel.maximize();
+			colorPanel.maximize();
+			namePanel.maximize();
+		}
 	}
 
 	@Override

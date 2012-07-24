@@ -76,8 +76,7 @@ DONE - price reduction management (see mail from roman) (new delivery, which pri
 DONE - colors for printed price changes
 DONE - popup for remove all price changes
 DONE - add promo-information to promo-sticker
-
-add label to load and save notepad/deliverynotice: "Lieferschein scannen:", "Name"
+DONE - add label to load and save notepad/deliverynotice: "Lieferschein scannen:", "Name"
 
 jump to article-types or stock after login
 
