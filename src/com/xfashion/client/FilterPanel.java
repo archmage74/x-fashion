@@ -25,7 +25,6 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.CellPreviewEvent;
-import com.google.gwt.view.client.ListDataProvider;
 import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.resources.ImageResources;
 import com.xfashion.client.resources.TextMessages;
@@ -64,7 +63,7 @@ public abstract class FilterPanel<T extends FilterCellData> implements IsMinimiz
 
 	public abstract void showTools();
 	
-	public abstract ListDataProvider<T> getDataProvider();
+	public abstract FilterDataProvider<T> getDataProvider();
 	
 	public abstract String getPanelTitle();
 
@@ -163,7 +162,11 @@ public abstract class FilterPanel<T extends FilterCellData> implements IsMinimiz
 		Column<T, String> column = new Column<T, String>(new EditTextCell()) {
 			@Override
 			public String getValue(T dto) {
-				return dto.getName();
+				if (dto.getHidden()) {
+					return "(" + dto.getName() + ")";
+				} else {
+					return dto.getName();
+				}
 			}
 		};
 		column.setFieldUpdater(new FieldUpdater<T, String>() {

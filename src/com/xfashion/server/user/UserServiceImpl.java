@@ -269,15 +269,11 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		String all = request.getRequestURL().toString();
 		String base = all.substring(0, all.indexOf(request.getServletPath()));
 
-		String msgBody = createResetPasswordMessage(user, rp, base);
+		String msgBody = createResetPasswordMailBody(user, rp, base);
 		log.info("created reset link=" + msgBody);
 
 		try {
-			Message msg = new MimeMessage(session);
-			msg.setFrom(new InternetAddress("xfashionadm@gmail.com", "XFashion"));
-			msg.addRecipient(Message.RecipientType.TO, new InternetAddress(user.getEmail(), user.getUsername()));
-			msg.setSubject("XFashion Account");
-			msg.setText(msgBody);
+			Message msg = createResetPasswordMail(user, session, msgBody);
 			Transport.send(msg);
 		} catch (AddressException e) {
 			throw new RuntimeException(e);
@@ -288,14 +284,30 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		}
 	}
 
-	private String createResetPasswordMessage(UserDTO user, ResetPasswordDTO rp, String base) {
+	private Message createResetPasswordMail(UserDTO user, Session session, String msgBody) throws MessagingException, UnsupportedEncodingException {
+		Message msg = new MimeMessage(session);
+		msg.setFrom(new InternetAddress("xfashionadm@gmail.com", "XFashion"));
+		msg.addRecipient(Message.RecipientType.TO, new InternetAddress(user.getEmail(), user.getUsername()));
+		msg.setSubject("XFashion Datenbank ACCOUNT AKTIVIERUNG");
+		msg.setText(msgBody);
+		return msg;
+	}
+
+	private String createResetPasswordMailBody(UserDTO user, ResetPasswordDTO rp, String base) {
 		StringBuffer sb = new StringBuffer();
-		sb.append("User: ");
+		sb.append("Willkommen bei XFashion\n");
+		sb.append("Dein Benutzername lautet: ");
 		sb.append(user.getUsername());
 		sb.append("\n");
+		sb.append("\n");
+		sb.append("Bitte clicke auf folgenden Link um dein persönliches Passwort festzulegen:\n");
 		sb.append(base);
 		sb.append("/resetpassword/");
 		sb.append(rp.getKey());
+		sb.append("\n");
+		sb.append("\n");
+		sb.append("Mit freundlichen Grüßen\n");
+		sb.append("Das XFashion Team\n");
 		String msgBody = sb.toString();
 		return msgBody;
 	}

@@ -1,15 +1,22 @@
 package com.xfashion.client.style;
 
 import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.view.client.ListDataProvider;
 import com.xfashion.client.ErrorEvent;
+import com.xfashion.client.FilterDataProvider;
 import com.xfashion.client.ResizeableIconFilterPanel;
 import com.xfashion.client.Xfashion;
+import com.xfashion.client.style.event.ClearStyleSelectionEvent;
+import com.xfashion.client.style.event.CreateStyleEvent;
+import com.xfashion.client.style.event.DeleteStyleEvent;
+import com.xfashion.client.style.event.MoveDownStyleEvent;
+import com.xfashion.client.style.event.MoveUpStyleEvent;
+import com.xfashion.client.style.event.SelectStyleEvent;
+import com.xfashion.client.style.event.UpdateStyleEvent;
 import com.xfashion.shared.StyleDTO;
 
 public class StylePanel extends ResizeableIconFilterPanel<StyleDTO> {
 
-	public StylePanel(ListDataProvider<StyleDTO> dataProvider) {
+	public StylePanel(FilterDataProvider<StyleDTO> dataProvider) {
 		super(dataProvider);
 	}
 

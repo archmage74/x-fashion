@@ -32,11 +32,11 @@ public abstract class SimpleFilterDataProvider<T extends FilterCellData> extends
 		if (idx < 0) {
 			return;
 		}
-		if (idx + 1 >= getList().size()) {
+		if (idx + 1 >= getAllItems().size()) {
 			return;
 		}
-		T item = getList().remove(idx);
-		getList().add(idx + 1, item);
+		T item = getAllItems().remove(idx);
+		getAllItems().add(idx + 1, item);
 		saveList();
 	}
 
@@ -61,26 +61,26 @@ public abstract class SimpleFilterDataProvider<T extends FilterCellData> extends
 		return articleTypes;
 	}
 
-	public void update(List<ArticleTypeDTO> articleTypes, HashMap<String, ArticleAmountDTO> articleAmounts) {
+	public void update(List<ArticleTypeDTO> filteredArticleTypes, HashMap<String, ArticleAmountDTO> articleAmounts) {
 		HashMap<String, Integer> articleAmountPerAttribute = new HashMap<String, Integer>();
-		for (ArticleTypeDTO at : articleTypes) {
-			int amount = 1;
+		for (ArticleTypeDTO at : filteredArticleTypes) {
+			int fileredAmount = 1;
 			if (articleAmounts != null) {
 				ArticleAmountDTO articleAmount = articleAmounts.get(at.getKey());
 				if (articleAmount != null) {
-					amount = articleAmount.getAmount();
+					fileredAmount = articleAmount.getAmount();
 				} else {
-					amount = 0;
+					fileredAmount = 0;
 				}
 			}
-			increaseAmountCounter(articleAmountPerAttribute, at, amount);
+			increaseAmountCounter(articleAmountPerAttribute, at, fileredAmount);
 		}
 		updateCellDataList(articleAmountPerAttribute);
 		refresh();
 	}
 	
 	private void updateCellDataList(HashMap<String, Integer> articleAmountPerAttribute) {
-		List<? extends FilterCellData> cellDataList = getList();
+		List<? extends FilterCellData> cellDataList = getAllItems();
 		for (FilterCellData fcd : cellDataList) {
 			Integer availableArticles = articleAmountPerAttribute.get(fcd.getKey());
 			if (availableArticles == null) {

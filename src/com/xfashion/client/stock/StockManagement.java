@@ -135,8 +135,9 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 
 	public Panel getPanel(ArticleAmountDataProvider notepadArticleProvider) {
 		if (panel == null) {
-			panel = stockPanel.createPanel(stockProvider, notepadArticleProvider);
 			sortStrategy = new DefaultArticleAmountComparator(articleTypeDatabase);
+			panel = stockPanel.createPanel(stockProvider, notepadArticleProvider);
+			refresh();
 		}
 		readPromos();
 		return panel;

@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.CellPreviewEvent;
-import com.google.gwt.view.client.ListDataProvider;
+import com.xfashion.client.FilterDataProvider;
 import com.xfashion.client.SimpleFilterPanel;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.cat.event.CreateCategoryEvent;
@@ -87,6 +87,7 @@ public class CategoryPanel extends SimpleFilterPanel<CategoryDTO> {
 	public void hideTools() {
 		removeAdditionalColumns();
 		cellTable.addColumn(createNameColumn());
+		dataProvider.showHidden(false);
 		redrawPanel();
 		createAnchor.clear();
 	}
@@ -99,6 +100,7 @@ public class CategoryPanel extends SimpleFilterPanel<CategoryDTO> {
 		for (Column<CategoryDTO, ?> c : toolColumns) {
 			cellTable.addColumn(c);
 		}
+		dataProvider.showHidden(true);
 		redrawPanel();
 		Widget create = createCreatePanel();
 		createAnchor.add(create);
@@ -111,7 +113,7 @@ public class CategoryPanel extends SimpleFilterPanel<CategoryDTO> {
 	}
 
 	@Override
-	public ListDataProvider<CategoryDTO> getDataProvider() {
+	public FilterDataProvider<CategoryDTO> getDataProvider() {
 		return dataProvider;
 	}
 

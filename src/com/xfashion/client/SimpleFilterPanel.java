@@ -6,15 +6,14 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.CellPreviewEvent;
-import com.google.gwt.view.client.ListDataProvider;
 import com.xfashion.shared.FilterCellData;
 
 public abstract class SimpleFilterPanel<T extends FilterCellData> extends FilterPanel<T> {
 
-	protected ListDataProvider<T> dataProvider;
+	protected FilterDataProvider<T> dataProvider;
 	protected CellTable<T> cellTable;
 
-	public SimpleFilterPanel(ListDataProvider<T> dataProvider) {
+	public SimpleFilterPanel(FilterDataProvider<T> dataProvider) {
 		super();
 		this.dataProvider = dataProvider;
 	}
@@ -44,6 +43,7 @@ public abstract class SimpleFilterPanel<T extends FilterCellData> extends Filter
 		removeAdditionalColumns();
 		cellTable.addColumn(createNameColumn());
 		cellTable.addColumn(createAmountColumn());
+		dataProvider.showHidden(false);
 		redrawPanel();
 		createAnchor.clear();
 	}
@@ -56,6 +56,7 @@ public abstract class SimpleFilterPanel<T extends FilterCellData> extends Filter
 		for (Column<T, ?> c : toolColumns) {
 			cellTable.addColumn(c);
 		}
+		dataProvider.showHidden(true);
 		redrawPanel();
 		Widget create = createCreatePanel();
 		createAnchor.add(create);
@@ -71,7 +72,7 @@ public abstract class SimpleFilterPanel<T extends FilterCellData> extends Filter
 		cellTable.redraw();
 	}
 
-	public ListDataProvider<T> getDataProvider() {
+	public FilterDataProvider<T> getDataProvider() {
 		return dataProvider;
 	}
 

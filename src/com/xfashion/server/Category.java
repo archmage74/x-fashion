@@ -30,11 +30,14 @@ public class Category {
 	
 	@Persistent
 	private Integer sortIndex;
+
+	@Persistent
+	private Boolean hidden;
 	
 	@Persistent
 	@Order(extensions = @Extension(vendorName="datanucleus", key="list-ordering", value="sortIndex asc"))
 	private List<Style> styles;
-	
+
 	public Category() {
 		styles = new ArrayList<Style>();
 	}
@@ -46,6 +49,7 @@ public class Category {
 	
 	public void updateFromDTO(CategoryDTO dto) {
 		this.name = dto.getName();
+		this.hidden = dto.getHidden();
 		updateStyleList(dto.getStyles());
 	}
 	
@@ -84,6 +88,7 @@ public class Category {
 		CategoryDTO dto = new CategoryDTO();
 		dto.setKey(getKeyString());
 		dto.setName(getName());
+		dto.setHidden(getHidden());
 		for (Style style : styles) {
 			dto.getStyles().add(style.createDTO());
 		}
@@ -132,6 +137,17 @@ public class Category {
 
 	public void setCategoryNumber(Integer categoryNumber) {
 		this.categoryNumber = categoryNumber;
+	}
+
+	public Boolean getHidden() {
+		if (hidden == null) {
+			return Boolean.FALSE;
+		}
+		return hidden;
+	}
+
+	public void setHidden(Boolean hidden) {
+		this.hidden = hidden;
 	}
 
 }

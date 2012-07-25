@@ -18,7 +18,11 @@ public class ResetPasswordServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	private static final String HEADER = "Passwort setzen";
-	private static final String SUCCESS = "Passwort wurde neu gesetzt.";
+	private static final String SUCCESS_1 = "Passwort wurde gespeichert";
+	private static final String SUCCESS_2 = "<a href=\"/\">Click hier um zur XFashion Datenbank zu gelangen.</a>";
+	private static final String LABEL_USER = "User";
+	private static final String LABEL_PASSWORD = "Passwort";
+	private static final String LABEL_REPEAT_PASSWORD = "Password Wiederholen";
 	
 	private static final String PARAM_ID = "id";
 	private static final String PARAM_USERNAME = "username";
@@ -52,9 +56,9 @@ public class ResetPasswordServlet extends HttpServlet {
 		out.println("<form action=\"/resetpassword\" method=\"POST\">");
 		out.println("<input type=\"hidden\" name=\"" + PARAM_ID + "\" value=\"" + resetDTO.getKey() + "\" />");
 		out.println("<table>");
-		out.println(generateFormField("User", PARAM_USERNAME, resetDTO.getUsername(), false));
-		out.println(generateFormField("Password 1", PARAM_PASSWORD_1, null, true));
-		out.println(generateFormField("Password 2", PARAM_PASSWORD_2, null, true));
+		out.println(generateFormField(LABEL_USER, PARAM_USERNAME, resetDTO.getUsername(), false));
+		out.println(generateFormField(LABEL_PASSWORD, PARAM_PASSWORD_1, null, true));
+		out.println(generateFormField(LABEL_REPEAT_PASSWORD, PARAM_PASSWORD_2, null, true));
 		out.println("</table>");
 		if (error != null) {
 			out.println("<p style=\"text-color: red;\">" + error + "</p>");
@@ -149,10 +153,8 @@ public class ResetPasswordServlet extends HttpServlet {
 		out.println("<html>");
 		out.println("<body>");
 	
-		out.println("<p>" + SUCCESS + "</p>");
-		String path = req.getRequestURL().toString();
-		String link = path.substring(0, path.lastIndexOf("/")); 
-		out.println("<a href=\"" + link + "\">X-Fashion</a>");
+		out.println("<p>" + SUCCESS_1 + "<br />");
+		out.println(SUCCESS_2 + "</p>");
 
 		out.println("</body>");
 		out.println("</html>");

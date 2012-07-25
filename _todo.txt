@@ -84,8 +84,7 @@ DONE - remove "+" (add to notepad) from article-details
 DONE - report correct error when entering wrong username
 DONE - adapt change password email and workflow texts
 DONE - sorting of stock (maybe even article-types after adding an article)
-
-do not allow do delete attribute of filter (currently allowed when filters are set so that 0 is shown as amount)
+DONE - do not allow to delete attribute of filter (currently allowed when filters are set so that 0 is shown as amount)
 
 fix bug: new articles cannot be added to notepad, only after re-login
 

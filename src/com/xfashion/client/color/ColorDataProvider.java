@@ -78,7 +78,7 @@ public class ColorDataProvider extends SimpleFilterDataProvider<ColorDTO> implem
 				return;
 			}
 		}
-		getList().remove(item);
+		item.setHidden(!item.getHidden());
 		saveList();
 	}
 
@@ -94,7 +94,7 @@ public class ColorDataProvider extends SimpleFilterDataProvider<ColorDTO> implem
 
 	@Override
 	public void onCreateColor(CreateColorEvent event) {
-		getList().add(event.getCellData());
+		getAllItems().add(event.getCellData());
 		saveList();
 
 	}
@@ -113,11 +113,11 @@ public class ColorDataProvider extends SimpleFilterDataProvider<ColorDTO> implem
 		if (idx < 0) {
 			return;
 		}
-		if (idx + 1 >= getList().size()) {
+		if (idx + 1 >= getAllItems().size()) {
 			return;
 		}
-		ColorDTO item = getList().remove(idx);
-		getList().add(idx + 1, item);
+		ColorDTO item = getAllItems().remove(idx);
+		getAllItems().add(idx + 1, item);
 		saveList();
 	}
 
@@ -162,13 +162,11 @@ public class ColorDataProvider extends SimpleFilterDataProvider<ColorDTO> implem
 				storeColors(result);
 			}
 		};
-		articleTypeService.updateColors(new ArrayList<ColorDTO>(getList()), callback);
+		articleTypeService.updateColors(new ArrayList<ColorDTO>(getAllItems()), callback);
 	}
 
 	private void storeColors(List<ColorDTO> result) {
-		List<ColorDTO> list = getList();
-		list.clear();
-		list.addAll(result);
+		setAllItems(result);
 		refreshResolver();
 		fireRefreshEvent();
 	}

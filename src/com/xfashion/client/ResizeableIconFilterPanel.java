@@ -16,7 +16,6 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.CellPreviewEvent;
-import com.google.gwt.view.client.ListDataProvider;
 import com.xfashion.client.resources.FilterTableResources;
 import com.xfashion.shared.FilterCellData;
 
@@ -25,7 +24,7 @@ public abstract class ResizeableIconFilterPanel<T extends FilterCellData> extend
 	public static final int PANEL_MAX_WIDTH = 160;
 	public static final int PANEL_MIN_WIDTH = 22;
 
-	public ResizeableIconFilterPanel(ListDataProvider<T> dataProvider) {
+	public ResizeableIconFilterPanel(FilterDataProvider<T> dataProvider) {
 		super(dataProvider);
 	}
 

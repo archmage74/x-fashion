@@ -68,7 +68,7 @@ public class BrandDataProvider extends SimpleFilterDataProvider<BrandDTO> implem
 				return;
 			}
 		}
-		getList().remove(item);
+		item.setHidden(!item.getHidden());
 		saveList();
 	}
 
@@ -84,7 +84,7 @@ public class BrandDataProvider extends SimpleFilterDataProvider<BrandDTO> implem
 
 	@Override
 	public void onCreateBrand(CreateBrandEvent event) {
-		getList().add(event.getCellData());
+		getAllItems().add(event.getCellData());
 		saveList();
 	}
 
@@ -148,14 +148,11 @@ public class BrandDataProvider extends SimpleFilterDataProvider<BrandDTO> implem
 				storeBrands(result);
 			}
 		};
-		articleTypeService.updateBrands(new ArrayList<BrandDTO>(getList()), callback);
+		articleTypeService.updateBrands(new ArrayList<BrandDTO>(getAllItems()), callback);
 	}
 
 	private void storeBrands(List<BrandDTO> result) {
-		List<BrandDTO> list = getList();
-		list.clear();
-		list.addAll(result);
-		refreshResolver();
+		setAllItems(result);
 		fireRefreshEvent();
 		Xfashion.eventBus.fireEvent(new BrandsLoadedEvent());
 	}

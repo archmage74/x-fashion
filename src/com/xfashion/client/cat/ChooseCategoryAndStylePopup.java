@@ -71,7 +71,7 @@ public class ChooseCategoryAndStylePopup {
 		categoryListBox = new ListBox();
 		categoryListBox.setWidth("120px");
 		categoryListBox.setVisibleItemCount(14);
-		for (CategoryDTO item : dataProvider.getList()) {
+		for (CategoryDTO item : dataProvider.getAllItems()) {
 			categoryListBox.addItem(item.getName(), item.getKey());
 		}
 		categoryListBox.addChangeHandler(new ChangeHandler() {
@@ -86,7 +86,7 @@ public class ChooseCategoryAndStylePopup {
 	private void selectCategory() {
 		int idx = categoryListBox.getSelectedIndex();
 		if (idx != -1) {
-			selectedCategory = dataProvider.getList().get(idx);
+			selectedCategory = dataProvider.getAllItems().get(idx);
 		} else {
 			selectedCategory = null;
 		}
@@ -135,7 +135,7 @@ public class ChooseCategoryAndStylePopup {
 		int categoryIdx = categoryListBox.getSelectedIndex();
 		int styleIdx = styleListBox.getSelectedIndex();
 		if (categoryIdx != -1 && styleIdx != -1) {
-			CategoryDTO category = dataProvider.getList().get(categoryIdx);
+			CategoryDTO category = dataProvider.getAllItems().get(categoryIdx);
 			StyleDTO style = selectedCategory.getStyles().get(styleIdx);
 			select(category, style);
 			hide();

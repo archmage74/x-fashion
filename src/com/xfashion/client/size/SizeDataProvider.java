@@ -120,13 +120,23 @@ public class SizeDataProvider extends SimpleFilterDataProvider<SizeDTO> implemen
 				return;
 			}
 		}
-		sizeList.remove(size);
+		size.setHidden(!size.getHidden());
 		saveList();
 	}
 
 	@Override
-	public List<SizeDTO> getList() {
-		return sizeList;
+	public void showHidden(boolean showHidden) {
+		super.showHidden(showHidden);
+		sizeList.clear();
+		sizeList.addAll(getProviderList());
+		refresh();
+	}
+	
+	@Override
+	public void setAllItems(List<SizeDTO> listToWrap) {
+		super.setAllItems(listToWrap);
+		sizeList.clear();
+		sizeList.addAll(getProviderList());
 	}
 
 	@Override
@@ -146,12 +156,6 @@ public class SizeDataProvider extends SimpleFilterDataProvider<SizeDTO> implemen
 	@Override
 	public void addDataDisplay(HasData<SizeDTO> display) {
 		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public void setList(List<SizeDTO> listToWrap) {
-		sizeList.clear();
-		sizeList.addAll(listToWrap);
 	}
 
 	public ListDataProvider<SizeDTO> getLeftProvider() {
@@ -218,10 +222,7 @@ public class SizeDataProvider extends SimpleFilterDataProvider<SizeDTO> implemen
 		if (result == null) {
 			result = new ArrayList<SizeDTO>();
 		}
-		List<SizeDTO> list = getList();
-		list.clear();
-		list.addAll(result);
-		refreshResolver();
+		setAllItems(result);
 		fireRefreshEvent();
 	}
 

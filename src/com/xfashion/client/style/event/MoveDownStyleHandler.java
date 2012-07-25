@@ -1,4 +1,4 @@
-package com.xfashion.client.style;
+package com.xfashion.client.style.event;
 
 import com.xfashion.client.FilterDataEventHandler;
 

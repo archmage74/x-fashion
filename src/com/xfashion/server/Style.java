@@ -22,6 +22,9 @@ public class Style {
 	@Persistent
 	private Integer sortIndex;
 	
+	@Persistent
+	private Boolean hidden;
+	
 	public Style() {
 		
 	}
@@ -32,12 +35,14 @@ public class Style {
 	
 	public void updateFromDTO(StyleDTO dto) {
 		this.name = dto.getName();
+		this.hidden = dto.getHidden();
 	}
 	
 	public StyleDTO createDTO() {
 		StyleDTO dto = new StyleDTO();
 		dto.setKey(getKeyString());
-		dto.setName(name);
+		dto.setName(getName());
+		dto.setHidden(getHidden());
 		return dto;
 	}
 
@@ -67,6 +72,17 @@ public class Style {
 
 	public void setSortIndex(Integer sortIndex) {
 		this.sortIndex = sortIndex;
+	}
+
+	public Boolean getHidden() {
+		if (hidden == null) {
+			return Boolean.FALSE;
+		}
+		return hidden;
+	}
+
+	public void setHidden(Boolean hidden) {
+		this.hidden = hidden;
 	}
 
 }

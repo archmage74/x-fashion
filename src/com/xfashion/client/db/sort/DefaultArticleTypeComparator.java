@@ -92,7 +92,7 @@ public class DefaultArticleTypeComparator implements IArticleTypeComparator {
 	}
 
 	protected int compareStyles(ArticleTypeDTO at0, ArticleTypeDTO at1) {
-		if (categoryProvider == null || categoryProvider.getList() == null || categoryProvider.getList().size() == 0) {
+		if (categoryProvider == null || categoryProvider.getAllItems() == null || categoryProvider.getAllItems().size() == 0) {
 			return 0;
 		}
 
@@ -124,7 +124,7 @@ public class DefaultArticleTypeComparator implements IArticleTypeComparator {
 	}
 
 	protected int compareSizes(ArticleTypeDTO at0, ArticleTypeDTO at1) {
-		if (sizeProvider == null || sizeProvider.getList() == null || sizeProvider.getList().size() == 0) {
+		if (sizeProvider == null || sizeProvider.getAllItems() == null || sizeProvider.getAllItems().size() == 0) {
 			return 0;
 		}
 		
@@ -152,8 +152,8 @@ public class DefaultArticleTypeComparator implements IArticleTypeComparator {
 			return 1;
 		}
 		
-		int index0 = sizeProvider.getList().indexOf(size0);
-		int index1 = sizeProvider.getList().indexOf(size1);
+		int index0 = sizeProvider.getAllItems().indexOf(size0);
+		int index1 = sizeProvider.getAllItems().indexOf(size1);
 		return index0 - index1;
 	}
 	
@@ -171,7 +171,7 @@ public class DefaultArticleTypeComparator implements IArticleTypeComparator {
 	}
 
 	protected int compareWithProvider(FilterDataProvider<? extends FilterCellData> provider, AttributeAccessor<String> accessor, ArticleTypeDTO at0, ArticleTypeDTO at1) {
-		if (provider == null || provider.getList() == null || provider.getList().size() == 0) {
+		if (provider == null || provider.getAllItems() == null || provider.getAllItems().size() == 0) {
 			return 0;
 		}
 

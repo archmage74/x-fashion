@@ -22,6 +22,9 @@ public class Size {
 	@Persistent
 	private Integer sortIndex;
 	
+	@Persistent
+	private Boolean hidden;
+
 	public Size() {
 
 	}
@@ -32,12 +35,14 @@ public class Size {
 
 	public void updateFromDTO(SizeDTO dto) {
 		this.name = dto.getName();
+		this.hidden = dto.getHidden();
 	}
 
 	public SizeDTO createDTO() {
 		SizeDTO dto = new SizeDTO();
 		dto.setKey(getKeyString());
-		dto.setName(name);
+		dto.setName(getName());
+		dto.setHidden(getHidden());
 		return dto;
 	}
 
@@ -67,6 +72,17 @@ public class Size {
 
 	public void setSortIndex(Integer sortIndex) {
 		this.sortIndex = sortIndex;
+	}
+
+	public Boolean getHidden() {
+		if (hidden == null) {
+			return Boolean.FALSE;
+		}
+		return hidden;
+	}
+
+	public void setHidden(Boolean hidden) {
+		this.hidden = hidden;
 	}
 
 }

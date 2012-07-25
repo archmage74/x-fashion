@@ -9,6 +9,8 @@ public abstract class FilterCellData extends DTO {
 	
 	private Integer articleAmount;
 	
+	private Boolean hidden;
+	
 	public FilterCellData() {
 		this.selected = false;
 		articleAmount = 0;
@@ -18,29 +20,32 @@ public abstract class FilterCellData extends DTO {
 		return name;
 	}
 
-
 	public void setName(String name) {
 		this.name = name;
 	}
-
 
 	public boolean isSelected() {
 		return selected;
 	}
 
-
 	public void setSelected(boolean selected) {
 		this.selected = selected;
 	}
-
 
 	public Integer getArticleAmount() {
 		return articleAmount;
 	}
 
-
 	public void setArticleAmount(Integer articleAmount) {
 		this.articleAmount = articleAmount;
+	}
+	
+	public Boolean getHidden() {
+		return hidden;
+	}
+
+	public void setHidden(Boolean hidden) {
+		this.hidden = hidden;
 	}
 
 	@Override

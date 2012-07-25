@@ -56,7 +56,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 	protected ListDataProvider<String> nameProvider;
 	protected MultiWordSuggestOracle nameOracle;
 	protected ArticleTypeDataProvider articleTypeProvider;
-	protected HashMap<String, ArticleAmountDTO> articleAmounts;
+	protected HashMap<String, ArticleAmountDTO> stockArticleAmounts;
 	protected IArticleTypeComparator sortStrategy;
 
 	private String nameFilter = null;
@@ -104,11 +104,11 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 	}
 
 	public HashMap<String, ArticleAmountDTO> getArticleAmounts() {
-		return articleAmounts;
+		return stockArticleAmounts;
 	}
 
 	public void setArticleAmounts(HashMap<String, ArticleAmountDTO> articleAmounts) {
-		this.articleAmounts = articleAmounts;
+		this.stockArticleAmounts = articleAmounts;
 	}
 
 	public IArticleTypeComparator getSortStrategy() {
@@ -250,7 +250,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 		temp = sizeProvider.applyFilter(temp);
 		temp = colorProvider.applyFilter(temp);
 		temp = applyNameFilter(nameFilter, temp);
-		categoryProvider.updateStyles(temp, articleAmounts);
+		categoryProvider.updateStyles(temp, stockArticleAmounts);
 	}
 
 	public void updateBrandProvider() {
@@ -260,7 +260,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 		temp = sizeProvider.applyFilter(temp);
 		temp = colorProvider.applyFilter(temp);
 		temp = applyNameFilter(nameFilter, temp);
-		brandProvider.update(temp, articleAmounts);
+		brandProvider.update(temp, stockArticleAmounts);
 	}
 
 	public void updateSizeProvider() {
@@ -270,7 +270,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 		temp = brandProvider.applyFilter(temp);
 		temp = colorProvider.applyFilter(temp);
 		temp = applyNameFilter(nameFilter, temp);
-		sizeProvider.update(temp, articleAmounts);
+		sizeProvider.update(temp, stockArticleAmounts);
 	}
 
 	public void updateColorProvider() {
@@ -280,7 +280,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 		temp = brandProvider.applyFilter(temp);
 		temp = sizeProvider.applyFilter(temp);
 		temp = applyNameFilter(nameFilter, temp);
-		colorProvider.update(temp, articleAmounts);
+		colorProvider.update(temp, stockArticleAmounts);
 	}
 
 	public void addArticleTypeDisplay(HasData<ArticleTypeDTO> display) {

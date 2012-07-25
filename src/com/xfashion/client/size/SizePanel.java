@@ -123,6 +123,7 @@ public class SizePanel extends ResizeableIconFilterPanel<SizeDTO> {
 		cellTable1.addColumn(createAmountColumn());
 		cellTable2.addColumn(createNameColumn());
 		cellTable2.addColumn(createAmountColumn());
+		dataProvider.showHidden(false);
 		redrawPanel();
 		createAnchor.clear();
 	}
@@ -137,6 +138,7 @@ public class SizePanel extends ResizeableIconFilterPanel<SizeDTO> {
 			cellTable1.addColumn(c);
 			cellTable2.addColumn(c);
 		}
+		dataProvider.showHidden(true);
 		redrawPanel();
 		Widget create = createCreatePanel();
 		createAnchor.add(create);

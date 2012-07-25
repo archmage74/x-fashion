@@ -22,6 +22,9 @@ public class Color {
 	@Persistent
 	private Integer sortIndex;
 	
+	@Persistent 
+	private Boolean hidden;
+	
 	public Color() {
 		
 	}
@@ -32,12 +35,14 @@ public class Color {
 	
 	public void updateFromDTO(ColorDTO dto) {
 		this.name = dto.getName();
+		this.hidden = dto.getHidden();
 	}
 	
 	public ColorDTO createDTO() {
 		ColorDTO dto = new ColorDTO();
 		dto.setKey(getKeyString());
-		dto.setName(name);
+		dto.setName(getName());
+		dto.setHidden(getHidden());
 		return dto;
 	}
 
@@ -67,6 +72,17 @@ public class Color {
 
 	public void setSortIndex(Integer sortIndex) {
 		this.sortIndex = sortIndex;
+	}
+
+	public Boolean getHidden() {
+		if (hidden == null) {
+			return Boolean.FALSE;
+		}
+		return hidden;
+	}
+
+	public void setHidden(Boolean hidden) {
+		this.hidden = hidden;
 	}
 
 }
