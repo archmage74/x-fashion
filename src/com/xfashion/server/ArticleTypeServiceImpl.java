@@ -2,6 +2,7 @@ package com.xfashion.server;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -556,7 +557,7 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 		try {
 			ArticleTypes articleTypes = readArticleTypes(pm);
 			dtos = articleTypes.getDtos();
-			ArrayList<String> imageKeys = new ArrayList<String>();
+			HashSet<String> imageKeys = new HashSet<String>();
 			for (ArticleTypeDTO dto : dtos) {
 				if (dto.getImageKey() != null) {
 					imageKeys.add(dto.getImageKey());

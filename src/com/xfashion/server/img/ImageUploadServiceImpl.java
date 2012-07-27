@@ -1,5 +1,6 @@
 package com.xfashion.server.img;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -103,13 +104,32 @@ public class ImageUploadServiceImpl extends RemoteServiceServlet implements Imag
 		return item;
 	}
 
+	private Collection<ArticleTypeImage> readArticleTypeImagesByStrings(PersistenceManager pm, Collection<String> keyStrings) {
+		Collection<Key> keys = new ArrayList<Key>(keyStrings.size());
+		for (String s : keyStrings) {
+			keys.add(KeyFactory.stringToKey(s));
+		}
+		return readArticleTypeImages(pm, keys);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Collection<ArticleTypeImage> readArticleTypeImages(PersistenceManager pm, Collection<Key> keys) {
+		Query query = pm.newQuery(ArticleTypeImage.class, ":p.contains(key)");
+		Collection<ArticleTypeImage> images = (Collection<ArticleTypeImage>) query.execute(keys);
+		return images;
+	}
+	
 	public Map<String, String> readImageUrls(Collection<String> articleTypeImageKeys) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		HashMap<String, String> urls = new HashMap<String, String>();
 		try {
-			for (String key: articleTypeImageKeys) {
-				ArticleTypeImage image = readArticleTypeImage(pm, key);
-				urls.put(key, image.createDTO(imagesService).getImageUrl());
+			BatchIterator<String> batchIterator = new BatchIterator<String>(articleTypeImageKeys, 30);
+			Collection<String> batchKeys = null;
+			while ((batchKeys = batchIterator.next()) != null) {
+				Collection<ArticleTypeImage> images = readArticleTypeImagesByStrings(pm, batchKeys);
+				for (ArticleTypeImage image : images) {
+					urls.put(image.getKeyString(), image.createDTO(imagesService).getImageUrl());
+				}
 			}
 		} finally {
 			pm.close();
