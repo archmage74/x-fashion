@@ -194,9 +194,9 @@ public abstract class ArticleTable<T> {
 				StringBuffer imageHtml = new StringBuffer();
 				imageHtml.append("<img class=\"articleIconImage\" ");
 				if (at.getImageKey() != null) {
-					imageHtml.append("src=\"/img/showimage?id=");
-					imageHtml.append("" + at.getImageKey());
-					imageHtml.append("&options=s48-c");
+					imageHtml.append("src=\"");
+					imageHtml.append(at.getImageUrl());
+					imageHtml.append("=s48");
 					imageHtml.append("\"");
 				}
 				imageHtml.append("/>");

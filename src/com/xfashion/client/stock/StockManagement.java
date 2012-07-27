@@ -17,6 +17,8 @@ import com.xfashion.client.db.event.FilterRefreshedHandler;
 import com.xfashion.client.db.event.RefreshFilterEvent;
 import com.xfashion.client.db.sort.DefaultArticleAmountComparator;
 import com.xfashion.client.db.sort.IArticleAmountComparator;
+import com.xfashion.client.dialog.YesNoCallback;
+import com.xfashion.client.dialog.YesNoPopup;
 import com.xfashion.client.notepad.ArticleAmountDataProvider;
 import com.xfashion.client.notepad.event.ClearNotepadEvent;
 import com.xfashion.client.notepad.event.IntoStockEvent;
@@ -69,12 +71,26 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 	}
 
 	@Override
-	public void onIntoStock(IntoStockEvent event) {
-		Long cnt = 0L;
+	public void onIntoStock(final IntoStockEvent event) {
+		long cnt = 0L;
 		for (ArticleAmountDTO articleAmount : event.getNotepad().getArticles()) {
 			cnt += articleAmount.getAmount();
 		}
-		final Long addedArticleNumber = cnt;
+		final long addedArticleNumber = cnt;
+		YesNoPopup confirmIntoStock = new YesNoPopup(textMessages.confirmIntoStock(addedArticleNumber), new YesNoCallback() {
+			@Override
+			public void yes() {
+				intoStock(event.getNotepad().getArticles(), addedArticleNumber);
+			}
+			@Override
+			public void no() {
+				// nothing to do
+			}
+		});
+		confirmIntoStock.show();
+	}
+	
+	private void intoStock(final Collection<ArticleAmountDTO> articles, final long addedArticleNumber) {
 		AsyncCallback<Collection<ArticleAmountDTO>> callback = new AsyncCallback<Collection<ArticleAmountDTO>>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -87,7 +103,7 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 				Xfashion.fireError(textMessages.intoStockResult(addedArticleNumber));
 			}
 		};
-		userService.addStockEntries(event.getNotepad().getArticles(), callback);
+		userService.addStockEntries(articles, callback);
 		Xfashion.eventBus.fireEvent(new ClearNotepadEvent());
 	}
 

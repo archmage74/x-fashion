@@ -1,12 +1,16 @@
 package com.xfashion.server.img;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
+import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
@@ -65,7 +69,11 @@ public class ImageUploadServiceImpl extends RemoteServiceServlet implements Imag
 	}
 	
 	private ArticleTypeImage readArticleTypeImage(PersistenceManager pm, String key) {
-		return pm.getObjectById(ArticleTypeImage.class, KeyFactory.stringToKey(key));
+		return readArticleTypeImage(pm, KeyFactory.stringToKey(key));
+	}
+	
+	private ArticleTypeImage readArticleTypeImage(PersistenceManager pm, Key key) {
+		return pm.getObjectById(ArticleTypeImage.class, key);
 	}
 	
 	@Override
@@ -95,4 +103,18 @@ public class ImageUploadServiceImpl extends RemoteServiceServlet implements Imag
 		return item;
 	}
 
+	public Map<String, String> readImageUrls(Collection<String> articleTypeImageKeys) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		HashMap<String, String> urls = new HashMap<String, String>();
+		try {
+			for (String key: articleTypeImageKeys) {
+				ArticleTypeImage image = readArticleTypeImage(pm, key);
+				urls.put(key, image.createDTO(imagesService).getImageUrl());
+			}
+		} finally {
+			pm.close();
+		}
+		return urls;
+	}
+	
 }

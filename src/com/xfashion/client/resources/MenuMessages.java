@@ -1,7 +1,6 @@
 package com.xfashion.client.resources;
 
 import com.google.gwt.i18n.client.Messages;
-import com.google.gwt.safehtml.shared.SafeHtml;
 
 public interface MenuMessages extends Messages {
 
@@ -24,15 +23,22 @@ public interface MenuMessages extends Messages {
 	String test();
 
 	@DefaultMessage("Bestand")
-	SafeHtml stock();
+	String stock();
 
 	@DefaultMessage("Verkäufe")
-	SafeHtml sellStatistic();
+	String sellStatistic();
 
 	@DefaultMessage("Aktionen")
-	SafeHtml promo();
+	String promo();
 	
 	@DefaultMessage("VK Preis Änderungen ({0,number})")
-	SafeHtml priceChanges(int priceChangeAmount);
+	String priceChanges(int priceChangeAmount);
+
+	@DefaultMessage("Verkauf")
+	String sellArticle();
+	
+	@DefaultMessage("Artikel verkaufen mit Barcode-Scan")
+	String sellArticleHint();
+
 
 }

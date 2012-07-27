@@ -15,6 +15,7 @@ import com.xfashion.client.Xfashion;
 import com.xfashion.client.pricechange.event.PriceChangesUpdatedEvent;
 import com.xfashion.client.pricechange.event.PriceChangesUpdatedHandler;
 import com.xfashion.client.resources.MenuMessages;
+import com.xfashion.client.stock.event.RequestOpenSellPopupEvent;
 import com.xfashion.client.user.LoginEvent;
 import com.xfashion.client.user.LoginHandler;
 import com.xfashion.client.user.UserManagement;
@@ -42,7 +43,7 @@ public class MenuPanel implements LoginHandler, PriceChangesUpdatedHandler {
 	public void onLogin(LoginEvent event) {
 		redraw();
 		if (loggedInLabel != null) {
-			loggedInLabel.setText(event.getUser().getUsername());
+			loggedInLabel.setText(menuMessages.loggedInAs() + ": " + event.getUser().getUsername());
 		}
 	}
 	
@@ -57,8 +58,6 @@ public class MenuPanel implements LoginHandler, PriceChangesUpdatedHandler {
 		RootPanel.get("navPanelContainer").add(navPanel);
 		
 		Panel loggedInPanel = new HorizontalPanel();
-		Label loggedInHeader = new Label(menuMessages.loggedInAs() + ": ");
-		loggedInPanel.add(loggedInHeader);
 		loggedInLabel = new Label();
 		loggedInPanel.add(loggedInLabel);
 		navPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
@@ -66,34 +65,38 @@ public class MenuPanel implements LoginHandler, PriceChangesUpdatedHandler {
 		
 		MenuBar menu = new MenuBar();
 		menu.setAutoOpen(true);
-		menu.setWidth("1200px");
+		menu.setWidth("1500px");
+		menu.setHeight("30px");
 		menu.setAnimationEnabled(true);
 
 		if (UserManagement.hasRole(UserRole.DEVELOPER, UserRole.ADMIN)) {
-			menu.addItem(createArticleTypeMenuItem());
-		}
-
-		if (UserManagement.hasRole(UserRole.SHOP)) {
-			menu.addItem(createStockMenuItem());
-		}
-		menu.addItem(createUserProfileMenuItem());
-		menu.addItem(createSellStatisticMenuItem());
-		menu.addItem(createPromoMenuItem());
-		
-		if(UserManagement.hasRole(UserRole.SHOP)) {
-			menu.addItem(createPriceChangeMenuItem());
-		}
-
-		if (UserManagement.hasRole(UserRole.DEVELOPER, UserRole.ADMIN)) {
-			menu.addItem(createUserManagementMenuItem());
-		}
-
-		if (UserManagement.hasRole(UserRole.DEVELOPER)) {
-			menu.addItem(createTestMenuItem());
+			addAdminMenuItems(menu);
+		} else if (UserManagement.hasRole(UserRole.SHOP)) {
+			addShopMenuItems(menu);
 		}
 
 		navPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_BOTTOM);
 		navPanel.add(menu);
+	}
+	
+	private void addAdminMenuItems(MenuBar menu) {
+		menu.addItem(createArticleTypeMenuItem());
+		menu.addItem(createUserProfileMenuItem());
+		menu.addItem(createSellStatisticMenuItem());
+		menu.addItem(createPromoMenuItem());
+		menu.addItem(createUserManagementMenuItem());
+		if (UserManagement.hasRole(UserRole.DEVELOPER)) {
+			menu.addItem(createTestMenuItem());
+		}
+	}
+	
+	private void addShopMenuItems(MenuBar menu) {
+		menu.addItem(createStockMenuItem());
+		menu.addItem(createUserProfileMenuItem());
+		menu.addItem(createSellArticleMenuItem());
+		menu.addItem(createSellStatisticMenuItem());
+		menu.addItem(createPromoMenuItem());
+		menu.addItem(createPriceChangeMenuItem());
 	}
 	
 	public void redraw() {
@@ -183,6 +186,17 @@ public class MenuPanel implements LoginHandler, PriceChangesUpdatedHandler {
 		return priceChangeItem;
 	}
 
+	private MenuItem createSellArticleMenuItem() {
+		Command sellArticle = new Command() {
+			public void execute() {
+				Xfashion.eventBus.fireEvent(new RequestOpenSellPopupEvent());
+			}
+		};
+		MenuItem sellArticleItem = new MenuItem(menuMessages.sellArticle(), sellArticle);
+		sellArticleItem.setTitle(menuMessages.sellArticleHint());
+		return sellArticleItem;
+	}
+	
 	private void registerForEvents() {
 		Xfashion.eventBus.addHandler(LoginEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(PriceChangesUpdatedEvent.TYPE, this);

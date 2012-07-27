@@ -83,11 +83,11 @@ public interface TextMessages extends Messages {
 	String printStickersHint();
 	String recordArticlesHint();
 	String intoStockHint();
-	String sellHint();
 
 	String stockManagementHeader();
-	String intoStockResult(Long addedArticleNumber);
-	String sellStockResult(Long soldArticleNumber);
+	String confirmIntoStock(long addedArticleNumber);
+	String intoStockResult(long addedArticleNumber);
+	String sellStockResult(long soldArticleNumber);
 	String sellArticles();
 	String sellRemoveArticle();
 	String sellStatisticHeader();

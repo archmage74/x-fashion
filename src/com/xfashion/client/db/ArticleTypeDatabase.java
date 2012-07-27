@@ -165,7 +165,14 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 	public Collection<String> getArticleNames(List<ArticleTypeDTO> articleTypes) {
 		HashSet<String> names = new HashSet<String>();
 		for (ArticleTypeDTO at : articleTypes) {
-			names.add(at.getName());
+			if (stockArticleAmounts == null) {
+				names.add(at.getName());
+			} else {
+				ArticleAmountDTO am = stockArticleAmounts.get(at.getKey());
+				if (am != null && am.getAmount() > 0) {
+					names.add(at.getName());
+				}
+			}
 		}
 		return names;
 	}

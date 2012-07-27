@@ -27,6 +27,8 @@ public class ArticleTypeDTO extends DTO implements IsSerializable {
 	private Integer sellPriceDe;
 	
 	private String imageKey;
+	
+	private String imageUrl;
 
 	public Long getProductNumber() {
 		return productNumber;
@@ -116,6 +118,14 @@ public class ArticleTypeDTO extends DTO implements IsSerializable {
 		this.imageKey = imageKey;
 	}
 
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+
 	public ArticleTypeDTO clone() {
 		ArticleTypeDTO clone = new ArticleTypeDTO();
 		clone.setProductNumber(getProductNumber());
@@ -129,6 +139,7 @@ public class ArticleTypeDTO extends DTO implements IsSerializable {
 		clone.setSellPriceAt(getSellPriceAt());
 		clone.setSellPriceDe(getSellPriceDe());
 		clone.setImageKey(getImageKey());
+		clone.setImageUrl(getImageUrl());
 		return clone;
 	}
 

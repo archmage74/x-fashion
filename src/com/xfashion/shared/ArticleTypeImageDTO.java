@@ -36,5 +36,5 @@ public class ArticleTypeImageDTO extends DTO {
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
 	}
-	
+
 }

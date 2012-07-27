@@ -164,6 +164,7 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 		}
 		if (currentNotepad == null || currentNotepad.getArticles().size() == 0) {
 			Xfashion.fireError(errorMessages.notepadEmpty());
+			return;
 		}
 		Xfashion.eventBus.fireEvent(new IntoStockEvent(currentNotepad));
 	}

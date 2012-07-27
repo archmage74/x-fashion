@@ -3,6 +3,7 @@ package com.xfashion.server;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.jdo.PersistenceManager;
@@ -15,6 +16,7 @@ import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.xfashion.client.db.ArticleTypeService;
+import com.xfashion.server.img.ImageUploadServiceImpl;
 import com.xfashion.server.task.DistributePriceChangeServlet;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.BrandDTO;
@@ -32,6 +34,8 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 	public static final long MULT_CAT = 1000000000L;
 	public static final long MULT_BUYP = 1000000L;
 
+	ImageUploadServiceImpl imageUploadServiceImpl = new ImageUploadServiceImpl();
+	
 	// *************
 	// categories
 	// *************
@@ -552,6 +556,18 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 		try {
 			ArticleTypes articleTypes = readArticleTypes(pm);
 			dtos = articleTypes.getDtos();
+			ArrayList<String> imageKeys = new ArrayList<String>();
+			for (ArticleTypeDTO dto : dtos) {
+				if (dto.getImageKey() != null) {
+					imageKeys.add(dto.getImageKey());
+				}
+			}
+			Map<String, String> urls = imageUploadServiceImpl.readImageUrls(imageKeys);
+			for (ArticleTypeDTO dto : dtos) {
+				if (dto.getImageKey() != null) {
+					dto.setImageUrl(urls.get(dto.getImageKey()));
+				}
+			}
 		} finally {
 			pm.close();
 		}

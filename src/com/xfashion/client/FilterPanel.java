@@ -29,7 +29,9 @@ import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.resources.ImageResources;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.client.tool.Buttons;
+import com.xfashion.client.user.UserManagement;
 import com.xfashion.shared.FilterCellData;
+import com.xfashion.shared.UserRole;
 
 public abstract class FilterPanel<T extends FilterCellData> implements IsMinimizable {
 
@@ -115,16 +117,18 @@ public abstract class FilterPanel<T extends FilterCellData> implements IsMinimiz
 		label.addStyleName("filterLabel attributeFilterLabel");
 		headerPanel.add(label);
 
-		Image toolsButton = Buttons.showTools();
-		ClickHandler toolsButtonClickHandler = new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				toggleTools();
-			}
-		};
-		toolsButton.addClickHandler(toolsButtonClickHandler);
-		headerPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-		headerPanel.add(toolsButton);
+		if (UserManagement.hasRole(UserRole.ADMIN, UserRole.DEVELOPER)) {
+			Image toolsButton = Buttons.showTools();
+			ClickHandler toolsButtonClickHandler = new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					toggleTools();
+				}
+			};
+			toolsButton.addClickHandler(toolsButtonClickHandler);
+			headerPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+			headerPanel.add(toolsButton);
+		}
 
 		label.addClickHandler(new ClickHandler() {
 			@Override

@@ -85,35 +85,27 @@ DONE - report correct error when entering wrong username
 DONE - adapt change password email and workflow texts
 DONE - sorting of stock (maybe even article-types after adding an article)
 DONE - do not allow to delete attribute of filter (currently allowed when filters are set so that 0 is shown as amount)
-
-fix bug: new articles cannot be added to notepad, only after re-login
-
-do not show article-names that are not in stock
-
-change "verkauefe to Protokolle"
-
-add "Wareneingang" to Protokolle view
-
-move "Verkauf" button to menu, between User Details and Protokolle
-
-show dialog when adding articles to stock: "Achtung, es werden x Artikel in den Bestand übernommen"
-
-fix bug: 0 articles are added to stock - this should not happen, just the message that notepad is empty   
-
-forbid removing of used article-types
-
-image-size in thumnails
-
-add remove from stock function in article-detials popup: show current amount there; ask before removing
-
-add deleted-articles statistic for shops (similar to sell statistic, but hidden feature.
-
- 
-
-add stock-view of shops to admin
+DONE - do not show article-names that are not in stock
+DONE - move "Verkauf" button to menu, between User Details and Protokolle
+DONE - change "verkauefe to Protokolle"
+DONE - show dialog when adding articles to stock: "Achtung, es werden x Artikel in den Bestand übernommen"
+DONE - fix bug: 0 articles are added to stock - this should not happen, just the message that notepad is empty   
+DONE - image-size in thumbnails
 
 store promo code to sold articles to show in statistic
 
+add "Wareneingang" to Protokolle view
+
+forbid removing of used article-types
+
+add remove from stock function in article-details popup: show current amount there; ask before removing, secret button to access remove-protocol
+
+add deleted-articles statistic for shops (similar to sell statistic, but hidden feature.
+
+add stock-view of shops to admin
+
+???? - works for me - fix bug: new articles cannot be added to notepad, only after re-login
+ 
 --------------------
 
 differenz anzeige - lieferschein vs bestandsaufnahme

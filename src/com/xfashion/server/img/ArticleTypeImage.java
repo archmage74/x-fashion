@@ -49,7 +49,8 @@ public class ArticleTypeImage implements IsSerializable {
 		dto.setBlobKey(getBlobKey());
 		if (imagesService != null) {
 			BlobKey key = new BlobKey(getBlobKey());
-			String url = imagesService.getServingUrl(ServingUrlOptions.Builder.withBlobKey(key));
+			ServingUrlOptions options = ServingUrlOptions.Builder.withBlobKey(key);
+			String url = imagesService.getServingUrl(options);
 			if (!PRODUCTION_MODE) {
 				url = url.replaceAll("http://0.0.0.0:8888", "http://127.0.0.1:8888");
 			}
