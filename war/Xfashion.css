@@ -280,7 +280,10 @@
 	vertical-align: middle;
 	font-size: 20px;
 	width: 75px;
-	height: 50;
+	height: 50px;
+}
+.articlePrice.originalPrice {
+	text-decoration: line-through; 
 }
 .articleAmount {
 	text-align: right;
