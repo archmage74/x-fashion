@@ -37,10 +37,16 @@ public class SoldArticle {
 	protected Integer buyPrice;
 
 	@Persistent
+	protected Integer originalSellPrice;
+	
+	@Persistent
 	protected Integer sellPrice;
 
 	@Persistent
 	protected Date sellDate;
+	
+	@Persistent
+	protected Key promoKey;
 	
 	public SoldArticle() {
 		this.sellDate = new Date();
@@ -54,7 +60,9 @@ public class SoldArticle {
 		this.shopName = dto.getShopName();
 		this.buyPrice = dto.getBuyPrice();
 		this.sellPrice = dto.getSellPrice();
+		this.originalSellPrice = dto.getOriginalSellPrice();
 		this.sellDate = new Date();
+		this.promoKey = KeyFactory.stringToKey(dto.getPromoKey());
 	}
 	
 	public SoldArticleDTO createDTO() {
@@ -67,7 +75,9 @@ public class SoldArticle {
 		dto.setShopName(getShopName());
 		dto.setBuyPrice(getBuyPrice());
 		dto.setSellPrice(getSellPrice());
+		dto.setOriginalSellPrice(getOriginalSellPrice());
 		dto.setSellDate(getSellDate());
+		dto.setPromoKey(getPromoKeyAsString());
 		return dto;
 	}
 
@@ -112,7 +122,7 @@ public class SoldArticle {
 	}
 
 	public String getShopKeyAsString() {
-		return KeyFactory.keyToString(articleTypeKey);
+		return KeyFactory.keyToString(shopKey);
 	}
 
 	public void setShopKey(Key shopKey) {
@@ -143,12 +153,36 @@ public class SoldArticle {
 		this.sellPrice = sellPrice;
 	}
 
+	public Integer getOriginalSellPrice() {
+		return originalSellPrice;
+	}
+
+	public void setOriginalSellPrice(Integer originalSellPrice) {
+		this.originalSellPrice = originalSellPrice;
+	}
+
 	public Date getSellDate() {
 		return sellDate;
 	}
 
 	public void setSellDate(Date sellDate) {
 		this.sellDate = sellDate;
+	}
+
+	public Key getPromoKey() {
+		return promoKey;
+	}
+
+	public String getPromoKeyAsString() {
+		if (promoKey != null) {
+			return KeyFactory.keyToString(promoKey);
+		} else {
+			return null;
+		}
+	}
+
+	public void setPromoKey(Key promoKey) {
+		this.promoKey = promoKey;
 	}
 
 }

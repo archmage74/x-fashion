@@ -46,7 +46,7 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 
 	private UserServiceAsync userService = (UserServiceAsync) GWT.create(UserService.class);
 	private PromoServiceAsync promoService = (PromoServiceAsync) GWT.create(PromoService.class);
-	
+
 	private HashMap<Long, PromoDTO> promos;
 
 	protected StockDataProvider stockProvider;
@@ -66,7 +66,7 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 		this.stockPanel = new StockPanel(articleTypeDatabase);
 
 		this.textMessages = GWT.create(TextMessages.class);
-		
+
 		registerForEvents();
 	}
 
@@ -82,6 +82,7 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 			public void yes() {
 				intoStock(event.getNotepad().getArticles(), addedArticleNumber);
 			}
+
 			@Override
 			public void no() {
 				// nothing to do
@@ -89,7 +90,7 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 		});
 		confirmIntoStock.show();
 	}
-	
+
 	private void intoStock(final Collection<ArticleAmountDTO> articles, final long addedArticleNumber) {
 		AsyncCallback<Collection<ArticleAmountDTO>> callback = new AsyncCallback<Collection<ArticleAmountDTO>>() {
 			@Override
@@ -178,6 +179,7 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 			public void onFailure(Throwable caught) {
 				Xfashion.fireError(caught.getMessage());
 			}
+
 			@Override
 			public void onSuccess(Set<ArticleAmountDTO> result) {
 				storeStock(result);
@@ -192,6 +194,7 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 			public void onSuccess(List<PromoDTO> result) {
 				storePromos(result);
 			}
+
 			@Override
 			public void onFailure(Throwable caught) {
 				Xfashion.fireError(caught.getMessage());
@@ -206,7 +209,7 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 			promos.put(promo.getEan(), promo);
 		}
 	}
-	
+
 	private void refresh() {
 		List<ArticleTypeDTO> filteredArticleTypes = articleTypeDatabase.getArticleTypeProvider().getList();
 		List<ArticleAmountDTO> filteredStockItems = new ArrayList<ArticleAmountDTO>();

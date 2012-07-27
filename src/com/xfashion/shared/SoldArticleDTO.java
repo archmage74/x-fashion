@@ -22,7 +22,14 @@ public class SoldArticleDTO implements IsSerializable {
 
 	protected Integer sellPrice;
 	
+	/**
+	 * sell price without taking promo into account
+	 */
+	protected Integer originalSellPrice;
+	
 	protected Date sellDate;
+	
+	protected String promoKey;
 
 	public SoldArticleDTO() {
 		
@@ -36,6 +43,7 @@ public class SoldArticleDTO implements IsSerializable {
 		this.shopName = shopDTO.getName();
 		this.buyPrice = articleTypeDTO.getBuyPrice();
 		this.sellPrice = sellPrice;
+		this.originalSellPrice = sellPrice;
 	}
 	
 	public String getKey() {
@@ -114,12 +122,28 @@ public class SoldArticleDTO implements IsSerializable {
 		this.sellPrice = sellPrice;
 	}
 
+	public Integer getOriginalSellPrice() {
+		return originalSellPrice;
+	}
+
+	public void setOriginalSellPrice(Integer originalSellPrice) {
+		this.originalSellPrice = originalSellPrice;
+	}
+
 	public Date getSellDate() {
 		return sellDate;
 	}
 
 	public void setSellDate(Date sellDate) {
 		this.sellDate = sellDate;
+	}
+
+	public String getPromoKey() {
+		return promoKey;
+	}
+
+	public void setPromoKey(String promoKey) {
+		this.promoKey = promoKey;
 	}
 
 }

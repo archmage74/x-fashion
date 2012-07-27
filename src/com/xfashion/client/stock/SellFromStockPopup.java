@@ -224,6 +224,12 @@ public class SellFromStockPopup {
 		}
 
 		SoldArticleDTO soldArticle = sellArticles.get(sellArticles.size() - 1);
+		if (soldArticle.getPromoKey() != null) {
+			Xfashion.fireError(errorMessages.onlyOnePromoAllowed());
+			return;
+		}
+		
+		soldArticle.setPromoKey(promo.getKey());
 		if (promo.getPrice() != null) {
 			soldArticle.setSellPrice(promo.getPrice());
 		} else {
