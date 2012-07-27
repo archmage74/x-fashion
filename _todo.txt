@@ -92,6 +92,9 @@ DONE - show dialog when adding articles to stock: "Achtung, es werden x Artikel 
 DONE - fix bug: 0 articles are added to stock - this should not happen, just the message that notepad is empty   
 DONE - image-size in thumbnails
 DONE - store promo code to sold articles to show in statistic
+DONE - initial sorting of ArticleTypes for admin
+
+stock is not shown immediatly if loaded too slow
 
 add "Wareneingang" to Protokolle view
 
