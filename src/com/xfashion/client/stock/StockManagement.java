@@ -12,6 +12,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Panel;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.db.ArticleTypeDatabase;
+import com.xfashion.client.db.event.ArticlesLoadedEvent;
+import com.xfashion.client.db.event.ArticlesLoadedHandler;
 import com.xfashion.client.db.event.FilterRefreshedEvent;
 import com.xfashion.client.db.event.FilterRefreshedHandler;
 import com.xfashion.client.db.event.RefreshFilterEvent;
@@ -42,7 +44,8 @@ import com.xfashion.shared.PromoDTO;
 import com.xfashion.shared.SoldArticleDTO;
 import com.xfashion.shared.UserRole;
 
-public class StockManagement implements IntoStockHandler, SellFromStockHandler, RequestOpenSellPopupHandler, LoginHandler, FilterRefreshedHandler {
+public class StockManagement implements IntoStockHandler, SellFromStockHandler, RequestOpenSellPopupHandler, LoginHandler, FilterRefreshedHandler,
+ ArticlesLoadedHandler {
 
 	private UserServiceAsync userService = (UserServiceAsync) GWT.create(UserService.class);
 	private PromoServiceAsync promoService = (PromoServiceAsync) GWT.create(PromoService.class);
@@ -144,6 +147,11 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 			readStock();
 		}
 	}
+	
+	@Override
+	public void onArticlesLoaded(ArticlesLoadedEvent event) {
+		// refresh();
+	}
 
 	@Override
 	public void onFilterRefreshed(FilterRefreshedEvent event) {
@@ -223,6 +231,7 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 			Collections.sort(filteredStockItems, sortStrategy);
 		}
 		stockProvider.setList(filteredStockItems);
+		stockProvider.refresh();
 	}
 
 	private void registerForEvents() {
@@ -231,6 +240,7 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 		Xfashion.eventBus.addHandler(SellFromStockEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(LoginEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(FilterRefreshedEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(ArticlesLoadedEvent.TYPE, this);
 	}
 
 }

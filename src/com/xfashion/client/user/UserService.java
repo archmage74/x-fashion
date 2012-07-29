@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+import com.xfashion.shared.AddedArticleDTO;
 import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.DeliveryNoticeDTO;
 import com.xfashion.shared.NotepadDTO;
@@ -78,11 +79,17 @@ public interface UserService extends RemoteService {
 
 	void deleteStockEntry(ArticleAmountDTO articleAmount) throws IllegalArgumentException;
 	
-	List<SoldArticleDTO> readSoldArticles(long from, long to) throws IllegalArgumentException;
+	List<SoldArticleDTO> readSoldArticles(int from, int to) throws IllegalArgumentException;
 	
-	List<SoldArticleDTO> readSoldArticlesOfShop(String shopKey, long from, long to) throws IllegalArgumentException;
+	List<SoldArticleDTO> readSoldArticlesOfShop(String shopKey, int from, int to) throws IllegalArgumentException;
 
-	List<SoldArticleDTO> readOwnSoldArticles(long from, long to) throws IllegalArgumentException;
+	List<SoldArticleDTO> readOwnSoldArticles(int from, int to) throws IllegalArgumentException;
+	
+	List<AddedArticleDTO> readWareInput(int from, int to) throws IllegalArgumentException;
+
+	List<AddedArticleDTO> readWareInputOfShop(String shopKey, int from, int to) throws IllegalArgumentException;
+
+	List<AddedArticleDTO> readOwnWareInput(int from, int to) throws IllegalArgumentException;
 
 	
 	// Shop-PriceChanges

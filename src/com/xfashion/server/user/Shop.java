@@ -1,19 +1,25 @@
 package com.xfashion.server.user;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import javax.jdo.annotations.Extension;
 import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.Order;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.xfashion.server.AddedArticle;
 import com.xfashion.server.PriceChange;
 import com.xfashion.server.SoldArticle;
 import com.xfashion.server.notepad.ArticleAmount;
 import com.xfashion.server.notepad.Notepad;
+import com.xfashion.shared.AddedArticleDTO;
 import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.DeliveryNoticeDTO;
 import com.xfashion.shared.NotepadDTO;
@@ -44,9 +50,6 @@ public class Shop {
 	@Persistent
 	private String city;
 	
-//	@Persistent
-//	private String description;
-	
 	@Persistent
 	Set<Notepad> notepads;
 	
@@ -57,7 +60,12 @@ public class Shop {
 	Set<ArticleAmount> articles;
 	
 	@Persistent
-	Set<SoldArticle> soldArticles;
+	@Order(extensions = @Extension(vendorName="datanucleus",key="list-ordering", value="sellDate desc"))
+	List<SoldArticle> soldArticles;
+	
+	@Persistent(mappedBy = "shop")
+	@Order(extensions = @Extension(vendorName="datanucleus",key="list-ordering", value="addDate desc"))
+	List<AddedArticle> addedArticles;
 	
 	@Persistent
 	Set<PriceChange> priceChanges;
@@ -66,7 +74,8 @@ public class Shop {
 		notepads = new HashSet<Notepad>();
 		deliveryNotices = new HashSet<DeliveryNotice>();
 		articles = new HashSet<ArticleAmount>();
-		soldArticles = new HashSet<SoldArticle>();
+		soldArticles = new ArrayList<SoldArticle>();
+		addedArticles = new ArrayList<AddedArticle>();
 	}
 	
 	public Shop(ShopDTO dto) {
@@ -146,8 +155,17 @@ public class Shop {
 		return deliveryNotices;
 	}
 	
-	public Set<SoldArticle> getSoldArticles() {
+	public List<SoldArticle> getSoldArticles() {
 		return soldArticles;
+	}
+
+	public List<AddedArticle> getAddedArticles() {
+		return addedArticles;
+	}
+	
+	public void addAddedArticle(AddedArticle addedArticle) {
+		addedArticles.add(addedArticle);
+		addedArticle.setShop(this);
 	}
 
 	public Set<PriceChange> getPriceChanges() {
@@ -199,6 +217,14 @@ public class Shop {
 		Set<ArticleAmountDTO> dtos = new HashSet<ArticleAmountDTO>();
 		for (ArticleAmount articleAmount : getArticles()) {
 			dtos.add(articleAmount.createDTO());
+		}
+		return dtos;
+	}
+	
+	public Set<AddedArticleDTO> createWareInput() {
+		Set<AddedArticleDTO> dtos = new HashSet<AddedArticleDTO>();
+		for (AddedArticle addedArticle : getAddedArticles()) {
+			dtos.add(addedArticle.createDTO());
 		}
 		return dtos;
 	}

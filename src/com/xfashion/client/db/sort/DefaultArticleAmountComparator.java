@@ -25,6 +25,15 @@ public class DefaultArticleAmountComparator implements IArticleAmountComparator 
 		ArticleTypeDataProvider articleTypeProvider = articleTypeDatabase.getArticleTypeProvider();
 		ArticleTypeDTO at0 = articleTypeProvider.resolveData(o0.getArticleTypeKey());
 		ArticleTypeDTO at1 = articleTypeProvider.resolveData(o1.getArticleTypeKey());
+		if (at0 == at1) {
+			return 0;
+		}
+		if (at0 == null) {
+			return 1;
+		}
+		if (at1 == null) {
+			return -1;
+		}
 		return articleTypeComparator.compare(at0, at1);
 	}
 }

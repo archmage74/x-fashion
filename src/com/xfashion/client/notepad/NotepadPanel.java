@@ -139,15 +139,15 @@ public class NotepadPanel implements IsMinimizable, OpenNotepadHandler, SaveNote
 	public void onDeliveryNoticeUpdated(DeliveryNoticeUpdatedEvent event) {
 		setDeliveryNoticeInfo(event.getDeliveryNotice());
 	}
-	
+
 	protected Panel createArticlePanel(ArticleAmountDataProvider articleAmountProvider) {
 		VerticalPanel panel = new VerticalPanel();
 
 		headerPanel = createHeaderPanel();
 		panel.add(headerPanel);
 
-		GetPriceFromArticleAmountStrategy priceStrategy = new GetPriceFromArticleAmountStrategy(articleAmountProvider,
-				ArticleTypeManagement.getArticleTypePriceStrategy);
+		GetPriceFromArticleAmountStrategy<ArticleAmountDTO> priceStrategy = new GetPriceFromArticleAmountStrategy<ArticleAmountDTO>(
+				articleAmountProvider, ArticleTypeManagement.getArticleTypePriceStrategy);
 		ArticleTable<ArticleAmountDTO> att = new NotepadArticleTable(provider, priceStrategy);
 		Panel atp = att.create(articleAmountProvider);
 		panel.add(atp);

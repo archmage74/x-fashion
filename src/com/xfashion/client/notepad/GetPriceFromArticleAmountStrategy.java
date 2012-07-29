@@ -1,22 +1,29 @@
 package com.xfashion.client.notepad;
 
+import com.xfashion.client.at.ArticleDataProvider;
 import com.xfashion.client.at.IGetPriceStrategy;
 import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.ArticleTypeDTO;
 
-public class GetPriceFromArticleAmountStrategy implements IGetPriceStrategy<ArticleAmountDTO> {
+public class GetPriceFromArticleAmountStrategy<T extends ArticleAmountDTO> implements IGetPriceStrategy<T> {
 
-	protected ArticleAmountDataProvider articleAmountDataProvider;
+	protected ArticleDataProvider<T> articleAmountDataProvider;
 	protected IGetPriceStrategy<ArticleTypeDTO> priceStrategy;
 	
-	public GetPriceFromArticleAmountStrategy(ArticleAmountDataProvider articleAmountDataProvider, IGetPriceStrategy<ArticleTypeDTO> priceStrategy) {
+	public GetPriceFromArticleAmountStrategy(ArticleDataProvider<T> articleAmountDataProvider, IGetPriceStrategy<ArticleTypeDTO> priceStrategy) {
 		this.articleAmountDataProvider = articleAmountDataProvider;
 		this.priceStrategy = priceStrategy;
 	}
 	
 	@Override
-	public Integer getPrice(ArticleAmountDTO item) {
+	public Integer getPrice(T item) {
+		if (item == null) {
+			return null;
+		}
 		ArticleTypeDTO articleType = articleAmountDataProvider.retrieveArticleType(item);
+		if (articleType == null) {
+			return null;
+		}
 		return priceStrategy.getPrice(articleType);
 	}
 	

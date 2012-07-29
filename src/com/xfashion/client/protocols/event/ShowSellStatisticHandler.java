@@ -1,4 +1,4 @@
-package com.xfashion.client.sell.event;
+package com.xfashion.client.protocols.event;
 
 
 public interface ShowSellStatisticHandler {

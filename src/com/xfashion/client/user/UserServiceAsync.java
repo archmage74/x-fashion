@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.xfashion.shared.AddedArticleDTO;
 import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.DeliveryNoticeDTO;
 import com.xfashion.shared.NotepadDTO;
@@ -49,6 +50,8 @@ public interface UserServiceAsync {
 
 	void updateDeliveryNotice(DeliveryNoticeDTO notepad, AsyncCallback<DeliveryNoticeDTO> callback);
 
+	
+	// Shop-Stock
 	void createStockEntry(ArticleAmountDTO articleAmount, AsyncCallback<ArticleAmountDTO> callback);
 
 	void readOwnStock(AsyncCallback<Set<ArticleAmountDTO>> callback);
@@ -63,12 +66,20 @@ public interface UserServiceAsync {
 
 	void deleteStockEntry(ArticleAmountDTO articleAmount, AsyncCallback<Void> callback);
 
-	void readSoldArticles(long from, long to, AsyncCallback<List<SoldArticleDTO>> callback);
+	void readSoldArticles(int from, int to, AsyncCallback<List<SoldArticleDTO>> callback);
 	
-	void readSoldArticlesOfShop(String shopKey, long from, long to, AsyncCallback<List<SoldArticleDTO>> callback);
+	void readSoldArticlesOfShop(String shopKey, int from, int to, AsyncCallback<List<SoldArticleDTO>> callback);
 
-	void readOwnSoldArticles(long from, long to, AsyncCallback<List<SoldArticleDTO>> callback);
+	void readOwnSoldArticles(int from, int to, AsyncCallback<List<SoldArticleDTO>> callback);
+	
+	void readWareInput(int from, int to, AsyncCallback<List<AddedArticleDTO>> callback);
+	
+	void readWareInputOfShop(String userKey, int from, int to, AsyncCallback<List<AddedArticleDTO>> callback);
+	
+	void readOwnWareInput(int from, int to, AsyncCallback<List<AddedArticleDTO>> callback);
 
+	
+	// Shop-PriceChanges
 	void createPriceChangeForShop(String shopKey, PriceChangeDTO dto, AsyncCallback<Void> callback);
 
 	void readOwnPriceChanges(AsyncCallback<Collection<PriceChangeDTO>> callback);

@@ -94,7 +94,7 @@ DONE - image-size in thumbnails
 DONE - store promo code to sold articles to show in statistic
 DONE - initial sorting of ArticleTypes for admin
 
-stock is not shown immediatly if loaded too slow
+TEST - stock is not shown immediatly if loaded too slow
 
 add "Wareneingang" to Protokolle view
 
@@ -102,7 +102,7 @@ forbid removing of used article-types
 
 add remove from stock function in article-details popup: show current amount there; ask before removing, secret button to access remove-protocol
 
-add deleted-articles statistic for shops (similar to sell statistic, but hidden feature.
+add deleted-articles statistic for shops (similar to sell statistic, but hidden feature).
 
 add stock-view of shops to admin
 

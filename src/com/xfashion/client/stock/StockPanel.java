@@ -139,8 +139,8 @@ public class StockPanel implements NotepadStartMinimizeHandler, NotepadStartMaxi
 		headerPanel = createHeaderPanel();
 		articlePanel.add(headerPanel);
 
-		GetPriceFromArticleAmountStrategy priceStrategy = new GetPriceFromArticleAmountStrategy(articleAmountProvider,
-				ArticleTypeManagement.getArticleTypePriceStrategy);
+		GetPriceFromArticleAmountStrategy<ArticleAmountDTO> priceStrategy = new GetPriceFromArticleAmountStrategy<ArticleAmountDTO>(
+				articleAmountProvider, ArticleTypeManagement.getArticleTypePriceStrategy);
 		ArticleTable<ArticleAmountDTO> att = new StockArticleTable(articleTypeDatabase, priceStrategy);
 		Panel atp = att.create(articleAmountProvider);
 		articlePanel.add(atp);

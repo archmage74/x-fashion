@@ -25,7 +25,7 @@ public interface MenuMessages extends Messages {
 	@DefaultMessage("Bestand")
 	String stock();
 
-	@DefaultMessage("Verkäufe")
+	@DefaultMessage("Protokolle")
 	String sellStatistic();
 
 	@DefaultMessage("Aktionen")

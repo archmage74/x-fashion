@@ -87,7 +87,14 @@ public abstract class ArticleTable<T> {
 				SafeHtmlBuilder sb = new SafeHtmlBuilder();
 				String styles = concatStyles("articlePrice", getAdditionalPriceStyles(a));
 				sb.appendHtmlConstant("<div class=\"" + styles + "\">");
-				sb.appendEscaped(formatter.formatCentsToCurrency(getPriceStrategy.getPrice(a)));
+				String priceString = textMessages.unknownPrice();
+				if (a != null) {
+					Integer price = getPriceStrategy.getPrice(a);
+					if (price != null) {
+						priceString = formatter.formatCentsToCurrency(price);
+					}
+				}
+				sb.appendEscaped(priceString);
 				sb.appendHtmlConstant("</div>");
 				return sb.toSafeHtml();
 			}
@@ -103,7 +110,10 @@ public abstract class ArticleTable<T> {
 				SafeHtmlBuilder sb = new SafeHtmlBuilder();
 				String styles = concatStyles("articleUpLe", getAdditionalMatrixStyles(a));
 				sb.appendHtmlConstant("<div class=\"" + styles + "\">");
-				ColorDTO color = provider.getColorProvider().resolveData(at.getColorKey());
+				ColorDTO color = null;
+				if (at != null) {
+					color = provider.getColorProvider().resolveData(at.getColorKey());
+				}
 				String name = textMessages.unknownColor();
 				if (color != null) {
 					name = color.getName();
@@ -112,7 +122,10 @@ public abstract class ArticleTable<T> {
 				sb.appendHtmlConstant("</div>");
 				styles = concatStyles("articleBoLe", getAdditionalMatrixStyles(a));
 				sb.appendHtmlConstant("<div class=\"" + styles + "\">");
-				SizeDTO size = provider.getSizeProvider().resolveData(at.getSizeKey());
+				SizeDTO size = null;
+				if (at != null) {
+					size = provider.getSizeProvider().resolveData(at.getSizeKey());
+				}
 				name = textMessages.unknownSize();
 				if (size != null) {
 					name = size.getName();
@@ -133,20 +146,27 @@ public abstract class ArticleTable<T> {
 				SafeHtmlBuilder html = new SafeHtmlBuilder();
 				StringBuffer sb = new StringBuffer();
 				String styles = concatStyles("articleUpCe", getAdditionalMatrixStyles(a));
+				String name = textMessages.unknownName();
+				if (at != null && at.getName() != null) {
+					name = at.getName();
+				}
 				sb.append("<div class=\"" + styles + "\"");
-				if (at.getName().length() > 14) {
+				if (name.length() > 14) {
 					sb.append(" style=\"font-size: 10px;\"");
 				}
 				sb.append(">");
 				html.appendHtmlConstant(sb.toString());
-				html.appendEscaped(at.getName());
+				html.appendEscaped(name);
 				html.appendHtmlConstant("</div>");
 				styles = concatStyles("articleBoCe", getAdditionalMatrixStyles(a));
 				html.appendHtmlConstant("<div class=\"" + styles + "\">");
-				StyleDTO dto = provider.getCategoryProvider().resolveStyle(at.getStyleKey());
-				String name = textMessages.unknownStyle();
-				if (dto != null) {
-					name = dto.getName();
+				StyleDTO style = null;
+				if (at != null) {
+					style = provider.getCategoryProvider().resolveStyle(at.getStyleKey());
+				}
+				name = textMessages.unknownStyle();
+				if (style != null) {
+					name = style.getName();
 				}
 				html.appendEscaped(name);
 				html.appendHtmlConstant("</div>");
@@ -164,7 +184,10 @@ public abstract class ArticleTable<T> {
 				SafeHtmlBuilder sb = new SafeHtmlBuilder();
 				String styles = concatStyles("articleUpLe", getAdditionalMatrixStyles(a));
 				sb.appendHtmlConstant("<div class=\"" + styles + "\">");
-				CategoryDTO category = provider.getCategoryProvider().resolveData(at.getCategoryKey());
+				CategoryDTO category = null;
+				if (at != null) {
+					category = provider.getCategoryProvider().resolveData(at.getCategoryKey());
+				}
 				String name = textMessages.unknownCategory();
 				if (category != null) {
 					name = category.getName();
@@ -173,7 +196,10 @@ public abstract class ArticleTable<T> {
 				sb.appendHtmlConstant("</div>");
 				styles = concatStyles("articleBoLe", getAdditionalMatrixStyles(a));
 				sb.appendHtmlConstant("<div class=\"" + styles + "\">");
-				BrandDTO brand = provider.getBrandProvider().resolveData(at.getBrandKey());
+				BrandDTO brand = null;
+				if (at != null) {
+					brand = provider.getBrandProvider().resolveData(at.getBrandKey());
+				}
 				name = textMessages.unknownBrand();
 				if (brand != null) {
 					name = brand.getName();
@@ -193,7 +219,7 @@ public abstract class ArticleTable<T> {
 				ArticleTypeDTO at = ap.retrieveArticleType(a);
 				StringBuffer imageHtml = new StringBuffer();
 				imageHtml.append("<img class=\"articleIconImage\" ");
-				if (at.getImageKey() != null) {
+				if (at != null && at.getImageKey() != null) {
 					imageHtml.append("src=\"");
 					imageHtml.append(at.getImageUrl());
 					imageHtml.append("=s48");

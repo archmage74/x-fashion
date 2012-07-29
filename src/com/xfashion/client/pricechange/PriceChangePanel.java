@@ -24,27 +24,27 @@ public class PriceChangePanel {
 	public static final int PANEL_MAX_WIDTH = 550;
 
 	protected ArticleTypeDatabase articleTypeDatabase;
-	
+
 	protected HorizontalPanel headerPanel;
 	protected HorizontalPanel panel;
 	protected ScrollPanel scrollPanel;
-	
+
 	protected TextMessages textMessages;
-	
+
 	public PriceChangePanel(ArticleTypeDatabase articleTypeDatabase) {
 		this.textMessages = GWT.create(TextMessages.class);
 		this.articleTypeDatabase = articleTypeDatabase;
 	}
 
 	public Panel createPanel(PriceChangeArticleAmountDataProvider changedArticleTypesProvider) {
-		
+
 		if (panel == null) {
 			panel = new HorizontalPanel();
 			panel.add(createArticlePanel(changedArticleTypesProvider));
 		}
 		return panel;
 	}
-	
+
 	public void setWidth(int width) {
 		scrollPanel.setWidth(width + "px");
 	}
@@ -56,8 +56,8 @@ public class PriceChangePanel {
 		headerPanel = createHeaderPanel();
 		articlePanel.add(headerPanel);
 
-		GetPriceFromArticleAmountStrategy priceStrategy = new GetPriceFromArticleAmountStrategy(articleAmountProvider,
-				ArticleTypeManagement.getArticleTypePriceStrategy);
+		GetPriceFromArticleAmountStrategy<ArticleAmountDTO> priceStrategy = new GetPriceFromArticleAmountStrategy<ArticleAmountDTO>(
+				articleAmountProvider, ArticleTypeManagement.getArticleTypePriceStrategy);
 		ArticleTable<ArticleAmountDTO> att = new PriceChangeArticleTable(articleTypeDatabase, priceStrategy, articleAmountProvider);
 		Panel atp = att.create(articleAmountProvider);
 		articlePanel.add(atp);
@@ -87,7 +87,7 @@ public class PriceChangePanel {
 	}
 
 	protected Button createAcceptAllPriceChangesButton() {
-		Button acceptAllPriceChangesButton = new Button(textMessages.acceptAllPriceChanges()); 
+		Button acceptAllPriceChangesButton = new Button(textMessages.acceptAllPriceChanges());
 		acceptAllPriceChangesButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {

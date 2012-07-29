@@ -1,20 +1,20 @@
-package com.xfashion.client.sell;
+package com.xfashion.client.protocols;
 
 import com.xfashion.client.at.ArticleDataProvider;
 import com.xfashion.client.db.ArticleTypeDatabase;
+import com.xfashion.shared.AddedArticleDTO;
 import com.xfashion.shared.ArticleTypeDTO;
-import com.xfashion.shared.SoldArticleDTO;
 
-public class SoldArticleDataProvider extends ArticleDataProvider<SoldArticleDTO> {
+public class AddedArticleDataProvider extends ArticleDataProvider<AddedArticleDTO> {
 
 	private ArticleTypeDatabase articleTypeDatabase;
 	
-	public SoldArticleDataProvider(ArticleTypeDatabase articleTypeDatabase) {
+	public AddedArticleDataProvider(ArticleTypeDatabase articleTypeDatabase) {
 		this.articleTypeDatabase = articleTypeDatabase;
 	}
 	
 	@Override
-	public ArticleTypeDTO retrieveArticleType(SoldArticleDTO item) {
+	public ArticleTypeDTO retrieveArticleType(AddedArticleDTO item) {
 		return articleTypeDatabase.getArticleTypeProvider().resolveData(item.getArticleTypeKey());
 	}
 

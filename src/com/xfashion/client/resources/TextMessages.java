@@ -24,6 +24,7 @@ public interface TextMessages extends Messages {
 	String bulkEditConfirmation(int articleNumber);
 	
 	String name();
+	String unknownName();
 	String brand();
 	String unknownBrand();
 	String style();
@@ -93,6 +94,7 @@ public interface TextMessages extends Messages {
 	String sellStatisticHeader();
 	String allShops();
 	String sellStatisticDate(Date sellDate);
+	String addedToStockDate(Date addDate);
 	String addMoreSoldArticles();
 
 	String promoHeader();

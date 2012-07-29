@@ -1,4 +1,4 @@
-package com.xfashion.client.sell;
+package com.xfashion.client.protocols;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,59 +21,60 @@ import com.google.gwt.user.client.ui.Widget;
 import com.xfashion.client.Formatter;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTable;
-import com.xfashion.client.at.GetSellPriceStrategy;
+import com.xfashion.client.at.ArticleTypeManagement;
+import com.xfashion.client.at.GetSellPriceFromSoldArticleStrategy;
 import com.xfashion.client.at.ProvidesArticleFilter;
+import com.xfashion.client.notepad.GetPriceFromArticleAmountStrategy;
+import com.xfashion.client.protocols.event.AddMoreSoldArticlesEvent;
+import com.xfashion.client.protocols.event.ShowSellStatisticEvent;
 import com.xfashion.client.resources.ImageResources;
 import com.xfashion.client.resources.TextMessages;
-import com.xfashion.client.sell.event.AddMoreSoldArticlesEvent;
-import com.xfashion.client.sell.event.ShowSellStatisticEvent;
 import com.xfashion.client.user.UserManagement;
 import com.xfashion.client.user.UserService;
 import com.xfashion.client.user.UserServiceAsync;
+import com.xfashion.shared.AddedArticleDTO;
 import com.xfashion.shared.ShopDTO;
 import com.xfashion.shared.SoldArticleDTO;
 import com.xfashion.shared.UserDTO;
 import com.xfashion.shared.UserRole;
 
-public class SellStatisticPanel {
+public class ProtocolsPanel {
 
-	public static final int PANEL_WIDTH = 800; 
+	public static final String SOLD_ARTICLE_PANEL_WIDTH = "800px";
+	public static final String ADDED_ARTICLE_PANEL_WIDTH = "700px";
 
 	protected UserServiceAsync userService = (UserServiceAsync) GWT.create(UserService.class);
 
 	protected List<ShopDTO> knownShops;
 	protected ProvidesArticleFilter filterProvider;
-	
+
 	protected Panel scrollPanel;
-	
+
 	protected ListBox shopListBox;
 	protected Button addMoreButton;
 	protected HorizontalPanel headerPanel;
-	
+
 	protected TextMessages textMessages;
 	protected ImageResources images;
 	protected Formatter formatter;
-	
-	public SellStatisticPanel(ProvidesArticleFilter filterProvider) {
+
+	public ProtocolsPanel(ProvidesArticleFilter filterProvider) {
 		this.knownShops = new ArrayList<ShopDTO>();
 		this.textMessages = GWT.create(TextMessages.class);
-		this.images = GWT.<ImageResources>create(ImageResources.class);
+		this.images = GWT.<ImageResources> create(ImageResources.class);
 		this.formatter = Formatter.getInstance();
 
 		this.filterProvider = filterProvider;
 	}
-	
-	public Panel createPanel(SoldArticleDataProvider articleAmountProvider) {
-		Panel articlePanel = createArticlePanel(articleAmountProvider);
-		scrollPanel = new SimplePanel();
-		scrollPanel.setStyleName("filterPanel");
-		setWidth(PANEL_WIDTH);
-		scrollPanel.add(articlePanel);
-		return scrollPanel;
-	}
-	
-	public void setWidth(int width) {
-		scrollPanel.setWidth(width + "px");
+
+	public Panel createPanel(SoldArticleDataProvider soldArticleProvider, AddedArticleDataProvider addedArticleProvider) {
+		VerticalPanel panel = new VerticalPanel();
+		panel.add(createHeaderPanel());
+		if (UserManagement.hasRole(UserRole.ADMIN, UserRole.DEVELOPER)) {
+			panel.add(createShopList());
+		}
+		panel.add(createProtocolPanels(soldArticleProvider, addedArticleProvider));
+		return panel;
 	}
 
 	public void setUsers(Collection<UserDTO> users) {
@@ -88,33 +89,66 @@ public class SellStatisticPanel {
 			}
 		}
 	}
-	
-	public void enableAddMore() {
+
+	public void enableAddMoreSoldArticles() {
 		addMoreButton.setEnabled(true);
 	}
-	
-	public void disableAddMore() {
+
+	public void disableAddMoreSoldArticles() {
 		addMoreButton.setEnabled(false);
 	}
-	
-	protected Panel createArticlePanel(SoldArticleDataProvider articleAmountProvider) {
 
-		VerticalPanel panel = new VerticalPanel();
+	public void enableAddMoreAddedArticles() {
+		// TODO Auto-generated method stub
+	}
 
-		panel.add(createHeaderPanel());
-		if (UserManagement.hasRole(UserRole.ADMIN, UserRole.DEVELOPER)) {
-			panel.add(createShopList());
-		}
+	public void disableAddMoreAddedArticles() {
+		// TODO
+	}
 
-		ArticleTable<SoldArticleDTO> att = new SellStatisticArticleTable(filterProvider, new GetSellPriceStrategy());
-		Panel atp = att.create(articleAmountProvider);
-		panel.add(atp);
+	protected Panel createProtocolPanels(SoldArticleDataProvider soldArticleProvider, AddedArticleDataProvider addedArticleProvider) {
+		HorizontalPanel hp = new HorizontalPanel();
+		hp.add(createSoldArticlePanel(soldArticleProvider));
+		hp.add(createAddedArticlePanel(addedArticleProvider));
+		return hp;
+	}
 
-		panel.add(createAddMoreButton());
-		
+	protected Panel createSoldArticlePanel(SoldArticleDataProvider soldArticleProvider) {
+		VerticalPanel vp = new VerticalPanel();
+
+		ArticleTable<SoldArticleDTO> att = new SoldArticleTable(filterProvider, new GetSellPriceFromSoldArticleStrategy());
+		Panel atp = att.create(soldArticleProvider);
+		vp.add(atp);
+		vp.add(createAddMoreSoldArticlesButton());
+
+		SimplePanel panel = new SimplePanel();
+		panel.setStyleName("filterPanel");
+		panel.setWidth(SOLD_ARTICLE_PANEL_WIDTH);
+		panel.add(vp);
+
 		return panel;
 	}
-	
+
+	protected Panel createAddedArticlePanel(AddedArticleDataProvider addedArticleProvider) {
+		VerticalPanel vp = new VerticalPanel();
+
+		GetPriceFromArticleAmountStrategy<AddedArticleDTO> priceStrategy = new GetPriceFromArticleAmountStrategy<AddedArticleDTO>(
+				addedArticleProvider, ArticleTypeManagement.getArticleTypePriceStrategy);
+		ArticleTable<AddedArticleDTO> att = new AddedArticleTable(filterProvider, priceStrategy);
+		Panel atp = att.create(addedArticleProvider);
+		vp.add(atp);
+		
+		// TODO
+		// vp.add(createAddMoreAddedArticlesButton());
+
+		SimplePanel panel = new SimplePanel();
+		panel.setStyleName("filterPanel");
+		panel.setWidth(ADDED_ARTICLE_PANEL_WIDTH);
+		panel.add(vp);
+
+		return panel;
+	}
+
 	private Widget createShopList() {
 		shopListBox = new ListBox();
 		shopListBox.setVisibleItemCount(1);
@@ -127,7 +161,7 @@ public class SellStatisticPanel {
 		return shopListBox;
 	}
 
-	private Widget createAddMoreButton() {
+	private Widget createAddMoreSoldArticlesButton() {
 		addMoreButton = new Button(textMessages.addMoreSoldArticles());
 		addMoreButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -145,26 +179,26 @@ public class SellStatisticPanel {
 			Xfashion.eventBus.fireEvent(new ShowSellStatisticEvent(knownShops.get(shopIndex)));
 		}
 	}
-	
+
 	protected HorizontalPanel createHeaderPanel() {
 		headerPanel = new HorizontalPanel();
 		headerPanel.addStyleName("filterHeader");
-		headerPanel.setWidth(PANEL_WIDTH + "px");
+		headerPanel.setWidth(SOLD_ARTICLE_PANEL_WIDTH + "px");
 
 		headerPanel.add(createHeaderLabel());
-		
+
 		HorizontalPanel toolPanel = new HorizontalPanel();
 		toolPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		headerPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		headerPanel.add(toolPanel);
-		
+
 		return headerPanel;
 	}
-	
+
 	private Label createHeaderLabel() {
 		Label headerLabel = new Label(textMessages.sellStatisticHeader());
 		headerLabel.addStyleName("filterLabel attributeFilterLabel");
 		return headerLabel;
 	}
-	
+
 }

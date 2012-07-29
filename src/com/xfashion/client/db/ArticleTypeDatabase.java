@@ -157,6 +157,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 		articleTypeProvider.getList().clear();
 		articleTypes = new ArrayList<ArticleTypeDTO>(result);
 		articleTypeProvider.getList().addAll(result);
+		articleTypeProvider.refreshResolver();
 		Xfashion.eventBus.fireEvent(new ArticlesLoadedEvent());
 		Xfashion.eventBus.fireEvent(new RefreshFilterEvent());
 	}

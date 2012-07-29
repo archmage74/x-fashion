@@ -14,7 +14,7 @@ import com.xfashion.client.db.ArticleTypeServiceAsync;
 import com.xfashion.client.notepad.NotepadManagement;
 import com.xfashion.client.pricechange.PriceChangeManagement;
 import com.xfashion.client.promo.PromoManagement;
-import com.xfashion.client.sell.SellStatisticManagement;
+import com.xfashion.client.protocols.ProtocolsManagement;
 import com.xfashion.client.stock.StockManagement;
 import com.xfashion.client.user.LoginEvent;
 import com.xfashion.client.user.LoginHandler;
@@ -41,7 +41,7 @@ public class MainPanel implements ErrorHandler, LoginHandler {
 	
 	private StockManagement stockManagement;
 	
-	private SellStatisticManagement sellStatisticManagement; 
+	private ProtocolsManagement sellStatisticManagement; 
 
 	private ErrorPopup errorPopup;
 
@@ -55,7 +55,7 @@ public class MainPanel implements ErrorHandler, LoginHandler {
 		userManagement = new UserManagement();
 		notepadManagement = new NotepadManagement(articleTypeDatabase);
 		stockManagement = new StockManagement(articleTypeDatabase);
-		sellStatisticManagement = new SellStatisticManagement(articleTypeDatabase);
+		sellStatisticManagement = new ProtocolsManagement(articleTypeDatabase);
 		promoManagement = new PromoManagement();
 		priceChangeManagement = new PriceChangeManagement(articleTypeDatabase);
 

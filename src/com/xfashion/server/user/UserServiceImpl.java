@@ -27,6 +27,7 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.xfashion.client.user.UserService;
 import com.xfashion.client.util.IdCounterService;
+import com.xfashion.server.AddedArticle;
 import com.xfashion.server.PMF;
 import com.xfashion.server.PriceChange;
 import com.xfashion.server.SoldArticle;
@@ -34,6 +35,7 @@ import com.xfashion.server.notepad.ArticleAmount;
 import com.xfashion.server.notepad.Notepad;
 import com.xfashion.server.util.IdCounterServiceImpl;
 import com.xfashion.server.util.IdCounterType;
+import com.xfashion.shared.AddedArticleDTO;
 import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.DeliveryNoticeDTO;
 import com.xfashion.shared.NotepadDTO;
@@ -585,22 +587,35 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 	}
 
 	private Shop addStockEntries(PersistenceManager pm, Map<String, ArticleAmountDTO> dtos) {
-		Collection<ArticleAmountDTO> toAdd = dtos.values();
+		Collection<ArticleAmountDTO> toAdd = new ArrayList<ArticleAmountDTO>(dtos.values());
 		Shop shop = readOwnShop(pm);
 
-		for (ArticleAmount articleAmount : shop.getArticles()) {
-			ArticleAmountDTO dto = dtos.get(KeyFactory.keyToString(articleAmount.getArticleTypeKey()));
-			if (dto != null) {
-				articleAmount.setAmount(articleAmount.getAmount() + dto.getAmount());
-				toAdd.remove(dto);
+		Transaction tx = pm.currentTransaction();
+
+		try {
+			for (ArticleAmount articleAmount : shop.getArticles()) {
+				ArticleAmountDTO dto = dtos.get(KeyFactory.keyToString(articleAmount.getArticleTypeKey()));
+				if (dto != null) {
+					articleAmount.setAmount(articleAmount.getAmount() + dto.getAmount());
+					toAdd.remove(dto);
+				}
+			}
+			pm.flush();
+	
+			for (ArticleAmountDTO dto : toAdd) {
+				shop.getArticles().add(new ArticleAmount(dto));
+			}
+			pm.flush();
+			
+			for (ArticleAmountDTO dto : dtos.values()) {
+				shop.addAddedArticle(new AddedArticle(dto));
+			}
+			pm.flush();
+		} finally {
+			if (tx.isActive()) {
+				tx.rollback();
 			}
 		}
-		pm.flush();
-
-		for (ArticleAmountDTO dto : toAdd) {
-			shop.getArticles().add(new ArticleAmount(dto));
-		}
-		pm.flush();
 
 		return shop;
 	}
@@ -694,7 +709,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 	}
 
 	@Override
-	public List<SoldArticleDTO> readSoldArticles(long from, long to) throws IllegalArgumentException {
+	public List<SoldArticleDTO> readSoldArticles(int from, int to) throws IllegalArgumentException {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		List<SoldArticleDTO> dtos = new ArrayList<SoldArticleDTO>();
 		try {
@@ -709,7 +724,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<SoldArticle> readSoldArticles(PersistenceManager pm, long from, long to) {
+	private List<SoldArticle> readSoldArticles(PersistenceManager pm, int from, int to) {
 		Query soldArticleQuery = pm.newQuery(SoldArticle.class);
 		soldArticleQuery.setRange(from, to);
 		soldArticleQuery.setOrdering("sellDate desc");
@@ -718,13 +733,16 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 	}
 
 	@Override
-	public List<SoldArticleDTO> readSoldArticlesOfShop(String userKey, long from, long to) throws IllegalArgumentException {
+	public List<SoldArticleDTO> readSoldArticlesOfShop(String shopKey, int from, int to) throws IllegalArgumentException {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		List<SoldArticleDTO> dtos = new ArrayList<SoldArticleDTO>();
 		try {
-			Collection<SoldArticle> soldArticles = readSoldArticlesOfShop(pm, userKey, from, to);
-			for (SoldArticle soldArticle : soldArticles) {
-				dtos.add(soldArticle.createDTO());
+			Shop shop = readShop(pm, shopKey);
+			int cnt = (int) from;
+			List<SoldArticle> soldArticles = shop.getSoldArticles(); 
+			while (cnt < to && cnt < soldArticles.size()) {
+				dtos.add(soldArticles.get(cnt).createDTO());
+				cnt++;
 			}
 		} finally {
 			pm.close();
@@ -732,23 +750,42 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		return dtos;
 	}
 	
-	@SuppressWarnings("unchecked")
-	private List<SoldArticle> readSoldArticlesOfShop(PersistenceManager pm, String shopKey, long from, long to) {
-		Query soldArticleQuery = pm.newQuery(SoldArticle.class);
-		soldArticleQuery.setFilter("shopKey == shopKeyParam");
-		soldArticleQuery.declareParameters("com.google.appengine.api.datastore.Key shopKeyParam");
-		soldArticleQuery.setRange(from, to);
-		soldArticleQuery.setOrdering("sellDate desc");
-		List<SoldArticle> soldArticles = (List<SoldArticle>) soldArticleQuery.execute(KeyFactory.stringToKey(shopKey));
-		return soldArticles;
-	}
-
 	@Override
-	public List<SoldArticleDTO> readOwnSoldArticles(long from, long to) throws IllegalArgumentException {
+	public List<SoldArticleDTO> readOwnSoldArticles(int from, int to) throws IllegalArgumentException {
 		UserDTO userDTO = (UserDTO) this.getThreadLocalRequest().getSession().getAttribute(SESSION_USER); 
 		return readSoldArticlesOfShop(userDTO.getShop().getKeyString(), from, to);
 	}
 
+	@Override
+	public List<AddedArticleDTO> readWareInput(int from, int to) throws IllegalArgumentException {
+		List<AddedArticleDTO> dtos = new ArrayList<AddedArticleDTO>();
+		return dtos;
+	}
+	
+	@Override
+	public List<AddedArticleDTO> readWareInputOfShop(String shopKey, int from, int to) throws IllegalArgumentException {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		List<AddedArticleDTO> dtos = new ArrayList<AddedArticleDTO>();
+		try {
+			Shop shop = readShop(pm, shopKey);
+			int cnt = (int) from;
+			List<AddedArticle> addedArticles = shop.getAddedArticles(); 
+			while (cnt < to && cnt < addedArticles.size()) {
+				dtos.add(addedArticles.get(cnt).createDTO());
+				cnt++;
+			}
+		} finally {
+			pm.close();
+		}
+		return dtos;
+	}
+
+	@Override
+	public List<AddedArticleDTO> readOwnWareInput(int from, int to) throws IllegalArgumentException {
+		UserDTO userDTO = (UserDTO) this.getThreadLocalRequest().getSession().getAttribute(SESSION_USER); 
+		return readWareInputOfShop(userDTO.getShop().getKeyString(), from, to);
+	}
+	
 	@Override
 	public void createPriceChangeForShop(String shopKey, PriceChangeDTO dto) throws IllegalArgumentException {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
@@ -825,4 +862,5 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		}
 		shop.getPriceChanges().removeAll(toRemove);
 	}
+
 }
