@@ -96,11 +96,13 @@ DONE - initial sorting of ArticleTypes for admin
 DONE - stock is not shown immediatly if loaded too slow
 DONE - add "Wareneingang" to Protokolle view
 
-forbid removing of used article-types
-
 add remove from stock function in article-details popup: show current amount there; ask before removing, secret button to access remove-protocol
 
 add deleted-articles statistic for shops (similar to sell statistic, but hidden feature).
+
+bug: article-types gets unsorted if an article is updated
+
+forbid removing of used article-types - should a delete-function exist?
 
 add stock-view of shops to admin
 

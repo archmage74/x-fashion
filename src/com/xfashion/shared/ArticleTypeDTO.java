@@ -29,7 +29,7 @@ public class ArticleTypeDTO extends DTO implements IsSerializable {
 	private String imageKey;
 	
 	private String imageUrl;
-
+	
 	public Long getProductNumber() {
 		return productNumber;
 	}

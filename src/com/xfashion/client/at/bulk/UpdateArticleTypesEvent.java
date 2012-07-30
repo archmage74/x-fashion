@@ -18,9 +18,13 @@ public class UpdateArticleTypesEvent extends Event<UpdateArticleTypesHandler> {
 
 	public UpdateArticleTypesEvent(ArticleTypeDTO articleType, PriceChangeDTO priceChange) {
 		this.articleTypes = new ArrayList<ArticleTypeDTO>();
-		this.articleTypes.add(articleType);
+		if (articleType != null) {
+			this.articleTypes.add(articleType);
+		}
 		this.priceChanges = new ArrayList<PriceChangeDTO>();
-		this.priceChanges.add(priceChange);
+		if (priceChange != null) {
+			this.priceChanges.add(priceChange);
+		}
 	}
 	
 	public UpdateArticleTypesEvent(List<ArticleTypeDTO> articleTypes, Collection<PriceChangeDTO> priceChanges) {

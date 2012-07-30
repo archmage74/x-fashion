@@ -15,7 +15,8 @@ import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ListDataProvider;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTypeDataProvider;
-import com.xfashion.client.at.ArticleTypeDetailPopup;
+import com.xfashion.client.at.ArticleTypePopup;
+import com.xfashion.client.at.EditArticleTypePopup;
 import com.xfashion.client.at.ProvidesArticleFilter;
 import com.xfashion.client.at.bulk.UpdateArticleTypesEvent;
 import com.xfashion.client.at.bulk.UpdateArticleTypesHandler;
@@ -36,10 +37,12 @@ import com.xfashion.client.db.sort.IArticleTypeComparator;
 import com.xfashion.client.name.NameFilterEvent;
 import com.xfashion.client.name.NameFilterHandler;
 import com.xfashion.client.size.SizeDataProvider;
+import com.xfashion.client.user.UserManagement;
 import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.CategoryDTO;
 import com.xfashion.shared.PriceChangeDTO;
+import com.xfashion.shared.UserRole;
 
 public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHandler, RefreshFilterHandler, UpdateArticleTypesHandler,
 		RequestShowArticleTypeDetailsHandler, DeleteArticleTypeHandler, SortArticlesHandler {
@@ -61,7 +64,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 
 	private String nameFilter = null;
 
-	ArticleTypeDetailPopup articleTypeDetailPopup = null;
+	protected ArticleTypePopup articleTypePopup = null;
 	
 	public ArticleTypeDatabase() {
 
@@ -338,10 +341,12 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 		
 	@Override
 	public void onRequestShowArticleTypeDetails(RequestShowArticleTypeDetailsEvent event) {
-		if (articleTypeDetailPopup == null) {
-			articleTypeDetailPopup = new ArticleTypeDetailPopup(this);
+		if (UserManagement.hasRole(UserRole.ADMIN, UserRole.DEVELOPER)) {
+			if (articleTypePopup == null) {
+				articleTypePopup = new EditArticleTypePopup(this);
+			}
+			articleTypePopup.showPopup(event.getArticleType());
 		}
-		articleTypeDetailPopup.showPopup(event.getArticleType());
 	}
 
 	public void updateArticleType(final ArticleTypeDTO articleType) {

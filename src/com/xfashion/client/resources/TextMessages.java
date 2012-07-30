@@ -84,6 +84,9 @@ public interface TextMessages extends Messages {
 	String printStickersHint();
 	String recordArticlesHint();
 	String intoStockHint();
+	String stock();
+	String removeFromStock();
+	String confirmRemoveFromStock();
 
 	String stockManagementHeader();
 	String confirmIntoStock(long addedArticleNumber);

@@ -11,12 +11,16 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Panel;
 import com.xfashion.client.Xfashion;
+import com.xfashion.client.at.ArticleTypeDetailPopup;
+import com.xfashion.client.at.ArticleTypePopup;
 import com.xfashion.client.db.ArticleTypeDatabase;
 import com.xfashion.client.db.event.ArticlesLoadedEvent;
 import com.xfashion.client.db.event.ArticlesLoadedHandler;
 import com.xfashion.client.db.event.FilterRefreshedEvent;
 import com.xfashion.client.db.event.FilterRefreshedHandler;
 import com.xfashion.client.db.event.RefreshFilterEvent;
+import com.xfashion.client.db.event.RequestShowArticleTypeDetailsEvent;
+import com.xfashion.client.db.event.RequestShowArticleTypeDetailsHandler;
 import com.xfashion.client.db.sort.DefaultArticleAmountComparator;
 import com.xfashion.client.db.sort.IArticleAmountComparator;
 import com.xfashion.client.dialog.YesNoCallback;
@@ -28,6 +32,8 @@ import com.xfashion.client.notepad.event.IntoStockHandler;
 import com.xfashion.client.promo.PromoService;
 import com.xfashion.client.promo.PromoServiceAsync;
 import com.xfashion.client.resources.TextMessages;
+import com.xfashion.client.stock.event.RemoveFromStockEvent;
+import com.xfashion.client.stock.event.RemoveFromStockHandler;
 import com.xfashion.client.stock.event.RequestOpenSellPopupEvent;
 import com.xfashion.client.stock.event.RequestOpenSellPopupHandler;
 import com.xfashion.client.stock.event.SellFromStockEvent;
@@ -45,7 +51,7 @@ import com.xfashion.shared.SoldArticleDTO;
 import com.xfashion.shared.UserRole;
 
 public class StockManagement implements IntoStockHandler, SellFromStockHandler, RequestOpenSellPopupHandler, LoginHandler, FilterRefreshedHandler,
- ArticlesLoadedHandler {
+ ArticlesLoadedHandler, RequestShowArticleTypeDetailsHandler, RemoveFromStockHandler {
 
 	private UserServiceAsync userService = (UserServiceAsync) GWT.create(UserService.class);
 	private PromoServiceAsync promoService = (PromoServiceAsync) GWT.create(PromoService.class);
@@ -59,6 +65,7 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 	private StockPanel stockPanel;
 	private Panel panel;
 	private SellFromStockPopup sellFromStockPopup;
+	protected ArticleTypePopup articleTypePopup;
 
 	TextMessages textMessages;
 
@@ -142,6 +149,22 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 	}
 
 	@Override
+	public void onRemoveFromStock(RemoveFromStockEvent event) {
+		// TODO
+		Xfashion.fireError("not implemented yet");
+	}
+	
+	@Override
+	public void onRequestShowArticleTypeDetails(RequestShowArticleTypeDetailsEvent event) {
+		if (UserManagement.hasRole(UserRole.SHOP)) {
+			if (articleTypePopup == null) {
+				articleTypePopup = new ArticleTypeDetailPopup(articleTypeDatabase, stockProvider);
+			}
+			articleTypePopup.showPopup(event.getArticleType());
+		}
+	}
+	
+	@Override
 	public void onLogin(LoginEvent event) {
 		if (UserManagement.hasRole(UserRole.SHOP)) {
 			readStock();
@@ -150,7 +173,7 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 	
 	@Override
 	public void onArticlesLoaded(ArticlesLoadedEvent event) {
-		// refresh();
+		refresh();
 	}
 
 	@Override
@@ -241,6 +264,8 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 		Xfashion.eventBus.addHandler(LoginEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(FilterRefreshedEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(ArticlesLoadedEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(RequestShowArticleTypeDetailsEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(RemoveFromStockEvent.TYPE, this);
 	}
 
 }
