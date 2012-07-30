@@ -95,7 +95,7 @@ public interface TextMessages extends Messages {
 	String allShops();
 	String sellStatisticDate(Date sellDate);
 	String addedToStockDate(Date addDate);
-	String addMoreSoldArticles();
+	String addMore();
 
 	String promoHeader();
 	String activate();

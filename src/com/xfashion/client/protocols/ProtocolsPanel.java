@@ -25,6 +25,7 @@ import com.xfashion.client.at.ArticleTypeManagement;
 import com.xfashion.client.at.GetSellPriceFromSoldArticleStrategy;
 import com.xfashion.client.at.ProvidesArticleFilter;
 import com.xfashion.client.notepad.GetPriceFromArticleAmountStrategy;
+import com.xfashion.client.protocols.event.AddMoreAddedArticlesEvent;
 import com.xfashion.client.protocols.event.AddMoreSoldArticlesEvent;
 import com.xfashion.client.protocols.event.ShowSellStatisticEvent;
 import com.xfashion.client.resources.ImageResources;
@@ -51,7 +52,8 @@ public class ProtocolsPanel {
 	protected Panel scrollPanel;
 
 	protected ListBox shopListBox;
-	protected Button addMoreButton;
+	protected Button addMoreSoldArticlesButton;
+	protected Button addMoreAddedArticlesButton;
 	protected HorizontalPanel headerPanel;
 
 	protected TextMessages textMessages;
@@ -91,19 +93,19 @@ public class ProtocolsPanel {
 	}
 
 	public void enableAddMoreSoldArticles() {
-		addMoreButton.setEnabled(true);
+		addMoreSoldArticlesButton.setEnabled(true);
 	}
 
 	public void disableAddMoreSoldArticles() {
-		addMoreButton.setEnabled(false);
+		addMoreSoldArticlesButton.setEnabled(false);
 	}
 
 	public void enableAddMoreAddedArticles() {
-		// TODO Auto-generated method stub
+		addMoreAddedArticlesButton.setEnabled(true);
 	}
 
 	public void disableAddMoreAddedArticles() {
-		// TODO
+		addMoreAddedArticlesButton.setEnabled(false);
 	}
 
 	protected Panel createProtocolPanels(SoldArticleDataProvider soldArticleProvider, AddedArticleDataProvider addedArticleProvider) {
@@ -138,8 +140,7 @@ public class ProtocolsPanel {
 		Panel atp = att.create(addedArticleProvider);
 		vp.add(atp);
 		
-		// TODO
-		// vp.add(createAddMoreAddedArticlesButton());
+		vp.add(createAddMoreAddedArticlesButton());
 
 		SimplePanel panel = new SimplePanel();
 		panel.setStyleName("filterPanel");
@@ -162,14 +163,25 @@ public class ProtocolsPanel {
 	}
 
 	private Widget createAddMoreSoldArticlesButton() {
-		addMoreButton = new Button(textMessages.addMoreSoldArticles());
-		addMoreButton.addClickHandler(new ClickHandler() {
+		addMoreSoldArticlesButton = new Button(textMessages.addMore());
+		addMoreSoldArticlesButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				Xfashion.eventBus.fireEvent(new AddMoreSoldArticlesEvent());
 			}
 		});
-		return addMoreButton;
+		return addMoreSoldArticlesButton;
+	}
+
+	private Widget createAddMoreAddedArticlesButton() {
+		addMoreAddedArticlesButton = new Button(textMessages.addMore());
+		addMoreAddedArticlesButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Xfashion.eventBus.fireEvent(new AddMoreAddedArticlesEvent());
+			}
+		});
+		return addMoreAddedArticlesButton;
 	}
 
 	private void selectShop(int shopIndex) {

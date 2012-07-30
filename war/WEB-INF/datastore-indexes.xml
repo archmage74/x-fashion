@@ -3,8 +3,11 @@
 	<datastore-index kind="ArticleTypeImage" ancestor="true" source="manual">
 		<property name="name" direction="asc" />
 	</datastore-index>
-    <datastore-index kind="SoldArticle" ancestor="false" source="manual">
-        <property name="shopKey" direction="asc"/>
-        <property name="sellDate" direction="desc"/>
-    </datastore-index>
+	<datastore-index kind="SoldArticle" ancestor="false" source="manual">
+		<property name="shopKey" direction="asc" />
+		<property name="sellDate" direction="desc" />
+	</datastore-index>
+	<datastore-index kind="AddedArticle" ancestor="true" source="manual">
+		<property name="addDate" direction="desc" />
+	</datastore-index>
 </datastore-indexes>

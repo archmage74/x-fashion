@@ -7,6 +7,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Panel;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.db.ArticleTypeDatabase;
+import com.xfashion.client.protocols.event.AddMoreAddedArticlesEvent;
+import com.xfashion.client.protocols.event.AddMoreAddedArticlesHandler;
 import com.xfashion.client.protocols.event.AddMoreSoldArticlesEvent;
 import com.xfashion.client.protocols.event.AddMoreSoldArticlesHandler;
 import com.xfashion.client.protocols.event.ShowSellStatisticEvent;
@@ -21,13 +23,13 @@ import com.xfashion.shared.SoldArticleDTO;
 import com.xfashion.shared.UserDTO;
 import com.xfashion.shared.UserRole;
 
-public class ProtocolsManagement implements ShowSellStatisticHandler, AddMoreSoldArticlesHandler {
+public class ProtocolsManagement implements ShowSellStatisticHandler, AddMoreSoldArticlesHandler, AddMoreAddedArticlesHandler {
 	
 	public static final int CHUNK_SIZE = 50;
 	
 	private UserServiceAsync userService = (UserServiceAsync) GWT.create(UserService.class);
 
-	private ProtocolsPanel sellStatisticPanel;
+	private ProtocolsPanel protocolsPanel;
 	private Panel panel;
 	
 	private ShopDTO currentShop;
@@ -45,14 +47,14 @@ public class ProtocolsManagement implements ShowSellStatisticHandler, AddMoreSol
 		this.sellStatisticProvider = new SoldArticleDataProvider(articleTypeDatabase);
 		this.addedArticleProvider = new AddedArticleDataProvider(articleTypeDatabase);
 
-		this.sellStatisticPanel = new ProtocolsPanel(articleTypeDatabase);
+		this.protocolsPanel = new ProtocolsPanel(articleTypeDatabase);
 
 		registerForEvents();
 	}
 	
 	public Panel getPanel() {
 		if (panel == null) {
-			panel = sellStatisticPanel.createPanel(sellStatisticProvider, addedArticleProvider);
+			panel = protocolsPanel.createPanel(sellStatisticProvider, addedArticleProvider);
 		}
 		refresh();
 		return panel;
@@ -68,6 +70,11 @@ public class ProtocolsManagement implements ShowSellStatisticHandler, AddMoreSol
 	@Override
 	public void onAddMoreSoldArticles(AddMoreSoldArticlesEvent event) {
 		addMoreSoldArticles();
+	}
+	
+	@Override
+	public void onAddMoreAddedArticles(AddMoreAddedArticlesEvent event) {
+		addMoreAddedArticles();
 	}
 	
 	private void addMoreSoldArticles() {
@@ -133,19 +140,19 @@ public class ProtocolsManagement implements ShowSellStatisticHandler, AddMoreSol
 	
 	private void clearSoldArticles() {
 		sellStatisticProvider.getList().clear();
-		sellStatisticPanel.enableAddMoreSoldArticles();
+		protocolsPanel.enableAddMoreSoldArticles();
 	}
 	
 	private void clearAddedArticles() {
 		addedArticleProvider.getList().clear();
-		sellStatisticPanel.enableAddMoreAddedArticles();
+		protocolsPanel.enableAddMoreAddedArticles();
 	}
 	
 	private void readShops() {
 		AsyncCallback<List<UserDTO>> callback = new AsyncCallback<List<UserDTO>>() {
 			@Override
 			public void onSuccess(List<UserDTO> result) {
-				sellStatisticPanel.setUsers(result);
+				protocolsPanel.setUsers(result);
 			}
 			@Override
 			public void onFailure(Throwable caught) {
@@ -158,20 +165,21 @@ public class ProtocolsManagement implements ShowSellStatisticHandler, AddMoreSol
 	private void addSoldArticles(List<SoldArticleDTO> result) {
 		sellStatisticProvider.getList().addAll(result);
 		if (result.size() < CHUNK_SIZE) {
-			sellStatisticPanel.disableAddMoreSoldArticles();
+			protocolsPanel.disableAddMoreSoldArticles();
 		}
 	}
 	
 	private void addAddedArticles(List<AddedArticleDTO> result) {
 		addedArticleProvider.getList().addAll(result);
 		if (result.size() < CHUNK_SIZE) {
-			sellStatisticPanel.disableAddMoreAddedArticles();
+			protocolsPanel.disableAddMoreAddedArticles();
 		}
 	}
 	
 	private void registerForEvents() {
 		Xfashion.eventBus.addHandler(ShowSellStatisticEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(AddMoreSoldArticlesEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(AddMoreAddedArticlesEvent.TYPE, this);
 	}
 
 }
