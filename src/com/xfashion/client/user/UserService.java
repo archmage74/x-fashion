@@ -11,6 +11,7 @@ import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.DeliveryNoticeDTO;
 import com.xfashion.shared.NotepadDTO;
 import com.xfashion.shared.PriceChangeDTO;
+import com.xfashion.shared.RemovedArticleDTO;
 import com.xfashion.shared.ResetPasswordDTO;
 import com.xfashion.shared.SoldArticleDTO;
 import com.xfashion.shared.UserDTO;
@@ -90,6 +91,12 @@ public interface UserService extends RemoteService {
 	List<AddedArticleDTO> readWareInputOfShop(String shopKey, int from, int to) throws IllegalArgumentException;
 
 	List<AddedArticleDTO> readOwnWareInput(int from, int to) throws IllegalArgumentException;
+	
+	ArticleAmountDTO removeOneFromStock(ArticleAmountDTO dto) throws IllegalArgumentException;
+	
+	List<RemovedArticleDTO> readOwnRemovedArticles(int from, int to) throws IllegalArgumentException;
+	
+	public List<RemovedArticleDTO> readRemovedArticlesOfShop(String shopKey, int from, int to) throws IllegalArgumentException;
 
 	
 	// Shop-PriceChanges

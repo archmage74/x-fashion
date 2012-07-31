@@ -16,6 +16,7 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.xfashion.server.AddedArticle;
 import com.xfashion.server.PriceChange;
+import com.xfashion.server.RemovedArticle;
 import com.xfashion.server.SoldArticle;
 import com.xfashion.server.notepad.ArticleAmount;
 import com.xfashion.server.notepad.Notepad;
@@ -67,6 +68,10 @@ public class Shop {
 	@Order(extensions = @Extension(vendorName="datanucleus",key="list-ordering", value="addDate desc"))
 	List<AddedArticle> addedArticles;
 	
+	@Persistent(mappedBy = "shop")
+	@Order(extensions = @Extension(vendorName="datanucleus",key="list-ordering", value="removeDate desc"))
+	List<RemovedArticle> removedArticles;
+	
 	@Persistent
 	Set<PriceChange> priceChanges;
 	
@@ -76,6 +81,7 @@ public class Shop {
 		articles = new HashSet<ArticleAmount>();
 		soldArticles = new ArrayList<SoldArticle>();
 		addedArticles = new ArrayList<AddedArticle>();
+		removedArticles = new ArrayList<RemovedArticle>();
 	}
 	
 	public Shop(ShopDTO dto) {
@@ -166,6 +172,15 @@ public class Shop {
 	public void addAddedArticle(AddedArticle addedArticle) {
 		addedArticles.add(addedArticle);
 		addedArticle.setShop(this);
+	}
+
+	public List<RemovedArticle> getRemovedArticles() {
+		return removedArticles;
+	}
+
+	public void addRemovedArticle(RemovedArticle removedArticle) {
+		removedArticles.add(removedArticle);
+		removedArticle.setShop(this);
 	}
 
 	public Set<PriceChange> getPriceChanges() {

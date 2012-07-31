@@ -10,6 +10,7 @@ import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.DeliveryNoticeDTO;
 import com.xfashion.shared.NotepadDTO;
 import com.xfashion.shared.PriceChangeDTO;
+import com.xfashion.shared.RemovedArticleDTO;
 import com.xfashion.shared.ResetPasswordDTO;
 import com.xfashion.shared.SoldArticleDTO;
 import com.xfashion.shared.UserDTO;
@@ -78,6 +79,12 @@ public interface UserServiceAsync {
 	
 	void readOwnWareInput(int from, int to, AsyncCallback<List<AddedArticleDTO>> callback);
 
+	void removeOneFromStock(ArticleAmountDTO dto, AsyncCallback<ArticleAmountDTO> callback);
+
+	void readOwnRemovedArticles(int from, int to, AsyncCallback<List<RemovedArticleDTO>> callback);
+
+	void readRemovedArticlesOfShop(String shopKey, int from, int to, AsyncCallback<List<RemovedArticleDTO>> callback);
+	
 	
 	// Shop-PriceChanges
 	void createPriceChangeForShop(String shopKey, PriceChangeDTO dto, AsyncCallback<Void> callback);

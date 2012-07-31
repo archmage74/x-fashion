@@ -24,12 +24,14 @@ import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.Key;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.xfashion.client.user.UserService;
 import com.xfashion.client.util.IdCounterService;
 import com.xfashion.server.AddedArticle;
 import com.xfashion.server.PMF;
 import com.xfashion.server.PriceChange;
+import com.xfashion.server.RemovedArticle;
 import com.xfashion.server.SoldArticle;
 import com.xfashion.server.notepad.ArticleAmount;
 import com.xfashion.server.notepad.Notepad;
@@ -40,12 +42,13 @@ import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.DeliveryNoticeDTO;
 import com.xfashion.shared.NotepadDTO;
 import com.xfashion.shared.PriceChangeDTO;
+import com.xfashion.shared.RemovedArticleDTO;
 import com.xfashion.shared.ResetPasswordDTO;
 import com.xfashion.shared.SoldArticleDTO;
 import com.xfashion.shared.UserCountry;
 import com.xfashion.shared.UserDTO;
 import com.xfashion.shared.UserRole;
-
+ 
 public class UserServiceImpl extends RemoteServiceServlet implements UserService {
 
 	private static final Logger log = Logger.getLogger(UserServiceImpl.class.getName());
@@ -786,6 +789,80 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		return readWareInputOfShop(userDTO.getShop().getKeyString(), from, to);
 	}
 	
+	@Override
+	public ArticleAmountDTO removeOneFromStock(ArticleAmountDTO dto) throws IllegalArgumentException {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			ArticleAmount articleAmount = removeOneFromStock(pm, dto);
+			if (articleAmount != null) {
+				dto = articleAmount.createDTO();
+			} else {
+				dto = null;
+			}
+		} finally {
+			pm.close();
+		}
+		return dto;
+	}
+	
+	private ArticleAmount removeOneFromStock(PersistenceManager pm, ArticleAmountDTO dto) {
+		Transaction tx = pm.currentTransaction();
+		ArticleAmount foundArticle = null;
+		try {
+			tx.begin();
+			Shop shop = readOwnShop(pm);
+			Key key = KeyFactory.stringToKey(dto.getKey());
+			for (ArticleAmount articleAmount : shop.getArticles()) {
+				if (key.equals(articleAmount.getKey())) {
+					articleAmount.setAmount(articleAmount.getAmount() - 1);
+
+					RemovedArticle removedArticle = new RemovedArticle();
+					removedArticle.setArticleTypeKey(articleAmount.getArticleTypeKey());
+					removedArticle.setAmount(1);
+					shop.addRemovedArticle(removedArticle);
+
+					if (articleAmount.getAmount() <= 0) {
+						shop.getArticles().remove(articleAmount);
+					} else {
+						foundArticle = articleAmount;
+					}
+					break;
+				}
+			}
+			tx.commit();
+		} finally {
+			if (tx.isActive()) {
+				tx.rollback();
+			}
+		}
+		return foundArticle;
+	}
+
+	@Override
+	public List<RemovedArticleDTO> readOwnRemovedArticles(int from, int to) throws IllegalArgumentException {
+		UserDTO userDTO = (UserDTO) this.getThreadLocalRequest().getSession().getAttribute(SESSION_USER); 
+		return readRemovedArticlesOfShop(userDTO.getShop().getKeyString(), from, to);
+	}
+
+	@Override
+	public List<RemovedArticleDTO> readRemovedArticlesOfShop(String shopKey, int from, int to) throws IllegalArgumentException {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		List<RemovedArticleDTO> dtos = new ArrayList<RemovedArticleDTO>();
+		try {
+			Shop shop = readShop(pm, shopKey);
+			int cnt = (int) from;
+			List<RemovedArticle> removedArticles = shop.getRemovedArticles(); 
+			while (cnt < to && cnt < removedArticles.size()) {
+				dtos.add(removedArticles.get(cnt).createDTO());
+				cnt++;
+			}
+		} finally {
+			pm.close();
+		}
+		return dtos;
+	}
+
+	// Shop-PriceChanges
 	@Override
 	public void createPriceChangeForShop(String shopKey, PriceChangeDTO dto) throws IllegalArgumentException {
 		PersistenceManager pm = PMF.get().getPersistenceManager();

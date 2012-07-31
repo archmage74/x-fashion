@@ -95,19 +95,24 @@ DONE - store promo code to sold articles to show in statistic
 DONE - initial sorting of ArticleTypes for admin
 DONE - stock is not shown immediatly if loaded too slow
 DONE - add "Wareneingang" to Protokolle view
-
-add remove from stock function in article-details popup: show current amount there; ask before removing, secret button to access remove-protocol
-
-add deleted-articles statistic for shops (similar to sell statistic, but hidden feature).
+DONE - add remove from stock function in article-details popup: show current amount there; ask before removing
+DONE - add deleted-articles statistic for shops (similar to sell statistic, but hidden feature).
+DONE - price on sticker: 18px
 
 bug: article-types gets unsorted if an article is updated
 
-forbid removing of used article-types - should a delete-function exist?
+forbid removing of used article-types - used = added the first time to notepad
 
 add stock-view of shops to admin
 
+notepad: insert at top
+
+notepad: ordering always the same, on print delivery note too
+
+notepad as popup, bit smaller matrix font
+
 ???? - works for me - fix bug: new articles cannot be added to notepad, only after re-login
- 
+
 --------------------
 
 differenz anzeige - lieferschein vs bestandsaufnahme

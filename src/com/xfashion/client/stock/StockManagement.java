@@ -150,10 +150,30 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 
 	@Override
 	public void onRemoveFromStock(RemoveFromStockEvent event) {
-		// TODO
-		Xfashion.fireError("not implemented yet");
+		final ArticleAmountDTO articleToRemove = stockProvider.getStock().get(event.getArticleType().getKey());
+		AsyncCallback<ArticleAmountDTO> callback = new AsyncCallback<ArticleAmountDTO>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
+			}
+			@Override
+			public void onSuccess(ArticleAmountDTO result) {
+				storeRemoveResult(articleToRemove, result);
+			}
+		};
+		userService.removeOneFromStock(articleToRemove, callback);
 	}
 	
+	protected void storeRemoveResult(ArticleAmountDTO articleToRemove, ArticleAmountDTO result) {
+		if (result == null) {
+			stockProvider.getList().remove(articleToRemove);
+			stockProvider.getStock().remove(articleToRemove.getArticleTypeKey());
+		} else {
+			articleToRemove.setAmount(result.getAmount());
+		}
+		stockProvider.refresh();
+	}
+
 	@Override
 	public void onRequestShowArticleTypeDetails(RequestShowArticleTypeDetailsEvent event) {
 		if (UserManagement.hasRole(UserRole.SHOP)) {
