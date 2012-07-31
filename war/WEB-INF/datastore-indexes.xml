@@ -10,4 +10,7 @@
 	<datastore-index kind="AddedArticle" ancestor="true" source="manual">
 		<property name="addDate" direction="desc" />
 	</datastore-index>
+	<datastore-index kind="RemovedArticle" ancestor="true" source="manual">
+        <property name="removeDate" direction="desc"/>
+    </datastore-index>
 </datastore-indexes>
