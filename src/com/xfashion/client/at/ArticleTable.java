@@ -27,7 +27,10 @@ public abstract class ArticleTable<T> {
 	
 	protected ArticleDataProvider<T> articleProvider;
 	protected IGetPriceStrategy<T> getPriceStrategy;
-
+	
+	protected CellTable<T> cellTable;
+	protected ScrollPanel articleTypePanel;
+	
 	protected TextMessages textMessages;
 	protected Formatter formatter;
 	
@@ -40,10 +43,22 @@ public abstract class ArticleTable<T> {
 	
 	protected abstract void addNavColumns(CellTable<T> cellTable);
 
+	public ArticleDataProvider<T> getArticleProvider() {
+		return articleProvider;
+	}
+
+	public CellTable<T> getCellTable() {
+		return cellTable;
+	}
+
+	public ScrollPanel getArticleTypePanel() {
+		return articleTypePanel;
+	}
+	
 	public Panel create(final ArticleDataProvider<T> ap) {
 		articleProvider = ap; 
 
-		CellTable<T> cellTable = new CellTable<T>(10000, GWT.<FilterTableResources> create(FilterTableResources.class));
+		cellTable = new CellTable<T>(10000, GWT.<FilterTableResources> create(FilterTableResources.class));
 
 		cellTable.addColumn(createImageColumn(ap));
 		cellTable.addColumn(createCategoryStyleColumn(ap));
@@ -67,7 +82,7 @@ public abstract class ArticleTable<T> {
 
 		articleProvider.addDataDisplay(cellTable);
 
-		ScrollPanel articleTypePanel = new ScrollPanel(cellTable);
+		articleTypePanel = new ScrollPanel(cellTable);
 		articleTypePanel.setHeight("750px");
 		return articleTypePanel;
 	}
@@ -241,5 +256,5 @@ public abstract class ArticleTable<T> {
 		}
 		return sb.toString();
 	}
-	
+
 }

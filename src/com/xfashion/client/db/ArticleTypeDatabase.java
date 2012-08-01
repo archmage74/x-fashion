@@ -359,6 +359,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 			public void onSuccess(Void result) {
 				articleTypeProvider.refresh();
 				applyFilters();
+				sortArticles();
 				updateProviders();
 			}
 		};
@@ -381,6 +382,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 			public void onSuccess(Void result) {
 				articleTypes.remove(articleType);
 				applyFilters();
+				sortArticles();
 				updateProviders();
 			}
 		};

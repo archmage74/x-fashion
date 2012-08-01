@@ -3,6 +3,7 @@ package com.xfashion.client.notepad;
 import java.util.Date;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.db.ArticleTypeDatabase;
@@ -24,6 +25,7 @@ import com.xfashion.client.notepad.event.PrintNotepadStickersEvent;
 import com.xfashion.client.notepad.event.PrintNotepadStickersHandler;
 import com.xfashion.client.notepad.event.RecordArticlesEvent;
 import com.xfashion.client.notepad.event.RecordArticlesHandler;
+import com.xfashion.client.notepad.event.RequestCheckNotepadPositionEvent;
 import com.xfashion.client.notepad.event.RequestIntoStockEvent;
 import com.xfashion.client.notepad.event.RequestIntoStockHandler;
 import com.xfashion.client.notepad.event.RequestOpenNotepadEvent;
@@ -87,6 +89,11 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 	public void onNotepadAddArticle(NotepadAddArticleEvent event) {
 		currentNotepad.addArticle(event.getArticleType(), event.getAmount());
 		articleProvider.setList(currentNotepad.getArticles());
+		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
+	        public void execute () {
+	        	Xfashion.eventBus.fireEvent(new RequestCheckNotepadPositionEvent());
+	        }
+	    });
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package com.xfashion.client.notepad;
 
 import java.util.Date;
+import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -10,17 +11,19 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.xfashion.client.IsMinimizable;
 import com.xfashion.client.PanelWidthAnimation;
 import com.xfashion.client.Xfashion;
-import com.xfashion.client.at.ArticleTable;
 import com.xfashion.client.at.ArticleTypeManagement;
 import com.xfashion.client.at.ProvidesArticleFilter;
 import com.xfashion.client.notepad.event.ClearNotepadEvent;
 import com.xfashion.client.notepad.event.DeliveryNoticeUpdatedEvent;
 import com.xfashion.client.notepad.event.DeliveryNoticeUpdatedHandler;
+import com.xfashion.client.notepad.event.NotepadAddArticleEvent;
+import com.xfashion.client.notepad.event.NotepadAddArticleHandler;
 import com.xfashion.client.notepad.event.NotepadStartMaximizeEvent;
 import com.xfashion.client.notepad.event.NotepadStartMinimizeEvent;
 import com.xfashion.client.notepad.event.OpenNotepadEvent;
@@ -28,6 +31,8 @@ import com.xfashion.client.notepad.event.OpenNotepadHandler;
 import com.xfashion.client.notepad.event.PrintDeliveryNoticeEvent;
 import com.xfashion.client.notepad.event.PrintNotepadStickersEvent;
 import com.xfashion.client.notepad.event.RecordArticlesEvent;
+import com.xfashion.client.notepad.event.RequestCheckNotepadPositionEvent;
+import com.xfashion.client.notepad.event.RequestCheckNotepadPositionHandler;
 import com.xfashion.client.notepad.event.RequestIntoStockEvent;
 import com.xfashion.client.notepad.event.RequestOpenNotepadEvent;
 import com.xfashion.client.notepad.event.RequestSaveNotepadEvent;
@@ -41,9 +46,10 @@ import com.xfashion.shared.BarcodeHelper;
 import com.xfashion.shared.DeliveryNoticeDTO;
 import com.xfashion.shared.NotepadDTO;
 
-public class NotepadPanel implements IsMinimizable, OpenNotepadHandler, SaveNotepadHandler, DeliveryNoticeUpdatedHandler {
+public class NotepadPanel implements IsMinimizable, OpenNotepadHandler, SaveNotepadHandler, DeliveryNoticeUpdatedHandler, NotepadAddArticleHandler,
+		RequestCheckNotepadPositionHandler {
 
-	public static final int PANEL_MAX_WIDTH = 550;
+	public static final int PANEL_MAX_WIDTH = 560;
 	public static final int PANEL_MIN_WIDTH = 25;
 
 	private ProvidesArticleFilter provider;
@@ -52,7 +58,8 @@ public class NotepadPanel implements IsMinimizable, OpenNotepadHandler, SaveNote
 	protected Label headerLabel;
 	protected Label notepadInfoLabel1;
 	protected Label notepadInfoLabel2;
-	private HorizontalPanel headerPanel;
+	protected HorizontalPanel headerPanel;
+	protected NotepadArticleTable notepadArticleTable;
 
 	protected boolean minimized = true;
 	protected Image minmaxButton;
@@ -69,12 +76,12 @@ public class NotepadPanel implements IsMinimizable, OpenNotepadHandler, SaveNote
 		registerForEvents();
 	}
 
-	public Panel createPanel(ArticleAmountDataProvider articleTypeProvider) {
-		return createPanel(articleTypeProvider, true);
+	public Panel createPanel(ArticleAmountDataProvider notepadArticleProvider) {
+		return createPanel(notepadArticleProvider, true);
 	}
 
-	public Panel createPanel(ArticleAmountDataProvider articleTypeProvider, boolean minimized) {
-		Panel articlePanel = createArticlePanel(articleTypeProvider);
+	public Panel createPanel(ArticleAmountDataProvider notepadArticleProvider, boolean minimized) {
+		Panel articlePanel = createArticlePanel(notepadArticleProvider);
 		scrollPanel = new SimplePanel();
 		scrollPanel.setStyleName("filterPanel");
 		if (minimized) {
@@ -140,6 +147,32 @@ public class NotepadPanel implements IsMinimizable, OpenNotepadHandler, SaveNote
 		setDeliveryNoticeInfo(event.getDeliveryNotice());
 	}
 
+	@Override
+	public void onNotepadAddArticle(NotepadAddArticleEvent event) {
+		String articleTypeKey = event.getArticleType().getKey();
+		notepadArticleTable.setLastUpdatedArticleTypeKey(articleTypeKey);
+	}
+
+	public void onRequestCheckNotepadPosition(RequestCheckNotepadPositionEvent event) {
+		String articleTypeKey = notepadArticleTable.getLastUpdatedArticleTypeKey();
+		List<ArticleAmountDTO> articles = notepadArticleTable.getArticleProvider().getList();
+		int articleIndex = -1;
+		for (int index = 0; index < articles.size(); index++) {
+			if (articles.get(index).getArticleTypeKey().equals(articleTypeKey)) {
+				articleIndex = index;
+				break;
+			}
+		}
+		ScrollPanel sp = notepadArticleTable.getArticleTypePanel();
+		int max = sp.getMaximumVerticalScrollPosition();
+		if (articleIndex != -1 && articles.size() > 1) {
+			int pos = articleIndex * max / (articles.size() - 1);
+			sp.setVerticalScrollPosition(pos);
+		} else {
+			sp.setVerticalScrollPosition(max);
+		}
+	}
+
 	protected Panel createArticlePanel(ArticleAmountDataProvider articleAmountProvider) {
 		VerticalPanel panel = new VerticalPanel();
 
@@ -148,8 +181,8 @@ public class NotepadPanel implements IsMinimizable, OpenNotepadHandler, SaveNote
 
 		GetPriceFromArticleAmountStrategy<ArticleAmountDTO> priceStrategy = new GetPriceFromArticleAmountStrategy<ArticleAmountDTO>(
 				articleAmountProvider, ArticleTypeManagement.getArticleTypePriceStrategy);
-		ArticleTable<ArticleAmountDTO> att = new NotepadArticleTable(provider, priceStrategy);
-		Panel atp = att.create(articleAmountProvider);
+		notepadArticleTable = new NotepadArticleTable(provider, priceStrategy);
+		Panel atp = notepadArticleTable.create(articleAmountProvider);
 		panel.add(atp);
 
 		return panel;
@@ -329,5 +362,7 @@ public class NotepadPanel implements IsMinimizable, OpenNotepadHandler, SaveNote
 		Xfashion.eventBus.addHandler(OpenNotepadEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(SaveNotepadEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(DeliveryNoticeUpdatedEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(NotepadAddArticleEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(RequestCheckNotepadPositionEvent.TYPE, this);
 	}
 }
