@@ -2,9 +2,7 @@ package com.xfashion.server.notepad;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
@@ -30,10 +28,10 @@ public class Notepad {
 	private Date creationDate;
 	
 	@Persistent
-	Set<ArticleAmount> articles;
+	List<ArticleAmount> articles;
 
 	public Notepad() {
-		articles = new HashSet<ArticleAmount>();
+		articles = new ArrayList<ArticleAmount>();
 	}
 	
 	public Notepad(NotepadDTO dto) {
@@ -48,8 +46,8 @@ public class Notepad {
 	}
 
 	public void updateArticles(List<ArticleAmountDTO> dtos) {
-		Set<ArticleAmount> toRemove = new HashSet<ArticleAmount>(articles);
-		Set<ArticleAmount> toAdd = new HashSet<ArticleAmount>();
+		List<ArticleAmount> toRemove = new ArrayList<ArticleAmount>(articles);
+		List<ArticleAmount> toAdd = new ArrayList<ArticleAmount>();
 		for (ArticleAmountDTO dto : dtos) {
 			ArticleAmount item = null;
 			if (dto.getKey() != null) {
@@ -69,7 +67,7 @@ public class Notepad {
 		articles.addAll(toAdd);
 	}
 
-	private ArticleAmount findItem(Set<ArticleAmount> articles, ArticleAmountDTO dto) {
+	private ArticleAmount findItem(List<ArticleAmount> articles, ArticleAmountDTO dto) {
 		for (ArticleAmount item : articles) {
 			if (dto.getKey() != null && KeyFactory.stringToKey(dto.getKey()).equals(item.getKey())) {
 				return item;
@@ -103,11 +101,11 @@ public class Notepad {
 		this.creationDate = creationDate;
 	}
 
-	public Set<ArticleAmount> getArticles() {
+	public List<ArticleAmount> getArticles() {
 		return articles;
 	}
 
-	public void setArticles(Set<ArticleAmount> articles) {
+	public void setArticles(List<ArticleAmount> articles) {
 		this.articles = articles;
 	}
 
@@ -120,8 +118,8 @@ public class Notepad {
 		return dto;
 	}
 
-	public Set<ArticleAmountDTO> createArticleAmountDTOs() {
-		Set<ArticleAmountDTO> dtos = new HashSet<ArticleAmountDTO>();
+	public List<ArticleAmountDTO> createArticleAmountDTOs() {
+		List<ArticleAmountDTO> dtos = new ArrayList<ArticleAmountDTO>();
 		for (ArticleAmount article : articles) {
 			dtos.add(article.createDTO());
 		}

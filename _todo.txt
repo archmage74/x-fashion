@@ -99,10 +99,8 @@ DONE - add remove from stock function in article-details popup: show current amo
 DONE - add deleted-articles statistic for shops (similar to sell statistic, but hidden feature).
 DONE - price on sticker: 18px
 DONE - bug: article-types gets unsorted if an article is updated
-
-notepad: insert at top
-
-notepad: ordering always the same, on print delivery note too
+DONE - notepad: scroll to newly added item, mark added item
+DONE - notepad: ordering always the same, on print delivery note too
 
 forbid removing of used article-types - used = added the first time to notepad
 
