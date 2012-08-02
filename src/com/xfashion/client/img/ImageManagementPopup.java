@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -29,9 +30,13 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.xfashion.client.Xfashion;
+import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.shared.ArticleTypeImageDTO;
 
 public class ImageManagementPopup implements HasSelectionHandlers<ArticleTypeImageDTO> {
+
+    private final int BATCH_SIZE = 15;
 
 	private ImageUploadServiceAsync imageUploadService = (ImageUploadServiceAsync) GWT.create(ImageUploadService.class);
 	
@@ -50,6 +55,8 @@ public class ImageManagementPopup implements HasSelectionHandlers<ArticleTypeIma
 	private Image articleImage;
 	
 	private List<ArticleTypeImageDTO> articleTypeImages;
+	
+	protected ErrorMessages errorMessages = GWT.create(ErrorMessages.class);
 	
 	public ImageManagementPopup() {
 		articleTypeImages = new ArrayList<ArticleTypeImageDTO>();
@@ -74,22 +81,34 @@ public class ImageManagementPopup implements HasSelectionHandlers<ArticleTypeIma
 	}
 	
 	private void readArticleTypeImages() {
+		articleTypeImages.clear();
+		imagesListBox.clear();
+		readArticleTypeImages(0);
+	}
+	
+	private void readArticleTypeImages(final int from) {
 		AsyncCallback<List<ArticleTypeImageDTO>> callback = new AsyncCallback<List<ArticleTypeImageDTO>>() {
 			@Override
 			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage() + " - " + caught.getStackTrace());
 			}
 			@Override
 			public void onSuccess(List<ArticleTypeImageDTO> result) {
-				articleTypeImages.clear();
-				imagesListBox.clear();
-				articleTypeImages.addAll(result);
-				for (ArticleTypeImageDTO dto : result) {
-					imagesListBox.addItem(dto.getName());
+				if (result != null && result.size() != 0) {
+					articleTypeImages.addAll(result);
+					for (ArticleTypeImageDTO dto : result) {
+						imagesListBox.addItem(dto.getName());
+					}
+					imagesListBox.setEnabled(true);
+					Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
+						public void execute () {
+				        	readArticleTypeImages(from + BATCH_SIZE);
+				        }
+				    });
 				}
-				imagesListBox.setEnabled(true);
 			}
 		};
-		imageUploadService.readArticleTypeImages(callback);
+		imageUploadService.readArticleTypeImages(from, from + BATCH_SIZE, callback);
 	}
 	
 	private DecoratedPopupPanel createPopup() {
@@ -215,10 +234,10 @@ public class ImageManagementPopup implements HasSelectionHandlers<ArticleTypeIma
 				
 				AsyncCallback<ArticleTypeImageDTO> callback = new AsyncCallback<ArticleTypeImageDTO>() {
 					public void onSuccess(ArticleTypeImageDTO result) {
-						articleTypeImages.add(result);
-						imagesListBox.addItem(result.getName());
+						articleTypeImages.add(0, result);
+						imagesListBox.insertItem(result.getName(), 0);
 						imageNameTextBox.setValue("");
-						imagesListBox.setSelectedIndex(imagesListBox.getItemCount() - 1);
+						imagesListBox.setSelectedIndex(0);
 						articleImage.setUrl(result.getImageUrl() + ArticleTypeImageDTO.IMAGE_OPTIONS_BIG);
 						requestUploadUrl();
 					}

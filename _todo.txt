@@ -101,8 +101,7 @@ DONE - price on sticker: 18px
 DONE - bug: article-types gets unsorted if an article is updated
 DONE - notepad: scroll to newly added item, mark added item
 DONE - notepad: ordering always the same, on print delivery note too
-
-forbid removing of used article-types - used = added the first time to notepad
+DONE - forbid removing of used article-types - used = added the first time to notepad
 
 add stock-view of shops to admin
 

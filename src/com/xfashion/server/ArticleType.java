@@ -51,6 +51,9 @@ public class ArticleType implements IsSerializable {
 	
 	@Persistent
 	private Key imageKey;
+	
+	@Persistent
+	private Boolean used;
 
 	public ArticleType() {
 		
@@ -75,6 +78,7 @@ public class ArticleType implements IsSerializable {
 		} else {
 			setImageKey(null);
 		}
+		setUsed(dto.getUsed());
 	}
 	
 	public ArticleTypeDTO createDTO() {
@@ -103,6 +107,7 @@ public class ArticleType implements IsSerializable {
 		} else {
 			dto.setImageKey(null);
 		}
+		dto.setUsed(getUsed());
 		return dto;
 	}
 
@@ -206,6 +211,17 @@ public class ArticleType implements IsSerializable {
 		this.imageKey = imageKey;
 	}
 
+	public Boolean getUsed() {
+		if (used == null) {
+			used = Boolean.TRUE;
+		}
+		return used;
+	}
+
+	public void setUsed(Boolean used) {
+		this.used = used;
+	}
+
 	public boolean equals(Object o) {
 		if (o == null) return false;
 		if (!(o instanceof ArticleType)) return false;
@@ -222,6 +238,7 @@ public class ArticleType implements IsSerializable {
 		equal &= attributeEquals(sellPrice, s.getSellPrice());
 		equal &= attributeEquals(sellPriceDe, s.getSellPriceDe());
 		equal &= attributeEquals(imageKey, s.getImageKey());
+		equal &= attributeEquals(used, s.getUsed());
 		return equal;
 	}
 	

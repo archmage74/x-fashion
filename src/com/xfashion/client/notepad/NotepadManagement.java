@@ -6,6 +6,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.xfashion.client.Xfashion;
+import com.xfashion.client.at.bulk.UpdateArticleTypesEvent;
 import com.xfashion.client.db.ArticleTypeDatabase;
 import com.xfashion.client.notepad.event.ClearNotepadEvent;
 import com.xfashion.client.notepad.event.ClearNotepadHandler;
@@ -39,6 +40,7 @@ import com.xfashion.client.notepad.event.SaveNotepadHandler;
 import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.user.UserService;
 import com.xfashion.client.user.UserServiceAsync;
+import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.DeliveryNoticeDTO;
 import com.xfashion.shared.NotepadDTO;
 
@@ -87,13 +89,21 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 
 	@Override
 	public void onNotepadAddArticle(NotepadAddArticleEvent event) {
-		currentNotepad.addArticle(event.getArticleType(), event.getAmount());
+		final ArticleTypeDTO articleType = event.getArticleType();
+		currentNotepad.addArticle(articleType, event.getAmount());
 		articleProvider.setList(currentNotepad.getArticles());
 		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
 	        public void execute () {
 	        	Xfashion.eventBus.fireEvent(new RequestCheckNotepadPositionEvent());
 	        }
 	    });
+		if (articleType.getUsed() != null && !articleType.getUsed()) {
+			Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
+		        public void execute () {
+		        	Xfashion.eventBus.fireEvent(new UpdateArticleTypesEvent(articleType, null));
+		        }
+		    });
+		}
 	}
 
 	@Override

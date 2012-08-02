@@ -61,7 +61,7 @@ public abstract class ArticleTypePopup {
 	protected abstract Panel createNavPanel();
 	
 	protected abstract void updateDetails();
-		
+	
 	public DialogBox createPopup() {
 		articleTypeDetailPopup = new DialogBox(true);
 		articleTypeDetailPopup.setGlassEnabled(true);
@@ -122,6 +122,7 @@ public abstract class ArticleTypePopup {
 		updateImage();
 		updateProductMatrix();
 		updateDetails();
+		updateNavPanel();
 		
 		postUpdate();
 		
@@ -139,6 +140,10 @@ public abstract class ArticleTypePopup {
 		printStickerLink.setHref(PRINT_STICKER_URL + this.articleType.getProductNumber());
 	}
 
+	protected void updateNavPanel() {
+		
+	}
+	
 	protected void updateProductMatrix() {
 		updateName();
 		brandLabel.setText(resolveBrand());

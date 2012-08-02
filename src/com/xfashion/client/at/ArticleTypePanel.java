@@ -167,6 +167,7 @@ public class ArticleTypePanel {
 
 	private ArticleTypeDTO createArticleTypeFromSelection() {
 		ArticleTypeDTO at = new ArticleTypeDTO();
+		at.setUsed(false);
 
 		CategoryDTO category = articleTypeDatabase.getCategoryProvider().getCategoryFilter();
 		if (category != null) {

@@ -515,7 +515,9 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 		pm = PMF.get().getPersistenceManager();
 		try {
 			ArticleType articleType = createArticleType(pm, dto, category);
+			articleType = readArticleType(pm, articleType.getKeyString());
 			dto = articleType.createDTO();
+			addImageUrl(dto);
 		} finally {
 			pm.close();
 		}
@@ -563,16 +565,28 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 					imageKeys.add(dto.getImageKey());
 				}
 			}
-			Map<String, String> urls = imageUploadServiceImpl.readImageUrls(imageKeys);
-			for (ArticleTypeDTO dto : dtos) {
-				if (dto.getImageKey() != null) {
-					dto.setImageUrl(urls.get(dto.getImageKey()));
-				}
-			}
+			addImageUrls(dtos, imageKeys);
 		} finally {
 			pm.close();
 		}
 		return dtos;
+	}
+
+	private void addImageUrl(ArticleTypeDTO dto) {
+		HashSet<String> imageKeys = new HashSet<String>();
+		imageKeys.add(dto.getImageKey());
+		HashSet<ArticleTypeDTO> dtos = new HashSet<ArticleTypeDTO>();
+		dtos.add(dto);
+		addImageUrls(dtos, imageKeys);
+	}
+
+	private void addImageUrls(Set<ArticleTypeDTO> dtos, HashSet<String> imageKeys) {
+		Map<String, String> urls = imageUploadServiceImpl.readImageUrls(imageKeys);
+		for (ArticleTypeDTO dto : dtos) {
+			if (dto.getImageKey() != null) {
+				dto.setImageUrl(urls.get(dto.getImageKey()));
+			}
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -596,6 +610,7 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 		try {
 			ArticleType articleType = readArticleType(pm, productNumber);
 			dto = articleType.createDTO();
+			addImageUrl(dto);
 		} finally {
 			pm.close();
 		}
@@ -622,6 +637,7 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 		try {
 			ArticleType articleType = readArticleType(pm, key);
 			dto = articleType.createDTO();
+			addImageUrl(dto);
 		} finally {
 			pm.close();
 		}
@@ -661,7 +677,9 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 
 	private void deleteArticleType(PersistenceManager pm, ArticleTypeDTO dto) {
 		ArticleType item = readArticleType(pm, dto.getKey());
-		pm.deletePersistent(item);
+		if (item.getUsed() != null && item.getUsed() == false) {
+			pm.deletePersistent(item);
+		}
 	}
 
 	@Override

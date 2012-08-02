@@ -129,6 +129,7 @@ public class CreateArticleTypePopup {
 						public void onSelection(SelectionEvent<ArticleTypeImageDTO> event) {
 							imageLabel.setText(event.getSelectedItem().getName());
 							currentArticleType.setImageKey(event.getSelectedItem().getKey());
+							currentArticleType.setImageUrl(event.getSelectedItem().getImageUrl());
 						}
 					});
 				}

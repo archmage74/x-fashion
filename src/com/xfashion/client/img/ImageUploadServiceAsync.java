@@ -13,6 +13,6 @@ public interface ImageUploadServiceAsync {
 
 	void readArticleTypeImage(String key, AsyncCallback<ArticleTypeImageDTO> callback);
 
-	void readArticleTypeImages(AsyncCallback<List<ArticleTypeImageDTO>> callback);
+	void readArticleTypeImages(int from, int to, AsyncCallback<List<ArticleTypeImageDTO>> callback);
 
 }

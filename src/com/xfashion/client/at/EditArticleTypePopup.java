@@ -57,6 +57,7 @@ public class EditArticleTypePopup extends ArticleTypePopup implements ChooseBran
 	protected TextBox sellPriceAtTextBox;
 	protected TextBox sellPriceDeTextBox;
 	protected Button editArticleButton;
+	protected Button deleteArticleButton;
 
 	protected PriceChangeDetector priceChangeDetector;
 	protected ErrorMessages errorMessages;
@@ -79,24 +80,27 @@ public class EditArticleTypePopup extends ArticleTypePopup implements ChooseBran
 	@Override
 	protected void updateDetails() {
 		buyPriceTextBox.setValue(formatter.formatCentsToValue(updatedArticleType.getBuyPrice()));
-		buyPriceTextBox.setStyleName("baseInput");
-		buyPriceTextBox.setWidth("96px");
 		if (updatedArticleType.getSellPriceAt() != null) {
 			sellPriceAtTextBox.setValue(formatter.formatCentsToValue(updatedArticleType.getSellPriceAt()));
 		} else {
 			sellPriceAtTextBox.setValue("");
 		}
-		sellPriceAtTextBox.setStyleName("baseInput");
-		sellPriceAtTextBox.setWidth("96px");
 		if (updatedArticleType.getSellPriceDe() != null) {
 			sellPriceDeTextBox.setValue(formatter.formatCentsToValue(updatedArticleType.getSellPriceDe()));
 		} else {
 			sellPriceDeTextBox.setValue("");
 		}
-		sellPriceDeTextBox.setStyleName("baseInput");
-		sellPriceDeTextBox.setWidth("96px");
 	}
 
+	@Override
+	protected void updateNavPanel() {
+		if (articleType.getUsed() != null && articleType.getUsed() == false) {
+			deleteArticleButton.setEnabled(true);
+		} else {
+			deleteArticleButton.setEnabled(false);
+		}
+	}
+	
 	@Override
 	protected void updateName() {
 		nameTextBox.setValue(this.articleType.getName());
@@ -241,18 +245,24 @@ public class EditArticleTypePopup extends ArticleTypePopup implements ChooseBran
 		Label buyPriceLabel = new Label(textMessages.buyPrice() + ":");
 		grid.setWidget(0, 0, buyPriceLabel);
 		buyPriceTextBox = createGridTextBoxRow(buyPriceGrid, 0, textMessages.currencySign());
+		buyPriceTextBox.setStyleName("baseInput");
+		buyPriceTextBox.setWidth("96px");
 		grid.setWidget(0, 1, buyPriceGrid);
 
 		Grid sellPriceAtGrid = new Grid(1, 2);
 		Label sellPriceAtLabel = new Label(textMessages.sellPriceAt() + ":");
 		grid.setWidget(1, 0, sellPriceAtLabel);
 		sellPriceAtTextBox = createGridTextBoxRow(sellPriceAtGrid, 0, textMessages.currencySign());
+		sellPriceAtTextBox.setStyleName("baseInput");
+		sellPriceAtTextBox.setWidth("96px");
 		grid.setWidget(1, 1, sellPriceAtGrid);
 
 		Grid sellPriceDeGrid = new Grid(1, 2);
 		Label sellPriceDeLabel = new Label(textMessages.sellPriceDe() + ":");
 		grid.setWidget(2, 0, sellPriceDeLabel);
 		sellPriceDeTextBox = createGridTextBoxRow(sellPriceDeGrid, 0, textMessages.currencySign());
+		sellPriceDeTextBox.setStyleName("baseInput");
+		sellPriceDeTextBox.setWidth("96px");
 		grid.setWidget(2, 1, sellPriceDeGrid);
 
 		productNumber = createGridLabelRow(grid, 3, textMessages.ean() + ":");
@@ -273,8 +283,8 @@ public class EditArticleTypePopup extends ArticleTypePopup implements ChooseBran
 		hp.add(editArticleButton);
 
 		hp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		Button deleteArticleButton = new Button(textMessages.deleteArticleTypeButton());
-		deleteArticleButton.setEnabled(false); // TODO
+		deleteArticleButton = new Button(textMessages.deleteArticleTypeButton());
+		deleteArticleButton.setEnabled(false);
 		deleteArticleButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {

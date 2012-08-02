@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
@@ -22,6 +23,8 @@ import com.xfashion.shared.ArticleTypeImageDTO;
 
 public class ImageUploadServiceImpl extends RemoteServiceServlet implements ImageUploadService {
 
+	private static Logger log = Logger.getLogger(ImageUploadServiceImpl.class.getName());
+	
 	private static final long serialVersionUID = 1L;
 
 	protected BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
@@ -78,12 +81,21 @@ public class ImageUploadServiceImpl extends RemoteServiceServlet implements Imag
 	}
 	
 	@Override
-	public List<ArticleTypeImageDTO> readArticleTypeImages() throws IllegalArgumentException {
+	public List<ArticleTypeImageDTO> readArticleTypeImages(int from, int to) throws IllegalArgumentException {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
-		List<ArticleTypeImageDTO> dtos = null;
+		List<ArticleTypeImageDTO> dtos = new ArrayList<ArticleTypeImageDTO>();
 		try {
 			Images images = readArticleTypeImages(pm);
-			dtos = images.getArticleTypeImageDtos(imagesService);
+			int cnt = (int) from;
+			List<ArticleTypeImage> articleTypeImages = images.getArticleTypeImages(); 
+			while (cnt < to && cnt < articleTypeImages.size()) {
+				try {
+					dtos.add(articleTypeImages.get(cnt).createDTO(imagesService));
+				} catch (Exception e) {
+					log.warning("could not create ArticleTypeImageDTO for image with index " + (from + cnt) + ", " + e.getMessage());
+				}
+				cnt++;
+			}
 		} finally {
 			pm.close();
 		}
