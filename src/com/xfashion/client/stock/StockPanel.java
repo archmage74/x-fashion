@@ -11,9 +11,11 @@ import com.google.gwt.user.client.ui.Widget;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTable;
 import com.xfashion.client.at.ArticleTypeManagement;
-import com.xfashion.client.brand.BrandPanel;
-import com.xfashion.client.cat.CategoryPanel;
-import com.xfashion.client.color.ColorPanel;
+import com.xfashion.client.at.brand.BrandPanel;
+import com.xfashion.client.at.category.CategoryPanel;
+import com.xfashion.client.at.color.ColorPanel;
+import com.xfashion.client.at.size.SizePanel;
+import com.xfashion.client.at.style.StylePanel;
 import com.xfashion.client.db.ArticleTypeDatabase;
 import com.xfashion.client.name.NamePanel;
 import com.xfashion.client.notepad.ArticleAmountDataProvider;
@@ -25,8 +27,6 @@ import com.xfashion.client.notepad.event.NotepadStartMinimizeEvent;
 import com.xfashion.client.notepad.event.NotepadStartMinimizeHandler;
 import com.xfashion.client.resources.ImageResources;
 import com.xfashion.client.resources.TextMessages;
-import com.xfashion.client.size.SizePanel;
-import com.xfashion.client.style.StylePanel;
 import com.xfashion.shared.ArticleAmountDTO;
 
 public class StockPanel implements NotepadStartMinimizeHandler, NotepadStartMaximizeHandler {

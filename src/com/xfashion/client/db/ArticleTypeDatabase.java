@@ -16,31 +16,32 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTypeDataProvider;
 import com.xfashion.client.at.ArticleTypePopup;
+import com.xfashion.client.at.ArticleTypeService;
+import com.xfashion.client.at.ArticleTypeServiceAsync;
 import com.xfashion.client.at.EditArticleTypePopup;
 import com.xfashion.client.at.ProvidesArticleFilter;
+import com.xfashion.client.at.brand.BrandDataProvider;
 import com.xfashion.client.at.bulk.UpdateArticleTypesEvent;
 import com.xfashion.client.at.bulk.UpdateArticleTypesHandler;
+import com.xfashion.client.at.category.CategoryDataProvider;
+import com.xfashion.client.at.color.ColorDataProvider;
+import com.xfashion.client.at.event.ArticlesLoadedEvent;
 import com.xfashion.client.at.event.DeleteArticleTypeEvent;
 import com.xfashion.client.at.event.DeleteArticleTypeHandler;
-import com.xfashion.client.brand.BrandDataProvider;
-import com.xfashion.client.cat.CategoryDataProvider;
-import com.xfashion.client.color.ColorDataProvider;
-import com.xfashion.client.db.event.ArticlesLoadedEvent;
-import com.xfashion.client.db.event.FilterRefreshedEvent;
-import com.xfashion.client.db.event.RefreshFilterEvent;
-import com.xfashion.client.db.event.RefreshFilterHandler;
-import com.xfashion.client.db.event.RequestShowArticleTypeDetailsEvent;
-import com.xfashion.client.db.event.RequestShowArticleTypeDetailsHandler;
-import com.xfashion.client.db.event.SortArticlesEvent;
-import com.xfashion.client.db.event.SortArticlesHandler;
-import com.xfashion.client.db.sort.IArticleTypeComparator;
+import com.xfashion.client.at.event.FilterRefreshedEvent;
+import com.xfashion.client.at.event.RefreshFilterEvent;
+import com.xfashion.client.at.event.RefreshFilterHandler;
+import com.xfashion.client.at.event.RequestShowArticleTypeDetailsEvent;
+import com.xfashion.client.at.event.RequestShowArticleTypeDetailsHandler;
+import com.xfashion.client.at.event.SortArticlesEvent;
+import com.xfashion.client.at.event.SortArticlesHandler;
+import com.xfashion.client.at.size.SizeDataProvider;
+import com.xfashion.client.at.sort.IArticleTypeComparator;
 import com.xfashion.client.name.NameFilterEvent;
 import com.xfashion.client.name.NameFilterHandler;
-import com.xfashion.client.size.SizeDataProvider;
 import com.xfashion.client.user.UserManagement;
 import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.ArticleTypeDTO;
-import com.xfashion.shared.CategoryDTO;
 import com.xfashion.shared.PriceChangeDTO;
 import com.xfashion.shared.UserRole;
 
@@ -236,12 +237,6 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 	public void onNameFilter(NameFilterEvent event) {
 		nameFilter = event.getName();
 		Xfashion.eventBus.fireEvent(new RefreshFilterEvent());
-	}
-
-	public void setCategoryFilter(CategoryDTO category) {
-		categoryProvider.setCategoryFilter(category);
-		applyFilters();
-		updateProviders();
 	}
 
 	public void updateProviders() {

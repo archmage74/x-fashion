@@ -16,7 +16,7 @@ import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-import com.xfashion.client.db.ArticleTypeService;
+import com.xfashion.client.at.ArticleTypeService;
 import com.xfashion.server.img.ImageUploadServiceImpl;
 import com.xfashion.server.task.DistributePriceChangeServlet;
 import com.xfashion.shared.ArticleTypeDTO;

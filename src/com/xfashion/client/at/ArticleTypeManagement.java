@@ -1,14 +1,18 @@
 package com.xfashion.client.at;
 
+import java.util.Set;
+
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Panel;
 import com.xfashion.client.Xfashion;
-import com.xfashion.client.brand.BrandPanel;
-import com.xfashion.client.cat.CategoryPanel;
-import com.xfashion.client.color.ColorPanel;
+import com.xfashion.client.at.brand.BrandPanel;
+import com.xfashion.client.at.category.CategoryPanel;
+import com.xfashion.client.at.color.ColorPanel;
+import com.xfashion.client.at.event.RefreshFilterEvent;
+import com.xfashion.client.at.size.SizePanel;
+import com.xfashion.client.at.sort.DefaultArticleTypeComparator;
+import com.xfashion.client.at.style.StylePanel;
 import com.xfashion.client.db.ArticleTypeDatabase;
-import com.xfashion.client.db.event.RefreshFilterEvent;
-import com.xfashion.client.db.sort.DefaultArticleTypeComparator;
 import com.xfashion.client.name.NamePanel;
 import com.xfashion.client.notepad.ArticleAmountDataProvider;
 import com.xfashion.client.notepad.NotepadPanel;
@@ -16,8 +20,6 @@ import com.xfashion.client.notepad.event.NotepadStartMaximizeEvent;
 import com.xfashion.client.notepad.event.NotepadStartMaximizeHandler;
 import com.xfashion.client.notepad.event.NotepadStartMinimizeEvent;
 import com.xfashion.client.notepad.event.NotepadStartMinimizeHandler;
-import com.xfashion.client.size.SizePanel;
-import com.xfashion.client.style.StylePanel;
 import com.xfashion.client.user.LoginEvent;
 import com.xfashion.client.user.LoginHandler;
 import com.xfashion.shared.ArticleTypeDTO;
@@ -115,6 +117,14 @@ public class ArticleTypeManagement implements NotepadStartMaximizeHandler, Notep
 			break;
 		}
 		Xfashion.eventBus.fireEvent(new RefreshFilterEvent());
+	}
+	
+	private void readArticleTypes() {
+		// TODO
+	}
+	
+	private void storeArticles(Set<ArticleTypeDTO> result) {
+		// TODO
 	}
 	
 	private void registerForEvents() {

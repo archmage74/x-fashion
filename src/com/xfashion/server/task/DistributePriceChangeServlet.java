@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.xfashion.client.db.ArticleTypeService;
+import com.xfashion.client.at.ArticleTypeService;
 import com.xfashion.server.ArticleTypeServiceImpl;
 import com.xfashion.server.user.UserServiceImpl;
 import com.xfashion.shared.PriceChangeDTO;

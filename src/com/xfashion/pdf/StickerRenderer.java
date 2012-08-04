@@ -2,7 +2,7 @@ package com.xfashion.pdf;
 
 import java.text.NumberFormat;
 
-import com.xfashion.client.db.ArticleTypeService;
+import com.xfashion.client.at.ArticleTypeService;
 import com.xfashion.server.ArticleTypeServiceImpl;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.BarcodeHelper;

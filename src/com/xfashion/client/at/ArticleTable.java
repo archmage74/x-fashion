@@ -11,7 +11,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.view.client.CellPreviewEvent;
 import com.xfashion.client.Formatter;
 import com.xfashion.client.Xfashion;
-import com.xfashion.client.db.event.RequestShowArticleTypeDetailsEvent;
+import com.xfashion.client.at.event.RequestShowArticleTypeDetailsEvent;
 import com.xfashion.client.resources.FilterTableResources;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.shared.ArticleTypeDTO;
