@@ -1,4 +1,4 @@
-package com.xfashion.client.at;
+package com.xfashion.client.at.popup;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Anchor;
@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.xfashion.client.Formatter;
+import com.xfashion.client.at.IProvideArticleFilter;
 import com.xfashion.client.img.ImageUploadService;
 import com.xfashion.client.img.ImageUploadServiceAsync;
 import com.xfashion.client.resources.TextMessages;
@@ -43,13 +44,13 @@ public abstract class ArticleTypePopup {
 	protected Label productNumber;
 
 	protected ArticleTypeDTO articleType;
-	protected ProvidesArticleFilter provider;
+	protected IProvideArticleFilter provider;
 
 	protected BarcodeHelper barcodeHelper = new BarcodeHelper();
 	protected Formatter formatter;
 	protected TextMessages textMessages;
 
-	public ArticleTypePopup(ProvidesArticleFilter provider) {
+	public ArticleTypePopup(IProvideArticleFilter provider) {
 		super();
 		this.provider = provider;
 		this.formatter = Formatter.getInstance();

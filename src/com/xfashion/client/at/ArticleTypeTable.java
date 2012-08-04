@@ -8,12 +8,13 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.xfashion.client.Xfashion;
+import com.xfashion.client.at.price.IGetPriceStrategy;
 import com.xfashion.client.notepad.event.NotepadAddArticleEvent;
 import com.xfashion.shared.ArticleTypeDTO;
 
 public class ArticleTypeTable extends ArticleTable<ArticleTypeDTO> {
 
-	public ArticleTypeTable(ProvidesArticleFilter provider, IGetPriceStrategy<ArticleTypeDTO> getPriceStrategy) {
+	public ArticleTypeTable(IProvideArticleFilter provider, IGetPriceStrategy<ArticleTypeDTO> getPriceStrategy) {
 		super(provider, getPriceStrategy);
 	}
 

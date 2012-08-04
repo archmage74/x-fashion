@@ -14,7 +14,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.xfashion.client.Formatter;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTypeManagement;
-import com.xfashion.client.at.ProvidesArticleFilter;
+import com.xfashion.client.at.IProvideArticleFilter;
 import com.xfashion.client.notepad.GetPriceFromArticleAmountStrategy;
 import com.xfashion.client.protocols.event.AddMoreAddedArticlesEvent;
 import com.xfashion.client.resources.TextMessages;
@@ -28,7 +28,7 @@ public class RemovedArticlePanel {
 
 	protected UserServiceAsync userService = (UserServiceAsync) GWT.create(UserService.class);
 
-	protected ProvidesArticleFilter filterProvider;
+	protected IProvideArticleFilter filterProvider;
 
 	protected Panel scrollPanel;
 
@@ -38,7 +38,7 @@ public class RemovedArticlePanel {
 	protected TextMessages textMessages;
 	protected Formatter formatter;
 
-	public RemovedArticlePanel(ProvidesArticleFilter filterProvider) {
+	public RemovedArticlePanel(IProvideArticleFilter filterProvider) {
 		this.textMessages = GWT.create(TextMessages.class);
 		this.formatter = Formatter.getInstance();
 		this.filterProvider = filterProvider;

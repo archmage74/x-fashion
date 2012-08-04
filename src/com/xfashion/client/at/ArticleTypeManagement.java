@@ -1,15 +1,24 @@
 package com.xfashion.client.at;
 
+import java.util.Collection;
 import java.util.Set;
 
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.view.client.HasData;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.brand.BrandPanel;
+import com.xfashion.client.at.bulk.UpdateArticleTypesEvent;
 import com.xfashion.client.at.category.CategoryPanel;
 import com.xfashion.client.at.color.ColorPanel;
+import com.xfashion.client.at.event.DeleteArticleTypeEvent;
 import com.xfashion.client.at.event.RefreshFilterEvent;
+import com.xfashion.client.at.event.RequestShowArticleTypeDetailsEvent;
+import com.xfashion.client.at.event.SortArticlesEvent;
 import com.xfashion.client.at.name.NamePanel;
+import com.xfashion.client.at.price.GetAtPriceFromArticleTypeStrategy;
+import com.xfashion.client.at.price.GetDePriceFromArticleTypeStrategy;
+import com.xfashion.client.at.price.IGetPriceStrategy;
 import com.xfashion.client.at.size.SizePanel;
 import com.xfashion.client.at.sort.DefaultArticleTypeComparator;
 import com.xfashion.client.at.style.StylePanel;
@@ -23,6 +32,7 @@ import com.xfashion.client.notepad.event.NotepadStartMinimizeHandler;
 import com.xfashion.client.user.LoginEvent;
 import com.xfashion.client.user.LoginHandler;
 import com.xfashion.shared.ArticleTypeDTO;
+import com.xfashion.shared.PriceChangeDTO;
 import com.xfashion.shared.UserDTO;
 
 public class ArticleTypeManagement implements NotepadStartMaximizeHandler, NotepadStartMinimizeHandler, LoginHandler {
@@ -119,6 +129,42 @@ public class ArticleTypeManagement implements NotepadStartMaximizeHandler, Notep
 		Xfashion.eventBus.fireEvent(new RefreshFilterEvent());
 	}
 	
+	public void addArticleTypeDisplay(HasData<ArticleTypeDTO> display) {
+//		articleTypeProvider.addDataDisplay(display);
+	}
+
+	public void createArticleType(final ArticleTypeDTO articleType) {
+		
+	}
+
+	public void onUpdateArticleTypes(UpdateArticleTypesEvent event) {
+
+	}
+	
+	public void onDeleteArticleType(DeleteArticleTypeEvent event) {
+
+	}
+	
+	public void createPriceChanges(Collection<PriceChangeDTO> priceChanges) {
+
+	}
+	
+	public void onRequestShowArticleTypeDetails(RequestShowArticleTypeDetailsEvent event) {
+
+	}
+
+	public void onSortArticles(SortArticlesEvent event) {
+		// TODO no sortevent, use refresh stuffs
+	}
+	
+	private void updateArticleType(final ArticleTypeDTO articleType) {
+		
+	}
+	
+	private void deleteArticleType(final ArticleTypeDTO articleType) {
+
+	}
+
 	private void readArticleTypes() {
 		// TODO
 	}

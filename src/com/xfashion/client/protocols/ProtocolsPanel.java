@@ -22,8 +22,8 @@ import com.xfashion.client.Formatter;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTable;
 import com.xfashion.client.at.ArticleTypeManagement;
-import com.xfashion.client.at.GetSellPriceFromSoldArticleStrategy;
-import com.xfashion.client.at.ProvidesArticleFilter;
+import com.xfashion.client.at.IProvideArticleFilter;
+import com.xfashion.client.at.price.GetSellPriceFromSoldArticleStrategy;
 import com.xfashion.client.notepad.GetPriceFromArticleAmountStrategy;
 import com.xfashion.client.protocols.event.AddMoreAddedArticlesEvent;
 import com.xfashion.client.protocols.event.AddMoreSoldArticlesEvent;
@@ -47,7 +47,7 @@ public class ProtocolsPanel {
 	protected UserServiceAsync userService = (UserServiceAsync) GWT.create(UserService.class);
 
 	protected List<ShopDTO> knownShops;
-	protected ProvidesArticleFilter filterProvider;
+	protected IProvideArticleFilter filterProvider;
 
 	protected Panel scrollPanel;
 
@@ -60,7 +60,7 @@ public class ProtocolsPanel {
 	protected ImageResources images;
 	protected Formatter formatter;
 
-	public ProtocolsPanel(ProvidesArticleFilter filterProvider) {
+	public ProtocolsPanel(IProvideArticleFilter filterProvider) {
 		this.knownShops = new ArrayList<ShopDTO>();
 		this.textMessages = GWT.create(TextMessages.class);
 		this.images = GWT.<ImageResources> create(ImageResources.class);

@@ -30,7 +30,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.web.bindery.event.shared.HandlerRegistration;
 import com.xfashion.client.Formatter;
 import com.xfashion.client.Xfashion;
-import com.xfashion.client.at.ProvidesArticleFilter;
+import com.xfashion.client.at.IProvideArticleFilter;
 import com.xfashion.client.at.brand.event.ChooseBrandEvent;
 import com.xfashion.client.at.brand.event.ChooseBrandHandler;
 import com.xfashion.client.at.brand.event.ShowChooseBrandPopupEvent;
@@ -83,7 +83,7 @@ public class BulkEditArticleTypePopup implements CloseHandler<PopupPanel>, Choos
 	private Grid sellPriceDeGrid;
 	private TextBox sellPriceDeTextBox;
 
-	private ProvidesArticleFilter provider;
+	private IProvideArticleFilter provider;
 
 	private Formatter formatter = Formatter.getInstance();
 
@@ -92,7 +92,7 @@ public class BulkEditArticleTypePopup implements CloseHandler<PopupPanel>, Choos
 
 	protected List<HandlerRegistration> handlerRegistrations = new ArrayList<HandlerRegistration>();
 
-	public BulkEditArticleTypePopup(ProvidesArticleFilter provider) {
+	public BulkEditArticleTypePopup(IProvideArticleFilter provider) {
 		this.provider = provider;
 		this.textMessages = GWT.create(TextMessages.class);
 		registerForEvents();

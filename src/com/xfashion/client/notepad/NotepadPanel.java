@@ -18,7 +18,7 @@ import com.xfashion.client.IsMinimizable;
 import com.xfashion.client.PanelWidthAnimation;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTypeManagement;
-import com.xfashion.client.at.ProvidesArticleFilter;
+import com.xfashion.client.at.IProvideArticleFilter;
 import com.xfashion.client.notepad.event.ClearNotepadEvent;
 import com.xfashion.client.notepad.event.DeliveryNoticeUpdatedEvent;
 import com.xfashion.client.notepad.event.DeliveryNoticeUpdatedHandler;
@@ -52,7 +52,7 @@ public class NotepadPanel implements IsMinimizable, OpenNotepadHandler, SaveNote
 	public static final int PANEL_MAX_WIDTH = 560;
 	public static final int PANEL_MIN_WIDTH = 25;
 
-	private ProvidesArticleFilter provider;
+	private IProvideArticleFilter provider;
 
 	protected Panel scrollPanel;
 	protected Label headerLabel;
@@ -68,7 +68,7 @@ public class NotepadPanel implements IsMinimizable, OpenNotepadHandler, SaveNote
 	protected ImageResources images;
 	protected BarcodeHelper barcodeHelper;
 
-	public NotepadPanel(ProvidesArticleFilter provider) {
+	public NotepadPanel(IProvideArticleFilter provider) {
 		textMessages = GWT.create(TextMessages.class);
 		images = GWT.<ImageResources> create(ImageResources.class);
 		barcodeHelper = new BarcodeHelper();

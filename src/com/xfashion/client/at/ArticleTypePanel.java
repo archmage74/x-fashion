@@ -25,6 +25,7 @@ import com.xfashion.client.ErrorEvent;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.bulk.BulkEditArticleTypePopup;
 import com.xfashion.client.at.name.NameFilterEvent;
+import com.xfashion.client.at.popup.CreateArticleTypePopup;
 import com.xfashion.client.at.size.SizeDataProvider;
 import com.xfashion.client.db.ArticleTypeDatabase;
 import com.xfashion.client.resources.ErrorMessages;

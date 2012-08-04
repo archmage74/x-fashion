@@ -12,6 +12,7 @@ import com.google.gwt.view.client.CellPreviewEvent;
 import com.xfashion.client.Formatter;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.event.RequestShowArticleTypeDetailsEvent;
+import com.xfashion.client.at.price.IGetPriceStrategy;
 import com.xfashion.client.resources.FilterTableResources;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.shared.ArticleTypeDTO;
@@ -23,7 +24,7 @@ import com.xfashion.shared.StyleDTO;
 
 public abstract class ArticleTable<T> {
 
-	private ProvidesArticleFilter provider;
+	private IProvideArticleFilter provider;
 	
 	protected ArticleDataProvider<T> articleProvider;
 	protected IGetPriceStrategy<T> getPriceStrategy;
@@ -34,7 +35,7 @@ public abstract class ArticleTable<T> {
 	protected TextMessages textMessages;
 	protected Formatter formatter;
 	
-	public ArticleTable(ProvidesArticleFilter provider, IGetPriceStrategy<T> getPriceStrategy) {
+	public ArticleTable(IProvideArticleFilter provider, IGetPriceStrategy<T> getPriceStrategy) {
 		this.textMessages = GWT.create(TextMessages.class);
 		this.formatter = Formatter.getInstance();
 		this.provider = provider;

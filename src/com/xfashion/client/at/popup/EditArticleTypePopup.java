@@ -1,4 +1,4 @@
-package com.xfashion.client.at;
+package com.xfashion.client.at.popup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +19,8 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.HandlerRegistration;
 import com.xfashion.client.Xfashion;
+import com.xfashion.client.at.CreateArticleException;
+import com.xfashion.client.at.IProvideArticleFilter;
 import com.xfashion.client.at.brand.event.ChooseBrandEvent;
 import com.xfashion.client.at.brand.event.ChooseBrandHandler;
 import com.xfashion.client.at.brand.event.ShowChooseBrandPopupEvent;
@@ -30,6 +32,7 @@ import com.xfashion.client.at.color.event.ChooseColorEvent;
 import com.xfashion.client.at.color.event.ChooseColorHandler;
 import com.xfashion.client.at.color.event.ShowChooseColorPopupEvent;
 import com.xfashion.client.at.event.DeleteArticleTypeEvent;
+import com.xfashion.client.at.price.PriceChangeDetector;
 import com.xfashion.client.at.size.event.ChooseSizeEvent;
 import com.xfashion.client.at.size.event.ChooseSizeHandler;
 import com.xfashion.client.at.size.event.ShowChooseSizePopupEvent;
@@ -64,7 +67,7 @@ public class EditArticleTypePopup extends ArticleTypePopup implements ChooseBran
 
 	protected List<HandlerRegistration> handlerRegistrations = new ArrayList<HandlerRegistration>();
 
-	public EditArticleTypePopup(ProvidesArticleFilter provider) {
+	public EditArticleTypePopup(IProvideArticleFilter provider) {
 		super(provider);
 		this.errorMessages = GWT.create(ErrorMessages.class);
 		this.priceChangeDetector = PriceChangeDetector.getInstance();

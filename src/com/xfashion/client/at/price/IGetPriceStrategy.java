@@ -1,4 +1,4 @@
-package com.xfashion.client.at;
+package com.xfashion.client.at.price;
 
 public interface IGetPriceStrategy<T> {
 	

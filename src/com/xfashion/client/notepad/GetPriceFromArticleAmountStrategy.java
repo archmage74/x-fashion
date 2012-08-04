@@ -1,7 +1,7 @@
 package com.xfashion.client.notepad;
 
 import com.xfashion.client.at.ArticleDataProvider;
-import com.xfashion.client.at.IGetPriceStrategy;
+import com.xfashion.client.at.price.IGetPriceStrategy;
 import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.ArticleTypeDTO;
 

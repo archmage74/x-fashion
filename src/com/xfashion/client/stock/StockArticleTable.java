@@ -7,15 +7,15 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTable;
-import com.xfashion.client.at.IGetPriceStrategy;
-import com.xfashion.client.at.ProvidesArticleFilter;
+import com.xfashion.client.at.IProvideArticleFilter;
+import com.xfashion.client.at.price.IGetPriceStrategy;
 import com.xfashion.client.notepad.event.NotepadAddArticleEvent;
 import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.ArticleTypeDTO;
 
 public class StockArticleTable extends ArticleTable<ArticleAmountDTO> {
 
-	public StockArticleTable(ProvidesArticleFilter provider, IGetPriceStrategy<ArticleAmountDTO> getPriceStrategy) {
+	public StockArticleTable(IProvideArticleFilter provider, IGetPriceStrategy<ArticleAmountDTO> getPriceStrategy) {
 		super(provider, getPriceStrategy);
 	}
 

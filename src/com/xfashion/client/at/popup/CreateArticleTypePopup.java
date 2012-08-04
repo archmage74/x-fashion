@@ -1,4 +1,4 @@
-package com.xfashion.client.at;
+package com.xfashion.client.at.popup;
 
 import java.util.List;
 
@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.xfashion.client.Formatter;
+import com.xfashion.client.at.CreateArticleException;
 import com.xfashion.client.db.ArticleTypeDatabase;
 import com.xfashion.client.img.ImageManagementPopup;
 import com.xfashion.client.resources.ErrorMessages;

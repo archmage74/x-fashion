@@ -15,11 +15,9 @@ import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ListDataProvider;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTypeDataProvider;
-import com.xfashion.client.at.ArticleTypePopup;
 import com.xfashion.client.at.ArticleTypeService;
 import com.xfashion.client.at.ArticleTypeServiceAsync;
-import com.xfashion.client.at.EditArticleTypePopup;
-import com.xfashion.client.at.ProvidesArticleFilter;
+import com.xfashion.client.at.IProvideArticleFilter;
 import com.xfashion.client.at.brand.BrandDataProvider;
 import com.xfashion.client.at.bulk.UpdateArticleTypesEvent;
 import com.xfashion.client.at.bulk.UpdateArticleTypesHandler;
@@ -37,6 +35,8 @@ import com.xfashion.client.at.event.SortArticlesEvent;
 import com.xfashion.client.at.event.SortArticlesHandler;
 import com.xfashion.client.at.name.NameFilterEvent;
 import com.xfashion.client.at.name.NameFilterHandler;
+import com.xfashion.client.at.popup.ArticleTypePopup;
+import com.xfashion.client.at.popup.EditArticleTypePopup;
 import com.xfashion.client.at.size.SizeDataProvider;
 import com.xfashion.client.at.sort.IArticleTypeComparator;
 import com.xfashion.client.user.UserManagement;
@@ -45,7 +45,7 @@ import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.PriceChangeDTO;
 import com.xfashion.shared.UserRole;
 
-public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHandler, RefreshFilterHandler, UpdateArticleTypesHandler,
+public class ArticleTypeDatabase implements IProvideArticleFilter, NameFilterHandler, RefreshFilterHandler, UpdateArticleTypesHandler,
 		RequestShowArticleTypeDetailsHandler, DeleteArticleTypeHandler, SortArticlesHandler {
 
 	private ArticleTypeServiceAsync articleTypeService = (ArticleTypeServiceAsync) GWT.create(ArticleTypeService.class);
@@ -344,7 +344,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 		}
 	}
 
-	public void updateArticleType(final ArticleTypeDTO articleType) {
+	private void updateArticleType(final ArticleTypeDTO articleType) {
 		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -366,7 +366,7 @@ public class ArticleTypeDatabase implements ProvidesArticleFilter, NameFilterHan
 		deleteArticleType(event.getArticleType());
 	}
 	
-	public void deleteArticleType(final ArticleTypeDTO articleType) {
+	private void deleteArticleType(final ArticleTypeDTO articleType) {
 		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 			@Override
 			public void onFailure(Throwable caught) {

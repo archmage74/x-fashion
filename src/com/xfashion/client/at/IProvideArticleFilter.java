@@ -5,7 +5,7 @@ import com.xfashion.client.at.category.CategoryDataProvider;
 import com.xfashion.client.at.color.ColorDataProvider;
 import com.xfashion.client.at.size.SizeDataProvider;
 
-public interface ProvidesArticleFilter {
+public interface IProvideArticleFilter {
 	CategoryDataProvider getCategoryProvider();
 	BrandDataProvider getBrandProvider();
 	SizeDataProvider getSizeProvider();

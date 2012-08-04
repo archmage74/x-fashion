@@ -5,7 +5,7 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.xfashion.client.Formatter;
 import com.xfashion.client.at.ArticleTable;
-import com.xfashion.client.at.ProvidesArticleFilter;
+import com.xfashion.client.at.IProvideArticleFilter;
 import com.xfashion.client.notepad.GetPriceFromArticleAmountStrategy;
 import com.xfashion.shared.AddedArticleDTO;
 
@@ -13,7 +13,7 @@ public class AddedArticleTable extends ArticleTable<AddedArticleDTO> {
 
 	protected Formatter formatter;
 
-	public AddedArticleTable(ProvidesArticleFilter provider, GetPriceFromArticleAmountStrategy<AddedArticleDTO> getPriceStrategy) {
+	public AddedArticleTable(IProvideArticleFilter provider, GetPriceFromArticleAmountStrategy<AddedArticleDTO> getPriceStrategy) {
 		super(provider, getPriceStrategy);
 		this.formatter = Formatter.getInstance();
 	}

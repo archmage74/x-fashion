@@ -1,4 +1,4 @@
-package com.xfashion.client.at;
+package com.xfashion.client.at.popup;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -9,6 +9,8 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.xfashion.client.Xfashion;
+import com.xfashion.client.at.ArticleTypeManagement;
+import com.xfashion.client.at.IProvideArticleFilter;
 import com.xfashion.client.dialog.YesNoCallback;
 import com.xfashion.client.dialog.YesNoPopup;
 import com.xfashion.client.stock.StockDataProvider;
@@ -25,7 +27,7 @@ public class ArticleTypeDetailPopup extends ArticleTypePopup {
 	
 	protected StockDataProvider stockProvider;
 
-	public ArticleTypeDetailPopup(ProvidesArticleFilter provider, StockDataProvider stockProvider) {
+	public ArticleTypeDetailPopup(IProvideArticleFilter provider, StockDataProvider stockProvider) {
 		super(provider);
 		this.stockProvider = stockProvider;
 	}

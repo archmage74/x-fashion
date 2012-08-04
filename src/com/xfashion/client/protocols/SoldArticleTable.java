@@ -8,15 +8,15 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.xfashion.client.Formatter;
 import com.xfashion.client.at.ArticleTable;
-import com.xfashion.client.at.GetSellPriceFromSoldArticleStrategy;
-import com.xfashion.client.at.ProvidesArticleFilter;
+import com.xfashion.client.at.IProvideArticleFilter;
+import com.xfashion.client.at.price.GetSellPriceFromSoldArticleStrategy;
 import com.xfashion.shared.SoldArticleDTO;
 
 public class SoldArticleTable extends ArticleTable<SoldArticleDTO> {
 
 	protected Formatter formatter;
 
-	public SoldArticleTable(ProvidesArticleFilter provider, GetSellPriceFromSoldArticleStrategy getPriceStrategy) {
+	public SoldArticleTable(IProvideArticleFilter provider, GetSellPriceFromSoldArticleStrategy getPriceStrategy) {
 		super(provider, getPriceStrategy);
 		this.formatter = Formatter.getInstance();
 	}

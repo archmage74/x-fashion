@@ -11,7 +11,7 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTable;
-import com.xfashion.client.at.ProvidesArticleFilter;
+import com.xfashion.client.at.IProvideArticleFilter;
 import com.xfashion.client.notepad.event.NotepadRemoveArticleEvent;
 import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.ArticleTypeDTO;
@@ -23,7 +23,7 @@ public class NotepadArticleTable extends ArticleTable<ArticleAmountDTO> {
 	protected String lastUpdatedArticleTypeKey = null;
 	protected Date lastUpdatedTime = null;
 
-	public NotepadArticleTable(ProvidesArticleFilter provider, GetPriceFromArticleAmountStrategy<ArticleAmountDTO> priceStrategy) {
+	public NotepadArticleTable(IProvideArticleFilter provider, GetPriceFromArticleAmountStrategy<ArticleAmountDTO> priceStrategy) {
 		super(provider, priceStrategy);
 	}
 
