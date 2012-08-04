@@ -1,4 +1,4 @@
-package com.xfashion.client.name;
+package com.xfashion.client.at.name;
 
 import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.core.client.GWT;

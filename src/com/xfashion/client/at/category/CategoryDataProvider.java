@@ -27,6 +27,7 @@ import com.xfashion.client.at.category.event.ShowChooseCategoryAndStylePopupEven
 import com.xfashion.client.at.category.event.ShowChooseCategoryAndStylePopupHandler;
 import com.xfashion.client.at.category.event.UpdateCategoryEvent;
 import com.xfashion.client.at.category.event.UpdateCategoryHandler;
+import com.xfashion.client.at.name.NameFilterEvent;
 import com.xfashion.client.at.style.StyleDataProvider;
 import com.xfashion.client.at.style.event.ClearStyleSelectionEvent;
 import com.xfashion.client.at.style.event.ClearStyleSelectionHandler;
@@ -42,7 +43,6 @@ import com.xfashion.client.at.style.event.SelectStyleEvent;
 import com.xfashion.client.at.style.event.SelectStyleHandler;
 import com.xfashion.client.at.style.event.UpdateStyleEvent;
 import com.xfashion.client.at.style.event.UpdateStyleHandler;
-import com.xfashion.client.name.NameFilterEvent;
 import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.CategoryDTO;
