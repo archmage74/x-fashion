@@ -62,10 +62,10 @@ public class MainPanel implements ErrorHandler, LoginHandler {
 		notepadManagement = new NotepadManagement(articleFilterProvider.getArticleTypeProvider());
 		stockManagement = new StockManagement(articleFilterProvider, articleTypeManagement);
 		stockManagement.init();
-		//protocolsManagement = new ProtocolsManagement(articleTypeDatabase);
-		//removedArticleManagement = new RemovedArticleManagement(articleTypeDatabase);
+		protocolsManagement = new ProtocolsManagement(articleFilterProvider);
+		removedArticleManagement = new RemovedArticleManagement(articleFilterProvider);
 		promoManagement = new PromoManagement();
-		//priceChangeManagement = new PriceChangeManagement(articleTypeDatabase);
+		priceChangeManagement = new PriceChangeManagement(articleFilterProvider);
 
 		RootPanel.get("logoContainer").add(createLogo());
 		contentPanel = new SimplePanel();

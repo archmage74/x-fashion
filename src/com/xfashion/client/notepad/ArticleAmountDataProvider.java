@@ -7,20 +7,20 @@ import com.xfashion.shared.ArticleTypeDTO;
 
 public class ArticleAmountDataProvider extends ArticleDataProvider<ArticleAmountDTO> {
 
-	protected ArticleTypeDataProvider articleTypeDatabase;
+	protected ArticleTypeDataProvider articleTypeProvider;
 	
-	public ArticleAmountDataProvider(ArticleTypeDataProvider articleTypeDatabase) {
-		this.articleTypeDatabase = articleTypeDatabase;
+	public ArticleAmountDataProvider(ArticleTypeDataProvider articleTypeProvider) {
+		this.articleTypeProvider = articleTypeProvider;
 	}
 	
 	@Override
 	public ArticleTypeDTO retrieveArticleType(ArticleAmountDTO item) {
-		return articleTypeDatabase.resolveData(item.getArticleTypeKey());
+		return articleTypeProvider.resolveData(item.getArticleTypeKey());
 	}
 
 	@Override
 	public ArticleTypeDTO retrieveArticleType(Long productNumber) {
-		return articleTypeDatabase.retrieveArticleType(productNumber);
+		return articleTypeProvider.retrieveArticleType(productNumber);
 	}
 
 }

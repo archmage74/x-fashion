@@ -5,11 +5,8 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.web.bindery.event.shared.EventBus;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.brand.BrandManagement;
-import com.xfashion.client.at.brand.BrandPanel;
 import com.xfashion.client.at.category.CategoryManagement;
-import com.xfashion.client.at.category.CategoryPanel;
 import com.xfashion.client.at.color.ColorManagement;
-import com.xfashion.client.at.color.ColorPanel;
 import com.xfashion.client.at.event.RefreshFilterEvent;
 import com.xfashion.client.at.event.RefreshFilterHandler;
 import com.xfashion.client.at.event.RequestShowArticleTypeDetailsEvent;
@@ -18,9 +15,7 @@ import com.xfashion.client.at.name.NamePanel;
 import com.xfashion.client.at.popup.ArticleTypePopup;
 import com.xfashion.client.at.popup.EditArticleTypePopup;
 import com.xfashion.client.at.size.SizeManagement;
-import com.xfashion.client.at.size.SizePanel;
 import com.xfashion.client.at.sort.DefaultArticleTypeComparator;
-import com.xfashion.client.at.style.StylePanel;
 import com.xfashion.client.notepad.ArticleAmountDataProvider;
 import com.xfashion.client.notepad.NotepadPanel;
 import com.xfashion.client.notepad.event.NotepadStartMaximizeEvent;
@@ -42,11 +37,6 @@ public class ArticleTypeView implements NotepadStartMaximizeHandler, NotepadStar
 	protected SizeManagement sizeManagement;
 	protected CategoryManagement categoryManagement;
 	
-	protected CategoryPanel categoryPanel;
-	protected BrandPanel brandPanel;
-	protected StylePanel stylePanel;
-	protected SizePanel sizePanel;
-	protected ColorPanel colorPanel;
 	protected NamePanel namePanel;
 	protected NotepadPanel notepadPanel;
 	protected ArticleTypePanel articleTypePanel;
@@ -117,6 +107,7 @@ public class ArticleTypeView implements NotepadStartMaximizeHandler, NotepadStar
 
 			panel.add(articleTypePanel.createPanel(articleFilterProvider.getArticleTypeProvider(), articleFilterProvider.getNameProvider().getNameOracle()));
 			panel.add(notepadPanel.createPanel(notepadArticleProvider, true));
+			adminBus.fireEvent(new RefreshFilterEvent());
 		}
 		return panel;
 	}
@@ -140,22 +131,14 @@ public class ArticleTypeView implements NotepadStartMaximizeHandler, NotepadStar
 	@Override
 	public void onNotepadStartMaximize(NotepadStartMaximizeEvent event) {
 		if (panel != null) {
-			brandPanel.minimize();
-			stylePanel.minimize();
-			sizePanel.minimize();
-			colorPanel.minimize();
-			namePanel.minimize();
+			// TODO fire minimize filter panel event
 		}
 	}
 
 	@Override
 	public void onNotepadStartMinimize(NotepadStartMinimizeEvent event) {
 		if (panel != null) {
-			brandPanel.maximize();
-			stylePanel.maximize();
-			sizePanel.maximize();
-			colorPanel.maximize();
-			namePanel.maximize();
+			// TODO fire maximize filter panel event
 		}
 	}
 

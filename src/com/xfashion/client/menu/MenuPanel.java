@@ -49,7 +49,9 @@ public class MenuPanel implements LoginHandler, PriceChangesUpdatedHandler {
 	
 	@Override
 	public void onPriceChangesUpdated(PriceChangesUpdatedEvent event) {
-		priceChangeItem.setHTML(menuMessages.priceChanges(event.getPriceChangesAmount()));
+		if (priceChangeItem != null) {
+			priceChangeItem.setHTML(menuMessages.priceChanges(event.getPriceChangesAmount()));
+		}
 	}
 	
 	public void addMenuPanel() {
@@ -86,6 +88,7 @@ public class MenuPanel implements LoginHandler, PriceChangesUpdatedHandler {
 		menu.addItem(createSellStatisticMenuItem());
 		menu.addItem(createPromoMenuItem());
 		menu.addItem(createUserManagementMenuItem());
+		menu.addItem(createPriceChangeMenuItem());
 		if (UserManagement.hasRole(UserRole.DEVELOPER)) {
 			menu.addItem(createTestMenuItem());
 		}
