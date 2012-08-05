@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.CellPreviewEvent;
+import com.google.web.bindery.event.shared.EventBus;
 import com.xfashion.client.SimpleFilterPanel;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.resources.ErrorMessages;
@@ -32,6 +33,7 @@ import com.xfashion.shared.UserRole;
 public abstract class FilterEditor<T extends FilterCellData> {
 
 	protected boolean editMode = false;
+	protected EventBus adminBus;
 
 	protected SimpleFilterPanel<T> filterPanel;
 
@@ -41,7 +43,8 @@ public abstract class FilterEditor<T extends FilterCellData> {
 	protected TextMessages textMessages;
 	protected ErrorMessages errorMessages;
 	
-	public FilterEditor(SimpleFilterPanel<T> filterPanel) {
+	public FilterEditor(SimpleFilterPanel<T> filterPanel, EventBus adminBus) {
+		this.adminBus = adminBus;
 		this.filterPanel = filterPanel;
 		this.filterPanel.setFilterEditor(this);
 		this.images = GWT.create(ImageResources.class);

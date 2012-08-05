@@ -1,7 +1,6 @@
 package com.xfashion.client.at.name;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -11,8 +10,8 @@ import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.web.bindery.event.shared.EventBus;
 import com.xfashion.client.Xfashion;
+import com.xfashion.client.at.ArticleFilterProvider;
 import com.xfashion.client.at.ArticleTypeDataProvider;
-import com.xfashion.client.at.IProvideArticleFilter;
 import com.xfashion.client.at.category.event.SelectCategoryEvent;
 import com.xfashion.client.at.category.event.SelectCategoryHandler;
 import com.xfashion.client.at.event.ArticlesLoadedEvent;
@@ -30,10 +29,10 @@ public class NameDataProvider extends ListDataProvider<String> implements NameFi
 	
 	protected MultiWordSuggestOracle nameOracle;
 
-	protected IProvideArticleFilter filterProvider;
+	protected ArticleFilterProvider filterProvider;
 	protected ArticleTypeDataProvider articleTypeProvider;
 	
-	public NameDataProvider(ArticleTypeDataProvider articleTypeProvider, IProvideArticleFilter filterProvider, EventBus eventBus) {
+	public NameDataProvider(ArticleTypeDataProvider articleTypeProvider, ArticleFilterProvider filterProvider, EventBus eventBus) {
 		this.articleTypeProvider = articleTypeProvider;
 		this.filterProvider = filterProvider;
 		this.eventBus = eventBus;
@@ -52,15 +51,13 @@ public class NameDataProvider extends ListDataProvider<String> implements NameFi
 	}
 
 	public void updateAvailableArticleNames() {
-		List<ArticleTypeDTO> result = new ArrayList<ArticleTypeDTO>(articleTypeProvider.getAllArticleTypes());
+		List<ArticleTypeDTO> result = new ArrayList<ArticleTypeDTO>(filterProvider.getAllArticleTypes());
 		result = filterProvider.getCategoryProvider().applyFilter(result);
 		result = filterProvider.getBrandProvider().applyFilter(result);
 		result = filterProvider.getSizeProvider().applyFilter(result);
 		result = filterProvider.getColorProvider().applyFilter(result);
 		
 		List<String> filteredNames = getFilteredNames(result);
-		Collection<String> availableNames = articleTypeProvider.getVisibleArticleNames();
-		filteredNames.retainAll(availableNames);
 		
 		Collections.sort(filteredNames);
 		setList(filteredNames);

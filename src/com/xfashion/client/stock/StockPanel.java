@@ -8,12 +8,14 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.web.bindery.event.shared.EventBus;
 import com.xfashion.client.at.ArticleFilterProvider;
 import com.xfashion.client.at.ArticleTable;
 import com.xfashion.client.at.ArticleTypeManagement;
 import com.xfashion.client.at.brand.BrandPanel;
 import com.xfashion.client.at.category.CategoryPanel;
 import com.xfashion.client.at.color.ColorPanel;
+import com.xfashion.client.at.name.NameDataProvider;
 import com.xfashion.client.at.name.NamePanel;
 import com.xfashion.client.at.size.SizePanel;
 import com.xfashion.client.at.style.StylePanel;
@@ -33,6 +35,8 @@ public class StockPanel implements NotepadStartMinimizeHandler, NotepadStartMaxi
 	public static final int PANEL_MAX_WIDTH = 550;
 	public static final int PANEL_MIN_WIDTH = 25;
 
+	protected EventBus stockBus;
+	
 	private ArticleFilterProvider stockFilterProvider;
 
 	protected HorizontalPanel headerPanel;
@@ -51,7 +55,8 @@ public class StockPanel implements NotepadStartMinimizeHandler, NotepadStartMaxi
 	protected TextMessages textMessages;
 	protected ImageResources images;
 
-	public StockPanel(StockFilterProvider stockFilterProvider) {
+	public StockPanel(StockFilterProvider stockFilterProvider, EventBus stockBus) {
+		this.stockBus = stockBus;
 		this.textMessages = GWT.create(TextMessages.class);
 		this.images = GWT.<ImageResources> create(ImageResources.class);
 		this.stockFilterProvider = stockFilterProvider;
@@ -59,17 +64,41 @@ public class StockPanel implements NotepadStartMinimizeHandler, NotepadStartMaxi
 		registerForEvents();
 	}
 
-	public Panel createPanel(ArticleAmountDataProvider stockProvider, ArticleAmountDataProvider notepadArticleProvider) {
+	public CategoryPanel getCategoryPanel() {
+		return categoryPanel;
+	}
+
+	public BrandPanel getBrandPanel() {
+		return brandPanel;
+	}
+
+	public StylePanel getStylePanel() {
+		return stylePanel;
+	}
+
+	public SizePanel getSizePanel() {
+		return sizePanel;
+	}
+
+	public ColorPanel getColorPanel() {
+		return colorPanel;
+	}
+
+	public NamePanel getNamePanel() {
+		return namePanel;
+	}
+
+	public Panel createPanel(ArticleTypeManagement articleTypeManagement, ArticleAmountDataProvider stockProvider, ArticleAmountDataProvider notepadArticleProvider) {
 		if (panel == null) {
 			panel = new HorizontalPanel();
-			panel.add(createCategoryPanel());
-			panel.add(createBrandPanel());
-			panel.add(createStylePanel());
+			panel.add(createCategoryPanel(articleTypeManagement));
+			panel.add(createBrandPanel(articleTypeManagement));
+			panel.add(createStylePanel(articleTypeManagement));
 			panel.add(createNamePanel());
-			panel.add(createColorPanel());
-			panel.add(createSizePanel());
+			panel.add(createColorPanel(articleTypeManagement));
+			panel.add(createSizePanel(articleTypeManagement));
 			panel.add(createArticlePanel(stockProvider));
-			NotepadPanel notepadPanel = new NotepadPanel(stockFilterProvider);
+			NotepadPanel notepadPanel = new NotepadPanel(stockFilterProvider, stockBus);
 			panel.add(notepadPanel.createPanel(notepadArticleProvider, true));
 		}
 		return panel;
@@ -101,34 +130,36 @@ public class StockPanel implements NotepadStartMinimizeHandler, NotepadStartMaxi
 		}
 	}
 
-	private Widget createCategoryPanel() {
-		categoryPanel = new CategoryPanel(stockFilterProvider.getCategoryProvider(), stockFilterProvider.getFilterEventBus());
-		return categoryPanel.createPanel();
+	private Widget createCategoryPanel(ArticleTypeManagement articleTypeManagement) {
+		categoryPanel = articleTypeManagement.getCategoryManagement().createCategoryPanel(stockFilterProvider, stockBus);
+		return categoryPanel.createAdminPanel();
 	}
 
-	private Widget createBrandPanel() {
-		brandPanel = new BrandPanel(stockFilterProvider.getBrandProvider(), stockFilterProvider.getFilterEventBus());
-		return brandPanel.createPanel();
+	private Widget createBrandPanel(ArticleTypeManagement articleTypeManagement) {
+		brandPanel = articleTypeManagement.getBrandManagement().createBrandPanel(stockFilterProvider, stockBus);
+		return brandPanel.createAdminPanel();
 	}
 
-	private Widget createStylePanel() {
-		stylePanel = new StylePanel(stockFilterProvider.getCategoryProvider().getStyleProvider(), stockFilterProvider.getFilterEventBus());
-		return stylePanel.createPanel();
+	private Widget createStylePanel(ArticleTypeManagement articleTypeManagement) {
+		stylePanel = articleTypeManagement.getCategoryManagement().createStylePanel(stockBus);
+		return stylePanel.createAdminPanel();
 	}
 
-	private Widget createColorPanel() {
-		colorPanel = new ColorPanel(stockFilterProvider.getColorProvider(), stockFilterProvider.getFilterEventBus());
-		return colorPanel.createPanel();
+	private Widget createColorPanel(ArticleTypeManagement articleTypeManagement) {
+		colorPanel = articleTypeManagement.getColorManagement().createColorPanel(stockFilterProvider, stockBus);
+		return colorPanel.createAdminPanel();
 	}
 
 	private Widget createNamePanel() {
-		namePanel = new NamePanel(stockFilterProvider.getNameProvider(), stockFilterProvider.getFilterEventBus());
+		NameDataProvider nameProvider = new NameDataProvider(stockFilterProvider.getArticleTypeProvider(), stockFilterProvider, stockBus);
+		stockFilterProvider.setNameProvider(nameProvider);
+		namePanel = new NamePanel(nameProvider, stockBus);
 		return namePanel.createPanel();
 	}
 
-	private Widget createSizePanel() {
-		sizePanel = new SizePanel(stockFilterProvider.getSizeProvider(), stockFilterProvider.getFilterEventBus());
-		return sizePanel.createPanel(new String[] { "sizePanel" });
+	private Widget createSizePanel(ArticleTypeManagement articleTypeManagement) {
+		sizePanel = articleTypeManagement.getSizeManagement().createSizePanel(stockFilterProvider, stockBus);
+		return sizePanel.createAdminPanel(new String[] { "sizePanel" });
 	}
 
 	protected Panel createArticlePanel(ArticleAmountDataProvider articleAmountProvider) {
@@ -174,8 +205,8 @@ public class StockPanel implements NotepadStartMinimizeHandler, NotepadStartMaxi
 	}
 
 	private void registerForEvents() {
-		stockFilterProvider.getFilterEventBus().addHandler(NotepadStartMaximizeEvent.TYPE, this);
-		stockFilterProvider.getFilterEventBus().addHandler(NotepadStartMinimizeEvent.TYPE, this);
+		stockBus.addHandler(NotepadStartMaximizeEvent.TYPE, this);
+		stockBus.addHandler(NotepadStartMinimizeEvent.TYPE, this);
 	}
 
 }

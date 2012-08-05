@@ -44,8 +44,8 @@ public class SizePanel extends ResizeableIconFilterPanel<SizeDTO> {
 	}
 
 	@Override
-	public Panel createPanel(String [] styles) {
-		Panel panel = super.createPanel(styles);
+	public Panel createAdminPanel(String [] styles) {
+		Panel panel = super.createAdminPanel(styles);
 		panel.setWidth(getMaxWidth() + "px");
 		return panel;
 	}

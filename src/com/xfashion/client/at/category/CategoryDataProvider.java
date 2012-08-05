@@ -13,44 +13,21 @@ import com.xfashion.client.FilterDataProvider;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTypeDataProvider;
 import com.xfashion.client.at.category.event.CategoriesLoadedEvent;
-import com.xfashion.client.at.category.event.CreateCategoryEvent;
-import com.xfashion.client.at.category.event.CreateCategoryHandler;
-import com.xfashion.client.at.category.event.DeleteCategoryEvent;
-import com.xfashion.client.at.category.event.DeleteCategoryHandler;
-import com.xfashion.client.at.category.event.MoveDownCategoryEvent;
-import com.xfashion.client.at.category.event.MoveDownCategoryHandler;
-import com.xfashion.client.at.category.event.MoveUpCategoryEvent;
-import com.xfashion.client.at.category.event.MoveUpCategoryHandler;
 import com.xfashion.client.at.category.event.SelectCategoryEvent;
 import com.xfashion.client.at.category.event.SelectCategoryHandler;
-import com.xfashion.client.at.category.event.ShowChooseCategoryAndStylePopupEvent;
-import com.xfashion.client.at.category.event.ShowChooseCategoryAndStylePopupHandler;
-import com.xfashion.client.at.category.event.UpdateCategoryEvent;
-import com.xfashion.client.at.category.event.UpdateCategoryHandler;
 import com.xfashion.client.at.style.StyleDataProvider;
 import com.xfashion.client.at.style.event.ClearStyleSelectionEvent;
 import com.xfashion.client.at.style.event.ClearStyleSelectionHandler;
-import com.xfashion.client.at.style.event.CreateStyleEvent;
-import com.xfashion.client.at.style.event.CreateStyleHandler;
-import com.xfashion.client.at.style.event.DeleteStyleEvent;
-import com.xfashion.client.at.style.event.DeleteStyleHandler;
-import com.xfashion.client.at.style.event.MoveDownStyleEvent;
-import com.xfashion.client.at.style.event.MoveDownStyleHandler;
-import com.xfashion.client.at.style.event.MoveUpStyleEvent;
-import com.xfashion.client.at.style.event.MoveUpStyleHandler;
 import com.xfashion.client.at.style.event.SelectStyleEvent;
 import com.xfashion.client.at.style.event.SelectStyleHandler;
-import com.xfashion.client.at.style.event.UpdateStyleEvent;
-import com.xfashion.client.at.style.event.UpdateStyleHandler;
 import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.CategoryDTO;
 import com.xfashion.shared.FilterCellData;
 import com.xfashion.shared.StyleDTO;
 
-public class CategoryDataProvider extends FilterDataProvider<CategoryDTO> implements CreateStyleHandler, UpdateStyleHandler, DeleteStyleHandler,
-		MoveDownStyleHandler, MoveUpStyleHandler, SelectStyleHandler, ClearStyleSelectionHandler, CreateCategoryHandler, UpdateCategoryHandler,
-		DeleteCategoryHandler, SelectCategoryHandler, MoveUpCategoryHandler, MoveDownCategoryHandler, ShowChooseCategoryAndStylePopupHandler {
+public class CategoryDataProvider extends FilterDataProvider<CategoryDTO> implements SelectStyleHandler, ClearStyleSelectionHandler,
+		SelectCategoryHandler {
 
 	protected CategoryDTO categoryFilter = null;
 
@@ -58,13 +35,15 @@ public class CategoryDataProvider extends FilterDataProvider<CategoryDTO> implem
 
 	protected Map<String, StyleDTO> styles;
 
-	protected FilterDataProvider<StyleDTO> styleProvider;
-	
+	protected StyleDataProvider styleProvider;
+
 	public CategoryDataProvider(ArticleTypeDataProvider articleTypeProvider, EventBus eventBus) {
 		super(articleTypeProvider, eventBus);
-		styleProvider = new StyleDataProvider(articleTypeProvider, eventBus);
-		styleFilter = new HashSet<String>();
-		styles = new HashMap<String, StyleDTO>();
+		
+		this.styleProvider = new StyleDataProvider(articleTypeProvider, eventBus);
+		this.styleFilter = new HashSet<String>();
+		this.styles = new HashMap<String, StyleDTO>();
+		
 		registerForEvents();
 	}
 
@@ -81,7 +60,7 @@ public class CategoryDataProvider extends FilterDataProvider<CategoryDTO> implem
 	public void setCategoryFilter(CategoryDTO categoryFilter) {
 		this.categoryFilter = categoryFilter;
 	}
-	
+
 	public void updateStyles(List<ArticleTypeDTO> articleTypes) {
 		updateStyles(articleTypes, null);
 	}
@@ -137,7 +116,7 @@ public class CategoryDataProvider extends FilterDataProvider<CategoryDTO> implem
 		return styles.get(styleId);
 	}
 
-	public FilterDataProvider<StyleDTO> getStyleProvider() {
+	public StyleDataProvider getStyleProvider() {
 		return styleProvider;
 	}
 
@@ -208,24 +187,7 @@ public class CategoryDataProvider extends FilterDataProvider<CategoryDTO> implem
 		}
 	}
 
-	@Override
-	public void onCreateCategory(CreateCategoryEvent event) {
-		final CategoryDTO category = event.getCellData();
-		getAllItems().add(category);
-		saveCategoryList();
-	}
-
-	@Override
-	public void onUpdateCategory(UpdateCategoryEvent event) {
-		final CategoryDTO item = event.getCellData();
-		if (item == null) {
-			saveCategoryList();
-		} else {
-			saveCategory(item);
-		}
-	}
-
-	private void saveCategory(final CategoryDTO category) {
+	public void saveItem(final CategoryDTO category) {
 		AsyncCallback<CategoryDTO> callback = new AsyncCallback<CategoryDTO>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -242,7 +204,7 @@ public class CategoryDataProvider extends FilterDataProvider<CategoryDTO> implem
 		articleTypeService.updateCategory(category, callback);
 	}
 
-	protected void saveCategoryList() {
+	public void saveList() {
 		AsyncCallback<List<CategoryDTO>> callback = new AsyncCallback<List<CategoryDTO>>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -255,21 +217,6 @@ public class CategoryDataProvider extends FilterDataProvider<CategoryDTO> implem
 			}
 		};
 		articleTypeService.updateCategories(new ArrayList<CategoryDTO>(getAllItems()), callback);
-	}
-
-	@Override
-	public void onDeleteCategory(DeleteCategoryEvent event) {
-		final CategoryDTO category = event.getCellData();
-		if (doesCategoryHaveArticles(category)) {
-			Xfashion.fireError(errorMessages.categoryIsNotEmpty(category.getName()));
-			return;
-		}
-		if (category.equals(getCategoryFilter())) {
-			setCategoryFilter(null);
-		}
-		category.setHidden(!category.getHidden());
-		saveCategoryList();
-		clearStyleSelection();
 	}
 
 	public boolean doesCategoryHaveArticles(CategoryDTO category) {
@@ -291,18 +238,8 @@ public class CategoryDataProvider extends FilterDataProvider<CategoryDTO> implem
 		if (dto != null) {
 			dto.setSelected(true);
 		}
-		fireRefreshEvent();
 		clearStyleSelection();
-	}
-
-	@Override
-	public void onMoveDownCategory(MoveDownCategoryEvent event) {
-		moveDownCategory(event.getIndex());
-	}
-
-	@Override
-	public void onMoveUpCategory(MoveUpCategoryEvent event) {
-		moveDownCategory(event.getIndex() - 1);
+		fireRefreshEvent();
 	}
 
 	public void moveDownCategory(int idx) {
@@ -314,12 +251,7 @@ public class CategoryDataProvider extends FilterDataProvider<CategoryDTO> implem
 		}
 		CategoryDTO item = getAllItems().remove(idx);
 		getAllItems().add(idx + 1, item);
-		saveCategoryList();
-	}
-
-	@Override
-	public void onUpdateStyle(UpdateStyleEvent event) {
-		saveCategory(getCategoryFilter());
+		saveList();
 	}
 
 	@Override
@@ -341,67 +273,19 @@ public class CategoryDataProvider extends FilterDataProvider<CategoryDTO> implem
 		fireRefreshEvent();
 	}
 
-	@Override
-	public void onMoveDownStyle(MoveDownStyleEvent event) {
-		moveDownStyle(event.getIndex());
-	}
-
-	@Override
-	public void onMoveUpStyle(MoveUpStyleEvent event) {
-		moveDownStyle(event.getIndex() - 1);
-	}
-
-	public void moveDownStyle(int idx) {
-		List<StyleDTO> styleList = getCategoryFilter().getStyles();
-		if (idx < 0) {
-			return;
-		}
-		if (idx + 1 >= styleList.size()) {
-			return;
-		}
-		StyleDTO item = styleList.remove(idx);
-		styleList.add(idx + 1, item);
-		saveCategory(getCategoryFilter());
-	}
-
-	@Override
-	public void onDeleteStyle(DeleteStyleEvent event) {
-		final StyleDTO style = event.getCellData();
-		CategoryDTO category = getCategoryFilter();
-		style.setHidden(style.getHidden());
-		saveCategory(category);
-	}
-
-	@Override
-	public void onCreateStyle(CreateStyleEvent event) {
-		final StyleDTO style = event.getCellData();
-		if (getCategoryFilter() != null) {
-			CategoryDTO category = getCategoryFilter();
-			category.getStyles().add(style);
-			saveCategory(category);
-		} else {
-			Xfashion.fireError(errorMessages.noCategorySelected());
-		}
-	}
-
 	public void readCategories() {
 		AsyncCallback<List<CategoryDTO>> callback = new AsyncCallback<List<CategoryDTO>>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				Xfashion.fireError(caught.getMessage());
 			}
+
 			@Override
 			public void onSuccess(List<CategoryDTO> result) {
 				storeCategories(result);
 			}
 		};
 		articleTypeService.readCategories(callback);
-	}
-
-	@Override
-	public void onShowChooseCategoryAndStylePopup(ShowChooseCategoryAndStylePopupEvent event) {
-		ChooseCategoryAndStylePopup popup = new ChooseCategoryAndStylePopup(this);
-		popup.show();
 	}
 
 	private void clearStyleSelection() {
@@ -412,18 +296,6 @@ public class CategoryDataProvider extends FilterDataProvider<CategoryDTO> implem
 		eventBus.addHandler(SelectCategoryEvent.TYPE, this);
 		eventBus.addHandler(SelectStyleEvent.TYPE, this);
 		eventBus.addHandler(ClearStyleSelectionEvent.TYPE, this);
-
-		Xfashion.eventBus.addHandler(CreateCategoryEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(UpdateCategoryEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(DeleteCategoryEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(MoveUpCategoryEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(MoveDownCategoryEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(CreateStyleEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(UpdateStyleEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(DeleteStyleEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(MoveUpStyleEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(MoveDownStyleEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(ShowChooseCategoryAndStylePopupEvent.TYPE, this);
 	}
 
 	private void storeCategories(List<CategoryDTO> result) {
@@ -434,4 +306,3 @@ public class CategoryDataProvider extends FilterDataProvider<CategoryDTO> implem
 	}
 
 }
-

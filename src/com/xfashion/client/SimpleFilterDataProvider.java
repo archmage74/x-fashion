@@ -30,7 +30,7 @@ public abstract class SimpleFilterDataProvider<T extends FilterCellData> extends
 		return filter;
 	}
 
-	protected void moveDown(int idx) {
+	public void moveDown(int idx) {
 		if (idx < 0) {
 			return;
 		}

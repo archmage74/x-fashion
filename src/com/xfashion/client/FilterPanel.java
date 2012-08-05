@@ -118,11 +118,11 @@ public abstract class FilterPanel<T extends FilterCellData> implements IsMinimiz
 		}
 	}
 
-	public Panel createPanel() {
-		return createPanel(null);
+	public Panel createAdminPanel() {
+		return createAdminPanel(null);
 	}
 
-	public Panel createPanel(String[] additionalStyles) {
+	public Panel createAdminPanel(String[] additionalStyles) {
 		tablePanel = createTablePanel();
 		scrollPanel = new SimplePanel();
 		scrollPanel.setStyleName("filterPanel");
@@ -139,7 +139,7 @@ public abstract class FilterPanel<T extends FilterCellData> implements IsMinimiz
 		
 		return scrollPanel;
 	}
-
+	
 	protected Panel createHeaderPanel(String title) {
 		headerPanel = new HorizontalPanel();
 		headerPanel.addStyleName("filterHeader");

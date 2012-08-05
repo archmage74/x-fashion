@@ -10,8 +10,11 @@ import java.util.Set;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.web.bindery.event.shared.EventBus;
+import com.google.web.bindery.event.shared.SimpleEventBus;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleFilterProvider;
+import com.xfashion.client.at.ArticleTypeManagement;
 import com.xfashion.client.at.event.ArticlesLoadedEvent;
 import com.xfashion.client.at.event.ArticlesLoadedHandler;
 import com.xfashion.client.at.event.RefreshFilterEvent;
@@ -55,10 +58,14 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 	private UserServiceAsync userService = (UserServiceAsync) GWT.create(UserService.class);
 	private PromoServiceAsync promoService = (PromoServiceAsync) GWT.create(PromoService.class);
 
+	protected EventBus stockBus; 
+	
 	private HashMap<Long, PromoDTO> promos;
 
 	protected StockFilterProvider stockFilterProvider;
 	protected IArticleAmountComparator sortStrategy;
+	
+	protected ArticleTypeManagement articleTypeManagement;
 
 	private StockPanel stockPanel;
 	private Panel panel;
@@ -67,11 +74,16 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 
 	TextMessages textMessages;
 
-	public StockManagement(ArticleFilterProvider articleFilterProvider) {
+	public StockManagement(ArticleFilterProvider articleFilterProvider, ArticleTypeManagement atm) {
+		this.articleTypeManagement = atm;
 		this.promos = new HashMap<Long, PromoDTO>();
+		this.stockBus = new SimpleEventBus();
+
 		StockDataProvider stockProvider = new StockDataProvider(articleFilterProvider.getArticleTypeProvider());
 		this.stockFilterProvider = new StockFilterProvider(articleFilterProvider.getArticleTypeProvider(), stockProvider);
-		this.stockPanel = new StockPanel(stockFilterProvider);
+
+		this.stockPanel = new StockPanel(stockFilterProvider, stockBus);
+
 		this.textMessages = GWT.create(TextMessages.class);
 
 		registerForEvents();
@@ -204,7 +216,7 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 	public Panel getPanel(ArticleAmountDataProvider notepadArticleProvider) {
 		if (panel == null) {
 			sortStrategy = new DefaultArticleAmountComparator(stockFilterProvider);
-			panel = stockPanel.createPanel(stockFilterProvider.getStockProvider(), notepadArticleProvider);
+			panel = stockPanel.createPanel(articleTypeManagement, stockFilterProvider.getStockProvider(), notepadArticleProvider);
 			refresh();
 		}
 		readPromos();
@@ -262,6 +274,9 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 	}
 
 	private void refresh() {
+		if (panel == null) {
+			return;
+		}
 		stockFilterProvider.getArticleTypeProvider().applyFilters(stockFilterProvider);
 		stockFilterProvider.updateProviders();
 
@@ -281,7 +296,7 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 	}
 
 	private void registerForEvents() {
-		stockFilterProvider.getFilterEventBus().addHandler(RefreshFilterEvent.TYPE, this);
+		stockBus.addHandler(RefreshFilterEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(IntoStockEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(RequestOpenSellPopupEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(SellFromStockEvent.TYPE, this);

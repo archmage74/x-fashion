@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.web.bindery.event.shared.EventBus;
 import com.xfashion.client.IsMinimizable;
 import com.xfashion.client.PanelWidthAnimation;
 import com.xfashion.client.Xfashion;
@@ -53,6 +54,8 @@ public class NotepadPanel implements IsMinimizable, OpenNotepadHandler, SaveNote
 	public static final int PANEL_MIN_WIDTH = 25;
 
 	private IProvideArticleFilter provider;
+	
+	protected EventBus eventBus;
 
 	protected Panel scrollPanel;
 	protected Label headerLabel;
@@ -68,10 +71,11 @@ public class NotepadPanel implements IsMinimizable, OpenNotepadHandler, SaveNote
 	protected ImageResources images;
 	protected BarcodeHelper barcodeHelper;
 
-	public NotepadPanel(IProvideArticleFilter provider) {
-		textMessages = GWT.create(TextMessages.class);
-		images = GWT.<ImageResources> create(ImageResources.class);
-		barcodeHelper = new BarcodeHelper();
+	public NotepadPanel(IProvideArticleFilter provider, EventBus eventBus) {
+		this.textMessages = GWT.create(TextMessages.class);
+		this.images = GWT.<ImageResources> create(ImageResources.class);
+		this.barcodeHelper = new BarcodeHelper();
+		this.eventBus = eventBus;
 		this.provider = provider;
 		registerForEvents();
 	}
@@ -99,11 +103,15 @@ public class NotepadPanel implements IsMinimizable, OpenNotepadHandler, SaveNote
 		if (isMinimized()) {
 			PanelWidthAnimation pwa = new PanelWidthAnimation(this, PANEL_MIN_WIDTH, PANEL_MAX_WIDTH);
 			pwa.run(300);
-			Xfashion.eventBus.fireEvent(new NotepadStartMaximizeEvent());
+			if (eventBus != null) {
+				eventBus.fireEvent(new NotepadStartMaximizeEvent());
+			}
 		} else {
 			PanelWidthAnimation pwa = new PanelWidthAnimation(this, PANEL_MAX_WIDTH, PANEL_MIN_WIDTH);
 			pwa.run(300);
-			Xfashion.eventBus.fireEvent(new NotepadStartMinimizeEvent());
+			if (eventBus != null) {
+				eventBus.fireEvent(new NotepadStartMinimizeEvent());
+			}
 		}
 	}
 

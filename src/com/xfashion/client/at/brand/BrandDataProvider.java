@@ -11,25 +11,12 @@ import com.xfashion.client.at.ArticleTypeDataProvider;
 import com.xfashion.client.at.brand.event.BrandsLoadedEvent;
 import com.xfashion.client.at.brand.event.ClearBrandSelectionEvent;
 import com.xfashion.client.at.brand.event.ClearBrandSelectionHandler;
-import com.xfashion.client.at.brand.event.CreateBrandEvent;
-import com.xfashion.client.at.brand.event.CreateBrandHandler;
-import com.xfashion.client.at.brand.event.DeleteBrandEvent;
-import com.xfashion.client.at.brand.event.DeleteBrandHandler;
-import com.xfashion.client.at.brand.event.MoveDownBrandEvent;
-import com.xfashion.client.at.brand.event.MoveDownBrandHandler;
-import com.xfashion.client.at.brand.event.MoveUpBrandEvent;
-import com.xfashion.client.at.brand.event.MoveUpBrandHandler;
 import com.xfashion.client.at.brand.event.SelectBrandEvent;
 import com.xfashion.client.at.brand.event.SelectBrandHandler;
-import com.xfashion.client.at.brand.event.ShowChooseBrandPopupEvent;
-import com.xfashion.client.at.brand.event.ShowChooseBrandPopupHandler;
-import com.xfashion.client.at.brand.event.UpdateBrandEvent;
-import com.xfashion.client.at.brand.event.UpdateBrandHandler;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.BrandDTO;
 
-public class BrandDataProvider extends SimpleFilterDataProvider<BrandDTO> implements CreateBrandHandler, UpdateBrandHandler, DeleteBrandHandler,
-		MoveUpBrandHandler, MoveDownBrandHandler, SelectBrandHandler, ClearBrandSelectionHandler, ShowChooseBrandPopupHandler {
+public class BrandDataProvider extends SimpleFilterDataProvider<BrandDTO> implements SelectBrandHandler, ClearBrandSelectionHandler {
 
 	public BrandDataProvider(ArticleTypeDataProvider articleTypeProvider, EventBus eventBus) {
 		super(articleTypeProvider, eventBus);
@@ -57,51 +44,6 @@ public class BrandDataProvider extends SimpleFilterDataProvider<BrandDTO> implem
 	public void onClearBrandSelection(ClearBrandSelectionEvent event) {
 		getFilter().clear();
 		fireRefreshEvent();
-	}
-
-	@Override
-	public void onDeleteBrand(DeleteBrandEvent event) {
-		final BrandDTO item = event.getCellData();
-		for (ArticleTypeDTO at : articleTypeProvider.getList()) {
-			if (at.getBrandKey().equals(item.getKey())) {
-				Xfashion.fireError(errorMessages.brandIsNotEmpty(item.getName()));
-				return;
-			}
-		}
-		item.setHidden(!item.getHidden());
-		saveList();
-	}
-
-	@Override
-	public void onUpdateBrand(UpdateBrandEvent event) {
-		final BrandDTO item = event.getCellData();
-		if (item == null) {
-			saveList();
-		} else {
-			saveItem(item);
-		}
-	}
-
-	@Override
-	public void onCreateBrand(CreateBrandEvent event) {
-		getAllItems().add(event.getCellData());
-		saveList();
-	}
-
-	@Override
-	public void onMoveDownBrand(MoveDownBrandEvent event) {
-		moveDown(event.getIndex());
-	}
-
-	@Override
-	public void onMoveUpBrand(MoveUpBrandEvent event) {
-		moveDown(event.getIndex() - 1);
-	}
-
-	@Override
-	public void onShowChooseBrandPopup(ShowChooseBrandPopupEvent event) {
-		ChooseBrandPopup brandPopup = new ChooseBrandPopup(this);
-		brandPopup.show();
 	}
 
 	public void readBrands() {
@@ -136,7 +78,7 @@ public class BrandDataProvider extends SimpleFilterDataProvider<BrandDTO> implem
 	}
 
 	@Override
-	protected void saveList() {
+	public void saveList() {
 		AsyncCallback<List<BrandDTO>> callback = new AsyncCallback<List<BrandDTO>>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -160,13 +102,6 @@ public class BrandDataProvider extends SimpleFilterDataProvider<BrandDTO> implem
 	private void registerForEvents() {
 		eventBus.addHandler(SelectBrandEvent.TYPE, this);
 		eventBus.addHandler(ClearBrandSelectionEvent.TYPE, this);
-		
-		Xfashion.eventBus.addHandler(DeleteBrandEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(CreateBrandEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(UpdateBrandEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(MoveUpBrandEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(MoveDownBrandEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(ShowChooseBrandPopupEvent.TYPE, this);
 	}
 
 }

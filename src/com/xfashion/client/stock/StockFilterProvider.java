@@ -1,11 +1,13 @@
 package com.xfashion.client.stock;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.xfashion.client.SimpleFilterDataProvider;
 import com.xfashion.client.at.ArticleFilterProvider;
 import com.xfashion.client.at.ArticleTypeDataProvider;
+import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.ArticleTypeDTO;
 
 public class StockFilterProvider extends ArticleFilterProvider {
@@ -25,6 +27,16 @@ public class StockFilterProvider extends ArticleFilterProvider {
 		this.stockProvider = stockProvider;
 	}
 
+	@Override
+	public Collection<ArticleTypeDTO> getAllArticleTypes() {
+		Collection<ArticleAmountDTO> amounts = stockProvider.getStock().values();
+		ArrayList<ArticleTypeDTO> articles = new ArrayList<ArticleTypeDTO>(amounts.size());
+		for (ArticleAmountDTO a : amounts) {
+			articles.add(stockProvider.retrieveArticleType(a));
+		}
+		return articles;
+	}
+	
 	@Override
 	public void updateProviders() {
 		categoryProvider.refresh();

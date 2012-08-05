@@ -1,10 +1,9 @@
 package com.xfashion.client.at;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-import com.google.web.bindery.event.shared.EventBus;
-import com.google.web.bindery.event.shared.SimpleEventBus;
 import com.xfashion.client.SimpleFilterDataProvider;
 import com.xfashion.client.at.brand.BrandDataProvider;
 import com.xfashion.client.at.category.CategoryDataProvider;
@@ -22,23 +21,10 @@ public class ArticleFilterProvider implements IProvideArticleFilter {
 	protected NameDataProvider nameProvider;
 	protected ArticleTypeDataProvider articleTypeProvider;
 
-	protected EventBus filterEventBus;
-	
 	public ArticleFilterProvider(ArticleTypeDataProvider articleTypeProvider) {
 		this.articleTypeProvider = articleTypeProvider;
-		this.filterEventBus = new SimpleEventBus();
-		
-		this.categoryProvider = new CategoryDataProvider(articleTypeProvider, filterEventBus);
-		this.brandProvider = new BrandDataProvider(articleTypeProvider, filterEventBus);
-		this.colorProvider = new ColorDataProvider(articleTypeProvider, filterEventBus);
-		this.sizeProvider = new SizeDataProvider(articleTypeProvider, filterEventBus);
-		this.nameProvider = new NameDataProvider(articleTypeProvider, this, filterEventBus);
 	}
 	
-	public EventBus getFilterEventBus() {
-		return filterEventBus;
-	}
-
 	@Override
 	public CategoryDataProvider getCategoryProvider() {
 		return categoryProvider;
@@ -84,12 +70,12 @@ public class ArticleFilterProvider implements IProvideArticleFilter {
 		this.nameProvider = nameProvider;
 	}
 
+	public Collection<ArticleTypeDTO> getAllArticleTypes() {
+		return articleTypeProvider.getAllArticleTypes();
+	}
+	
 	public void init() {
-		articleTypeProvider.readArticleTypes();
-		categoryProvider.readCategories();
-		brandProvider.readBrands();
-		colorProvider.readColors();
-		sizeProvider.readSizes();
+
 	}
 	
 	@Override

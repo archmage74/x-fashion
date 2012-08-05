@@ -4,11 +4,11 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.web.bindery.event.shared.EventBus;
 import com.xfashion.client.Xfashion;
-import com.xfashion.client.at.brand.BrandEditor;
+import com.xfashion.client.at.brand.BrandManagement;
 import com.xfashion.client.at.brand.BrandPanel;
-import com.xfashion.client.at.category.CategoryEditor;
+import com.xfashion.client.at.category.CategoryManagement;
 import com.xfashion.client.at.category.CategoryPanel;
-import com.xfashion.client.at.color.ColorEditor;
+import com.xfashion.client.at.color.ColorManagement;
 import com.xfashion.client.at.color.ColorPanel;
 import com.xfashion.client.at.event.RefreshFilterEvent;
 import com.xfashion.client.at.event.RefreshFilterHandler;
@@ -17,10 +17,9 @@ import com.xfashion.client.at.event.RequestShowArticleTypeDetailsHandler;
 import com.xfashion.client.at.name.NamePanel;
 import com.xfashion.client.at.popup.ArticleTypePopup;
 import com.xfashion.client.at.popup.EditArticleTypePopup;
-import com.xfashion.client.at.size.SizeEditor;
+import com.xfashion.client.at.size.SizeManagement;
 import com.xfashion.client.at.size.SizePanel;
 import com.xfashion.client.at.sort.DefaultArticleTypeComparator;
-import com.xfashion.client.at.style.StyleEditor;
 import com.xfashion.client.at.style.StylePanel;
 import com.xfashion.client.notepad.ArticleAmountDataProvider;
 import com.xfashion.client.notepad.NotepadPanel;
@@ -34,8 +33,15 @@ import com.xfashion.shared.UserRole;
 public class ArticleTypeView implements NotepadStartMaximizeHandler, NotepadStartMinimizeHandler, RefreshFilterHandler,
 		RequestShowArticleTypeDetailsHandler {
 
+	protected EventBus adminBus;
+	
 	protected HorizontalPanel panel;
 
+	protected BrandManagement brandManagement;
+	protected ColorManagement colorManagement;
+	protected SizeManagement sizeManagement;
+	protected CategoryManagement categoryManagement;
+	
 	protected CategoryPanel categoryPanel;
 	protected BrandPanel brandPanel;
 	protected StylePanel stylePanel;
@@ -50,24 +56,46 @@ public class ArticleTypeView implements NotepadStartMaximizeHandler, NotepadStar
 	protected ArticleFilterProvider articleFilterProvider;
 	protected DefaultArticleTypeComparator sortStrategy;
 
-	public ArticleTypeView(ArticleFilterProvider articleFilterProvider) {
+	public ArticleTypeView(ArticleFilterProvider articleFilterProvider, EventBus adminBus) {
 		this.articleFilterProvider = articleFilterProvider;
+		this.adminBus = adminBus;
 		registerForEvents();
+	}
+
+	public BrandManagement getBrandManagement() {
+		return brandManagement;
+	}
+
+	public void setBrandManagement(BrandManagement brandManagement) {
+		this.brandManagement = brandManagement;
+	}
+
+	public ColorManagement getColorManagement() {
+		return colorManagement;
+	}
+
+	public void setColorManagement(ColorManagement colorManagement) {
+		this.colorManagement = colorManagement;
+	}
+
+	public SizeManagement getSizeManagement() {
+		return sizeManagement;
+	}
+
+	public void setSizeManagement(SizeManagement sizeManagement) {
+		this.sizeManagement = sizeManagement;
+	}
+
+	public CategoryManagement getCategoryManagement() {
+		return categoryManagement;
+	}
+
+	public void setCategoryManagement(CategoryManagement categoryManagement) {
+		this.categoryManagement = categoryManagement;
 	}
 
 	public Panel getPanel(ArticleAmountDataProvider notepadArticleProvider) {
 		if (panel == null) {
-			panel = new HorizontalPanel();
-			EventBus eventBus = articleFilterProvider.getFilterEventBus(); 
-			categoryPanel = new CategoryPanel(articleFilterProvider.getCategoryProvider(), eventBus);
-			brandPanel = new BrandPanel(articleFilterProvider.getBrandProvider(), eventBus);
-			stylePanel = new StylePanel(articleFilterProvider.getCategoryProvider().getStyleProvider(), eventBus);
-			sizePanel = new SizePanel(articleFilterProvider.getSizeProvider(), eventBus);
-			colorPanel = new ColorPanel(articleFilterProvider.getColorProvider(), eventBus);
-			namePanel = new NamePanel(articleFilterProvider.getNameProvider(), eventBus);
-			articleTypePanel = new ArticleTypePanel(articleFilterProvider);
-			notepadPanel = new NotepadPanel(articleFilterProvider);
-
 			sortStrategy = new DefaultArticleTypeComparator();
 			sortStrategy.setCategoryProvider(articleFilterProvider.getCategoryProvider());
 			sortStrategy.setBrandProvider(articleFilterProvider.getBrandProvider());
@@ -75,20 +103,18 @@ public class ArticleTypeView implements NotepadStartMaximizeHandler, NotepadStar
 			sortStrategy.setSizeProvider(articleFilterProvider.getSizeProvider());
 			articleFilterProvider.getArticleTypeProvider().setSortStrategy(sortStrategy);
 
-			if (UserManagement.hasRole(UserRole.ADMIN, UserRole.DEVELOPER)) {
-				new CategoryEditor(categoryPanel);
-				new StyleEditor(stylePanel);
-				new BrandEditor(brandPanel);
-				new ColorEditor(colorPanel);
-				new SizeEditor(sizePanel);
-			}
-			
-			panel.add(categoryPanel.createPanel());
-			panel.add(brandPanel.createPanel());
-			panel.add(stylePanel.createPanel());
+			panel = new HorizontalPanel();
+			namePanel = new NamePanel(articleFilterProvider.getNameProvider(), adminBus);
+			articleTypePanel = new ArticleTypePanel(articleFilterProvider);
+			notepadPanel = new NotepadPanel(articleFilterProvider, adminBus);
+
+			panel.add(categoryManagement.getCategoryAdminPanel());
+			panel.add(brandManagement.getAdminPanel());
+			panel.add(categoryManagement.getStyleAdminPanel());
 			panel.add(namePanel.createPanel());
-			panel.add(colorPanel.createPanel());
-			panel.add(sizePanel.createPanel());
+			panel.add(colorManagement.getAdminPanel());
+			panel.add(sizeManagement.getAdminPanel());
+
 			panel.add(articleTypePanel.createPanel(articleFilterProvider.getArticleTypeProvider(), articleFilterProvider.getNameProvider().getNameOracle()));
 			panel.add(notepadPanel.createPanel(notepadArticleProvider, true));
 		}
@@ -134,10 +160,9 @@ public class ArticleTypeView implements NotepadStartMaximizeHandler, NotepadStar
 	}
 
 	private void registerForEvents() {
-		EventBus eventBus = articleFilterProvider.getFilterEventBus();
-		eventBus.addHandler(NotepadStartMaximizeEvent.TYPE, this);
-		eventBus.addHandler(NotepadStartMinimizeEvent.TYPE, this);
-		eventBus.addHandler(RefreshFilterEvent.TYPE, this);
+		adminBus.addHandler(NotepadStartMaximizeEvent.TYPE, this);
+		adminBus.addHandler(NotepadStartMinimizeEvent.TYPE, this);
+		adminBus.addHandler(RefreshFilterEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(RequestShowArticleTypeDetailsEvent.TYPE, this);
 	}
 
