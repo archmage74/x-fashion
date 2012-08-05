@@ -11,18 +11,17 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Panel;
 import com.xfashion.client.Xfashion;
+import com.xfashion.client.at.ArticleFilterProvider;
 import com.xfashion.client.at.event.ArticlesLoadedEvent;
 import com.xfashion.client.at.event.ArticlesLoadedHandler;
-import com.xfashion.client.at.event.FilterRefreshedEvent;
-import com.xfashion.client.at.event.FilterRefreshedHandler;
 import com.xfashion.client.at.event.RefreshFilterEvent;
+import com.xfashion.client.at.event.RefreshFilterHandler;
 import com.xfashion.client.at.event.RequestShowArticleTypeDetailsEvent;
 import com.xfashion.client.at.event.RequestShowArticleTypeDetailsHandler;
 import com.xfashion.client.at.popup.ArticleTypeDetailPopup;
 import com.xfashion.client.at.popup.ArticleTypePopup;
 import com.xfashion.client.at.sort.DefaultArticleAmountComparator;
 import com.xfashion.client.at.sort.IArticleAmountComparator;
-import com.xfashion.client.db.ArticleTypeDatabase;
 import com.xfashion.client.dialog.YesNoCallback;
 import com.xfashion.client.dialog.YesNoPopup;
 import com.xfashion.client.notepad.ArticleAmountDataProvider;
@@ -50,16 +49,15 @@ import com.xfashion.shared.PromoDTO;
 import com.xfashion.shared.SoldArticleDTO;
 import com.xfashion.shared.UserRole;
 
-public class StockManagement implements IntoStockHandler, SellFromStockHandler, RequestOpenSellPopupHandler, LoginHandler, FilterRefreshedHandler,
- ArticlesLoadedHandler, RequestShowArticleTypeDetailsHandler, RemoveFromStockHandler {
+public class StockManagement implements IntoStockHandler, SellFromStockHandler, RequestOpenSellPopupHandler, LoginHandler, ArticlesLoadedHandler,
+		RequestShowArticleTypeDetailsHandler, RemoveFromStockHandler, RefreshFilterHandler {
 
 	private UserServiceAsync userService = (UserServiceAsync) GWT.create(UserService.class);
 	private PromoServiceAsync promoService = (PromoServiceAsync) GWT.create(PromoService.class);
 
 	private HashMap<Long, PromoDTO> promos;
 
-	protected StockDataProvider stockProvider;
-	protected ArticleTypeDatabase articleTypeDatabase;
+	protected StockFilterProvider stockFilterProvider;
 	protected IArticleAmountComparator sortStrategy;
 
 	private StockPanel stockPanel;
@@ -69,15 +67,18 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 
 	TextMessages textMessages;
 
-	public StockManagement(ArticleTypeDatabase articleTypeDatabase) {
+	public StockManagement(ArticleFilterProvider articleFilterProvider) {
 		this.promos = new HashMap<Long, PromoDTO>();
-		this.articleTypeDatabase = articleTypeDatabase;
-		this.stockProvider = new StockDataProvider(articleTypeDatabase);
-		this.stockPanel = new StockPanel(articleTypeDatabase);
-
+		StockDataProvider stockProvider = new StockDataProvider(articleFilterProvider.getArticleTypeProvider());
+		this.stockFilterProvider = new StockFilterProvider(articleFilterProvider.getArticleTypeProvider(), stockProvider);
+		this.stockPanel = new StockPanel(stockFilterProvider);
 		this.textMessages = GWT.create(TextMessages.class);
 
 		registerForEvents();
+	}
+
+	public void init() {
+		stockFilterProvider.init();
 	}
 
 	@Override
@@ -121,7 +122,7 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 	@Override
 	public void onRequestOpenSellPopup(RequestOpenSellPopupEvent event) {
 		if (sellFromStockPopup == null) {
-			sellFromStockPopup = new SellFromStockPopup(stockProvider);
+			sellFromStockPopup = new SellFromStockPopup(stockFilterProvider.getStockProvider());
 		}
 		sellFromStockPopup.show(promos);
 	}
@@ -150,12 +151,13 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 
 	@Override
 	public void onRemoveFromStock(RemoveFromStockEvent event) {
-		final ArticleAmountDTO articleToRemove = stockProvider.getStock().get(event.getArticleType().getKey());
+		final ArticleAmountDTO articleToRemove = stockFilterProvider.getStockProvider().getStock().get(event.getArticleType().getKey());
 		AsyncCallback<ArticleAmountDTO> callback = new AsyncCallback<ArticleAmountDTO>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				Xfashion.fireError(caught.getMessage());
 			}
+
 			@Override
 			public void onSuccess(ArticleAmountDTO result) {
 				storeRemoveResult(articleToRemove, result);
@@ -163,48 +165,46 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 		};
 		userService.removeOneFromStock(articleToRemove, callback);
 	}
-	
+
 	protected void storeRemoveResult(ArticleAmountDTO articleToRemove, ArticleAmountDTO result) {
 		if (result == null) {
-			stockProvider.getList().remove(articleToRemove);
-			stockProvider.getStock().remove(articleToRemove.getArticleTypeKey());
+			stockFilterProvider.getStockProvider().getList().remove(articleToRemove);
+			stockFilterProvider.getStockProvider().getStock().remove(articleToRemove.getArticleTypeKey());
 		} else {
 			articleToRemove.setAmount(result.getAmount());
 		}
-		stockProvider.refresh();
+		stockFilterProvider.getStockProvider().refresh();
 	}
 
 	@Override
 	public void onRequestShowArticleTypeDetails(RequestShowArticleTypeDetailsEvent event) {
 		if (UserManagement.hasRole(UserRole.SHOP)) {
 			if (articleTypePopup == null) {
-				articleTypePopup = new ArticleTypeDetailPopup(articleTypeDatabase, stockProvider);
+				articleTypePopup = new ArticleTypeDetailPopup(stockFilterProvider, stockFilterProvider.getStockProvider());
 			}
 			articleTypePopup.showPopup(event.getArticleType());
 		}
 	}
-	
+
 	@Override
 	public void onLogin(LoginEvent event) {
-		if (UserManagement.hasRole(UserRole.SHOP)) {
-			readStock();
-		}
+		readStock();
 	}
-	
+
 	@Override
 	public void onArticlesLoaded(ArticlesLoadedEvent event) {
 		refresh();
 	}
 
 	@Override
-	public void onFilterRefreshed(FilterRefreshedEvent event) {
+	public void onRefreshFilter(RefreshFilterEvent event) {
 		refresh();
 	}
 
 	public Panel getPanel(ArticleAmountDataProvider notepadArticleProvider) {
 		if (panel == null) {
-			sortStrategy = new DefaultArticleAmountComparator(articleTypeDatabase);
-			panel = stockPanel.createPanel(stockProvider, notepadArticleProvider);
+			sortStrategy = new DefaultArticleAmountComparator(stockFilterProvider);
+			panel = stockPanel.createPanel(stockFilterProvider.getStockProvider(), notepadArticleProvider);
 			refresh();
 		}
 		readPromos();
@@ -212,15 +212,15 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 	}
 
 	protected void storeStock(Collection<ArticleAmountDTO> result) {
-		stockProvider.getStock().clear();
+		stockFilterProvider.getStockProvider().getStock().clear();
 		List<ArticleAmountDTO> list = new ArrayList<ArticleAmountDTO>();
 		for (ArticleAmountDTO aa : result) {
-			stockProvider.getStock().put(aa.getArticleTypeKey(), aa);
+			stockFilterProvider.getStockProvider().getStock().put(aa.getArticleTypeKey(), aa);
 			list.add(aa);
 		}
-		articleTypeDatabase.setArticleAmounts(stockProvider.getStock());
+
 		Xfashion.eventBus.fireEvent(new RefreshFilterEvent());
-		Xfashion.eventBus.fireEvent(new StockLoadedEvent(stockProvider));
+		Xfashion.eventBus.fireEvent(new StockLoadedEvent(stockFilterProvider.getStockProvider()));
 		refresh();
 	}
 
@@ -262,10 +262,13 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 	}
 
 	private void refresh() {
-		List<ArticleTypeDTO> filteredArticleTypes = articleTypeDatabase.getArticleTypeProvider().getList();
+		stockFilterProvider.getArticleTypeProvider().applyFilters(stockFilterProvider);
+		stockFilterProvider.updateProviders();
+
+		List<ArticleTypeDTO> filteredArticleTypes = stockFilterProvider.getArticleTypeProvider().getList();
 		List<ArticleAmountDTO> filteredStockItems = new ArrayList<ArticleAmountDTO>();
 		for (ArticleTypeDTO articleType : filteredArticleTypes) {
-			ArticleAmountDTO stockArticle = stockProvider.getStock().get(articleType.getKey());
+			ArticleAmountDTO stockArticle = stockFilterProvider.getStockProvider().getStock().get(articleType.getKey());
 			if (stockArticle != null) {
 				filteredStockItems.add(stockArticle);
 			}
@@ -273,16 +276,16 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 		if (sortStrategy != null) {
 			Collections.sort(filteredStockItems, sortStrategy);
 		}
-		stockProvider.setList(filteredStockItems);
-		stockProvider.refresh();
+		stockFilterProvider.getStockProvider().setList(filteredStockItems);
+		stockFilterProvider.getStockProvider().refresh();
 	}
 
 	private void registerForEvents() {
+		stockFilterProvider.getFilterEventBus().addHandler(RefreshFilterEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(IntoStockEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(RequestOpenSellPopupEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(SellFromStockEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(LoginEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(FilterRefreshedEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(ArticlesLoadedEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(RequestShowArticleTypeDetailsEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(RemoveFromStockEvent.TYPE, this);

@@ -24,10 +24,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.xfashion.client.ErrorEvent;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.bulk.BulkEditArticleTypePopup;
-import com.xfashion.client.at.name.NameFilterEvent;
+import com.xfashion.client.at.name.event.NameFilterEvent;
 import com.xfashion.client.at.popup.CreateArticleTypePopup;
 import com.xfashion.client.at.size.SizeDataProvider;
-import com.xfashion.client.db.ArticleTypeDatabase;
 import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.client.tool.Buttons;
@@ -47,19 +46,19 @@ public class ArticleTypePanel {
 	
 	private HorizontalPanel headerPanel;
 	
-	private ArticleTypeDatabase articleTypeDatabase;
+	private ArticleFilterProvider articleFilterProvider;
 	
 	private TextMessages textMessages;
 	
-	public ArticleTypePanel(ArticleTypeDatabase filterProvider) {
+	public ArticleTypePanel(ArticleFilterProvider articleFilterProvider) {
 		this.textMessages = GWT.create(TextMessages.class);
-		this.articleTypeDatabase = filterProvider;
+		this.articleFilterProvider = articleFilterProvider;
 		this.errorMessages = GWT.create(ErrorMessages.class);
 	}
 	
 	public Panel createPanel(ArticleTypeDataProvider articleTypeProvider, MultiWordSuggestOracle nameOracle) {
 
-		createArticleTypePopup = new CreateArticleTypePopup(articleTypeDatabase);
+		createArticleTypePopup = new CreateArticleTypePopup(articleFilterProvider);
 
 		VerticalPanel panel = new VerticalPanel();
 		panel.setWidth("580px");
@@ -67,7 +66,7 @@ public class ArticleTypePanel {
 		headerPanel = createHeaderPanel(nameOracle);
 		panel.add(headerPanel);
 		
-		ArticleTypeTable articleTypeTable = new ArticleTypeTable(articleTypeDatabase, ArticleTypeManagement.getArticleTypePriceStrategy);
+		ArticleTypeTable articleTypeTable = new ArticleTypeTable(articleFilterProvider, ArticleTypeManagement.getArticleTypePriceStrategy);
 		Panel atp = articleTypeTable.create(articleTypeProvider);
 		panel.add(atp);
 		
@@ -140,8 +139,8 @@ public class ArticleTypePanel {
 		ClickHandler editBulkButtonClickHandler = new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				BulkEditArticleTypePopup bulkEditPopup = new BulkEditArticleTypePopup(articleTypeDatabase);
-				bulkEditPopup.showPopup(articleTypeDatabase.getArticleTypeProvider().getList());
+				BulkEditArticleTypePopup bulkEditPopup = new BulkEditArticleTypePopup(articleFilterProvider);
+				bulkEditPopup.showPopup(articleFilterProvider.getArticleTypeProvider().getList());
 			}
 		};
 		editBulkButton.addClickHandler(editBulkButtonClickHandler);
@@ -170,22 +169,22 @@ public class ArticleTypePanel {
 		ArticleTypeDTO at = new ArticleTypeDTO();
 		at.setUsed(false);
 
-		CategoryDTO category = articleTypeDatabase.getCategoryProvider().getCategoryFilter();
+		CategoryDTO category = articleFilterProvider.getCategoryProvider().getCategoryFilter();
 		if (category != null) {
 			at.setCategoryKey(category.getKey());
 		}
 
-		Set<String> styles = articleTypeDatabase.getCategoryProvider().getStyleFilter();
+		Set<String> styles = articleFilterProvider.getCategoryProvider().getStyleFilter();
 		if (styles.size() == 1) {
 			at.setStyleKey(styles.iterator().next());
 		}
 		
-		Set<String> brands = articleTypeDatabase.getBrandProvider().getFilter();
+		Set<String> brands = articleFilterProvider.getBrandProvider().getFilter();
 		if (brands.size() == 1) {
 			at.setBrandKey(brands.iterator().next());
 		}
 		
-		Set<String> colors = articleTypeDatabase.getColorProvider().getFilter();
+		Set<String> colors = articleFilterProvider.getColorProvider().getFilter();
 		if (colors.size() == 1) {
 			at.setColorKey(colors.iterator().next());
 		}
@@ -195,8 +194,8 @@ public class ArticleTypePanel {
 	
 	private List<SizeDTO> getSelectedSizes() {
 		ArrayList<SizeDTO> list = new ArrayList<SizeDTO>();
-		Set<String> sizes = articleTypeDatabase.getSizeProvider().getFilter();
-		SizeDataProvider sizeProvider = articleTypeDatabase.getSizeProvider();
+		Set<String> sizes = articleFilterProvider.getSizeProvider().getFilter();
+		SizeDataProvider sizeProvider = articleFilterProvider.getSizeProvider();
 		for (String id : sizes) {
 			list.add(sizeProvider.resolveData(id));
 		}

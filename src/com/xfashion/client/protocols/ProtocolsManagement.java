@@ -6,7 +6,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Panel;
 import com.xfashion.client.Xfashion;
-import com.xfashion.client.db.ArticleTypeDatabase;
+import com.xfashion.client.at.ArticleFilterProvider;
 import com.xfashion.client.protocols.event.AddMoreAddedArticlesEvent;
 import com.xfashion.client.protocols.event.AddMoreAddedArticlesHandler;
 import com.xfashion.client.protocols.event.AddMoreSoldArticlesEvent;
@@ -34,20 +34,20 @@ public class ProtocolsManagement implements ShowSellStatisticHandler, AddMoreSol
 	
 	private ShopDTO currentShop;
 	
-	protected ArticleTypeDatabase articleTypeDatabase;
+	protected ArticleFilterProvider articleTypeDatabase;
 	private SoldArticleDataProvider sellStatisticProvider;
 	private AddedArticleDataProvider addedArticleProvider;
 	
 	TextMessages textMessages;
 
 	
-	public ProtocolsManagement(ArticleTypeDatabase articleTypeDatabase) {
+	public ProtocolsManagement(ArticleFilterProvider articleProvider) {
 		this.textMessages = GWT.create(TextMessages.class);
-		this.articleTypeDatabase = articleTypeDatabase;
-		this.sellStatisticProvider = new SoldArticleDataProvider(articleTypeDatabase);
-		this.addedArticleProvider = new AddedArticleDataProvider(articleTypeDatabase);
+		this.articleTypeDatabase = articleProvider;
+		this.sellStatisticProvider = new SoldArticleDataProvider(articleProvider.getArticleTypeProvider());
+		this.addedArticleProvider = new AddedArticleDataProvider(articleProvider.getArticleTypeProvider());
 
-		this.protocolsPanel = new ProtocolsPanel(articleTypeDatabase);
+		this.protocolsPanel = new ProtocolsPanel(articleProvider);
 
 		registerForEvents();
 	}

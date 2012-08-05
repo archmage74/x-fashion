@@ -3,7 +3,7 @@ package com.xfashion.client.pricechange;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import com.xfashion.client.db.ArticleTypeDatabase;
+import com.xfashion.client.at.ArticleTypeDataProvider;
 import com.xfashion.client.notepad.ArticleAmountDataProvider;
 import com.xfashion.shared.PriceChangeDTO;
 
@@ -11,7 +11,7 @@ public class PriceChangeArticleAmountDataProvider extends ArticleAmountDataProvi
 
 	Collection<PriceChangeDTO> priceChanges;
 	
-	public PriceChangeArticleAmountDataProvider(ArticleTypeDatabase articleTypeDatabase) {
+	public PriceChangeArticleAmountDataProvider(ArticleTypeDataProvider articleTypeDatabase) {
 		super(articleTypeDatabase);
 		priceChanges = new ArrayList<PriceChangeDTO>();
 	}

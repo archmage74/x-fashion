@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.xfashion.client.ErrorEvent;
+import com.google.web.bindery.event.shared.EventBus;
 import com.xfashion.client.SimpleFilterDataProvider;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTypeDataProvider;
@@ -31,8 +31,8 @@ import com.xfashion.shared.BrandDTO;
 public class BrandDataProvider extends SimpleFilterDataProvider<BrandDTO> implements CreateBrandHandler, UpdateBrandHandler, DeleteBrandHandler,
 		MoveUpBrandHandler, MoveDownBrandHandler, SelectBrandHandler, ClearBrandSelectionHandler, ShowChooseBrandPopupHandler {
 
-	public BrandDataProvider(ArticleTypeDataProvider articleProvider) {
-		super(articleProvider);
+	public BrandDataProvider(ArticleTypeDataProvider articleTypeProvider, EventBus eventBus) {
+		super(articleTypeProvider, eventBus);
 		registerForEvents();
 	}
 
@@ -64,7 +64,7 @@ public class BrandDataProvider extends SimpleFilterDataProvider<BrandDTO> implem
 		final BrandDTO item = event.getCellData();
 		for (ArticleTypeDTO at : articleTypeProvider.getList()) {
 			if (at.getBrandKey().equals(item.getKey())) {
-				Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.brandIsNotEmpty(item.getName())));
+				Xfashion.fireError(errorMessages.brandIsNotEmpty(item.getName()));
 				return;
 			}
 		}
@@ -154,12 +154,13 @@ public class BrandDataProvider extends SimpleFilterDataProvider<BrandDTO> implem
 	private void storeBrands(List<BrandDTO> result) {
 		setAllItems(result);
 		fireRefreshEvent();
-		Xfashion.eventBus.fireEvent(new BrandsLoadedEvent());
+		eventBus.fireEvent(new BrandsLoadedEvent());
 	}
 
 	private void registerForEvents() {
-		Xfashion.eventBus.addHandler(SelectBrandEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(ClearBrandSelectionEvent.TYPE, this);
+		eventBus.addHandler(SelectBrandEvent.TYPE, this);
+		eventBus.addHandler(ClearBrandSelectionEvent.TYPE, this);
+		
 		Xfashion.eventBus.addHandler(DeleteBrandEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(CreateBrandEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(UpdateBrandEvent.TYPE, this);

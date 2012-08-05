@@ -11,10 +11,10 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.xfashion.client.at.ArticleFilterProvider;
 import com.xfashion.client.at.ArticleTypeManagement;
 import com.xfashion.client.at.ArticleTypeService;
 import com.xfashion.client.at.ArticleTypeServiceAsync;
-import com.xfashion.client.db.ArticleTypeDatabase;
 import com.xfashion.client.notepad.NotepadManagement;
 import com.xfashion.client.pricechange.PriceChangeManagement;
 import com.xfashion.client.promo.PromoManagement;
@@ -33,8 +33,6 @@ public class MainPanel implements ErrorHandler, LoginHandler {
 	private boolean DEV_MODE = false;
 	
 	private Panel contentPanel;
-
-	private ArticleTypeDatabase articleTypeDatabase;
 
 	private ArticleTypeManagement articleTypeManagement;
 
@@ -57,20 +55,21 @@ public class MainPanel implements ErrorHandler, LoginHandler {
 	private PriceChangeManagement priceChangeManagement;
 	
 	public MainPanel() {
-		articleTypeDatabase = new ArticleTypeDatabase();
-		articleTypeDatabase.init();
+		articleTypeManagement = new ArticleTypeManagement();
+		articleTypeManagement.init();
+		ArticleFilterProvider articleFilterProvider = articleTypeManagement.getArticleFilterProvider();
 		userManagement = new UserManagement();
-		notepadManagement = new NotepadManagement(articleTypeDatabase);
-		stockManagement = new StockManagement(articleTypeDatabase);
-		protocolsManagement = new ProtocolsManagement(articleTypeDatabase);
-		removedArticleManagement = new RemovedArticleManagement(articleTypeDatabase);
+		notepadManagement = new NotepadManagement(articleFilterProvider.getArticleTypeProvider());
+		stockManagement = new StockManagement(articleFilterProvider);
+		stockManagement.init();
+		//protocolsManagement = new ProtocolsManagement(articleTypeDatabase);
+		//removedArticleManagement = new RemovedArticleManagement(articleTypeDatabase);
 		promoManagement = new PromoManagement();
-		priceChangeManagement = new PriceChangeManagement(articleTypeDatabase);
+		//priceChangeManagement = new PriceChangeManagement(articleTypeDatabase);
 
 		RootPanel.get("logoContainer").add(createLogo());
 		contentPanel = new SimplePanel();
 		RootPanel.get("mainPanelContainer").add(contentPanel);
-		articleTypeManagement = new ArticleTypeManagement(articleTypeDatabase); 
 		userProfile = new UserProfile();
 		
 		registerEventHandlers();

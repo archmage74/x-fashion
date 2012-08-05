@@ -333,7 +333,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 	}
 
 	public Notepad createNotepad(PersistenceManager pm, NotepadDTO dto) {
-		Shop shop = readOwnShop(pm);
+		Shop shop = readOwnStock(pm);
 		Notepad notepad = new Notepad(dto);
 		shop.getNotepads().add(notepad);
 		return notepad;
@@ -344,7 +344,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		Set<NotepadDTO> notepads = null;
 		try {
-			Shop shop = readOwnShop(pm);
+			Shop shop = readOwnStock(pm);
 			notepads = shop.createNotepadDTOs();
 		} finally {
 			pm.close();
@@ -357,7 +357,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		return notepad;
 	}
 
-	public Shop readOwnShop(PersistenceManager pm) {
+	public Shop readOwnStock(PersistenceManager pm) {
 		UserDTO userDTO = (UserDTO) this.getThreadLocalRequest().getSession().getAttribute(SESSION_USER);
 		if (userDTO == null) {
 			throw new RuntimeException("no user logged in");
@@ -417,7 +417,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 	}
 
 	public DeliveryNotice createDeliveryNotice(PersistenceManager pm, DeliveryNoticeDTO dto) {
-		Shop shop = readOwnShop(pm);
+		Shop shop = readOwnStock(pm);
 		DeliveryNotice deliveryNotice = new DeliveryNotice(dto);
 		shop.getDeliveryNotices().add(deliveryNotice);
 		return deliveryNotice;
@@ -428,7 +428,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		Set<DeliveryNoticeDTO> dtos = null;
 		try {
-			Shop shop = readOwnShop(pm);
+			Shop shop = readOwnStock(pm);
 			dtos = shop.createDeliveryNoticeDTOs();
 			for (DeliveryNoticeDTO dto : dtos) {
 				setShopsToDeliveryNoticeDTO(pm, dto);
@@ -509,7 +509,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		ArticleAmount articleAmount = null;
 		try {
 			tx.begin();
-			Shop shop = readOwnShop(pm);
+			Shop shop = readOwnStock(pm);
 			for (ArticleAmount aa : shop.getArticles()) {
 				if (aa.getArticleTypeKey().equals(dto.getArticleTypeKey())) {
 					throw new RuntimeException("Article is already in stock");
@@ -531,7 +531,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		Set<ArticleAmountDTO> dtos = null;
 		try {
-			Shop shop = readOwnShop(pm);
+			Shop shop = readOwnStock(pm);
 			dtos = shop.createStock();
 		} finally {
 			pm.close();
@@ -591,11 +591,13 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 
 	private Shop addStockEntries(PersistenceManager pm, Map<String, ArticleAmountDTO> dtos) {
 		Collection<ArticleAmountDTO> toAdd = new ArrayList<ArticleAmountDTO>(dtos.values());
-		Shop shop = readOwnShop(pm);
 
 		Transaction tx = pm.currentTransaction();
-
+		Shop shop = null;
 		try {
+			tx.begin();
+			shop = readOwnStock(pm);
+
 			for (ArticleAmount articleAmount : shop.getArticles()) {
 				ArticleAmountDTO dto = dtos.get(KeyFactory.keyToString(articleAmount.getArticleTypeKey()));
 				if (dto != null) {
@@ -606,7 +608,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 			pm.flush();
 	
 			for (ArticleAmountDTO dto : toAdd) {
-				shop.getArticles().add(new ArticleAmount(dto));
+				shop.addArticle(new ArticleAmount(dto));
 			}
 			pm.flush();
 			
@@ -614,12 +616,14 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 				shop.addAddedArticle(new AddedArticle(dto));
 			}
 			pm.flush();
+			tx.commit();
+		} catch (Exception e) {
+			log.warning("error while adding articles to stock: " + e.getMessage());
 		} finally {
 			if (tx.isActive()) {
 				tx.rollback();
 			}
 		}
-
 		return shop;
 	}
 
@@ -654,7 +658,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 
 		try {
 			tx.begin();
-			shop = readOwnShop(pm);
+			shop = readOwnStock(pm);
 			Collection<ArticleAmount> toRemove = new HashSet<ArticleAmount>();
 
 			for (ArticleAmount articleAmount : shop.getArticles()) {
@@ -810,7 +814,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		ArticleAmount foundArticle = null;
 		try {
 			tx.begin();
-			Shop shop = readOwnShop(pm);
+			Shop shop = readOwnStock(pm);
 			Key key = KeyFactory.stringToKey(dto.getKey());
 			for (ArticleAmount articleAmount : shop.getArticles()) {
 				if (key.equals(articleAmount.getKey())) {
@@ -884,7 +888,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		Collection<PriceChangeDTO> dtos = new ArrayList<PriceChangeDTO>();
 		try {
-			Shop shop = readOwnShop(pm);
+			Shop shop = readOwnStock(pm);
 			for (PriceChange priceChange : shop.getPriceChanges()) {
 				dtos.add(priceChange.createDTO());
 			}
@@ -931,7 +935,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 	
 	private void deletePriceChanges(PersistenceManager pm, Set<String> deleteKeys) {
 		ArrayList<PriceChange> toRemove = new ArrayList<PriceChange>();
-		Shop shop = readOwnShop(pm);
+		Shop shop = readOwnStock(pm);
 		for (PriceChange priceChange : shop.getPriceChanges()) {
 			if (deleteKeys.contains(priceChange.getKeyString())) {
 				toRemove.add(priceChange);

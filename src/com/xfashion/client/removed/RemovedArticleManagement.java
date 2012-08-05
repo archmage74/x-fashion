@@ -6,7 +6,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Panel;
 import com.xfashion.client.Xfashion;
-import com.xfashion.client.db.ArticleTypeDatabase;
+import com.xfashion.client.at.ArticleFilterProvider;
 import com.xfashion.client.removed.event.AddMoreRemovedArticlesEvent;
 import com.xfashion.client.removed.event.AddMoreRemovedArticlesHandler;
 import com.xfashion.client.resources.TextMessages;
@@ -23,18 +23,18 @@ public class RemovedArticleManagement implements AddMoreRemovedArticlesHandler {
 	private RemovedArticlePanel removedArticlePanel;
 	private Panel panel;
 	
-	protected ArticleTypeDatabase articleTypeDatabase;
+	protected ArticleFilterProvider articleFilterProvider;
 	private RemovedArticleDataProvider removedArticleProvider;
 	
 	TextMessages textMessages;
 
 	
-	public RemovedArticleManagement(ArticleTypeDatabase articleTypeDatabase) {
+	public RemovedArticleManagement(ArticleFilterProvider articleFilterProvider) {
 		this.textMessages = GWT.create(TextMessages.class);
-		this.articleTypeDatabase = articleTypeDatabase;
-		this.removedArticleProvider = new RemovedArticleDataProvider(articleTypeDatabase);
+		this.articleFilterProvider = articleFilterProvider;
+		this.removedArticleProvider = new RemovedArticleDataProvider(articleFilterProvider.getArticleTypeProvider());
 
-		this.removedArticlePanel = new RemovedArticlePanel(articleTypeDatabase);
+		this.removedArticlePanel = new RemovedArticlePanel(articleFilterProvider);
 
 		registerForEvents();
 	}

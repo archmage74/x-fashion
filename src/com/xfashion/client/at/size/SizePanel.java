@@ -1,27 +1,17 @@
 package com.xfashion.client.at.size;
 
-import java.util.List;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.CellPreviewEvent;
-import com.xfashion.client.ErrorEvent;
+import com.google.web.bindery.event.shared.EventBus;
 import com.xfashion.client.ResizeableIconFilterPanel;
-import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.size.event.ClearSizeSelectionEvent;
-import com.xfashion.client.at.size.event.CreateSizeEvent;
-import com.xfashion.client.at.size.event.DeleteSizeEvent;
-import com.xfashion.client.at.size.event.MoveDownSizeEvent;
-import com.xfashion.client.at.size.event.MoveUpSizeEvent;
 import com.xfashion.client.at.size.event.SelectSizeEvent;
-import com.xfashion.client.at.size.event.UpdateSizeEvent;
 import com.xfashion.client.resources.FilterTableResources;
 import com.xfashion.shared.SizeDTO;
 
@@ -32,9 +22,25 @@ public class SizePanel extends ResizeableIconFilterPanel<SizeDTO> {
 	protected CellTable<SizeDTO> cellTable1;
 	protected CellTable<SizeDTO> cellTable2;
 
-	public SizePanel(SizeDataProvider dataProvider) {
-		super(dataProvider);
+	public SizePanel(SizeDataProvider dataProvider, EventBus eventBus) {
+		super(dataProvider, eventBus);
 		this.sizeProvider = dataProvider;
+	}
+	
+	public SizeDataProvider getDataProvider() {
+		return sizeProvider;
+	}
+
+	public CellTable<SizeDTO> getCellTable1() {
+		return cellTable1;
+	}
+
+	public CellTable<SizeDTO> getCellTable2() {
+		return cellTable2;
+	}
+
+	public String getPanelTitle() {
+		return textMessages.size();
 	}
 
 	@Override
@@ -53,21 +59,16 @@ public class SizePanel extends ResizeableIconFilterPanel<SizeDTO> {
 		HorizontalPanel splitSizePanel = new HorizontalPanel();
 
 		cellTable1 = new CellTable<SizeDTO>(35, GWT.<FilterTableResources> create(FilterTableResources.class));
-
-		cellTable1.addColumn(createIconColumn());
-		cellTable1.addColumn(createNameColumn());
-		cellTable1.addColumn(createAmountColumn());
 		cellTable1.addHandler(createSelectHandler(), CellPreviewEvent.getType());
 		cellTable1.setStyleName("sizeLeftPanel");
 		sizeProvider.getLeftProvider().addDataDisplay(cellTable1);
 
 		cellTable2 = new CellTable<SizeDTO>(35, GWT.<FilterTableResources> create(FilterTableResources.class));
-		cellTable2.addColumn(createIconColumn());
-		cellTable2.addColumn(createNameColumn());
-		cellTable2.addColumn(createAmountColumn());
 		cellTable2.addHandler(createSelectHandler(), CellPreviewEvent.getType());
 		cellTable2.setStyleName("sizeRightPanel");
 		sizeProvider.getRightProvider().addDataDisplay(cellTable2);
+
+		createColumns();
 
 		splitSizePanel.add(cellTable1);
 		splitSizePanel.add(cellTable2);
@@ -78,9 +79,20 @@ public class SizePanel extends ResizeableIconFilterPanel<SizeDTO> {
 
 		return panel;
 	}
+
+	@Override
+	public void createColumns() {
+		cellTable1.addColumn(createIconColumn());
+		cellTable1.addColumn(createNameColumn());
+		cellTable1.addColumn(createAmountColumn());
+		cellTable2.addColumn(createIconColumn());
+		cellTable2.addColumn(createNameColumn());
+		cellTable2.addColumn(createAmountColumn());
+	}
 	
-	public String getPanelTitle() {
-		return textMessages.size();
+	@Override
+	public void select(SizeDTO dto) {
+		eventBus.fireEvent(new SelectSizeEvent(dto));
 	}
 
 	protected ImageResource getAvailableIcon() {
@@ -92,96 +104,19 @@ public class SizePanel extends ResizeableIconFilterPanel<SizeDTO> {
 	}
 
 	@Override
-	protected void moveUp(SizeDTO dto, int index) {
-		Xfashion.eventBus.fireEvent(new MoveUpSizeEvent(dto, index));
-	}
-
-	@Override
-	protected void moveDown(SizeDTO dto, int index) {
-		Xfashion.eventBus.fireEvent(new MoveDownSizeEvent(dto, index));
-	}
-	
-	@Override
-	protected void updateDTO(SizeDTO dto) {
-		Xfashion.eventBus.fireEvent(new UpdateSizeEvent(dto));
-	}
-	
-	@Override
-	protected void select(SizeDTO dto) {
-		Xfashion.eventBus.fireEvent(new SelectSizeEvent(dto));
-	}
-
-	@Override
 	public void clearSelection() {
-		Xfashion.eventBus.fireEvent(new ClearSizeSelectionEvent());
+		eventBus.fireEvent(new ClearSizeSelectionEvent());
 	}
 
 	@Override
-	public void hideTools() {
-		removeAdditionalColumns();
-		cellTable1.addColumn(createNameColumn());
-		cellTable1.addColumn(createAmountColumn());
-		cellTable2.addColumn(createNameColumn());
-		cellTable2.addColumn(createAmountColumn());
-		dataProvider.showHidden(false);
-		redrawPanel();
-		createAnchor.clear();
-	}
-
-	@Override
-	public void showTools() {
-		removeAdditionalColumns();
-		cellTable1.addColumn(createEditNameColumn("editSize"));
-		cellTable2.addColumn(createEditNameColumn("editSize"));
-		List<Column<SizeDTO, ?>> toolColumns = createToolsColumns();
-		for (Column<SizeDTO, ?> c : toolColumns) {
-			cellTable1.addColumn(c);
-			cellTable2.addColumn(c);
-		}
-		dataProvider.showHidden(true);
-		redrawPanel();
-		Widget create = createCreatePanel();
-		createAnchor.add(create);
-	}
-
-	private void removeAdditionalColumns() {
-		while (cellTable1.getColumnCount() > 1) {
-			cellTable1.removeColumn(1);
-		}
-		while (cellTable2.getColumnCount() > 1) {
-			cellTable2.removeColumn(1);
-		}
-	}
-
-	@Override
-	protected void redrawPanel() {
+	public void redrawPanel() {
 		cellTable1.redraw();
 		cellTable2.redraw();
 	}
 
 	@Override
-	public void delete(SizeDTO size) {
-		if (size.getArticleAmount() != null && size.getArticleAmount() > 0) {
-			Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.sizeIsNotEmpty(size.getName())));
-		} else {
-			Xfashion.eventBus.fireEvent(new DeleteSizeEvent(size));
-		}
-	}
-
-	@Override
-	protected void createDTO() {
-		SizeDTO size = new SizeDTO();
-		fillDTOFromPanel(size);
-		Xfashion.eventBus.fireEvent(new CreateSizeEvent(size));
-	}
-
-	@Override
 	protected int getMaxWidth() {
 		return 240;	
-	}
-	
-	public SizeDataProvider getDataProvider() {
-		return sizeProvider;
 	}
 
 }

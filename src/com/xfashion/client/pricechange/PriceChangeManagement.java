@@ -8,9 +8,9 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Panel;
 import com.xfashion.client.Xfashion;
+import com.xfashion.client.at.ArticleFilterProvider;
 import com.xfashion.client.at.sort.DefaultArticleAmountComparator;
 import com.xfashion.client.at.sort.IArticleAmountComparator;
-import com.xfashion.client.db.ArticleTypeDatabase;
 import com.xfashion.client.dialog.YesNoCallback;
 import com.xfashion.client.dialog.YesNoPopup;
 import com.xfashion.client.notepad.NotepadPrinter;
@@ -34,7 +34,7 @@ public class PriceChangeManagement implements StockLoadedHandler, PrintChangePri
 
 	protected UserServiceAsync userService = (UserServiceAsync) GWT.create(UserService.class);
 
-	protected ArticleTypeDatabase articleTypeDatabase;
+	protected ArticleFilterProvider filterProvider;
 	protected PriceChangeArticleAmountDataProvider changeArticleTypesProvider;
 	protected StockDataProvider stockProvider;
 
@@ -46,10 +46,10 @@ public class PriceChangeManagement implements StockLoadedHandler, PrintChangePri
 
 	protected TextMessages textMessages;
 
-	public PriceChangeManagement(ArticleTypeDatabase articleTypeDatabase) {
-		this.articleTypeDatabase = articleTypeDatabase;
-		this.changeArticleTypesProvider = new PriceChangeArticleAmountDataProvider(articleTypeDatabase);
-		this.priceChangePanel = new PriceChangePanel(articleTypeDatabase);
+	public PriceChangeManagement(ArticleFilterProvider filterProvider) {
+		this.filterProvider = filterProvider;
+		this.changeArticleTypesProvider = new PriceChangeArticleAmountDataProvider(filterProvider.getArticleTypeProvider());
+		this.priceChangePanel = new PriceChangePanel(filterProvider);
 		this.notepadPrinter = new NotepadPrinter();
 		this.textMessages = GWT.create(TextMessages.class);
 		registerForEvents();
@@ -58,7 +58,7 @@ public class PriceChangeManagement implements StockLoadedHandler, PrintChangePri
 	public Panel getPanel() {
 		if (panel == null) {
 			panel = priceChangePanel.createPanel(changeArticleTypesProvider);
-			sortStrategy = new DefaultArticleAmountComparator(articleTypeDatabase);
+			sortStrategy = new DefaultArticleAmountComparator(filterProvider);
 		}
 		refreshProvider();
 		return panel;

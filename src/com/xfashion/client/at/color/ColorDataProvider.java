@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.web.bindery.event.shared.EventBus;
 import com.xfashion.client.ErrorEvent;
 import com.xfashion.client.SimpleFilterDataProvider;
 import com.xfashion.client.Xfashion;
@@ -30,24 +31,13 @@ import com.xfashion.shared.ColorDTO;
 public class ColorDataProvider extends SimpleFilterDataProvider<ColorDTO> implements CreateColorHandler, UpdateColorHandler, DeleteColorHandler,
 		MoveUpColorHandler, MoveDownColorHandler, SelectColorHandler, ClearColorSelectionHandler, ShowChooseColorPopupHandler {
 
-	public ColorDataProvider(ArticleTypeDataProvider articleProvider) {
-		super(articleProvider);
+	public ColorDataProvider(ArticleTypeDataProvider articleTypeProvider, EventBus eventBus) {
+		super(articleTypeProvider, eventBus);
 		registerForEvents();
 	}
 
 	public String getAttributeContent(ArticleTypeDTO articleType) {
 		return articleType.getColorKey();
-	}
-
-	private void registerForEvents() {
-		Xfashion.eventBus.addHandler(SelectColorEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(ClearColorSelectionEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(DeleteColorEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(CreateColorEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(UpdateColorEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(MoveUpColorEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(MoveDownColorEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(ShowChooseColorPopupEvent.TYPE, this);
 	}
 
 	@Override
@@ -175,6 +165,18 @@ public class ColorDataProvider extends SimpleFilterDataProvider<ColorDTO> implem
 	public void onShowChooseColorPopup(ShowChooseColorPopupEvent event) {
 		ChooseColorPopup colorPopup = new ChooseColorPopup(this);
 		colorPopup.show();
+	}
+
+	private void registerForEvents() {
+		eventBus.addHandler(SelectColorEvent.TYPE, this);
+		eventBus.addHandler(ClearColorSelectionEvent.TYPE, this);
+
+		Xfashion.eventBus.addHandler(DeleteColorEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(CreateColorEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(UpdateColorEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(MoveUpColorEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(MoveDownColorEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(ShowChooseColorPopupEvent.TYPE, this);
 	}
 
 }

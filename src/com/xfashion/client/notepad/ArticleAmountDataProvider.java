@@ -1,26 +1,26 @@
 package com.xfashion.client.notepad;
 
 import com.xfashion.client.at.ArticleDataProvider;
-import com.xfashion.client.db.ArticleTypeDatabase;
+import com.xfashion.client.at.ArticleTypeDataProvider;
 import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.ArticleTypeDTO;
 
 public class ArticleAmountDataProvider extends ArticleDataProvider<ArticleAmountDTO> {
 
-	protected ArticleTypeDatabase articleTypeDatabase;
+	protected ArticleTypeDataProvider articleTypeDatabase;
 	
-	public ArticleAmountDataProvider(ArticleTypeDatabase articleTypeDatabase) {
+	public ArticleAmountDataProvider(ArticleTypeDataProvider articleTypeDatabase) {
 		this.articleTypeDatabase = articleTypeDatabase;
 	}
 	
 	@Override
 	public ArticleTypeDTO retrieveArticleType(ArticleAmountDTO item) {
-		return articleTypeDatabase.getArticleTypeProvider().resolveData(item.getArticleTypeKey());
+		return articleTypeDatabase.resolveData(item.getArticleTypeKey());
 	}
 
 	@Override
 	public ArticleTypeDTO retrieveArticleType(Long productNumber) {
-		return articleTypeDatabase.getArticleTypeProvider().retrieveArticleType(productNumber);
+		return articleTypeDatabase.retrieveArticleType(productNumber);
 	}
 
 }

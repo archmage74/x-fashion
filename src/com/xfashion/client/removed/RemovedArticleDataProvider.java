@@ -1,26 +1,26 @@
 package com.xfashion.client.removed;
 
 import com.xfashion.client.at.ArticleDataProvider;
-import com.xfashion.client.db.ArticleTypeDatabase;
+import com.xfashion.client.at.ArticleTypeDataProvider;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.RemovedArticleDTO;
 
 public class RemovedArticleDataProvider extends ArticleDataProvider<RemovedArticleDTO> {
 
-	private ArticleTypeDatabase articleTypeDatabase;
+	private ArticleTypeDataProvider articleProvider;
 	
-	public RemovedArticleDataProvider(ArticleTypeDatabase articleTypeDatabase) {
-		this.articleTypeDatabase = articleTypeDatabase;
+	public RemovedArticleDataProvider(ArticleTypeDataProvider articleTypeDatabase) {
+		this.articleProvider = articleTypeDatabase;
 	}
 	
 	@Override
 	public ArticleTypeDTO retrieveArticleType(RemovedArticleDTO item) {
-		return articleTypeDatabase.getArticleTypeProvider().resolveData(item.getArticleTypeKey());
+		return articleProvider.resolveData(item.getArticleTypeKey());
 	}
 
 	@Override
 	public ArticleTypeDTO retrieveArticleType(Long productNumber) {
-		return articleTypeDatabase.getArticleTypeProvider().retrieveArticleType(productNumber);
+		return articleProvider.retrieveArticleType(productNumber);
 	}
 
 }

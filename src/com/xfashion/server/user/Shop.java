@@ -58,7 +58,7 @@ public class Shop {
 	Set<DeliveryNotice> deliveryNotices;
 	
 	@Persistent
-	Set<ArticleAmount> articles;
+	List<ArticleAmount> articles;
 	
 	@Persistent
 	@Order(extensions = @Extension(vendorName="datanucleus",key="list-ordering", value="sellDate desc"))
@@ -78,7 +78,7 @@ public class Shop {
 	public Shop() {
 		notepads = new HashSet<Notepad>();
 		deliveryNotices = new HashSet<DeliveryNotice>();
-		articles = new HashSet<ArticleAmount>();
+		articles = new ArrayList<ArticleAmount>();
 		soldArticles = new ArrayList<SoldArticle>();
 		addedArticles = new ArrayList<AddedArticle>();
 		removedArticles = new ArrayList<RemovedArticle>();
@@ -153,8 +153,12 @@ public class Shop {
 		return notepads;
 	}
 
-	public Set<ArticleAmount> getArticles() {
+	public List<ArticleAmount> getArticles() {
 		return articles;
+	}
+	
+	public void addArticle(ArticleAmount articleAmount) {
+		articles.add(articleAmount);
 	}
 
 	public Set<DeliveryNotice> getDeliveryNotices() {

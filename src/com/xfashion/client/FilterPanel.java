@@ -1,89 +1,122 @@
 package com.xfashion.client;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gwt.cell.client.EditTextCell;
-import com.google.gwt.cell.client.FieldUpdater;
-import com.google.gwt.cell.client.ImageResourceCell;
 import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.CellPreviewEvent;
+import com.google.web.bindery.event.shared.EventBus;
+import com.xfashion.client.at.FilterEditor;
 import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.resources.ImageResources;
 import com.xfashion.client.resources.TextMessages;
-import com.xfashion.client.tool.Buttons;
-import com.xfashion.client.user.UserManagement;
 import com.xfashion.shared.FilterCellData;
-import com.xfashion.shared.UserRole;
 
 public abstract class FilterPanel<T extends FilterCellData> implements IsMinimizable {
+
+	protected EventBus eventBus;
 
 	protected HorizontalPanel headerPanel;
 	protected Panel scrollPanel;
 	protected Panel tablePanel;
 
 	protected Panel createAnchor;
-	protected TextBox createTextBox;
+	protected Panel toolsAnchor;
 
 	protected boolean minimized = false;
 	protected Image minmaxButton;
 
 	protected boolean editMode = false;
+	protected FilterEditor<T> filterEditor;
 
 	protected TextMessages textMessages;
 	protected ErrorMessages errorMessages;
 	protected ImageResources images;
 
-	public FilterPanel() {
-		errorMessages = GWT.create(ErrorMessages.class);
-		textMessages = GWT.create(TextMessages.class);
-		images = GWT.<ImageResources> create(ImageResources.class);
+	public FilterPanel(EventBus eventBus) {
+		this(eventBus, null);
+	}
+	
+	public FilterPanel(EventBus eventBus, FilterEditor<T> filterEditor) {
+		this.filterEditor = filterEditor;
+		this.eventBus = eventBus;
+		this.errorMessages = GWT.create(ErrorMessages.class);
+		this.textMessages = GWT.create(TextMessages.class);
+		this.images = GWT.<ImageResources> create(ImageResources.class);
 	}
 
 	public abstract Panel createTablePanel();
 
 	public abstract void clearSelection();
 
-	public abstract void hideTools();
-
-	public abstract void showTools();
-	
 	public abstract FilterDataProvider<T> getDataProvider();
 	
 	public abstract String getPanelTitle();
 
-	protected abstract void handleSelection(CellPreviewEvent<T> event);
+	public abstract void select(T dto);
+	
+	public abstract void redrawPanel();
 
-	protected abstract void moveUp(T dto, int index);
+	public FilterEditor<T> getFilterEditor() {
+		return filterEditor;
+	}
 
-	protected abstract void moveDown(T dto, int index);
-	
-	protected abstract void delete(T dto);
-	
-	protected abstract void select(T dto);
-	
-	protected abstract void updateDTO(T dto);
-	
-	protected abstract void createDTO();
-	
-	protected abstract void redrawPanel();
+	public void setFilterEditor(FilterEditor<T> filterEditor) {
+		this.filterEditor = filterEditor;
+	}
+
+	public Panel getCreateAnchor() {
+		return createAnchor;
+	}
+
+	protected void setCreateAnchor(Panel createAnchor) {
+		this.createAnchor = createAnchor;
+	}
+
+	public Panel getToolsAnchor() {
+		return toolsAnchor;
+	}
+
+	public Panel getTablePanel() {
+		return tablePanel;
+	}
+
+	public boolean isMinimized() {
+		return minimized;
+	}
+
+	public void setMinimized(boolean minimized) {
+		if (minimized) {
+			if (!this.minimized) {
+				minmaxButton.setResource(images.iconMaximize());
+			}
+		} else {
+			if (this.minimized) {
+				minmaxButton.setResource(images.iconMinimize());
+			}
+		}
+		this.minimized = minimized;
+	}
+
+	protected void handleSelection(CellPreviewEvent<T> event) {
+		if (filterEditor != null) {
+			filterEditor.handleSelection(event);
+		} else {
+			select(event.getValue());
+		}
+	}
 
 	public Panel createPanel() {
 		return createPanel(null);
@@ -99,6 +132,11 @@ public abstract class FilterPanel<T extends FilterCellData> implements IsMinimiz
 			}
 		}
 		scrollPanel.add(tablePanel);
+
+		if (filterEditor != null) {
+			filterEditor.init();
+		}
+		
 		return scrollPanel;
 	}
 
@@ -117,19 +155,10 @@ public abstract class FilterPanel<T extends FilterCellData> implements IsMinimiz
 		label.addStyleName("filterLabel attributeFilterLabel");
 		headerPanel.add(label);
 
-		if (UserManagement.hasRole(UserRole.ADMIN, UserRole.DEVELOPER)) {
-			Image toolsButton = Buttons.showTools();
-			ClickHandler toolsButtonClickHandler = new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					toggleTools();
-				}
-			};
-			toolsButton.addClickHandler(toolsButtonClickHandler);
-			headerPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-			headerPanel.add(toolsButton);
-		}
-
+		toolsAnchor = new SimplePanel();
+		headerPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		headerPanel.add(toolsAnchor);
+		
 		label.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -139,89 +168,7 @@ public abstract class FilterPanel<T extends FilterCellData> implements IsMinimiz
 
 		return headerPanel;
 	}
-
-	public void toggleTools() {
-		if (editMode) {
-			editMode = false;
-			hideTools();
-		} else {
-			showTools();
-			editMode = true;
-		}
-	}
-
-	protected List<Column<T, ?>> createToolsColumns() {
-		List<Column<T, ?>> columns = new ArrayList<Column<T, ?>>();
-		columns.add(createUpColumn());
-		columns.add(createDownColumn());
-		columns.add(createDeleteColumn());
-		return columns;
-	}
-
-	protected Column<T, String> createEditNameColumn() {
-		return createEditNameColumn(null);
-	}
 	
-	protected Column<T, String> createEditNameColumn(String style) {
-		Column<T, String> column = new Column<T, String>(new EditTextCell()) {
-			@Override
-			public String getValue(T dto) {
-				if (dto.getHidden()) {
-					return "(" + dto.getName() + ")";
-				} else {
-					return dto.getName();
-				}
-			}
-		};
-		column.setFieldUpdater(new FieldUpdater<T, String>() {
-			@Override
-			public void update(int index, T dto, String value) {
-				dto.setName(value);
-				updateDTO(dto);
-			}
-		});
-		if (style != null) {
-			column.setCellStyleNames(style);
-		} else {
-			column.setCellStyleNames("editFilter");
-		}
-		column.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
-		return column;
-	}
-
-	private Column<T, ImageResource> createUpColumn() {
-		Column<T, ImageResource> tool = new Column<T, ImageResource>(new ImageResourceCell()) {
-			@Override
-			public ImageResource getValue(T object) {
-				return images.iconUp();
-			}
-		};
-		tool.setCellStyleNames("buttonTool");
-		return tool;
-	}
-
-	private Column<T, ImageResource> createDownColumn() {
-		Column<T, ImageResource> tool = new Column<T, ImageResource>(new ImageResourceCell()) {
-			@Override
-			public ImageResource getValue(T object) {
-				return images.iconDown();
-			}
-		};
-		tool.setCellStyleNames("buttonTool");
-		return tool;
-	}
-
-	private Column<T, ImageResource> createDeleteColumn() {
-		Column<T, ImageResource> tool = new Column<T, ImageResource>(new ImageResourceCell()) {
-			@Override
-			public ImageResource getValue(T object) {
-				return images.iconDelete();
-			}
-		};
-		tool.setCellStyleNames("buttonTool");
-		return tool;
-	}
-
 	protected Column<T, SafeHtml> createNameColumn() {
 		Column<T, SafeHtml> column = new Column<T, SafeHtml>(new SafeHtmlCell()) {
 			@Override
@@ -280,35 +227,6 @@ public abstract class FilterPanel<T extends FilterCellData> implements IsMinimiz
 		return sb.toSafeHtml();
 	}
 
-	protected Widget createCreatePanel() {
-		Grid createGrid = new Grid(2, 1);
-
-		createTextBox = new TextBox();
-		createTextBox.setMaxLength(12);
-		createTextBox.setWidth("140px");
-		createGrid.setWidget(0, 0, createTextBox);
-
-		Button createButton = new Button("Anlegen");
-		createButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				createDTO();
-			}
-		});
-		createGrid.setWidget(1, 0, createButton);
-
-		return createGrid;
-	}
-
-	protected void fillDTOFromPanel(T dto) {
-		String name = createTextBox.getText();
-		if (name == null || name.length() == 0) {
-			Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.createAttributeNoName()));
-			return;
-		}
-		dto.setName(name);
-	}
-
 	@Override
 	public void setWidth(int width) {
 		scrollPanel.setWidth(width + "px");
@@ -316,35 +234,6 @@ public abstract class FilterPanel<T extends FilterCellData> implements IsMinimiz
 	
 	protected List<Widget> createLeftHeaderButtons() {
 		return null;
-	}
-
-	public Panel getCreateAnchor() {
-		return createAnchor;
-	}
-
-	public void setCreateAnchor(Panel createAnchor) {
-		this.createAnchor = createAnchor;
-	}
-
-	public Panel getTablePanel() {
-		return tablePanel;
-	}
-
-	public boolean isMinimized() {
-		return minimized;
-	}
-
-	public void setMinimized(boolean minimized) {
-		if (minimized) {
-			if (!this.minimized) {
-				minmaxButton.setResource(images.iconMaximize());
-			}
-		} else {
-			if (this.minimized) {
-				minmaxButton.setResource(images.iconMinimize());
-			}
-		}
-		this.minimized = minimized;
 	}
 
 }

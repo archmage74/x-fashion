@@ -6,7 +6,7 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ListDataProvider;
-import com.xfashion.client.ErrorEvent;
+import com.google.web.bindery.event.shared.EventBus;
 import com.xfashion.client.SimpleFilterDataProvider;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTypeDataProvider;
@@ -37,8 +37,8 @@ public class SizeDataProvider extends SimpleFilterDataProvider<SizeDTO> implemen
 
 	protected SplitList<SizeDTO> sizeList;
 
-	public SizeDataProvider(ArticleTypeDataProvider articleProvider) {
-		super(articleProvider);
+	public SizeDataProvider(ArticleTypeDataProvider articleTypeProvider, EventBus eventBus) {
+		super(articleTypeProvider, eventBus);
 		sizeList = new SplitList<SizeDTO>();
 		leftProvider = new ListDataProvider<SizeDTO>();
 		leftProvider.setList(sizeList.getFirst());
@@ -116,7 +116,7 @@ public class SizeDataProvider extends SimpleFilterDataProvider<SizeDTO> implemen
 		final SizeDTO size = event.getCellData();
 		for (ArticleTypeDTO at : articleTypeProvider.getList()) {
 			if (at.getSizeKey().equals(size.getKey())) {
-				Xfashion.eventBus.fireEvent(new ErrorEvent(errorMessages.sizeIsNotEmpty(size.getName())));
+				Xfashion.fireError(errorMessages.sizeIsNotEmpty(size.getName()));
 				return;
 			}
 		}
@@ -227,8 +227,9 @@ public class SizeDataProvider extends SimpleFilterDataProvider<SizeDTO> implemen
 	}
 
 	private void registerForEvents() {
-		Xfashion.eventBus.addHandler(SelectSizeEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(ClearSizeSelectionEvent.TYPE, this);
+		eventBus.addHandler(SelectSizeEvent.TYPE, this);
+		eventBus.addHandler(ClearSizeSelectionEvent.TYPE, this);
+
 		Xfashion.eventBus.addHandler(DeleteSizeEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(CreateSizeEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(UpdateSizeEvent.TYPE, this);

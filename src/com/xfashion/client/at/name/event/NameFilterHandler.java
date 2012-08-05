@@ -1,4 +1,4 @@
-package com.xfashion.client.at.name;
+package com.xfashion.client.at.name.event;
 
 public interface NameFilterHandler {
 	

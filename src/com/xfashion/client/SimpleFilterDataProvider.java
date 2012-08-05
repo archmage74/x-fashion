@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import com.google.web.bindery.event.shared.EventBus;
 import com.xfashion.client.at.ArticleTypeDataProvider;
 import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.ArticleTypeDTO;
@@ -13,10 +15,10 @@ import com.xfashion.shared.FilterCellData;
 
 public abstract class SimpleFilterDataProvider<T extends FilterCellData> extends FilterDataProvider<T> {
 
-	private Set<String> filter;
-
-	public SimpleFilterDataProvider(ArticleTypeDataProvider articleProvider) {
-		super(articleProvider);
+	protected Set<String> filter;
+	
+	public SimpleFilterDataProvider(ArticleTypeDataProvider articleProvider, EventBus eventBus) {
+		super(articleProvider, eventBus);
 		filter = new HashSet<String>();
 	}
 
@@ -61,7 +63,11 @@ public abstract class SimpleFilterDataProvider<T extends FilterCellData> extends
 		return articleTypes;
 	}
 
-	public void update(List<ArticleTypeDTO> filteredArticleTypes, HashMap<String, ArticleAmountDTO> articleAmounts) {
+	public void update(List<ArticleTypeDTO> filteredArticleTypes) {
+		update(filteredArticleTypes, null);
+	}
+
+	public void update(List<ArticleTypeDTO> filteredArticleTypes, Map<String, ArticleAmountDTO> articleAmounts) {
 		HashMap<String, Integer> articleAmountPerAttribute = new HashMap<String, Integer>();
 		for (ArticleTypeDTO at : filteredArticleTypes) {
 			int fileredAmount = 1;

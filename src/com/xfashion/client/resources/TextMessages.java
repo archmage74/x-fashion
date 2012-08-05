@@ -53,6 +53,7 @@ public interface TextMessages extends Messages {
 	String edit();
 	String close();
 	String open();
+	String create();
 
 	String notepadManagementHeader();
 	String printSticker();

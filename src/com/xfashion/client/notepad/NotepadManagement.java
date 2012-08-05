@@ -6,8 +6,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.xfashion.client.Xfashion;
+import com.xfashion.client.at.ArticleTypeDataProvider;
 import com.xfashion.client.at.bulk.UpdateArticleTypesEvent;
-import com.xfashion.client.db.ArticleTypeDatabase;
 import com.xfashion.client.notepad.event.ClearNotepadEvent;
 import com.xfashion.client.notepad.event.ClearNotepadHandler;
 import com.xfashion.client.notepad.event.DeliveryNoticeUpdatedEvent;
@@ -62,8 +62,8 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 	protected OpenNotepadPopup openNotepadPopup;
 	protected ScanArticlePopup scanArticlePopup;
 
-	public NotepadManagement(ArticleTypeDatabase articleTypeDatabase) {
-		this.articleProvider = new ArticleAmountDataProvider(articleTypeDatabase);
+	public NotepadManagement(ArticleTypeDataProvider articleTypeProvider) {
+		this.articleProvider = new ArticleAmountDataProvider(articleTypeProvider);
 		this.notepadPrinter = new NotepadPrinter();
 		this.errorMessages = GWT.create(ErrorMessages.class);
 		this.currentNotepad = new NotepadDTO();

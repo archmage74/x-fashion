@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.web.bindery.event.shared.EventBus;
 import com.xfashion.client.at.ArticleTypeDataProvider;
 import com.xfashion.client.at.ArticleTypeService;
 import com.xfashion.client.at.ArticleTypeServiceAsync;
@@ -26,6 +27,8 @@ public abstract class FilterDataProvider<T extends FilterCellData> extends ListD
 	
 	protected ArticleTypeDataProvider articleTypeProvider;
 	
+	protected EventBus eventBus;
+
 	protected ErrorMessages errorMessages;
 	
 	/**
@@ -37,11 +40,12 @@ public abstract class FilterDataProvider<T extends FilterCellData> extends ListD
 
 	public abstract List<ArticleTypeDTO> applyFilter(List<ArticleTypeDTO> articleTypes);
 
-	public FilterDataProvider(ArticleTypeDataProvider articleTypeProvider) {
+	public FilterDataProvider(ArticleTypeDataProvider articleTypeProvider, EventBus eventBus) {
 		this.articleTypeProvider = articleTypeProvider;
 		this.errorMessages = GWT.create(ErrorMessages.class);
 		this.idToItem = new HashMap<String, T>();
 		this.allItems = new ArrayList<T>();
+		this.eventBus = eventBus;
 	}
 	
 	@Deprecated
@@ -78,6 +82,11 @@ public abstract class FilterDataProvider<T extends FilterCellData> extends ListD
 	public List<T> getAllItems() {
 		return allItems;
 	}
+	
+	public void clearAllItems() {
+		this.allItems.clear();
+		setProviderList(new ArrayList<T>());
+	}
 
 	public void setAllItems(List<T> allItems) {
 		this.allItems.clear();
@@ -106,7 +115,7 @@ public abstract class FilterDataProvider<T extends FilterCellData> extends ListD
 	}
 	
 	protected void fireRefreshEvent() {
-		Xfashion.eventBus.fireEvent(new RefreshFilterEvent());
+		eventBus.fireEvent(new RefreshFilterEvent());
 	}
 
 }

@@ -13,7 +13,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTable;
 import com.xfashion.client.at.ArticleTypeManagement;
-import com.xfashion.client.db.ArticleTypeDatabase;
+import com.xfashion.client.at.IProvideArticleFilter;
 import com.xfashion.client.notepad.GetPriceFromArticleAmountStrategy;
 import com.xfashion.client.pricechange.event.AcceptPriceChangesEvent;
 import com.xfashion.client.resources.TextMessages;
@@ -23,7 +23,7 @@ public class PriceChangePanel {
 
 	public static final int PANEL_MAX_WIDTH = 550;
 
-	protected ArticleTypeDatabase articleTypeDatabase;
+	protected IProvideArticleFilter filterProvider;
 
 	protected HorizontalPanel headerPanel;
 	protected HorizontalPanel panel;
@@ -31,9 +31,9 @@ public class PriceChangePanel {
 
 	protected TextMessages textMessages;
 
-	public PriceChangePanel(ArticleTypeDatabase articleTypeDatabase) {
+	public PriceChangePanel(IProvideArticleFilter filterProvider) {
 		this.textMessages = GWT.create(TextMessages.class);
-		this.articleTypeDatabase = articleTypeDatabase;
+		this.filterProvider = filterProvider;
 	}
 
 	public Panel createPanel(PriceChangeArticleAmountDataProvider changedArticleTypesProvider) {
@@ -58,7 +58,7 @@ public class PriceChangePanel {
 
 		GetPriceFromArticleAmountStrategy<ArticleAmountDTO> priceStrategy = new GetPriceFromArticleAmountStrategy<ArticleAmountDTO>(
 				articleAmountProvider, ArticleTypeManagement.getArticleTypePriceStrategy);
-		ArticleTable<ArticleAmountDTO> att = new PriceChangeArticleTable(articleTypeDatabase, priceStrategy, articleAmountProvider);
+		ArticleTable<ArticleAmountDTO> att = new PriceChangeArticleTable(filterProvider, priceStrategy, articleAmountProvider);
 		Panel atp = att.create(articleAmountProvider);
 		articlePanel.add(atp);
 

@@ -1,7 +1,7 @@
 package com.xfashion.client.at.sort;
 
+import com.xfashion.client.at.ArticleFilterProvider;
 import com.xfashion.client.at.ArticleTypeDataProvider;
-import com.xfashion.client.db.ArticleTypeDatabase;
 import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.ArticleTypeDTO;
 
@@ -9,9 +9,9 @@ public class DefaultArticleAmountComparator implements IArticleAmountComparator 
 
 	protected DefaultArticleTypeComparator articleTypeComparator;
 	
-	protected ArticleTypeDatabase articleTypeDatabase;
+	protected ArticleFilterProvider articleTypeDatabase;
 	
-	public DefaultArticleAmountComparator(ArticleTypeDatabase articleTypeProvider) {
+	public DefaultArticleAmountComparator(ArticleFilterProvider articleTypeProvider) {
 		this.articleTypeDatabase = articleTypeProvider;
 		this.articleTypeComparator = new DefaultArticleTypeComparator();
 		this.articleTypeComparator.setCategoryProvider(articleTypeDatabase.getCategoryProvider());

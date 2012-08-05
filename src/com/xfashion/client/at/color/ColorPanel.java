@@ -1,27 +1,22 @@
 package com.xfashion.client.at.color;
 
 import com.google.gwt.resources.client.ImageResource;
+import com.google.web.bindery.event.shared.EventBus;
 import com.xfashion.client.ResizeableIconFilterPanel;
 import com.xfashion.client.SimpleFilterDataProvider;
-import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.color.event.ClearColorSelectionEvent;
-import com.xfashion.client.at.color.event.CreateColorEvent;
-import com.xfashion.client.at.color.event.DeleteColorEvent;
-import com.xfashion.client.at.color.event.MoveDownColorEvent;
-import com.xfashion.client.at.color.event.MoveUpColorEvent;
 import com.xfashion.client.at.color.event.SelectColorEvent;
-import com.xfashion.client.at.color.event.UpdateColorEvent;
 import com.xfashion.shared.ColorDTO;
 
 public class ColorPanel extends ResizeableIconFilterPanel<ColorDTO> {
 
-	public ColorPanel(SimpleFilterDataProvider<ColorDTO> dataProvider) {
-		super(dataProvider);
+	public ColorPanel(SimpleFilterDataProvider<ColorDTO> dataProvider, EventBus eventBus) {
+		super(dataProvider, eventBus);
 	}
 
 	@Override
 	public void clearSelection() {
-		Xfashion.eventBus.fireEvent(new ClearColorSelectionEvent());
+		eventBus.fireEvent(new ClearColorSelectionEvent());
 	}
 
 	@Override
@@ -30,30 +25,8 @@ public class ColorPanel extends ResizeableIconFilterPanel<ColorDTO> {
 	}
 
 	@Override
-	protected void moveUp(ColorDTO dto, int index) {
-		Xfashion.eventBus.fireEvent(new MoveUpColorEvent(dto, index));
-	}
-
-	@Override
-	protected void moveDown(ColorDTO dto, int index) {
-		Xfashion.eventBus.fireEvent(new MoveDownColorEvent(dto, index));
-	}
-
-	@Override
-	protected void delete(ColorDTO dto) {
-		Xfashion.eventBus.fireEvent(new DeleteColorEvent(dto));
-	}
-
-	@Override
-	protected void select(ColorDTO dto) {
-		Xfashion.eventBus.fireEvent(new SelectColorEvent(dto));
-	}
-
-	@Override
-	protected void createDTO() {
-		ColorDTO item = new ColorDTO();
-		fillDTOFromPanel(item);
-		Xfashion.eventBus.fireEvent(new CreateColorEvent(item));
+	public void select(ColorDTO dto) {
+		eventBus.fireEvent(new SelectColorEvent(dto));
 	}
 
 	@Override
@@ -64,11 +37,6 @@ public class ColorPanel extends ResizeableIconFilterPanel<ColorDTO> {
 	@Override
 	protected ImageResource getAvailableIcon() {
 		return images.iconColorUnselected();
-	}
-
-	@Override
-	public void updateDTO(ColorDTO color) {
-		Xfashion.eventBus.fireEvent(new UpdateColorEvent(color));
 	}
 
 }

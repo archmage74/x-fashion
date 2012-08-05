@@ -16,15 +16,17 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.view.client.CellPreviewEvent;
-import com.google.gwt.view.client.ListDataProvider;
+import com.google.web.bindery.event.shared.EventBus;
 import com.xfashion.client.IsMinimizable;
 import com.xfashion.client.PanelWidthAnimation;
-import com.xfashion.client.Xfashion;
+import com.xfashion.client.at.name.event.NameFilterEvent;
 import com.xfashion.client.resources.FilterTableResources;
 import com.xfashion.client.resources.ImageResources;
 import com.xfashion.client.resources.TextMessages;
 
-public class NamePanel implements IsMinimizable, NameFilterHandler {
+public class NamePanel implements IsMinimizable {
+
+	protected EventBus eventBus;
 
 	protected Panel listPanel;
 	protected Panel scrollPanel;
@@ -33,27 +35,16 @@ public class NamePanel implements IsMinimizable, NameFilterHandler {
 	
 	protected boolean minimized = false;
 	
-	protected ListDataProvider<String> dataProvider;
-	
-	protected String selectedName = null;
+	protected NameDataProvider dataProvider;
 	
 	protected TextMessages textMessages;
 	protected ImageResources images;
 	
-	public NamePanel(ListDataProvider<String> dataProvider) {
+	public NamePanel(NameDataProvider dataProvider, EventBus eventBus) {
 		this.dataProvider = dataProvider;
-		textMessages = GWT.create(TextMessages.class);
-		images = GWT.create(ImageResources.class);
-		
-		registerForEvents();
-	}
-	
-	public String getSelectedName() {
-		return selectedName;
-	}
-
-	public void setSelectedName(String selectedName) {
-		this.selectedName = selectedName;
+		this.eventBus = eventBus;
+		this.textMessages = GWT.create(TextMessages.class);
+		this.images = GWT.create(ImageResources.class);
 	}
 	
 	public Panel createPanel() {
@@ -78,7 +69,7 @@ public class NamePanel implements IsMinimizable, NameFilterHandler {
 				SafeHtmlBuilder sb = new SafeHtmlBuilder();
 				StringBuffer b = new StringBuffer();
 				b.append("<div style=\"outline:none;\"");
-				if (s.equals(selectedName)) {
+				if (s.equals(dataProvider.getSelectedName())) {
 					b.append(" class=\"filterRowSelected\"");
 				}
 				b.append(">");
@@ -108,11 +99,6 @@ public class NamePanel implements IsMinimizable, NameFilterHandler {
 		sp.add(listPanel);
 		
 		return sp;
-	}
-	
-	@Override
-	public void onNameFilter(NameFilterEvent event) {
-		selectedName = event.getName();
 	}
 	
 	public void clearSelection() {
@@ -199,11 +185,7 @@ public class NamePanel implements IsMinimizable, NameFilterHandler {
 	}
 
 	protected void select(String name) {
-		Xfashion.eventBus.fireEvent(new NameFilterEvent(name));		
+		eventBus.fireEvent(new NameFilterEvent(name));		
 	}
 
-	private void registerForEvents() {
-		Xfashion.eventBus.addHandler(NameFilterEvent.TYPE, this);
-	}
-	
 }
