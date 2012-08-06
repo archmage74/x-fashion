@@ -1,6 +1,8 @@
 package com.xfashion.client.stock;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -28,7 +30,12 @@ import com.xfashion.client.notepad.event.NotepadStartMinimizeEvent;
 import com.xfashion.client.notepad.event.NotepadStartMinimizeHandler;
 import com.xfashion.client.resources.ImageResources;
 import com.xfashion.client.resources.TextMessages;
+import com.xfashion.client.stock.event.LoadStockEvent;
+import com.xfashion.client.user.SelectUserListBox;
+import com.xfashion.client.user.UserManagement;
 import com.xfashion.shared.ArticleAmountDTO;
+import com.xfashion.shared.UserDTO;
+import com.xfashion.shared.UserRole;
 
 public class StockPanel implements NotepadStartMinimizeHandler, NotepadStartMaximizeHandler {
 
@@ -192,12 +199,29 @@ public class StockPanel implements NotepadStartMinimizeHandler, NotepadStartMaxi
 
 		HorizontalPanel toolPanel = new HorizontalPanel();
 		toolPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		if (UserManagement.hasRole(UserRole.ADMIN, UserRole.DEVELOPER)) {
+			SelectUserListBox shopListBox = createSelectUserListBox();
+			toolPanel.add(shopListBox);
+		}
 		headerPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		headerPanel.add(toolPanel);
 
 		return headerPanel;
 	}
 
+	private SelectUserListBox createSelectUserListBox() {
+		SelectUserListBox shopListBox = new SelectUserListBox(UserManagement.user);
+		shopListBox.setVisibleItemCount(1);
+		shopListBox.addSelectionHandler(new SelectionHandler<UserDTO>() {
+			@Override
+			public void onSelection(SelectionEvent<UserDTO> event) {
+				stockBus.fireEvent(new LoadStockEvent(event.getSelectedItem()));
+			}
+		});
+		shopListBox.init();
+		return shopListBox;
+	}
+	
 	private Label createHeaderLabel() {
 		Label headerLabel = new Label(textMessages.stockManagementHeader());
 		headerLabel.addStyleName("filterLabel attributeFilterLabel");

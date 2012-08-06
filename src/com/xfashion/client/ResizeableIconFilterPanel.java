@@ -17,16 +17,23 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.CellPreviewEvent;
 import com.google.web.bindery.event.shared.EventBus;
+import com.xfashion.client.at.event.MaximizeAllFilterPanelsEvent;
+import com.xfashion.client.at.event.MaximizeAllFilterPanelsHandler;
+import com.xfashion.client.at.event.MinimizeAllFilterPanelsEvent;
+import com.xfashion.client.at.event.MinimizeAllFilterPanelsHandler;
 import com.xfashion.client.resources.FilterTableResources;
 import com.xfashion.shared.FilterCellData;
 
-public abstract class ResizeableIconFilterPanel<T extends FilterCellData> extends SimpleFilterPanel<T> {
+public abstract class ResizeableIconFilterPanel<T extends FilterCellData> extends SimpleFilterPanel<T> implements MinimizeAllFilterPanelsHandler,
+		MaximizeAllFilterPanelsHandler {
 
 	public static final int PANEL_MAX_WIDTH = 160;
 	public static final int PANEL_MIN_WIDTH = 22;
 
 	public ResizeableIconFilterPanel(FilterDataProvider<T> dataProvider, EventBus eventBus) {
 		super(dataProvider, eventBus);
+
+		registerForEvents();
 	}
 
 	protected abstract ImageResource getSelectedIcon();
@@ -87,7 +94,7 @@ public abstract class ResizeableIconFilterPanel<T extends FilterCellData> extend
 	}
 
 	@Override
-	protected List<Widget> createLeftHeaderButtons() { 
+	protected List<Widget> createLeftHeaderButtons() {
 		minmaxButton = new Image();
 		if (isMinimized()) {
 			minmaxButton.setResource(images.iconMaximize());
@@ -102,10 +109,20 @@ public abstract class ResizeableIconFilterPanel<T extends FilterCellData> extend
 			}
 		};
 		minmaxButton.addClickHandler(minmaxClickHandler);
-		
+
 		List<Widget> buttons = new ArrayList<Widget>();
 		buttons.add(minmaxButton);
 		return buttons;
+	}
+
+	@Override
+	public void onMaximizeAllFilterPanels(MaximizeAllFilterPanelsEvent event) {
+		maximize();
+	}
+
+	@Override
+	public void onMinimizeAllFilterPanels(MinimizeAllFilterPanelsEvent event) {
+		minimize();
 	}
 
 	public void minmax() {
@@ -131,11 +148,16 @@ public abstract class ResizeableIconFilterPanel<T extends FilterCellData> extend
 	}
 
 	protected int getMinWidth() {
-		return PANEL_MIN_WIDTH;		
+		return PANEL_MIN_WIDTH;
 	}
-	
+
 	protected int getMaxWidth() {
 		return PANEL_MAX_WIDTH;
 	}
-	
+
+	private void registerForEvents() {
+		eventBus.addHandler(MinimizeAllFilterPanelsEvent.TYPE, this);
+		eventBus.addHandler(MaximizeAllFilterPanelsEvent.TYPE, this);
+	}
+
 }

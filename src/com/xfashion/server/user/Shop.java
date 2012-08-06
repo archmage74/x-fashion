@@ -58,7 +58,7 @@ public class Shop {
 	Set<DeliveryNotice> deliveryNotices;
 	
 	@Persistent
-	List<ArticleAmount> articles;
+	Set<ArticleAmount> articles;
 	
 	@Persistent
 	@Order(extensions = @Extension(vendorName="datanucleus",key="list-ordering", value="sellDate desc"))
@@ -78,7 +78,7 @@ public class Shop {
 	public Shop() {
 		notepads = new HashSet<Notepad>();
 		deliveryNotices = new HashSet<DeliveryNotice>();
-		articles = new ArrayList<ArticleAmount>();
+		articles = new HashSet<ArticleAmount>();
 		soldArticles = new ArrayList<SoldArticle>();
 		addedArticles = new ArrayList<AddedArticle>();
 		removedArticles = new ArrayList<RemovedArticle>();
@@ -153,7 +153,7 @@ public class Shop {
 		return notepads;
 	}
 
-	public List<ArticleAmount> getArticles() {
+	public Set<ArticleAmount> getArticles() {
 		return articles;
 	}
 	
@@ -232,16 +232,16 @@ public class Shop {
 		setCity(dto.getCity());
 	}
 
-	public Set<ArticleAmountDTO> createStock() {
-		Set<ArticleAmountDTO> dtos = new HashSet<ArticleAmountDTO>();
+	public List<ArticleAmountDTO> createStock() {
+		List<ArticleAmountDTO> dtos = new ArrayList<ArticleAmountDTO>();
 		for (ArticleAmount articleAmount : getArticles()) {
 			dtos.add(articleAmount.createDTO());
 		}
 		return dtos;
 	}
 	
-	public Set<AddedArticleDTO> createWareInput() {
-		Set<AddedArticleDTO> dtos = new HashSet<AddedArticleDTO>();
+	public List<AddedArticleDTO> createWareInput() {
+		List<AddedArticleDTO> dtos = new ArrayList<AddedArticleDTO>();
 		for (AddedArticle addedArticle : getAddedArticles()) {
 			dtos.add(addedArticle.createDTO());
 		}

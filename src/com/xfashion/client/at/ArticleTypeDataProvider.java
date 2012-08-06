@@ -85,6 +85,7 @@ public class ArticleTypeDataProvider extends ArticleDataProvider<ArticleTypeDTO>
 	}
 
 	public void readArticleTypes() {
+		setIsLoading(true);
 		AsyncCallback<Set<ArticleTypeDTO>> callback = new AsyncCallback<Set<ArticleTypeDTO>>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -152,6 +153,7 @@ public class ArticleTypeDataProvider extends ArticleDataProvider<ArticleTypeDTO>
 			addFastArticleTypeWithoutSort(a);
 		}
 		sortArticles();
+		setIsLoading(false);
 	}
 
 	protected void updateArticleType(final ArticleTypeDTO articleType) {

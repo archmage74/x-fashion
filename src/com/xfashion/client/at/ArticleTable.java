@@ -81,13 +81,13 @@ public abstract class ArticleTable<T> {
 		};
 		cellTable.addHandler(cellPreviewHandler, CellPreviewEvent.getType());
 
-		articleProvider.addDataDisplay(cellTable);
+		articleProvider.setCellTable(cellTable);
 
 		articleTypePanel = new ScrollPanel(cellTable);
 		articleTypePanel.setHeight("750px");
 		return articleTypePanel;
 	}
-
+	
 	protected String getAdditionalMatrixStyles(T a) {
 		return null;
 	}

@@ -68,9 +68,9 @@ public interface UserService extends RemoteService {
 	// Shop-Stock
 	ArticleAmountDTO createStockEntry(ArticleAmountDTO articleAmount) throws IllegalArgumentException;
 	
-	Set<ArticleAmountDTO> readOwnStock() throws IllegalArgumentException;
+	List<ArticleAmountDTO> readOwnStock() throws IllegalArgumentException;
 	
-	Set<ArticleAmountDTO> readStockOfUser(String userKey) throws IllegalArgumentException;
+	List<ArticleAmountDTO> readStockOfUser(String userKey) throws IllegalArgumentException;
 	
 	Collection<ArticleAmountDTO> addStockEntries(Collection<ArticleAmountDTO> dtos) throws IllegalArgumentException;
 		

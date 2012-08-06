@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -34,6 +33,8 @@ import com.xfashion.client.notepad.event.IntoStockHandler;
 import com.xfashion.client.promo.PromoService;
 import com.xfashion.client.promo.PromoServiceAsync;
 import com.xfashion.client.resources.TextMessages;
+import com.xfashion.client.stock.event.LoadStockEvent;
+import com.xfashion.client.stock.event.LoadStockHandler;
 import com.xfashion.client.stock.event.RemoveFromStockEvent;
 import com.xfashion.client.stock.event.RemoveFromStockHandler;
 import com.xfashion.client.stock.event.RequestOpenSellPopupEvent;
@@ -53,7 +54,7 @@ import com.xfashion.shared.SoldArticleDTO;
 import com.xfashion.shared.UserRole;
 
 public class StockManagement implements IntoStockHandler, SellFromStockHandler, RequestOpenSellPopupHandler, LoginHandler, ArticlesLoadedHandler,
-		RequestShowArticleTypeDetailsHandler, RemoveFromStockHandler, RefreshFilterHandler {
+		RequestShowArticleTypeDetailsHandler, RemoveFromStockHandler, RefreshFilterHandler, LoadStockHandler {
 
 	private UserServiceAsync userService = (UserServiceAsync) GWT.create(UserService.class);
 	private PromoServiceAsync promoService = (PromoServiceAsync) GWT.create(PromoService.class);
@@ -199,8 +200,13 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 	}
 
 	@Override
+	public void onLoadStock(LoadStockEvent event) {
+		readStock(event.getUser().getKey());
+	}
+	
+	@Override
 	public void onLogin(LoginEvent event) {
-		readStock();
+		readStock(null);
 	}
 
 	@Override
@@ -234,21 +240,27 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 		Xfashion.eventBus.fireEvent(new RefreshFilterEvent());
 		Xfashion.eventBus.fireEvent(new StockLoadedEvent(stockFilterProvider.getStockProvider()));
 		refresh();
+		stockFilterProvider.getStockProvider().setIsLoading(false);
 	}
 
-	private void readStock() {
-		AsyncCallback<Set<ArticleAmountDTO>> callback = new AsyncCallback<Set<ArticleAmountDTO>>() {
+	private void readStock(String shopKey) {
+		stockFilterProvider.getStockProvider().setIsLoading(true);
+		AsyncCallback<List<ArticleAmountDTO>> callback = new AsyncCallback<List<ArticleAmountDTO>>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				Xfashion.fireError(caught.getMessage());
 			}
 
 			@Override
-			public void onSuccess(Set<ArticleAmountDTO> result) {
+			public void onSuccess(List<ArticleAmountDTO> result) {
 				storeStock(result);
 			}
 		};
-		userService.readOwnStock(callback);
+		if (shopKey == null) {
+			userService.readOwnStock(callback);
+		} else {
+			userService.readStockOfUser(shopKey, callback);
+		}
 	}
 
 	private void readPromos() {
@@ -297,6 +309,7 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 
 	private void registerForEvents() {
 		stockBus.addHandler(RefreshFilterEvent.TYPE, this);
+		stockBus.addHandler(LoadStockEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(IntoStockEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(RequestOpenSellPopupEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(SellFromStockEvent.TYPE, this);

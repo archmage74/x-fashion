@@ -19,12 +19,16 @@ import com.google.gwt.view.client.CellPreviewEvent;
 import com.google.web.bindery.event.shared.EventBus;
 import com.xfashion.client.IsMinimizable;
 import com.xfashion.client.PanelWidthAnimation;
+import com.xfashion.client.at.event.MaximizeAllFilterPanelsEvent;
+import com.xfashion.client.at.event.MaximizeAllFilterPanelsHandler;
+import com.xfashion.client.at.event.MinimizeAllFilterPanelsEvent;
+import com.xfashion.client.at.event.MinimizeAllFilterPanelsHandler;
 import com.xfashion.client.at.name.event.NameFilterEvent;
 import com.xfashion.client.resources.FilterTableResources;
 import com.xfashion.client.resources.ImageResources;
 import com.xfashion.client.resources.TextMessages;
 
-public class NamePanel implements IsMinimizable {
+public class NamePanel implements IsMinimizable, MinimizeAllFilterPanelsHandler, MaximizeAllFilterPanelsHandler {
 
 	protected EventBus eventBus;
 
@@ -45,6 +49,8 @@ public class NamePanel implements IsMinimizable {
 		this.eventBus = eventBus;
 		this.textMessages = GWT.create(TextMessages.class);
 		this.images = GWT.create(ImageResources.class);
+		
+		registerForEvents();
 	}
 	
 	public Panel createPanel() {
@@ -122,6 +128,17 @@ public class NamePanel implements IsMinimizable {
 		this.minimized = minimized;
 	}
 
+
+	@Override
+	public void onMaximizeAllFilterPanels(MaximizeAllFilterPanelsEvent event) {
+		maximize();
+	}
+	
+	@Override
+	public void onMinimizeAllFilterPanels(MinimizeAllFilterPanelsEvent event) {
+		minimize();
+	}
+
 	public void minmax() {
 		if (isMinimized()) {
 			maximize();
@@ -186,6 +203,11 @@ public class NamePanel implements IsMinimizable {
 
 	protected void select(String name) {
 		eventBus.fireEvent(new NameFilterEvent(name));		
+	}
+
+	private void registerForEvents() {
+		eventBus.addHandler(MinimizeAllFilterPanelsEvent.TYPE, this);
+		eventBus.addHandler(MaximizeAllFilterPanelsEvent.TYPE, this);
 	}
 
 }

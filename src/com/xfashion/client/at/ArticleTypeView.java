@@ -7,6 +7,8 @@ import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.brand.BrandManagement;
 import com.xfashion.client.at.category.CategoryManagement;
 import com.xfashion.client.at.color.ColorManagement;
+import com.xfashion.client.at.event.MaximizeAllFilterPanelsEvent;
+import com.xfashion.client.at.event.MinimizeAllFilterPanelsEvent;
 import com.xfashion.client.at.event.RefreshFilterEvent;
 import com.xfashion.client.at.event.RefreshFilterHandler;
 import com.xfashion.client.at.event.RequestShowArticleTypeDetailsEvent;
@@ -131,14 +133,14 @@ public class ArticleTypeView implements NotepadStartMaximizeHandler, NotepadStar
 	@Override
 	public void onNotepadStartMaximize(NotepadStartMaximizeEvent event) {
 		if (panel != null) {
-			// TODO fire minimize filter panel event
+			adminBus.fireEvent(new MinimizeAllFilterPanelsEvent());
 		}
 	}
 
 	@Override
 	public void onNotepadStartMinimize(NotepadStartMinimizeEvent event) {
 		if (panel != null) {
-			// TODO fire maximize filter panel event
+			adminBus.fireEvent(new MaximizeAllFilterPanelsEvent());
 		}
 	}
 

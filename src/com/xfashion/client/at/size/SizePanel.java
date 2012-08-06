@@ -94,7 +94,7 @@ public class SizePanel extends ResizeableIconFilterPanel<SizeDTO> {
 	public void select(SizeDTO dto) {
 		eventBus.fireEvent(new SelectSizeEvent(dto));
 	}
-
+	
 	protected ImageResource getAvailableIcon() {
 		return images.iconSizeUnselected();
 	}

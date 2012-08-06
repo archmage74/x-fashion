@@ -55,9 +55,9 @@ public interface UserServiceAsync {
 	// Shop-Stock
 	void createStockEntry(ArticleAmountDTO articleAmount, AsyncCallback<ArticleAmountDTO> callback);
 
-	void readOwnStock(AsyncCallback<Set<ArticleAmountDTO>> callback);
+	void readOwnStock(AsyncCallback<List<ArticleAmountDTO>> callback);
 
-	void readStockOfUser(String shopKey, AsyncCallback<Set<ArticleAmountDTO>> callback);
+	void readStockOfUser(String userKey, AsyncCallback<List<ArticleAmountDTO>> callback);
 	
 	void addStockEntries(Collection<ArticleAmountDTO> dtos, AsyncCallback<Collection<ArticleAmountDTO>> callback);
 	

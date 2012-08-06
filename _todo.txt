@@ -102,9 +102,7 @@ DONE - bug: article-types gets unsorted if an article is updated
 DONE - notepad: scroll to newly added item, mark added item
 DONE - notepad: ordering always the same, on print delivery note too
 DONE - forbid removing of used article-types - used = added the first time to notepad
-
-add stock-view of shops to admin
- - min/max all filter panels (event driven)
+DONE - add stock-view of shops to admin
 
 notepad as popup, bit smaller matrix font
 

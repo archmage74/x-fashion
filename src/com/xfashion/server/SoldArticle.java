@@ -62,7 +62,9 @@ public class SoldArticle {
 		this.sellPrice = dto.getSellPrice();
 		this.originalSellPrice = dto.getOriginalSellPrice();
 		this.sellDate = new Date();
-		this.promoKey = KeyFactory.stringToKey(dto.getPromoKey());
+		if (dto.getPromoKey() != null) {
+			this.promoKey = KeyFactory.stringToKey(dto.getPromoKey());
+		}
 	}
 	
 	public SoldArticleDTO createDTO() {

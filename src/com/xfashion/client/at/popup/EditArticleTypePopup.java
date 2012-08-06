@@ -242,7 +242,7 @@ public class EditArticleTypePopup extends ArticleTypePopup implements ChooseBran
 	}
 
 	protected Grid createDetailsGrid() {
-		Grid grid = new Grid(4, 2);
+		Grid grid = new Grid(3, 2);
 
 		Grid buyPriceGrid = new Grid(1, 2);
 		Label buyPriceLabel = new Label(textMessages.buyPrice() + ":");
@@ -267,8 +267,6 @@ public class EditArticleTypePopup extends ArticleTypePopup implements ChooseBran
 		sellPriceDeTextBox.setStyleName("baseInput");
 		sellPriceDeTextBox.setWidth("96px");
 		grid.setWidget(2, 1, sellPriceDeGrid);
-
-		productNumber = createGridLabelRow(grid, 3, textMessages.ean() + ":");
 
 		return grid;
 	}
@@ -312,14 +310,6 @@ public class EditArticleTypePopup extends ArticleTypePopup implements ChooseBran
 			}
 		});
 		return cancelButton;
-	}
-
-	private Label createGridLabelRow(Grid grid, int row, String name) {
-		Label label = new Label(name);
-		Label content = new Label();
-		grid.setWidget(row, 0, label);
-		grid.setWidget(row, 1, content);
-		return content;
 	}
 
 	private TextBox createGridTextBoxRow(Grid grid, int row, String name) {

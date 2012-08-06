@@ -527,9 +527,9 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 	}
 
 	@Override
-	public Set<ArticleAmountDTO> readOwnStock() {
+	public List<ArticleAmountDTO> readOwnStock() {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
-		Set<ArticleAmountDTO> dtos = null;
+		List<ArticleAmountDTO> dtos = null;
 		try {
 			Shop shop = readOwnStock(pm);
 			dtos = shop.createStock();
@@ -545,9 +545,9 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 	}
 
 	@Override 
-	public Set<ArticleAmountDTO> readStockOfUser(String userKey) {
+	public List<ArticleAmountDTO> readStockOfUser(String userKey) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
-		Set<ArticleAmountDTO> dtos = null;
+		List<ArticleAmountDTO> dtos = null;
 		try {
 			User user = readUser(pm, userKey);
 			Shop shop = user.getShop();
@@ -605,17 +605,16 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 					toAdd.remove(dto);
 				}
 			}
-			pm.flush();
 	
 			for (ArticleAmountDTO dto : toAdd) {
 				shop.addArticle(new ArticleAmount(dto));
 			}
-			pm.flush();
 			
 			for (ArticleAmountDTO dto : dtos.values()) {
 				shop.addAddedArticle(new AddedArticle(dto));
 			}
-			pm.flush();
+			
+			pm.makePersistent(shop);
 			tx.commit();
 		} catch (Exception e) {
 			log.warning("error while adding articles to stock: " + e.getMessage());
