@@ -127,7 +127,7 @@ public class BrandManagement implements CreateBrandHandler, UpdateBrandHandler, 
 		adminBus.addHandler(UpdateBrandEvent.TYPE, this);
 		adminBus.addHandler(MoveUpBrandEvent.TYPE, this);
 		adminBus.addHandler(MoveDownBrandEvent.TYPE, this);
-		adminBus.addHandler(ShowChooseBrandPopupEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(ShowChooseBrandPopupEvent.TYPE, this);
 	}
 
 }

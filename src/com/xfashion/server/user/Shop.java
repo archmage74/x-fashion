@@ -58,18 +58,18 @@ public class Shop {
 	Set<DeliveryNotice> deliveryNotices;
 	
 	@Persistent
-	Set<ArticleAmount> articles;
+	List<ArticleAmount> articles;
 	
 	@Persistent
-	@Order(extensions = @Extension(vendorName="datanucleus",key="list-ordering", value="sellDate desc"))
+	@Order(extensions = @Extension(vendorName="datanucleus", key="list-ordering", value="sellDate desc"))
 	List<SoldArticle> soldArticles;
 	
 	@Persistent(mappedBy = "shop")
-	@Order(extensions = @Extension(vendorName="datanucleus",key="list-ordering", value="addDate desc"))
+	@Order(extensions = @Extension(vendorName="datanucleus", key="list-ordering", value="addDate desc"))
 	List<AddedArticle> addedArticles;
 	
 	@Persistent(mappedBy = "shop")
-	@Order(extensions = @Extension(vendorName="datanucleus",key="list-ordering", value="removeDate desc"))
+	@Order(extensions = @Extension(vendorName="datanucleus", key="list-ordering", value="removeDate desc"))
 	List<RemovedArticle> removedArticles;
 	
 	@Persistent
@@ -78,7 +78,7 @@ public class Shop {
 	public Shop() {
 		notepads = new HashSet<Notepad>();
 		deliveryNotices = new HashSet<DeliveryNotice>();
-		articles = new HashSet<ArticleAmount>();
+		articles = new ArrayList<ArticleAmount>();
 		soldArticles = new ArrayList<SoldArticle>();
 		addedArticles = new ArrayList<AddedArticle>();
 		removedArticles = new ArrayList<RemovedArticle>();
@@ -153,12 +153,16 @@ public class Shop {
 		return notepads;
 	}
 
-	public Set<ArticleAmount> getArticles() {
+	public List<ArticleAmount> getArticles() {
 		return articles;
 	}
 	
 	public void addArticle(ArticleAmount articleAmount) {
 		articles.add(articleAmount);
+	}
+	
+	public void setArticles(List<ArticleAmount> articles) {
+		this.articles = articles;
 	}
 
 	public Set<DeliveryNotice> getDeliveryNotices() {

@@ -103,6 +103,19 @@ DONE - notepad: scroll to newly added item, mark added item
 DONE - notepad: ordering always the same, on print delivery note too
 DONE - forbid removing of used article-types - used = added the first time to notepad
 DONE - add stock-view of shops to admin
+------ phone call on 2012-08-07 about fixes and minor changes
+DONE - add article to stock - friedberg
+DONE - de-preis bulk edit
+DONE - how to change picture of articles with no picture?
+DONE - cat/brand/style and bulk edit
+DONE - notepad in article panel empty after stock is opened
+DONE - image = mandatory
+
+price on delivery-notice for target shop
+
+image edit does not work immediatly
+
+get article-details when scanning barcode (textfield in menubar)
 
 notepad as popup, bit smaller matrix font
 

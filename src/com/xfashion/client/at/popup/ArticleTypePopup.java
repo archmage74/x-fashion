@@ -73,7 +73,7 @@ public abstract class ArticleTypePopup {
 		mainPanel.add(createTopBar());
 		
 		mainPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		image = createArticleImage();
+		createArticleImagePanel();
 		mainPanel.add(image);
 
 		productMatrix = createProductMatrix();
@@ -167,7 +167,15 @@ public abstract class ArticleTypePopup {
 	}
 	
 	protected void updateImage() {
-		image.setUrl(this.articleType.getImageUrl() + "=s400");
+		updateImage(articleType);
+	}
+	
+	protected void updateImage(ArticleTypeDTO articleType) {
+		if (articleType.getImageUrl() == null) {
+			image.setUrl("whitePixel.png");
+		} else {
+			image.setUrl(articleType.getImageUrl() + "=s400");
+		}
 	}
 
 	protected void updateHeader() {
@@ -275,11 +283,11 @@ public abstract class ArticleTypePopup {
 		}
 	}
 
-	protected Image createArticleImage() {
-		Image img = new Image("");
-		img.setWidth(400 + "px");
-		img.setHeight(400 + "px");
-		return img;
+	protected Image createArticleImagePanel() {
+		image = new Image("#");
+		image.setWidth(400 + "px");
+		image.setHeight(400 + "px");
+		return image;
 	}
 
 }

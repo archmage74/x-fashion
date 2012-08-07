@@ -586,6 +586,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		} finally {
 			pm.close();
 		}
+		
 		return dtos;
 	}
 
@@ -605,15 +606,16 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 					toAdd.remove(dto);
 				}
 			}
-	
+
 			for (ArticleAmountDTO dto : toAdd) {
-				shop.addArticle(new ArticleAmount(dto));
+				ArticleAmount articleAmount = new ArticleAmount(dto);
+				shop.addArticle(articleAmount);
 			}
 			
 			for (ArticleAmountDTO dto : dtos.values()) {
 				shop.addAddedArticle(new AddedArticle(dto));
 			}
-			
+
 			pm.makePersistent(shop);
 			tx.commit();
 		} catch (Exception e) {

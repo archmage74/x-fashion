@@ -219,7 +219,7 @@ DeleteCategoryHandler, MoveUpCategoryHandler, MoveDownCategoryHandler, ShowChoos
 		adminBus.addHandler(DeleteStyleEvent.TYPE, this);
 		adminBus.addHandler(MoveUpStyleEvent.TYPE, this);
 		adminBus.addHandler(MoveDownStyleEvent.TYPE, this);
-		adminBus.addHandler(ShowChooseCategoryAndStylePopupEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(ShowChooseCategoryAndStylePopupEvent.TYPE, this);
 	}
 
 }

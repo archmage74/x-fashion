@@ -439,7 +439,7 @@ public class BulkEditArticleTypePopup implements CloseHandler<PopupPanel>, Choos
 
 	public void onChangeSellPriceDe() {
 		try {
-			Integer price = formatter.parseEurToCents(sellPriceAtTextBox.getText());
+			Integer price = formatter.parseEurToCents(sellPriceDeTextBox.getText());
 			bulk.setTargetSellPriceDe(price);
 			sellPriceDeTextBox.addStyleName("editBulkChanged");
 		} catch (NumberFormatException e) {

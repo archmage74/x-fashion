@@ -123,8 +123,8 @@ public class EditArticleTypePopup extends ArticleTypePopup implements ChooseBran
 	}
 	
 	@Override
-	protected Image createArticleImage() {
-		Image image = super.createArticleImage();
+	protected Image createArticleImagePanel() {
+		Image image = super.createArticleImagePanel();
 		image.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -133,7 +133,8 @@ public class EditArticleTypePopup extends ArticleTypePopup implements ChooseBran
 					public void onSelection(SelectionEvent<ArticleTypeImageDTO> event) {
 						ArticleTypeImageDTO selected = event.getSelectedItem();
 						updatedArticleType.setImageKey(selected.getKey());
-						updateImage();
+						updatedArticleType.setImageUrl(selected.getImageUrl());
+						updateImage(updatedArticleType);
 					}
 				});
 				imagePopup.show();
@@ -368,6 +369,7 @@ public class EditArticleTypePopup extends ArticleTypePopup implements ChooseBran
 		articleType.setSellPriceAt(updatedArticleType.getSellPriceAt());
 		articleType.setSellPriceDe(updatedArticleType.getSellPriceDe());
 		articleType.setImageKey(updatedArticleType.getImageKey());
+		articleType.setImageUrl(updatedArticleType.getImageUrl());
 	}
 
 	private void showDeleteConfirmation() {

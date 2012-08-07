@@ -81,7 +81,7 @@ public abstract class ArticleTable<T> {
 		};
 		cellTable.addHandler(cellPreviewHandler, CellPreviewEvent.getType());
 
-		articleProvider.setCellTable(cellTable);
+		articleProvider.addDataDisplay(cellTable);
 
 		articleTypePanel = new ScrollPanel(cellTable);
 		articleTypePanel.setHeight("750px");

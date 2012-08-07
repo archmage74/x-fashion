@@ -186,6 +186,9 @@ public class CreateArticleTypePopup {
 	}
 	
 	private void updateArticleType(ArticleTypeDTO at) throws CreateArticleException {
+		if (at.getImageKey() == null || at.getImageKey().length() == 0) {
+			throw new CreateArticleException(errorMessages.invalidImage());
+		}
 		try {
 			Integer price = formatter.parseEurToCents(sellPriceAtTextBox.getText());
 			currentArticleType.setSellPriceAt(price);
