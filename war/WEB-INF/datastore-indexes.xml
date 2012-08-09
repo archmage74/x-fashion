@@ -13,4 +13,10 @@
 	<datastore-index kind="RemovedArticle" ancestor="true" source="manual">
         <property name="removeDate" direction="desc"/>
     </datastore-index>
+    <datastore-index kind="ArticleAmount" ancestor="true" source="manual">
+        <property name="__key__" direction="desc"/>
+    </datastore-index>
+    <datastore-index kind="StockArticle" ancestor="true" source="manual">
+        <property name="__key__" direction="desc"/>
+    </datastore-index>
 </datastore-indexes>
