@@ -18,7 +18,7 @@ import com.xfashion.server.AddedArticle;
 import com.xfashion.server.PriceChange;
 import com.xfashion.server.RemovedArticle;
 import com.xfashion.server.SoldArticle;
-import com.xfashion.server.notepad.ArticleAmount;
+import com.xfashion.server.StockArticle;
 import com.xfashion.server.notepad.Notepad;
 import com.xfashion.shared.AddedArticleDTO;
 import com.xfashion.shared.ArticleAmountDTO;
@@ -58,7 +58,7 @@ public class Shop {
 	Set<DeliveryNotice> deliveryNotices;
 	
 	@Persistent
-	List<ArticleAmount> articles;
+	List<StockArticle> articles;
 	
 	@Persistent
 	@Order(extensions = @Extension(vendorName="datanucleus", key="list-ordering", value="sellDate desc"))
@@ -78,7 +78,7 @@ public class Shop {
 	public Shop() {
 		notepads = new HashSet<Notepad>();
 		deliveryNotices = new HashSet<DeliveryNotice>();
-		articles = new ArrayList<ArticleAmount>();
+		articles = new ArrayList<StockArticle>();
 		soldArticles = new ArrayList<SoldArticle>();
 		addedArticles = new ArrayList<AddedArticle>();
 		removedArticles = new ArrayList<RemovedArticle>();
@@ -153,15 +153,15 @@ public class Shop {
 		return notepads;
 	}
 
-	public List<ArticleAmount> getArticles() {
+	public List<StockArticle> getArticles() {
 		return articles;
 	}
 	
-	public void addArticle(ArticleAmount articleAmount) {
+	public void addArticle(StockArticle articleAmount) {
 		articles.add(articleAmount);
 	}
 	
-	public void setArticles(List<ArticleAmount> articles) {
+	public void setArticles(List<StockArticle> articles) {
 		this.articles = articles;
 	}
 
@@ -238,7 +238,7 @@ public class Shop {
 
 	public List<ArticleAmountDTO> createStock() {
 		List<ArticleAmountDTO> dtos = new ArrayList<ArticleAmountDTO>();
-		for (ArticleAmount articleAmount : getArticles()) {
+		for (StockArticle articleAmount : getArticles()) {
 			dtos.add(articleAmount.createDTO());
 		}
 		return dtos;

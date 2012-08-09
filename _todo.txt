@@ -110,12 +110,18 @@ DONE - how to change picture of articles with no picture?
 DONE - cat/brand/style and bulk edit
 DONE - notepad in article panel empty after stock is opened
 DONE - image = mandatory
+DONE - image edit does not work immediatly
+DONE - cannot sell last article of one type 
+DONE - etikett 2 characters to left
+DONE - create size
 
 price on delivery-notice for target shop
 
-image edit does not work immediatly
-
 get article-details when scanning barcode (textfield in menubar)
+
+screen width adaption: 1440
+
+no 2 scrollbars: for window and article-type-panel 
 
 notepad as popup, bit smaller matrix font
 
@@ -134,7 +140,5 @@ NEW - favicon (format an roman 32x32 or 16x16 pixel, for IE only win-icon-format
 NEW - remove expired reset-password-tokens
 
 colored color-filter-attributes
-
-position of notepad
 
 inventur

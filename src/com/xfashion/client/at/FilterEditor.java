@@ -128,7 +128,7 @@ public abstract class FilterEditor<T extends FilterCellData> {
 		filterPanel.getCreateAnchor().add(create);
 	}
 
-	private void removeColumns() {
+	protected void removeColumns() {
 		CellTable<T> cellTable = filterPanel.getCellTable();
 		while (cellTable.getColumnCount() > 0) {
 			cellTable.removeColumn(0);

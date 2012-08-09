@@ -236,11 +236,11 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 			stockFilterProvider.getStockProvider().getStock().put(aa.getArticleTypeKey(), aa);
 			list.add(aa);
 		}
+		stockFilterProvider.getStockProvider().setIsLoading(false);
 
 		Xfashion.eventBus.fireEvent(new RefreshFilterEvent());
 		Xfashion.eventBus.fireEvent(new StockLoadedEvent(stockFilterProvider.getStockProvider()));
 		refresh();
-		stockFilterProvider.getStockProvider().setIsLoading(false);
 	}
 
 	private void readStock(String shopKey) {

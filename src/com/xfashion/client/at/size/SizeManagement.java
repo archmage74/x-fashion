@@ -128,7 +128,8 @@ public class SizeManagement implements CreateSizeHandler, UpdateSizeHandler, Del
 		adminBus.addHandler(UpdateSizeEvent.TYPE, this);
 		adminBus.addHandler(MoveUpSizeEvent.TYPE, this);
 		adminBus.addHandler(MoveDownSizeEvent.TYPE, this);
-		adminBus.addHandler(ShowChooseSizePopupEvent.TYPE, this);
+
+		Xfashion.eventBus.addHandler(ShowChooseSizePopupEvent.TYPE, this);
 	}
 
 }

@@ -6,13 +6,13 @@ import java.util.Set;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.xfashion.shared.AddedArticleDTO;
-import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.DeliveryNoticeDTO;
 import com.xfashion.shared.NotepadDTO;
 import com.xfashion.shared.PriceChangeDTO;
 import com.xfashion.shared.RemovedArticleDTO;
 import com.xfashion.shared.ResetPasswordDTO;
 import com.xfashion.shared.SoldArticleDTO;
+import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.UserDTO;
 
 public interface UserServiceAsync {

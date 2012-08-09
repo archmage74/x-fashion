@@ -54,7 +54,7 @@ public class StickerRenderer {
 		sb.append("</tr>");
 		sb.append("</table>");
 
-		sb.append("<table class=\"articleCell\" style=\"width: 215px;\">");
+		sb.append("<table class=\"articleCell\" style=\"width: 203px;\">");
 		sb.append("<tr style=\"padding: 0px; margin: 0px;\">");
 		sb.append("<td style=\"align: center; padding-top: 0px;\">");
 		sb.append("<img width=\"120\" height=\"46\" src=\"http://intern.spielemarkt.at/spielemarkt_at/barcode.php?num=");

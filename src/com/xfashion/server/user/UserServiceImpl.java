@@ -23,8 +23,8 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 
-import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.xfashion.client.user.UserService;
 import com.xfashion.client.util.IdCounterService;
@@ -33,7 +33,7 @@ import com.xfashion.server.PMF;
 import com.xfashion.server.PriceChange;
 import com.xfashion.server.RemovedArticle;
 import com.xfashion.server.SoldArticle;
-import com.xfashion.server.notepad.ArticleAmount;
+import com.xfashion.server.StockArticle;
 import com.xfashion.server.notepad.Notepad;
 import com.xfashion.server.util.IdCounterServiceImpl;
 import com.xfashion.server.util.IdCounterType;
@@ -496,7 +496,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 	public ArticleAmountDTO createStockEntry(ArticleAmountDTO dto) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
-			ArticleAmount articleAmount = createStockEntry(pm, dto);
+			StockArticle articleAmount = createStockEntry(pm, dto);
 			dto = articleAmount.createDTO();
 		} finally {
 			pm.close();
@@ -504,18 +504,18 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		return dto;
 	}
 
-	public ArticleAmount createStockEntry(PersistenceManager pm, ArticleAmountDTO dto) {
+	public StockArticle createStockEntry(PersistenceManager pm, ArticleAmountDTO dto) {
 		Transaction tx = pm.currentTransaction();
-		ArticleAmount articleAmount = null;
+		StockArticle articleAmount = null;
 		try {
 			tx.begin();
 			Shop shop = readOwnStock(pm);
-			for (ArticleAmount aa : shop.getArticles()) {
+			for (StockArticle aa : shop.getArticles()) {
 				if (aa.getArticleTypeKey().equals(dto.getArticleTypeKey())) {
 					throw new RuntimeException("Article is already in stock");
 				}
 			}
-			articleAmount = new ArticleAmount(dto);
+			articleAmount = new StockArticle(dto);
 			shop.getArticles().add(articleAmount);
 			tx.commit();
 		} finally {
@@ -539,8 +539,8 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		return dtos;
 	}
 
-	public ArticleAmount readStockEntry(PersistenceManager pm, String keyString) {
-		ArticleAmount articleAmount = pm.getObjectById(ArticleAmount.class, KeyFactory.stringToKey(keyString));
+	public StockArticle readStockEntry(PersistenceManager pm, String keyString) {
+		StockArticle articleAmount = pm.getObjectById(StockArticle.class, KeyFactory.stringToKey(keyString));
 		return articleAmount;
 	}
 
@@ -569,7 +569,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 	}
 
 	private void updateStockEntry(PersistenceManager pm, ArticleAmountDTO dto) {
-		ArticleAmount articleAmount = readStockEntry(pm, dto.getKey());
+		StockArticle articleAmount = readStockEntry(pm, dto.getKey());
 		articleAmount.updateFromDTO(dto);
 	}
 
@@ -579,12 +579,17 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		for (ArticleAmountDTO dto : dtos) {
 			dtoMap.put(dto.getArticleTypeKey(), dto);
 		}
+		Shop shop = null;
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
-			Shop shop = addStockEntries(pm, dtoMap);
-			dtos = shop.createStock();
+			shop = addStockEntries(pm, dtoMap);
+		} catch (Exception e) {
+			log.warning("error while adding articles to stock: " + e.getMessage());
 		} finally {
 			pm.close();
+		}
+		if (shop != null) {
+			dtos = shop.createStock();
 		}
 		
 		return dtos;
@@ -599,22 +604,28 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 			tx.begin();
 			shop = readOwnStock(pm);
 
-			for (ArticleAmount articleAmount : shop.getArticles()) {
-				ArticleAmountDTO dto = dtos.get(KeyFactory.keyToString(articleAmount.getArticleTypeKey()));
+			for (StockArticle stockArticle : shop.getArticles()) {
+				ArticleAmountDTO dto = dtos.get(KeyFactory.keyToString(stockArticle.getArticleTypeKey()));
 				if (dto != null) {
-					articleAmount.setAmount(articleAmount.getAmount() + dto.getAmount());
+					stockArticle.setAmount(stockArticle.getAmount() + dto.getAmount());
 					toAdd.remove(dto);
 				}
 			}
+			pm.flush();
 
 			for (ArticleAmountDTO dto : toAdd) {
-				ArticleAmount articleAmount = new ArticleAmount(dto);
-				shop.addArticle(articleAmount);
+				StockArticle stockArticle = new StockArticle(dto);
+				shop.addArticle(stockArticle);
+				if (stockArticle.getKey() == null) {
+					log.warning("added stockArticle, key is still null");
+				}
 			}
+			pm.flush();
 			
 			for (ArticleAmountDTO dto : dtos.values()) {
 				shop.addAddedArticle(new AddedArticle(dto));
 			}
+			pm.flush();
 
 			pm.makePersistent(shop);
 			tx.commit();
@@ -660,9 +671,9 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		try {
 			tx.begin();
 			shop = readOwnStock(pm);
-			Collection<ArticleAmount> toRemove = new HashSet<ArticleAmount>();
+			Collection<StockArticle> toRemove = new HashSet<StockArticle>();
 
-			for (ArticleAmount articleAmount : shop.getArticles()) {
+			for (StockArticle articleAmount : shop.getArticles()) {
 				ArticleAmountDTO dto = dtoMap.get(KeyFactory.keyToString(articleAmount.getArticleTypeKey()));
 				if (dto != null) {
 					Integer newAmount = articleAmount.getAmount() - dto.getAmount();
@@ -712,7 +723,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 	}
 
 	private void deleteStockEntry(PersistenceManager pm, ArticleAmountDTO dto) {
-		ArticleAmount articleAmount = readStockEntry(pm, dto.getKey());
+		StockArticle articleAmount = readStockEntry(pm, dto.getKey());
 		pm.deletePersistent(articleAmount);
 	}
 
@@ -798,7 +809,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 	public ArticleAmountDTO removeOneFromStock(ArticleAmountDTO dto) throws IllegalArgumentException {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
-			ArticleAmount articleAmount = removeOneFromStock(pm, dto);
+			StockArticle articleAmount = removeOneFromStock(pm, dto);
 			if (articleAmount != null) {
 				dto = articleAmount.createDTO();
 			} else {
@@ -810,14 +821,14 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		return dto;
 	}
 	
-	private ArticleAmount removeOneFromStock(PersistenceManager pm, ArticleAmountDTO dto) {
+	private StockArticle removeOneFromStock(PersistenceManager pm, ArticleAmountDTO dto) {
 		Transaction tx = pm.currentTransaction();
-		ArticleAmount foundArticle = null;
+		StockArticle foundArticle = null;
 		try {
 			tx.begin();
 			Shop shop = readOwnStock(pm);
 			Key key = KeyFactory.stringToKey(dto.getKey());
-			for (ArticleAmount articleAmount : shop.getArticles()) {
+			for (StockArticle articleAmount : shop.getArticles()) {
 				if (key.equals(articleAmount.getKey())) {
 					articleAmount.setAmount(articleAmount.getAmount() - 1);
 
