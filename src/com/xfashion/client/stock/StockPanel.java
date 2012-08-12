@@ -7,10 +7,11 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
+import com.xfashion.client.MainPanel;
+import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleFilterProvider;
 import com.xfashion.client.at.ArticleTable;
 import com.xfashion.client.at.ArticleTypeManagement;
@@ -21,6 +22,8 @@ import com.xfashion.client.at.name.NameDataProvider;
 import com.xfashion.client.at.name.NamePanel;
 import com.xfashion.client.at.size.SizePanel;
 import com.xfashion.client.at.style.StylePanel;
+import com.xfashion.client.event.ContentPanelResizeEvent;
+import com.xfashion.client.event.ContentPanelResizeHandler;
 import com.xfashion.client.notepad.ArticleAmountDataProvider;
 import com.xfashion.client.notepad.GetPriceFromArticleAmountStrategy;
 import com.xfashion.client.notepad.NotepadPanel;
@@ -37,7 +40,7 @@ import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.UserDTO;
 import com.xfashion.shared.UserRole;
 
-public class StockPanel implements NotepadStartMinimizeHandler, NotepadStartMaximizeHandler {
+public class StockPanel implements NotepadStartMinimizeHandler, NotepadStartMaximizeHandler, ContentPanelResizeHandler {
 
 	public static final int PANEL_MAX_WIDTH = 550;
 	public static final int PANEL_MIN_WIDTH = 25;
@@ -48,7 +51,7 @@ public class StockPanel implements NotepadStartMinimizeHandler, NotepadStartMaxi
 
 	protected HorizontalPanel headerPanel;
 	protected HorizontalPanel panel;
-	protected ScrollPanel scrollPanel;
+	protected Panel scrollPanel;
 
 	protected CategoryPanel categoryPanel;
 	protected BrandPanel brandPanel;
@@ -179,15 +182,25 @@ public class StockPanel implements NotepadStartMinimizeHandler, NotepadStartMaxi
 		GetPriceFromArticleAmountStrategy<ArticleAmountDTO> priceStrategy = new GetPriceFromArticleAmountStrategy<ArticleAmountDTO>(
 				articleAmountProvider, ArticleTypeManagement.getArticleTypePriceStrategy);
 		ArticleTable<ArticleAmountDTO> att = new StockArticleTable(stockFilterProvider, priceStrategy);
-		Panel atp = att.create(articleAmountProvider);
-		articlePanel.add(atp);
+		scrollPanel = att.create(articleAmountProvider);
+		articlePanel.add(scrollPanel);
 
-		scrollPanel = new ScrollPanel();
-		scrollPanel.setStyleName("filterPanel");
 		setWidth(PANEL_MAX_WIDTH);
-		scrollPanel.add(articlePanel);
+		setHeight(MainPanel.contentPanelHeight);
 
 		return articlePanel;
+	}
+
+	@Override
+	public void onContentPanelResize(ContentPanelResizeEvent event) {
+		setHeight(event.getHeight());
+	}
+	
+	public void setHeight(int height) {
+		if (scrollPanel != null) {
+			int panelHeight = height - 40;
+			scrollPanel.setHeight(panelHeight + "px");
+		}
 	}
 
 	protected HorizontalPanel createHeaderPanel() {
@@ -231,6 +244,7 @@ public class StockPanel implements NotepadStartMinimizeHandler, NotepadStartMaxi
 	private void registerForEvents() {
 		stockBus.addHandler(NotepadStartMaximizeEvent.TYPE, this);
 		stockBus.addHandler(NotepadStartMinimizeEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(ContentPanelResizeEvent.TYPE, this);
 	}
 
 }

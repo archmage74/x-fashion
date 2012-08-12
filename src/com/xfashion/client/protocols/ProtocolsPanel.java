@@ -15,15 +15,17 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.xfashion.client.Formatter;
+import com.xfashion.client.MainPanel;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTable;
 import com.xfashion.client.at.ArticleTypeManagement;
 import com.xfashion.client.at.IProvideArticleFilter;
 import com.xfashion.client.at.price.GetSellPriceFromSoldArticleStrategy;
+import com.xfashion.client.event.ContentPanelResizeEvent;
+import com.xfashion.client.event.ContentPanelResizeHandler;
 import com.xfashion.client.notepad.GetPriceFromArticleAmountStrategy;
 import com.xfashion.client.protocols.event.AddMoreAddedArticlesEvent;
 import com.xfashion.client.protocols.event.AddMoreSoldArticlesEvent;
@@ -39,7 +41,7 @@ import com.xfashion.shared.SoldArticleDTO;
 import com.xfashion.shared.UserDTO;
 import com.xfashion.shared.UserRole;
 
-public class ProtocolsPanel {
+public class ProtocolsPanel implements ContentPanelResizeHandler {
 
 	public static final String SOLD_ARTICLE_PANEL_WIDTH = "800px";
 	public static final String ADDED_ARTICLE_PANEL_WIDTH = "700px";
@@ -49,8 +51,9 @@ public class ProtocolsPanel {
 	protected List<ShopDTO> knownShops;
 	protected IProvideArticleFilter filterProvider;
 
-	protected Panel scrollPanel;
-
+	protected Panel soldArticlePanel;
+	protected Panel addedArticlePanel;
+	
 	protected ListBox shopListBox;
 	protected Button addMoreSoldArticlesButton;
 	protected Button addMoreAddedArticlesButton;
@@ -65,8 +68,10 @@ public class ProtocolsPanel {
 		this.textMessages = GWT.create(TextMessages.class);
 		this.images = GWT.<ImageResources> create(ImageResources.class);
 		this.formatter = Formatter.getInstance();
-
+		
 		this.filterProvider = filterProvider;
+		
+		registerForEvents();
 	}
 
 	public Panel createPanel(SoldArticleDataProvider soldArticleProvider, AddedArticleDataProvider addedArticleProvider) {
@@ -112,6 +117,7 @@ public class ProtocolsPanel {
 		HorizontalPanel hp = new HorizontalPanel();
 		hp.add(createSoldArticlePanel(soldArticleProvider));
 		hp.add(createAddedArticlePanel(addedArticleProvider));
+		setHeight(MainPanel.contentPanelHeight);
 		return hp;
 	}
 
@@ -119,16 +125,14 @@ public class ProtocolsPanel {
 		VerticalPanel vp = new VerticalPanel();
 
 		ArticleTable<SoldArticleDTO> att = new SoldArticleTable(filterProvider, new GetSellPriceFromSoldArticleStrategy());
-		Panel atp = att.create(soldArticleProvider);
-		vp.add(atp);
+		soldArticlePanel = att.create(soldArticleProvider);
+		vp.add(soldArticlePanel);
 		vp.add(createAddMoreSoldArticlesButton());
 
-		SimplePanel panel = new SimplePanel();
-		panel.setStyleName("filterPanel");
-		panel.setWidth(SOLD_ARTICLE_PANEL_WIDTH);
-		panel.add(vp);
+		soldArticlePanel.setStyleName("filterPanel");
+		soldArticlePanel.setWidth(SOLD_ARTICLE_PANEL_WIDTH);
 
-		return panel;
+		return vp;
 	}
 
 	protected Panel createAddedArticlePanel(AddedArticleDataProvider addedArticleProvider) {
@@ -137,17 +141,30 @@ public class ProtocolsPanel {
 		GetPriceFromArticleAmountStrategy<AddedArticleDTO> priceStrategy = new GetPriceFromArticleAmountStrategy<AddedArticleDTO>(
 				addedArticleProvider, ArticleTypeManagement.getArticleTypePriceStrategy);
 		ArticleTable<AddedArticleDTO> att = new AddedArticleTable(filterProvider, priceStrategy);
-		Panel atp = att.create(addedArticleProvider);
-		vp.add(atp);
+		addedArticlePanel = att.create(addedArticleProvider);
+		vp.add(addedArticlePanel);
 		
 		vp.add(createAddMoreAddedArticlesButton());
 
-		SimplePanel panel = new SimplePanel();
-		panel.setStyleName("filterPanel");
-		panel.setWidth(ADDED_ARTICLE_PANEL_WIDTH);
-		panel.add(vp);
+		addedArticlePanel.setStyleName("filterPanel");
+		addedArticlePanel.setWidth(ADDED_ARTICLE_PANEL_WIDTH);
 
-		return panel;
+		return vp;
+	}
+
+	@Override
+	public void onContentPanelResize(ContentPanelResizeEvent event) {
+		setHeight(event.getHeight());
+	}
+	
+	public void setHeight(int height) {
+		int panelHeight = height - 100;
+		if (addedArticlePanel != null) {
+			addedArticlePanel.setHeight(panelHeight + "px");
+		}
+		if (soldArticlePanel != null) {
+			soldArticlePanel.setHeight(panelHeight + "px");
+		}
 	}
 
 	private Widget createShopList() {
@@ -211,6 +228,10 @@ public class ProtocolsPanel {
 		Label headerLabel = new Label(textMessages.sellStatisticHeader());
 		headerLabel.addStyleName("filterLabel attributeFilterLabel");
 		return headerLabel;
+	}
+
+	private void registerForEvents() {
+		Xfashion.eventBus.addHandler(ContentPanelResizeEvent.TYPE, this);
 	}
 
 }

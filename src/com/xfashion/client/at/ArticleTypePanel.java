@@ -22,11 +22,14 @@ import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.xfashion.client.ErrorEvent;
+import com.xfashion.client.MainPanel;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.bulk.BulkEditArticleTypePopup;
 import com.xfashion.client.at.name.event.NameFilterEvent;
 import com.xfashion.client.at.popup.CreateArticleTypePopup;
 import com.xfashion.client.at.size.SizeDataProvider;
+import com.xfashion.client.event.ContentPanelResizeEvent;
+import com.xfashion.client.event.ContentPanelResizeHandler;
 import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.client.tool.Buttons;
@@ -34,7 +37,7 @@ import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.CategoryDTO;
 import com.xfashion.shared.SizeDTO;
 
-public class ArticleTypePanel {
+public class ArticleTypePanel implements ContentPanelResizeHandler {
 
 	private ArticleTypeDTO selectedArticleType;
 
@@ -45,6 +48,7 @@ public class ArticleTypePanel {
 	private ErrorMessages errorMessages;
 	
 	private HorizontalPanel headerPanel;
+	private Panel articleTypePanel;
 	
 	private ArticleFilterProvider articleFilterProvider;
 	
@@ -54,6 +58,7 @@ public class ArticleTypePanel {
 		this.textMessages = GWT.create(TextMessages.class);
 		this.articleFilterProvider = articleFilterProvider;
 		this.errorMessages = GWT.create(ErrorMessages.class);
+		registerForEvents();
 	}
 	
 	public Panel createPanel(ArticleTypeDataProvider articleTypeProvider, MultiWordSuggestOracle nameOracle) {
@@ -67,10 +72,20 @@ public class ArticleTypePanel {
 		panel.add(headerPanel);
 		
 		ArticleTypeTable articleTypeTable = new ArticleTypeTable(articleFilterProvider, ArticleTypeManagement.getArticleTypePriceStrategy);
-		Panel atp = articleTypeTable.create(articleTypeProvider);
-		panel.add(atp);
-		
+		articleTypePanel = articleTypeTable.create(articleTypeProvider);
+		setHeight(MainPanel.contentPanelHeight);
+		panel.add(articleTypePanel);
 		return panel;
+	}
+	
+	@Override
+	public void onContentPanelResize(ContentPanelResizeEvent event) {
+		setHeight(event.getHeight());
+	}
+	
+	public void setHeight(int height) {
+		int panelHeight = height - 40;
+		articleTypePanel.setHeight(panelHeight + "px");
 	}
 	
 	private HorizontalPanel createHeaderPanel(MultiWordSuggestOracle nameOracle) {
@@ -208,6 +223,10 @@ public class ArticleTypePanel {
 
 	public void setSelectedCategory(ArticleTypeDTO selectedArticleType) {
 		this.selectedArticleType = selectedArticleType;
+	}
+	
+	private void registerForEvents() {
+		Xfashion.eventBus.addHandler(ContentPanelResizeEvent.TYPE, this);
 	}
 
 }

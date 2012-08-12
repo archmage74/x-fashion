@@ -116,14 +116,14 @@ DONE - etikett 2 characters to left
 DONE - create size
 DONE - get article-details when scanning barcode (textfield in menubar)
 DONE - price on delivery-notice for target shop
+DONE - fix bug: new articles cannot be added to notepad, only after re-login
+DONE - no 2 scrollbars: for window and article-type-panel 
 
 screen width adaption: 1440
 
-no 2 scrollbars: for window and article-type-panel 
-
 notepad as popup, bit smaller matrix font
 
-???? - works for me - fix bug: new articles cannot be added to notepad, only after re-login
+automatic image management
 
 --------------------
 

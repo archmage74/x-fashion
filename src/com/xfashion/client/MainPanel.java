@@ -5,6 +5,9 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
+import com.google.gwt.event.logical.shared.ResizeEvent;
+import com.google.gwt.event.logical.shared.ResizeHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Panel;
@@ -15,6 +18,7 @@ import com.xfashion.client.at.ArticleFilterProvider;
 import com.xfashion.client.at.ArticleTypeManagement;
 import com.xfashion.client.at.ArticleTypeService;
 import com.xfashion.client.at.ArticleTypeServiceAsync;
+import com.xfashion.client.event.ContentPanelResizeEvent;
 import com.xfashion.client.notepad.NotepadManagement;
 import com.xfashion.client.pricechange.PriceChangeManagement;
 import com.xfashion.client.promo.PromoManagement;
@@ -29,6 +33,8 @@ import com.xfashion.shared.SizeDTO;
 import com.xfashion.shared.UserRole;
 
 public class MainPanel implements ErrorHandler, LoginHandler {
+
+	public static int contentPanelHeight;
 
 	private boolean DEV_MODE = false;
 	
@@ -69,10 +75,23 @@ public class MainPanel implements ErrorHandler, LoginHandler {
 
 		RootPanel.get("logoContainer").add(createLogo());
 		contentPanel = new SimplePanel();
+		contentPanel.setSize("100%", "100%");
 		RootPanel.get("mainPanelContainer").add(contentPanel);
 		userProfile = new UserProfile();
-		
+		windowResize(Window.getClientWidth(), Window.getClientHeight());
+		Window.addResizeHandler(new ResizeHandler() {
+			@Override
+			public void onResize(ResizeEvent event) {
+				windowResize(event.getWidth(), event.getHeight());
+			}
+		});
 		registerEventHandlers();
+	}
+
+	protected void windowResize(int width, int height) {
+		MainPanel.contentPanelHeight = height - 75;
+		contentPanel.setHeight(contentPanelHeight + "px");
+		Xfashion.eventBus.fireEvent(new ContentPanelResizeEvent(contentPanelHeight));
 	}
 
 	public void showArticleTypePanel() {

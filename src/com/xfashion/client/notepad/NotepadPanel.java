@@ -16,10 +16,13 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.web.bindery.event.shared.EventBus;
 import com.xfashion.client.IsMinimizable;
+import com.xfashion.client.MainPanel;
 import com.xfashion.client.PanelWidthAnimation;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.IProvideArticleFilter;
 import com.xfashion.client.at.price.IGetPriceStrategy;
+import com.xfashion.client.event.ContentPanelResizeEvent;
+import com.xfashion.client.event.ContentPanelResizeHandler;
 import com.xfashion.client.notepad.event.ClearNotepadEvent;
 import com.xfashion.client.notepad.event.DeliveryNoticeUpdatedEvent;
 import com.xfashion.client.notepad.event.DeliveryNoticeUpdatedHandler;
@@ -48,7 +51,7 @@ import com.xfashion.shared.DeliveryNoticeDTO;
 import com.xfashion.shared.NotepadDTO;
 
 public class NotepadPanel implements IsMinimizable, OpenNotepadHandler, SaveNotepadHandler, DeliveryNoticeUpdatedHandler, NotepadAddArticleHandler,
-		RequestCheckNotepadPositionHandler {
+		RequestCheckNotepadPositionHandler, ContentPanelResizeHandler {
 
 	public static final int PANEL_MAX_WIDTH = 560;
 	public static final int PANEL_MIN_WIDTH = 25;
@@ -58,6 +61,7 @@ public class NotepadPanel implements IsMinimizable, OpenNotepadHandler, SaveNote
 	protected EventBus eventBus;
 
 	protected Panel scrollPanel;
+	protected Panel resizePanel;
 	protected Label headerLabel;
 	protected Label notepadInfoLabel1;
 	protected Label notepadInfoLabel2;
@@ -89,9 +93,12 @@ public class NotepadPanel implements IsMinimizable, OpenNotepadHandler, SaveNote
 	}
 
 	public Panel createPanel(ArticleAmountDataProvider notepadArticleProvider, boolean minimized) {
+		resizePanel = new SimplePanel();
+		resizePanel.setStyleName("filterPanel");
+		
 		Panel articlePanel = createArticlePanel(notepadArticleProvider);
-		scrollPanel = new SimplePanel();
-		scrollPanel.setStyleName("filterPanel");
+		resizePanel.add(articlePanel);
+		
 		if (minimized) {
 			this.minimized = minimized;
 			setWidth(PANEL_MIN_WIDTH);
@@ -99,10 +106,20 @@ public class NotepadPanel implements IsMinimizable, OpenNotepadHandler, SaveNote
 			this.minimized = minimized;
 			setWidth(PANEL_MAX_WIDTH);
 		}
-		scrollPanel.add(articlePanel);
-		return scrollPanel;
+		setHeight(MainPanel.contentPanelHeight);
+		return resizePanel;
 	}
 
+	@Override
+	public void onContentPanelResize(ContentPanelResizeEvent event) {
+		setHeight(event.getHeight());
+	}
+	
+	public void setHeight(int height) {
+		int panelHeight = height - 40;
+		scrollPanel.setHeight(panelHeight + "px");
+	}
+	
 	public void minmax() {
 		if (isMinimized()) {
 			PanelWidthAnimation pwa = new PanelWidthAnimation(this, PANEL_MIN_WIDTH, PANEL_MAX_WIDTH);
@@ -120,7 +137,7 @@ public class NotepadPanel implements IsMinimizable, OpenNotepadHandler, SaveNote
 	}
 
 	public void setWidth(int width) {
-		scrollPanel.setWidth(width + "px");
+		resizePanel.setWidth(width + "px");
 	}
 
 	@Override
@@ -192,8 +209,8 @@ public class NotepadPanel implements IsMinimizable, OpenNotepadHandler, SaveNote
 		panel.add(headerPanel);
 
 		notepadArticleTable = new NotepadArticleTable(provider);
-		Panel atp = notepadArticleTable.create(articleAmountProvider);
-		panel.add(atp);
+		scrollPanel = notepadArticleTable.create(articleAmountProvider);
+		panel.add(scrollPanel);
 
 		return panel;
 	}
@@ -374,5 +391,6 @@ public class NotepadPanel implements IsMinimizable, OpenNotepadHandler, SaveNote
 		Xfashion.eventBus.addHandler(DeliveryNoticeUpdatedEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(NotepadAddArticleEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(RequestCheckNotepadPositionEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(ContentPanelResizeEvent.TYPE, this);
 	}
 }

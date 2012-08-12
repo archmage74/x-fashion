@@ -8,18 +8,20 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.xfashion.client.MainPanel;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTable;
 import com.xfashion.client.at.ArticleTypeManagement;
 import com.xfashion.client.at.IProvideArticleFilter;
+import com.xfashion.client.event.ContentPanelResizeEvent;
+import com.xfashion.client.event.ContentPanelResizeHandler;
 import com.xfashion.client.notepad.GetPriceFromArticleAmountStrategy;
 import com.xfashion.client.pricechange.event.AcceptPriceChangesEvent;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.shared.ArticleAmountDTO;
 
-public class PriceChangePanel {
+public class PriceChangePanel implements ContentPanelResizeHandler {
 
 	public static final int PANEL_MAX_WIDTH = 550;
 
@@ -27,13 +29,15 @@ public class PriceChangePanel {
 
 	protected HorizontalPanel headerPanel;
 	protected HorizontalPanel panel;
-	protected ScrollPanel scrollPanel;
+	protected Panel scrollPanel;
 
 	protected TextMessages textMessages;
 
 	public PriceChangePanel(IProvideArticleFilter filterProvider) {
 		this.textMessages = GWT.create(TextMessages.class);
 		this.filterProvider = filterProvider;
+		
+		registerForEvents();
 	}
 
 	public Panel createPanel(PriceChangeArticleAmountDataProvider changedArticleTypesProvider) {
@@ -59,15 +63,25 @@ public class PriceChangePanel {
 		GetPriceFromArticleAmountStrategy<ArticleAmountDTO> priceStrategy = new GetPriceFromArticleAmountStrategy<ArticleAmountDTO>(
 				articleAmountProvider, ArticleTypeManagement.getArticleTypePriceStrategy);
 		ArticleTable<ArticleAmountDTO> att = new PriceChangeArticleTable(filterProvider, priceStrategy, articleAmountProvider);
-		Panel atp = att.create(articleAmountProvider);
-		articlePanel.add(atp);
+		scrollPanel = att.create(articleAmountProvider);
+		articlePanel.add(scrollPanel);
 
-		scrollPanel = new ScrollPanel();
-		scrollPanel.setStyleName("filterPanel");
 		setWidth(PANEL_MAX_WIDTH);
-		scrollPanel.add(articlePanel);
+		setHeight(MainPanel.contentPanelHeight);
 
 		return articlePanel;
+	}
+	
+	@Override
+	public void onContentPanelResize(ContentPanelResizeEvent event) {
+		setHeight(event.getHeight());
+	}
+	
+	public void setHeight(int height) {
+		if (scrollPanel != null) {
+			int panelHeight = height - 40;
+			scrollPanel.setHeight(panelHeight + "px");
+		}
 	}
 
 	protected HorizontalPanel createHeaderPanel() {
@@ -105,6 +119,10 @@ public class PriceChangePanel {
 		Label headerLabel = new Label(textMessages.priceChangeManagementHeader());
 		headerLabel.addStyleName("filterLabel");
 		return headerLabel;
+	}
+
+	private void registerForEvents() {
+		Xfashion.eventBus.addHandler(ContentPanelResizeEvent.TYPE, this);
 	}
 
 }

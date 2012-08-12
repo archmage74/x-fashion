@@ -84,7 +84,7 @@ public abstract class ArticleTable<T> {
 		articleProvider.addDataDisplay(cellTable);
 
 		articleTypePanel = new ScrollPanel(cellTable);
-		articleTypePanel.setHeight("750px");
+		articleTypePanel.setHeight("500px");
 		return articleTypePanel;
 	}
 	
