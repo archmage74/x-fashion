@@ -21,6 +21,8 @@ public class ShopDTO implements IsSerializable, Serializable {
 	private String postalcode;
 	
 	private String city;
+	
+	private UserCountry country;
 
 	public String getKeyString() {
 		return keyString;
@@ -76,6 +78,14 @@ public class ShopDTO implements IsSerializable, Serializable {
 
 	public void setCity(String city) {
 		this.city = city;
+	}
+
+	public UserCountry getCountry() {
+		return country;
+	}
+
+	public void setCountry(UserCountry country) {
+		this.country = country;
 	}
 
 }

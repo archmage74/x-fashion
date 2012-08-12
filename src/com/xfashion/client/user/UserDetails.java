@@ -116,18 +116,18 @@ public class UserDetails {
 				housenumberTextBox.setValue(noNullString(user.getShop().getHousenumber()));
 				postalcodeTextBox.setValue(noNullString(user.getShop().getPostalcode()));
 				cityTextBox.setValue(noNullString(user.getShop().getCity()));
+				for (int i = 0; i < countryListBox.getItemCount(); i++) {
+					if (countryListBox.getValue(i).equals(user.getShop().getCountry().name())) {
+						countryListBox.setSelectedIndex(i);
+						break;
+					}
+				}
 			} else {
 				shopNameTextBox.setValue("");
 				clearShopTextBoxes();
 			}
 			emailTextBox.setValue(noNullString(user.getEmail()));
 			enabledCheckBox.setValue(user.getEnabled());
-			for (int i = 0; i < countryListBox.getItemCount(); i++) {
-				if (countryListBox.getValue(i).equals(user.getCountry().name())) {
-					countryListBox.setSelectedIndex(i);
-					break;
-				}
-			}
 			for (int i = 0; i < roleListBox.getItemCount(); i++) {
 				if (roleListBox.getValue(i).equals(user.getRole().name())) {
 					roleListBox.setSelectedIndex(i);
@@ -337,6 +337,7 @@ public class UserDetails {
 		user.setEmail(emailTextBox.getValue());
 		user.setEnabled(enabledCheckBox.getValue());
 		user.setCountry(UserCountry.valueOf(countryListBox.getValue(countryListBox.getSelectedIndex())));
+		user.getShop().setCountry(UserCountry.valueOf(countryListBox.getValue(countryListBox.getSelectedIndex())));
 		user.setRole(UserRole.valueOf(roleListBox.getValue(roleListBox.getSelectedIndex())));
 	}
 

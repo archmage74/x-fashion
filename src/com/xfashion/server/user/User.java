@@ -108,6 +108,9 @@ public class User {
 	}
 
 	public Shop getShop() {
+		if (shop.getCountry() == null) {
+			shop.setCountry(country);
+		}
 		return shop;
 	}
 

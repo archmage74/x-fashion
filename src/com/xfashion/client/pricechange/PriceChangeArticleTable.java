@@ -19,12 +19,20 @@ public class PriceChangeArticleTable extends ArticleTable<ArticleAmountDTO> {
 
 	protected PriceChangeArticleAmountDataProvider priceChangeProvider;
 	
-	public PriceChangeArticleTable(IProvideArticleFilter provider, IGetPriceStrategy<ArticleAmountDTO> getPriceStrategy,
+	protected IGetPriceStrategy<ArticleAmountDTO> priceStrategy;
+	
+	public PriceChangeArticleTable(IProvideArticleFilter provider, IGetPriceStrategy<ArticleAmountDTO> priceStrategy,
 			PriceChangeArticleAmountDataProvider priceChangeProvider) {
-		super(provider, getPriceStrategy);
+		super(provider);
 		this.priceChangeProvider = priceChangeProvider;
+		this.priceStrategy = priceStrategy;
 	}
 
+	@Override
+	protected IGetPriceStrategy<ArticleAmountDTO> currentPriceStrategy() {
+		return priceStrategy;
+	}
+	
 	protected void addNavColumns(CellTable<ArticleAmountDTO> cellTable) {
 		Column<ArticleAmountDTO, SafeHtml> amount = new Column<ArticleAmountDTO, SafeHtml>(new SafeHtmlCell()) {
 			@Override

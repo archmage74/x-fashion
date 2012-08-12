@@ -12,6 +12,7 @@ import com.google.gwt.user.cellview.client.Column;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTable;
 import com.xfashion.client.at.IProvideArticleFilter;
+import com.xfashion.client.at.price.IGetPriceStrategy;
 import com.xfashion.client.notepad.event.NotepadRemoveArticleEvent;
 import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.ArticleTypeDTO;
@@ -20,11 +21,14 @@ public class NotepadArticleTable extends ArticleTable<ArticleAmountDTO> {
 
 	public static final long HIGHLIGHT_TIME = 5000;
 
+	protected NotepadManagement notepadManagement;
+	
 	protected String lastUpdatedArticleTypeKey = null;
 	protected Date lastUpdatedTime = null;
 
-	public NotepadArticleTable(IProvideArticleFilter provider, GetPriceFromArticleAmountStrategy<ArticleAmountDTO> priceStrategy) {
-		super(provider, priceStrategy);
+	public NotepadArticleTable(IProvideArticleFilter provider) {
+		super(provider);
+		notepadManagement = NotepadManagement.getInstance();
 	}
 
 	public String getLastUpdatedArticleTypeKey() {
@@ -36,6 +40,11 @@ public class NotepadArticleTable extends ArticleTable<ArticleAmountDTO> {
 		this.lastUpdatedTime = new Date();
 	}
 
+	@Override
+	protected IGetPriceStrategy<ArticleAmountDTO> currentPriceStrategy() {
+		return notepadManagement.currentPriceStrategy();
+	}
+	
 	protected void addNavColumns(CellTable<ArticleAmountDTO> cellTable) {
 		Column<ArticleAmountDTO, SafeHtml> amount = new Column<ArticleAmountDTO, SafeHtml>(new SafeHtmlCell()) {
 			@Override

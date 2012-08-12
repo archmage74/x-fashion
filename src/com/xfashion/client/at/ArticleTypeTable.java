@@ -14,10 +14,18 @@ import com.xfashion.shared.ArticleTypeDTO;
 
 public class ArticleTypeTable extends ArticleTable<ArticleTypeDTO> {
 
+	IGetPriceStrategy<ArticleTypeDTO> priceStratgey;
+	
 	public ArticleTypeTable(IProvideArticleFilter provider, IGetPriceStrategy<ArticleTypeDTO> getPriceStrategy) {
-		super(provider, getPriceStrategy);
+		super(provider);
+		this.priceStratgey = getPriceStrategy;
 	}
 
+	@Override
+	protected IGetPriceStrategy<ArticleTypeDTO> currentPriceStrategy() {
+		return priceStratgey;
+	}
+	
 	protected Column<ArticleTypeDTO, SafeHtml> createPriceColumn(final ArticleDataProvider<ArticleTypeDTO> ap) {
 		Column<ArticleTypeDTO, SafeHtml> price = new Column<ArticleTypeDTO, SafeHtml>(new SafeHtmlCell()) {
 			@Override

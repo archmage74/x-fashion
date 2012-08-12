@@ -18,8 +18,8 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.xfashion.client.IsMinimizable;
 import com.xfashion.client.PanelWidthAnimation;
 import com.xfashion.client.Xfashion;
-import com.xfashion.client.at.ArticleTypeManagement;
 import com.xfashion.client.at.IProvideArticleFilter;
+import com.xfashion.client.at.price.IGetPriceStrategy;
 import com.xfashion.client.notepad.event.ClearNotepadEvent;
 import com.xfashion.client.notepad.event.DeliveryNoticeUpdatedEvent;
 import com.xfashion.client.notepad.event.DeliveryNoticeUpdatedHandler;
@@ -54,7 +54,7 @@ public class NotepadPanel implements IsMinimizable, OpenNotepadHandler, SaveNote
 	public static final int PANEL_MIN_WIDTH = 25;
 
 	private IProvideArticleFilter provider;
-	
+
 	protected EventBus eventBus;
 
 	protected Panel scrollPanel;
@@ -78,6 +78,10 @@ public class NotepadPanel implements IsMinimizable, OpenNotepadHandler, SaveNote
 		this.eventBus = eventBus;
 		this.provider = provider;
 		registerForEvents();
+	}
+
+	public void setGetPriceStrategy(IGetPriceStrategy<ArticleAmountDTO> getPriceStrategy) {
+		
 	}
 
 	public Panel createPanel(ArticleAmountDataProvider notepadArticleProvider) {
@@ -187,9 +191,7 @@ public class NotepadPanel implements IsMinimizable, OpenNotepadHandler, SaveNote
 		headerPanel = createHeaderPanel();
 		panel.add(headerPanel);
 
-		GetPriceFromArticleAmountStrategy<ArticleAmountDTO> priceStrategy = new GetPriceFromArticleAmountStrategy<ArticleAmountDTO>(
-				articleAmountProvider, ArticleTypeManagement.getArticleTypePriceStrategy);
-		notepadArticleTable = new NotepadArticleTable(provider, priceStrategy);
+		notepadArticleTable = new NotepadArticleTable(provider);
 		Panel atp = notepadArticleTable.create(articleAmountProvider);
 		panel.add(atp);
 

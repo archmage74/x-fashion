@@ -27,7 +27,6 @@ public abstract class ArticleTable<T> {
 	private IProvideArticleFilter provider;
 	
 	protected ArticleDataProvider<T> articleProvider;
-	protected IGetPriceStrategy<T> getPriceStrategy;
 	
 	protected CellTable<T> cellTable;
 	protected ScrollPanel articleTypePanel;
@@ -35,15 +34,16 @@ public abstract class ArticleTable<T> {
 	protected TextMessages textMessages;
 	protected Formatter formatter;
 	
-	public ArticleTable(IProvideArticleFilter provider, IGetPriceStrategy<T> getPriceStrategy) {
+	public ArticleTable(IProvideArticleFilter provider) {
 		this.textMessages = GWT.create(TextMessages.class);
 		this.formatter = Formatter.getInstance();
 		this.provider = provider;
-		this.getPriceStrategy = getPriceStrategy;
 	}
 	
 	protected abstract void addNavColumns(CellTable<T> cellTable);
-
+	
+	protected abstract IGetPriceStrategy<T> currentPriceStrategy();
+	
 	public ArticleDataProvider<T> getArticleProvider() {
 		return articleProvider;
 	}
@@ -55,7 +55,7 @@ public abstract class ArticleTable<T> {
 	public ScrollPanel getArticleTypePanel() {
 		return articleTypePanel;
 	}
-	
+
 	public Panel create(final ArticleDataProvider<T> ap) {
 		articleProvider = ap; 
 
@@ -105,7 +105,7 @@ public abstract class ArticleTable<T> {
 				sb.appendHtmlConstant("<div class=\"" + styles + "\">");
 				String priceString = textMessages.unknownPrice();
 				if (a != null) {
-					Integer price = getPriceStrategy.getPrice(a);
+					Integer price = currentPriceStrategy().getPrice(a);
 					if (price != null) {
 						priceString = formatter.formatCentsToCurrency(price);
 					}

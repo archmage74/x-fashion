@@ -19,6 +19,7 @@ import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.BarcodeHelper;
 import com.xfashion.shared.DeliveryNoticeDTO;
 import com.xfashion.shared.ShopDTO;
+import com.xfashion.shared.UserCountry;
 
 public class DeliveryNotice extends HttpServlet {
 
@@ -56,7 +57,7 @@ public class DeliveryNotice extends HttpServlet {
 		int sum = 0;
 		for (ArticleAmountDTO aa : dn.getNotepad().getArticles()) {
 			sum += aa.getAmount();
-			out.print(renderArticle(aa));
+			out.print(renderArticle(dn.getTargetShop(), aa));
 		}
 		out.print(renderFooter(sum));
 	}
@@ -129,7 +130,7 @@ public class DeliveryNotice extends HttpServlet {
 		return sb;
 	}
 
-	public String renderArticle(ArticleAmountDTO aa) {
+	public String renderArticle(ShopDTO shop, ArticleAmountDTO aa) {
 		ArticleTypeDTO at = readArticleType(aa.getArticleTypeKey());
 		StringBuffer sb = new StringBuffer();
 		sb.append("<tr>\n");
@@ -147,12 +148,20 @@ public class DeliveryNotice extends HttpServlet {
 		sb.append("</tr>\n");
 		sb.append("</table>\n");
 		sb.append("</td>\n");
-		sb.append("<td class=\"price\">").append(currencyFormat.format(((double) at.getSellPriceAt()) / 100)).append("</td>\n");
+		sb.append("<td class=\"price\">").append(getPriceFromArticle(shop, at)).append("</td>\n");
 		sb.append("<td class=\"pieces\">").append(aa.getAmount()).append("</td><td class=\"piecesLabel\">Stk.</td>\n");
 		sb.append("</tr>\n");
 		return sb.toString();
 	}
 
+	private String getPriceFromArticle(ShopDTO s, ArticleTypeDTO a) {
+		Integer price = a.getSellPriceAt();
+		if (UserCountry.DE == s.getCountry()) {
+			price = a.getSellPriceDe();
+		}
+		return currencyFormat.format(((price.doubleValue()) ) / 100);
+	}
+	
 	private String renderFooter(int sum) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<tr>\n");

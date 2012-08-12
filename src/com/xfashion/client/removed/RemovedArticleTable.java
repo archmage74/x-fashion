@@ -6,16 +6,25 @@ import com.google.gwt.user.cellview.client.Column;
 import com.xfashion.client.Formatter;
 import com.xfashion.client.at.ArticleTable;
 import com.xfashion.client.at.IProvideArticleFilter;
+import com.xfashion.client.at.price.IGetPriceStrategy;
 import com.xfashion.client.notepad.GetPriceFromArticleAmountStrategy;
 import com.xfashion.shared.RemovedArticleDTO;
 
 public class RemovedArticleTable extends ArticleTable<RemovedArticleDTO> {
 
+	IGetPriceStrategy<RemovedArticleDTO> priceStrategy;
+	
 	protected Formatter formatter;
 
 	public RemovedArticleTable(IProvideArticleFilter provider, GetPriceFromArticleAmountStrategy<RemovedArticleDTO> getPriceStrategy) {
-		super(provider, getPriceStrategy);
+		super(provider);
 		this.formatter = Formatter.getInstance();
+		this.priceStrategy = getPriceStrategy;
+	}
+
+	@Override
+	protected IGetPriceStrategy<RemovedArticleDTO> currentPriceStrategy() {
+		return priceStrategy;
 	}
 
 	protected void addNavColumns(CellTable<RemovedArticleDTO> cellTable) {

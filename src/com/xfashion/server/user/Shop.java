@@ -25,6 +25,7 @@ import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.DeliveryNoticeDTO;
 import com.xfashion.shared.NotepadDTO;
 import com.xfashion.shared.ShopDTO;
+import com.xfashion.shared.UserCountry;
 
 @PersistenceCapable
 public class Shop {
@@ -50,6 +51,9 @@ public class Shop {
 	
 	@Persistent
 	private String city;
+	
+	@Persistent
+	private String country;
 	
 	@Persistent
 	Set<Notepad> notepads;
@@ -149,6 +153,14 @@ public class Shop {
 		this.city = city;
 	}
 
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
 	public Set<Notepad> getNotepads() {
 		return notepads;
 	}
@@ -208,6 +220,9 @@ public class Shop {
 		dto.setHousenumber(getHousenumber());
 		dto.setPostalcode(getPostalcode());
 		dto.setCity(getCity());
+		if (getCountry() != null) {
+			dto.setCountry(UserCountry.valueOf(getCountry()));
+		}
 		return dto;
 	}
 
@@ -234,6 +249,7 @@ public class Shop {
 		setHousenumber(dto.getHousenumber());
 		setPostalcode(dto.getPostalcode());
 		setCity(dto.getCity());
+		setCountry(dto.getCountry().name());
 	}
 
 	public List<ArticleAmountDTO> createStock() {

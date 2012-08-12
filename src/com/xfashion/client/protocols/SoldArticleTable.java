@@ -10,15 +10,24 @@ import com.xfashion.client.Formatter;
 import com.xfashion.client.at.ArticleTable;
 import com.xfashion.client.at.IProvideArticleFilter;
 import com.xfashion.client.at.price.GetSellPriceFromSoldArticleStrategy;
+import com.xfashion.client.at.price.IGetPriceStrategy;
 import com.xfashion.shared.SoldArticleDTO;
 
 public class SoldArticleTable extends ArticleTable<SoldArticleDTO> {
 
 	protected Formatter formatter;
 
+	protected IGetPriceStrategy<SoldArticleDTO> priceStrategy;
+
 	public SoldArticleTable(IProvideArticleFilter provider, GetSellPriceFromSoldArticleStrategy getPriceStrategy) {
-		super(provider, getPriceStrategy);
+		super(provider);
 		this.formatter = Formatter.getInstance();
+		this.priceStrategy = getPriceStrategy;
+	}
+
+	@Override
+	protected IGetPriceStrategy<SoldArticleDTO> currentPriceStrategy() {
+		return priceStrategy;
 	}
 
 	protected void addNavColumns(CellTable<SoldArticleDTO> cellTable) {

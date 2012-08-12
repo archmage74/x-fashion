@@ -15,8 +15,16 @@ import com.xfashion.shared.ArticleTypeDTO;
 
 public class StockArticleTable extends ArticleTable<ArticleAmountDTO> {
 
+	IGetPriceStrategy<ArticleAmountDTO> priceStrategy;
+	
 	public StockArticleTable(IProvideArticleFilter provider, IGetPriceStrategy<ArticleAmountDTO> getPriceStrategy) {
-		super(provider, getPriceStrategy);
+		super(provider);
+		this.priceStrategy = getPriceStrategy;
+	}
+
+	@Override
+	protected IGetPriceStrategy<ArticleAmountDTO> currentPriceStrategy() {
+		return priceStrategy;
 	}
 
 	protected void addNavColumns(CellTable<ArticleAmountDTO> cellTable) {

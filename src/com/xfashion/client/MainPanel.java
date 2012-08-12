@@ -59,7 +59,7 @@ public class MainPanel implements ErrorHandler, LoginHandler {
 		articleTypeManagement.init();
 		ArticleFilterProvider articleFilterProvider = articleTypeManagement.getArticleFilterProvider();
 		userManagement = new UserManagement();
-		notepadManagement = new NotepadManagement(articleFilterProvider.getArticleTypeProvider());
+		notepadManagement = NotepadManagement.getInstance(articleFilterProvider.getArticleTypeProvider());
 		stockManagement = new StockManagement(articleFilterProvider, articleTypeManagement);
 		stockManagement.init();
 		protocolsManagement = new ProtocolsManagement(articleFilterProvider);

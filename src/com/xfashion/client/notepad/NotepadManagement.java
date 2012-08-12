@@ -8,6 +8,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTypeDataProvider;
 import com.xfashion.client.at.bulk.UpdateArticleTypesEvent;
+import com.xfashion.client.at.price.GetAtPriceFromArticleTypeStrategy;
+import com.xfashion.client.at.price.GetDePriceFromArticleTypeStrategy;
 import com.xfashion.client.notepad.event.ClearNotepadEvent;
 import com.xfashion.client.notepad.event.ClearNotepadHandler;
 import com.xfashion.client.notepad.event.DeliveryNoticeUpdatedEvent;
@@ -38,18 +40,24 @@ import com.xfashion.client.notepad.event.SaveDeliveryNoticeHandler;
 import com.xfashion.client.notepad.event.SaveNotepadEvent;
 import com.xfashion.client.notepad.event.SaveNotepadHandler;
 import com.xfashion.client.resources.ErrorMessages;
+import com.xfashion.client.user.UserManagement;
 import com.xfashion.client.user.UserService;
 import com.xfashion.client.user.UserServiceAsync;
+import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.DeliveryNoticeDTO;
 import com.xfashion.shared.NotepadDTO;
+import com.xfashion.shared.UserCountry;
 
 public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemoveArticleHandler, PrintNotepadStickersHandler, ClearNotepadHandler,
-		OpenNotepadHandler, OpenDeliveryNoticeHandler, RequestOpenNotepadHandler, SaveDeliveryNoticeHandler, SaveNotepadHandler, 
+		OpenNotepadHandler, OpenDeliveryNoticeHandler, RequestOpenNotepadHandler, SaveDeliveryNoticeHandler, SaveNotepadHandler,
 		RequestSaveNotepadHandler, PrintDeliveryNoticeHandler, RecordArticlesHandler, RequestIntoStockHandler {
 
+	public GetPriceFromArticleAmountStrategy<ArticleAmountDTO> atPriceStrategy = null;
+	public GetPriceFromArticleAmountStrategy<ArticleAmountDTO> dePriceStrategy = null;
+
 	private UserServiceAsync userService = (UserServiceAsync) GWT.create(UserService.class);
-	
+
 	private ErrorMessages errorMessages;
 
 	private NotepadDTO currentNotepad;
@@ -62,7 +70,23 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 	protected OpenNotepadPopup openNotepadPopup;
 	protected ScanArticlePopup scanArticlePopup;
 
-	public NotepadManagement(ArticleTypeDataProvider articleTypeProvider) {
+	private static NotepadManagement notepadManagement;
+
+	public static NotepadManagement getInstance() {
+		if (notepadManagement == null) {
+			throw new RuntimeException("NotepadManagement is not yet initialized");
+		}
+		return notepadManagement;
+	}
+	
+	public static NotepadManagement getInstance(ArticleTypeDataProvider articleTypeDataProvider) {
+		if (notepadManagement == null) {
+			notepadManagement = new NotepadManagement(articleTypeDataProvider);
+		}
+		return notepadManagement;
+	}
+
+	protected NotepadManagement(ArticleTypeDataProvider articleTypeProvider) {
 		this.articleProvider = new ArticleAmountDataProvider(articleTypeProvider);
 		this.notepadPrinter = new NotepadPrinter();
 		this.errorMessages = GWT.create(ErrorMessages.class);
@@ -70,7 +94,27 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 		this.saveNotepadPopup = new SaveNotepadPopup();
 		this.openNotepadPopup = new OpenNotepadPopup();
 		this.scanArticlePopup = new ScanArticlePopup(articleProvider);
+		this.atPriceStrategy = new GetPriceFromArticleAmountStrategy<ArticleAmountDTO>(this.articleProvider, new GetAtPriceFromArticleTypeStrategy());
+		this.dePriceStrategy = new GetPriceFromArticleAmountStrategy<ArticleAmountDTO>(this.articleProvider, new GetDePriceFromArticleTypeStrategy());
 		registerForEvents();
+	}
+
+	public GetPriceFromArticleAmountStrategy<ArticleAmountDTO> currentPriceStrategy() {
+		UserCountry country = UserManagement.user.getCountry();
+		if (currentDeliveryNotice != null) {
+			if (currentDeliveryNotice.getTargetShop() != null) {
+				country = currentDeliveryNotice.getTargetShop().getCountry();
+			}
+		}
+		switch (country) {
+		case AT:
+			return atPriceStrategy;
+		case DE:
+			return dePriceStrategy;
+		}
+
+		// no target shop and no user, something strange is going on
+		throw new RuntimeException("could not get price strategy for notepad");
 	}
 
 	@Override
@@ -92,17 +136,17 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 		final ArticleTypeDTO articleType = event.getArticleType();
 		currentNotepad.addArticle(articleType, event.getAmount());
 		articleProvider.setList(currentNotepad.getArticles());
-		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
-	        public void execute () {
-	        	Xfashion.eventBus.fireEvent(new RequestCheckNotepadPositionEvent());
-	        }
-	    });
+		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+			public void execute() {
+				Xfashion.eventBus.fireEvent(new RequestCheckNotepadPositionEvent());
+			}
+		});
 		if (articleType.getUsed() != null && !articleType.getUsed()) {
-			Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
-		        public void execute () {
-		        	Xfashion.eventBus.fireEvent(new UpdateArticleTypesEvent(articleType, null));
-		        }
-		    });
+			Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+				public void execute() {
+					Xfashion.eventBus.fireEvent(new UpdateArticleTypesEvent(articleType, null));
+				}
+			});
 		}
 	}
 
@@ -200,6 +244,7 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 			public void onFailure(Throwable caught) {
 				Xfashion.fireError(caught.getMessage());
 			}
+
 			@Override
 			public void onSuccess(NotepadDTO result) {
 				currentNotepad = result;
@@ -208,14 +253,14 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 		};
 		userService.createNotepad(notepad, callback);
 	}
-	
+
 	private void resetNotepad() {
 		currentNotepad.getArticles().clear();
 		currentNotepad.setCreationDate(new Date());
 		currentDeliveryNotice = null;
 		refreshProvider();
 	}
-	
+
 	private void refreshProvider() {
 		articleProvider.setList(currentNotepad.getArticles());
 	}
@@ -226,6 +271,7 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 			public void onFailure(Throwable caught) {
 				Xfashion.fireError(caught.getMessage());
 			}
+
 			@Override
 			public void onSuccess(NotepadDTO result) {
 				currentNotepad = result;
@@ -241,6 +287,7 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 			public void onFailure(Throwable caught) {
 				Xfashion.fireError(caught.getMessage());
 			}
+
 			@Override
 			public void onSuccess(DeliveryNoticeDTO result) {
 				Xfashion.eventBus.fireEvent(new DeliveryNoticeUpdatedEvent(result));
@@ -251,13 +298,14 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 		};
 		userService.createDeliveryNotice(deliverNotice, callback);
 	}
-	
+
 	private void updateDeliveryNotice(DeliveryNoticeDTO deliveryNotice) {
 		AsyncCallback<DeliveryNoticeDTO> callback = new AsyncCallback<DeliveryNoticeDTO>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				Xfashion.fireError(caught.getMessage());
 			}
+
 			@Override
 			public void onSuccess(DeliveryNoticeDTO result) {
 				currentNotepad = result.getNotepad();
