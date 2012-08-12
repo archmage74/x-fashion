@@ -114,10 +114,9 @@ DONE - image edit does not work immediatly
 DONE - cannot sell last article of one type 
 DONE - etikett 2 characters to left
 DONE - create size
+DONE - get article-details when scanning barcode (textfield in menubar)
 
 price on delivery-notice for target shop
-
-get article-details when scanning barcode (textfield in menubar)
 
 screen width adaption: 1440
 

@@ -40,5 +40,8 @@ public interface MenuMessages extends Messages {
 	@DefaultMessage("Artikel verkaufen mit Barcode-Scan")
 	String sellArticleHint();
 
+	@DefaultMessage("Artikel scannen:")
+	String scanArticle();
+
 
 }

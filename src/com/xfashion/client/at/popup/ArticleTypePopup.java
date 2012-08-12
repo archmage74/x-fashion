@@ -65,7 +65,8 @@ public abstract class ArticleTypePopup {
 	
 	public DialogBox createPopup() {
 		articleTypeDetailPopup = new DialogBox(true);
-		articleTypeDetailPopup.setGlassEnabled(true);
+		articleTypeDetailPopup.setGlassEnabled(false);
+		articleTypeDetailPopup.setModal(false);
 		articleTypeDetailPopup.setAnimationEnabled(true);
 
 		VerticalPanel mainPanel = new VerticalPanel();

@@ -11,11 +11,11 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.xfashion.client.Xfashion;
+import com.xfashion.client.at.ArticleScanner;
 import com.xfashion.client.notepad.event.NotepadAddArticleEvent;
 import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.shared.ArticleTypeDTO;
-import com.xfashion.shared.BarcodeHelper;
 
 public class ScanArticlePopup {
 
@@ -63,10 +63,21 @@ public class ScanArticlePopup {
 
 	private Widget createBarcodeTextBox() {
 		barcodeTextBox = new TextBox();
+		final ArticleScanner articleScanner = new ArticleScanner() {
+			@Override
+			public void onSuccess(long ean) {
+				addArticle(ean);
+			}
+			@Override
+			public void onError(String scannedText) {
+				Xfashion.fireError(errorMessages.noValidArticleTypeEAN());
+				clear();
+			}
+		};
 		barcodeTextBox.addKeyUpHandler(new KeyUpHandler() {
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
-				checkForEAN();
+				articleScanner.scan(barcodeTextBox.getValue());
 			}
 		});
 		return barcodeTextBox;
@@ -83,26 +94,7 @@ public class ScanArticlePopup {
 		return cancelButton;
 	}
 
-	private void checkForEAN() {
-		String name = barcodeTextBox.getValue();
-		if (name != null && name.length() == 13) {
-			for (Character c : name.toCharArray()) {
-				if (c < '0' || c > '9') {
-					return;
-				}
-			}
-			if (name.toCharArray()[0] == BarcodeHelper.ARTICLE_PREFIX_CHAR) {
-				addArticle(barcodeTextBox.getValue());
-			} else {
-				Xfashion.fireError(errorMessages.noValidDeliveryNoticeEAN());
-				clear();
-			}
-		}
-	}
-	
-	private void addArticle(String ean) {
-		String idString = ean.substring(0, 12);
-		Long productNumber = Long.parseLong(idString);
+	private void addArticle(long productNumber) {
 		ArticleTypeDTO articleType = provider.retrieveArticleType(productNumber);
 		Xfashion.eventBus.fireEvent(new NotepadAddArticleEvent(articleType));
 		clear();

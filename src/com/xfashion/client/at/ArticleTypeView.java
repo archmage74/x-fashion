@@ -11,6 +11,8 @@ import com.xfashion.client.at.event.MaximizeAllFilterPanelsEvent;
 import com.xfashion.client.at.event.MinimizeAllFilterPanelsEvent;
 import com.xfashion.client.at.event.RefreshFilterEvent;
 import com.xfashion.client.at.event.RefreshFilterHandler;
+import com.xfashion.client.at.event.RequestShowArticleTypeDetailsByEanEvent;
+import com.xfashion.client.at.event.RequestShowArticleTypeDetailsByEanHandler;
 import com.xfashion.client.at.event.RequestShowArticleTypeDetailsEvent;
 import com.xfashion.client.at.event.RequestShowArticleTypeDetailsHandler;
 import com.xfashion.client.at.name.NamePanel;
@@ -25,10 +27,11 @@ import com.xfashion.client.notepad.event.NotepadStartMaximizeHandler;
 import com.xfashion.client.notepad.event.NotepadStartMinimizeEvent;
 import com.xfashion.client.notepad.event.NotepadStartMinimizeHandler;
 import com.xfashion.client.user.UserManagement;
+import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.UserRole;
 
 public class ArticleTypeView implements NotepadStartMaximizeHandler, NotepadStartMinimizeHandler, RefreshFilterHandler,
-		RequestShowArticleTypeDetailsHandler {
+		RequestShowArticleTypeDetailsHandler, RequestShowArticleTypeDetailsByEanHandler {
 
 	protected EventBus adminBus;
 	
@@ -131,6 +134,17 @@ public class ArticleTypeView implements NotepadStartMaximizeHandler, NotepadStar
 	}
 
 	@Override
+	public void onRequestShowArticleTypeDetailsByEan(RequestShowArticleTypeDetailsByEanEvent event) {
+		if (UserManagement.hasRole(UserRole.ADMIN, UserRole.DEVELOPER)) {
+			if (articleTypePopup == null) {
+				articleTypePopup = new EditArticleTypePopup(articleFilterProvider);
+			}
+			ArticleTypeDTO articleType = articleFilterProvider.getArticleTypeProvider().retrieveArticleType(event.getEan());
+			articleTypePopup.showPopup(articleType);
+		}
+	}
+
+	@Override
 	public void onNotepadStartMaximize(NotepadStartMaximizeEvent event) {
 		if (panel != null) {
 			adminBus.fireEvent(new MinimizeAllFilterPanelsEvent());
@@ -149,6 +163,7 @@ public class ArticleTypeView implements NotepadStartMaximizeHandler, NotepadStar
 		adminBus.addHandler(NotepadStartMinimizeEvent.TYPE, this);
 		adminBus.addHandler(RefreshFilterEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(RequestShowArticleTypeDetailsEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(RequestShowArticleTypeDetailsByEanEvent.TYPE, this);
 	}
 
 }

@@ -1,7 +1,10 @@
 package com.xfashion.client.menu;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -9,11 +12,16 @@ import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.xfashion.client.MainPanel;
 import com.xfashion.client.Xfashion;
+import com.xfashion.client.at.ArticleScanner;
+import com.xfashion.client.at.event.RequestShowArticleTypeDetailsByEanEvent;
 import com.xfashion.client.pricechange.event.PriceChangesUpdatedEvent;
 import com.xfashion.client.pricechange.event.PriceChangesUpdatedHandler;
+import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.resources.MenuMessages;
 import com.xfashion.client.stock.event.RequestOpenSellPopupEvent;
 import com.xfashion.client.user.LoginEvent;
@@ -24,6 +32,7 @@ import com.xfashion.shared.UserRole;
 public class MenuPanel implements LoginHandler, PriceChangesUpdatedHandler {
 
 	private MenuMessages menuMessages;
+	private ErrorMessages errorMessages;
 	
 	private MainPanel mainPanel;
 	
@@ -32,9 +41,12 @@ public class MenuPanel implements LoginHandler, PriceChangesUpdatedHandler {
 	private Label loggedInLabel;
 	
 	private MenuItem priceChangeItem;
+
+	private TextBox scanArticleTextBox;
 	
 	public MenuPanel(MainPanel mainPanel) {
 		this.menuMessages = GWT.create(MenuMessages.class);
+		this.errorMessages = GWT.create(ErrorMessages.class);
 		this.mainPanel = mainPanel;
 		registerForEvents();
 	}
@@ -45,6 +57,7 @@ public class MenuPanel implements LoginHandler, PriceChangesUpdatedHandler {
 		if (loggedInLabel != null) {
 			loggedInLabel.setText(menuMessages.loggedInAs() + ": " + event.getUser().getUsername());
 		}
+		scanArticleTextBox.setEnabled(true);
 	}
 	
 	@Override
@@ -59,16 +72,65 @@ public class MenuPanel implements LoginHandler, PriceChangesUpdatedHandler {
 		navPanel.addStyleName("navigationPanel");
 		RootPanel.get("navPanelContainer").add(navPanel);
 		
-		Panel loggedInPanel = new HorizontalPanel();
-		loggedInLabel = new Label();
-		loggedInPanel.add(loggedInLabel);
 		navPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-		navPanel.add(loggedInPanel);
+		navPanel.add(createLoggedInPanel());
+
+		navPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_BOTTOM);
+		navPanel.add(createMenuPanel());
+	}
+
+	private Panel createMenuPanel() {
+		HorizontalPanel menuPanel = new HorizontalPanel();
+		menuPanel.setWidth("1280px");
+
+		menuPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
+		menuPanel.add(createMenuBar());
+
+		menuPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		menuPanel.add(createArticleScanPanel());
 		
+		return menuPanel;
+	}
+	
+	private Widget createArticleScanPanel() {
+		HorizontalPanel hp = new HorizontalPanel();
+		hp.setSize("210px", "30px");
+		hp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		hp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		hp.setStyleName("scanPanel");
+
+		Label label = new Label(menuMessages.scanArticle());
+		hp.add(label);
+		scanArticleTextBox = new TextBox();
+		scanArticleTextBox.setWidth("100px");
+		scanArticleTextBox.setEnabled(false);
+		final ArticleScanner articleScanner = new ArticleScanner() {
+			@Override
+			public void onSuccess(long ean) {
+				showArticle(ean);
+			}
+			@Override
+			public void onError(String scannedText) {
+				Xfashion.fireError(errorMessages.noValidArticleTypeEAN());
+				clearScanArticleTextBox();
+			}
+		};
+		scanArticleTextBox.addKeyUpHandler(new KeyUpHandler() {
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				articleScanner.scan(scanArticleTextBox.getValue());
+			}
+		});
+		
+		hp.add(scanArticleTextBox);
+
+		return hp;
+	}
+
+	private MenuBar createMenuBar() {
 		MenuBar menu = new MenuBar();
 		menu.setAutoOpen(true);
-		menu.setWidth("1500px");
-		menu.setHeight("30px");
+		menu.setSize("1065px", "30px");
 		menu.setAnimationEnabled(true);
 
 		if (UserManagement.hasRole(UserRole.DEVELOPER, UserRole.ADMIN)) {
@@ -76,9 +138,14 @@ public class MenuPanel implements LoginHandler, PriceChangesUpdatedHandler {
 		} else if (UserManagement.hasRole(UserRole.SHOP)) {
 			addShopMenuItems(menu);
 		}
-
-		navPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_BOTTOM);
-		navPanel.add(menu);
+		return menu;
+	}
+	
+	private Panel createLoggedInPanel() {
+		Panel loggedInPanel = new HorizontalPanel();
+		loggedInLabel = new Label();
+		loggedInPanel.add(loggedInLabel);
+		return loggedInPanel;
 	}
 	
 	private void addAdminMenuItems(MenuBar menu) {
@@ -199,6 +266,15 @@ public class MenuPanel implements LoginHandler, PriceChangesUpdatedHandler {
 		MenuItem sellArticleItem = new MenuItem(menuMessages.sellArticle(), sellArticle);
 		sellArticleItem.setTitle(menuMessages.sellArticleHint());
 		return sellArticleItem;
+	}
+
+	private void showArticle(long ean) {
+		Xfashion.eventBus.fireEvent(new RequestShowArticleTypeDetailsByEanEvent(ean));
+		clearScanArticleTextBox();
+	}
+	
+	private void clearScanArticleTextBox() {
+		scanArticleTextBox.setValue("");
 	}
 	
 	private void registerForEvents() {

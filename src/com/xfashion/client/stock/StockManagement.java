@@ -18,6 +18,8 @@ import com.xfashion.client.at.event.ArticlesLoadedEvent;
 import com.xfashion.client.at.event.ArticlesLoadedHandler;
 import com.xfashion.client.at.event.RefreshFilterEvent;
 import com.xfashion.client.at.event.RefreshFilterHandler;
+import com.xfashion.client.at.event.RequestShowArticleTypeDetailsByEanEvent;
+import com.xfashion.client.at.event.RequestShowArticleTypeDetailsByEanHandler;
 import com.xfashion.client.at.event.RequestShowArticleTypeDetailsEvent;
 import com.xfashion.client.at.event.RequestShowArticleTypeDetailsHandler;
 import com.xfashion.client.at.popup.ArticleTypeDetailPopup;
@@ -54,7 +56,7 @@ import com.xfashion.shared.SoldArticleDTO;
 import com.xfashion.shared.UserRole;
 
 public class StockManagement implements IntoStockHandler, SellFromStockHandler, RequestOpenSellPopupHandler, LoginHandler, ArticlesLoadedHandler,
-		RequestShowArticleTypeDetailsHandler, RemoveFromStockHandler, RefreshFilterHandler, LoadStockHandler {
+		RequestShowArticleTypeDetailsHandler, RequestShowArticleTypeDetailsByEanHandler, RemoveFromStockHandler, RefreshFilterHandler, LoadStockHandler {
 
 	private UserServiceAsync userService = (UserServiceAsync) GWT.create(UserService.class);
 	private PromoServiceAsync promoService = (PromoServiceAsync) GWT.create(PromoService.class);
@@ -200,6 +202,17 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 	}
 
 	@Override
+	public void onRequestShowArticleTypeDetailsByEan(RequestShowArticleTypeDetailsByEanEvent event) {
+		if (UserManagement.hasRole(UserRole.SHOP)) {
+			if (articleTypePopup == null) {
+				articleTypePopup = new ArticleTypeDetailPopup(stockFilterProvider, stockFilterProvider.getStockProvider());
+			}
+			ArticleTypeDTO articleType = stockFilterProvider.getArticleTypeProvider().retrieveArticleType(event.getEan()); 
+			articleTypePopup.showPopup(articleType);
+		}
+	}
+
+	@Override
 	public void onLoadStock(LoadStockEvent event) {
 		readStock(event.getUser().getKey());
 	}
@@ -316,6 +329,7 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 		Xfashion.eventBus.addHandler(LoginEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(ArticlesLoadedEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(RequestShowArticleTypeDetailsEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(RequestShowArticleTypeDetailsByEanEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(RemoveFromStockEvent.TYPE, this);
 	}
 
