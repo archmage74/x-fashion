@@ -118,12 +118,13 @@ DONE - get article-details when scanning barcode (textfield in menubar)
 DONE - price on delivery-notice for target shop
 DONE - fix bug: new articles cannot be added to notepad, only after re-login
 DONE - no 2 scrollbars: for window and article-type-panel 
+DONE - automatic image management
 
-screen width adaption: 1440
+redesign of delivery notice
 
-notepad as popup, bit smaller matrix font
+screen width adaption: 1440 - different article-matrix
 
-automatic image management
+notepad as popup
 
 --------------------
 

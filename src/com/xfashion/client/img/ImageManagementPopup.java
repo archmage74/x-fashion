@@ -253,6 +253,19 @@ public class ImageManagementPopup implements HasSelectionHandlers<ArticleTypeIma
 		return uploadForm;
 	}
 	
+	private void requestUploadUrl() {
+		imageUploadService.createUploadUrl(new AsyncCallback<String>() {
+			public void onSuccess(String result) {
+				uploadForm.setAction(result);
+				uploadButton.setEnabled(true);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				// We probably want to do something here
+			}
+		});
+	}
+
 	private String extractFilename(String path) {
 		if (path == null || path.length() == 0) {
 			return null;
@@ -266,19 +279,6 @@ public class ImageManagementPopup implements HasSelectionHandlers<ArticleTypeIma
 		} else {
 			return path.substring(idx + 1);
 		}
-	}
-
-	private void requestUploadUrl() {
-		imageUploadService.createUploadUrl(new AsyncCallback<String>() {
-			public void onSuccess(String result) {
-				uploadForm.setAction(result);
-				uploadButton.setEnabled(true);
-			}
-			@Override
-			public void onFailure(Throwable caught) {
-				// We probably want to do something here
-			}
-		});
 	}
 
 	private Panel createNavPanel() {

@@ -38,7 +38,7 @@ import com.xfashion.client.at.size.event.ChooseSizeHandler;
 import com.xfashion.client.at.size.event.ShowChooseSizePopupEvent;
 import com.xfashion.client.dialog.YesNoCallback;
 import com.xfashion.client.dialog.YesNoPopup;
-import com.xfashion.client.img.ImageManagementPopup;
+import com.xfashion.client.img.ImageUploadPopup;
 import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.ArticleTypeImageDTO;
@@ -128,7 +128,7 @@ public class EditArticleTypePopup extends ArticleTypePopup implements ChooseBran
 		image.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				ImageManagementPopup imagePopup = new ImageManagementPopup();
+				ImageUploadPopup imagePopup = new ImageUploadPopup();
 				imagePopup.addSelectionHandler(new SelectionHandler<ArticleTypeImageDTO>() {
 					public void onSelection(SelectionEvent<ArticleTypeImageDTO> event) {
 						ArticleTypeImageDTO selected = event.getSelectedItem();

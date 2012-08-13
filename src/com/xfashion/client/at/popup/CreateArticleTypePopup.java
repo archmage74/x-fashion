@@ -19,7 +19,7 @@ import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.CreateArticleException;
 import com.xfashion.client.at.IProvideArticleFilter;
 import com.xfashion.client.at.event.CreateArticleTypeEvent;
-import com.xfashion.client.img.ImageManagementPopup;
+import com.xfashion.client.img.ImageUploadPopup;
 import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.shared.ArticleTypeDTO;
@@ -49,7 +49,7 @@ public class CreateArticleTypePopup {
 	
 	private Formatter formatter;
 	
-	private ImageManagementPopup imagePopup;
+	private ImageUploadPopup imagePopup;
 	
 	private ErrorMessages errorMessages;
 	private TextMessages textMessages;
@@ -126,7 +126,7 @@ public class CreateArticleTypePopup {
 			@Override
 			public void onClick(ClickEvent event) {
 				if (imagePopup == null) {
-					imagePopup = new ImageManagementPopup();
+					imagePopup = new ImageUploadPopup();
 					imagePopup.addSelectionHandler(new SelectionHandler<ArticleTypeImageDTO>() {
 						@Override
 						public void onSelection(SelectionEvent<ArticleTypeImageDTO> event) {

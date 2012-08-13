@@ -43,7 +43,7 @@ import com.xfashion.client.at.color.event.ShowChooseColorPopupEvent;
 import com.xfashion.client.at.size.event.ChooseSizeEvent;
 import com.xfashion.client.at.size.event.ChooseSizeHandler;
 import com.xfashion.client.at.size.event.ShowChooseSizePopupEvent;
-import com.xfashion.client.img.ImageManagementPopup;
+import com.xfashion.client.img.ImageUploadPopup;
 import com.xfashion.client.img.ImageUploadService;
 import com.xfashion.client.img.ImageUploadServiceAsync;
 import com.xfashion.client.resources.ErrorMessages;
@@ -61,7 +61,7 @@ public class BulkEditArticleTypePopup implements CloseHandler<PopupPanel>, Choos
 		ChooseCategoryAndStyleHandler {
 
 	private ImageUploadServiceAsync imageUploadService = (ImageUploadServiceAsync) GWT.create(ImageUploadService.class);
-
+	
 	private DecoratedPopupPanel articleTypeDetailPopup;
 
 	private List<ArticleTypeDTO> articleTypes;
@@ -265,11 +265,12 @@ public class BulkEditArticleTypePopup implements CloseHandler<PopupPanel>, Choos
 		img.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				ImageManagementPopup imagePopup = new ImageManagementPopup();
+				ImageUploadPopup imagePopup = new ImageUploadPopup();
 				imagePopup.addSelectionHandler(new SelectionHandler<ArticleTypeImageDTO>() {
 					public void onSelection(SelectionEvent<ArticleTypeImageDTO> event) {
 						ArticleTypeImageDTO selected = event.getSelectedItem();
 						bulk.setTargetImageKey(selected.getKey());
+						bulk.setTargetImageUrl(selected.getImageUrl());
 						updateImage();
 					}
 				});

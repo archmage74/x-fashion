@@ -22,6 +22,7 @@ public class BulkEditArticleType {
 	private Integer sourceSellPriceAt;
 	private Integer sourceSellPriceDe;
 	private String sourceImageKey;
+	private String sourceImageUrl;
 
 	private String targetName;
 	private String targetCategoryKey;
@@ -33,6 +34,7 @@ public class BulkEditArticleType {
 	private Integer targetSellPriceAt;
 	private Integer targetSellPriceDe;
 	private String targetImageKey;
+	private String targetImageUrl;
 
 	public BulkEditArticleType(List<ArticleTypeDTO> articleTypes) {
 		extractSources(articleTypes);
@@ -118,6 +120,14 @@ public class BulkEditArticleType {
 		this.targetImageKey = targetImageKey;
 	}
 
+	public String getTargetImageUrl() {
+		return targetImageUrl;
+	}
+
+	public void setTargetImageUrl(String targetImageUrl) {
+		this.targetImageUrl = targetImageUrl;
+	}
+
 	public String getSourceName() {
 		return sourceName;
 	}
@@ -158,6 +168,10 @@ public class BulkEditArticleType {
 		return sourceImageKey;
 	}
 
+	public String getSourceImageUrl() {
+		return sourceImageUrl;
+	}
+
 	private void extractSources(List<ArticleTypeDTO> articleTypes) {
 		AttributeHelper helper = new AttributeHelper();
 		sourceBrandKey = helper.extractSourceAttribute(articleTypes, new BrandKeyAccessor());
@@ -165,6 +179,7 @@ public class BulkEditArticleType {
 		sourceCategoryKey = helper.extractSourceAttribute(articleTypes, new CategoryKeyAccessor());
 		sourceColorKey = helper.extractSourceAttribute(articleTypes, new ColorKeyAccessor());
 		sourceImageKey = helper.extractSourceAttribute(articleTypes, new ImageKeyAccessor());
+		sourceImageUrl = helper.extractSourceAttribute(articleTypes, new ImageUrlAccessor());
 		sourceName = helper.extractSourceAttribute(articleTypes, new NameAccessor());
 		sourceSellPriceAt = helper.extractSourceAttribute(articleTypes, new SellPriceAtAccessor());
 		sourceSellPriceDe = helper.extractSourceAttribute(articleTypes, new SellPriceDeAccessor());
@@ -180,6 +195,7 @@ public class BulkEditArticleType {
 		helper.saveAttribute(articleTypes, new CategoryKeyAccessor(), targetCategoryKey);
 		helper.saveAttribute(articleTypes, new ColorKeyAccessor(), targetColorKey);
 		helper.saveAttribute(articleTypes, new ImageKeyAccessor(), targetImageKey);
+		helper.saveAttribute(articleTypes, new ImageUrlAccessor(), targetImageUrl);
 		helper.saveAttribute(articleTypes, new NameAccessor(), targetName);
 		helper.saveAttribute(articleTypes, priceChanges, new SellPriceAtAccessor(), targetSellPriceAt);
 		helper.saveAttribute(articleTypes, priceChanges, new SellPriceDeAccessor(), targetSellPriceDe);

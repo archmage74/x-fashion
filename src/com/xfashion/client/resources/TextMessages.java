@@ -17,6 +17,8 @@ public interface TextMessages extends Messages {
 	String articleCreateHeader();
 	String articleCreate();
 	String selectImage();
+	String uploadImage();
+	String imageName();
 	String select();
 	
 	String bulkMultipleAttributes();
