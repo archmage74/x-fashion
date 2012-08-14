@@ -53,16 +53,29 @@ public class DeliveryNotice extends HttpServlet {
 
 		ServletOutputStream out = res.getOutputStream();
 
-		out.print(renderHeader(dn));
-		int sum = 0;
+		out.print(renderAddresses(dn));
+		out.print(renderTableHeader());
+		int piecesSum = 0;
+		int priceSum = 0;
 		for (ArticleAmountDTO aa : dn.getNotepad().getArticles()) {
-			sum += aa.getAmount();
-			out.print(renderArticle(dn.getTargetShop(), aa));
+			piecesSum += aa.getAmount();
+			ArticleTypeDTO at = readArticleType(aa.getArticleTypeKey());
+			Integer ap = getPriceFromArticle(dn.getTargetShop(), at);
+			if (ap != null) {
+				priceSum += aa.getAmount() * ap;
+			}
+			out.print(renderArticle(dn.getTargetShop(), aa, at));
 		}
-		out.print(renderFooter(sum));
+		out.print(renderFooter(priceSum, piecesSum));
 	}
 
-	public String renderHeader(DeliveryNoticeDTO dn) {
+	public String renderTableHeader() {
+		StringBuffer sb = new StringBuffer();
+		
+		return sb.toString();
+	}
+	
+	public String renderAddresses(DeliveryNoticeDTO dn) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<html><head>");
 		sb.append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-15\" />");
@@ -94,12 +107,25 @@ public class DeliveryNotice extends HttpServlet {
 		sb.append("</tr>\n");
 		sb.append("\n");
 		sb.append("<tr>\n");
-		sb.append("<td colspan=\"2\" class=\"articleTableHeader\">Diese Lieferung beinhaltet</td>\n");
+		sb.append("<td colspan=\"2\" class=\"articleTableHeader0\">Diese Lieferung beinhaltet</td>\n");
 		sb.append("</tr>\n");
-		sb.append("\n");
+		sb.append("</table>\n");
+
+		sb.append("<table class=\"articleTable\" width=\"100%\" cellspacing=\"0\">\n");
+		sb.append("<thead>\n");
 		sb.append("<tr>\n");
-		sb.append("<td colspan=\"2\" width=\"100%\">\n");
-		sb.append("<table class=\"articleTable\" width=\"100%\">\n");
+		sb.append("<th class=\"hHeader hCategory\">Kategorie</td>\n");
+		sb.append("<th class=\"hHeader hBrand\">Marke</td>\n");
+		sb.append("<th class=\"hHeader hStyle\">Stil</td>\n");
+		sb.append("<th class=\"hHeader hName\">Name</td>\n");
+		sb.append("<th class=\"hHeader hColor\">Farbe</td>\n");
+		sb.append("<th class=\"hHeader hSize\">Größe</td>\n");
+		sb.append("<th class=\"hHeader hPrice\">VK</td>\n");
+		sb.append("<th class=\"hHeader hPieces\">Stück</td>\n");
+		sb.append("</tr>\n");
+		sb.append("</thead>\n");
+		sb.append("<tbody>\n");
+		
 		return sb.toString();
 	}
 
@@ -130,49 +156,52 @@ public class DeliveryNotice extends HttpServlet {
 		return sb;
 	}
 
-	public String renderArticle(ShopDTO shop, ArticleAmountDTO aa) {
-		ArticleTypeDTO at = readArticleType(aa.getArticleTypeKey());
+	public String renderArticle(ShopDTO shop, ArticleAmountDTO aa, ArticleTypeDTO at) {
 		StringBuffer sb = new StringBuffer();
+		String price = formatPrice(getPriceFromArticle(shop, at));
 		sb.append("<tr>\n");
+		sb.append("<td class=\"articleCell1\">").append(readCategoryName(at.getCategoryKey())).append("</td>\n");
+		sb.append("<td class=\"articleCell1\">").append(readBrandName(at.getBrandKey())).append("</td>\n");
+		sb.append("<td class=\"articleCell1\">").append(readStyleName(at.getStyleKey())).append("</td>\n");
+		sb.append("<td class=\"articleCell1\">").append(at.getName()).append("</td>\n");
+		sb.append("<td class=\"articleCell1\">").append(readColorName(at.getColorKey())).append("</td>\n");
+		sb.append("<td class=\"articleCell2\">").append(readSizeName(at.getSizeKey())).append("</td>\n");
+		sb.append("<td class=\"articleCell3\">").append(price).append("</td>\n");
+		sb.append("<td class=\"articleCell3\">").append(aa.getAmount()).append("</td>");
 		sb.append("<td width=\"66%\">\n");
-		sb.append("<table class=\"articleMatrix\" >\n");
-		sb.append("<tr>\n");
-		sb.append("<td class=\"articleUpLe\">").append(readCategoryName(at.getCategoryKey())).append("</td>\n");
-		sb.append("<td class=\"articleUpCe\">").append(at.getName()).append("</td>\n");
-		sb.append("<td class=\"articleUpRi\">").append(readColorName(at.getColorKey())).append("</td>\n");
-		sb.append("</tr>\n");
-		sb.append("<tr>\n");
-		sb.append("<td class=\"articleBoLe\">").append(readStyleName(at.getStyleKey())).append("</td>\n");
-		sb.append("<td class=\"articleBoCe\">").append(readBrandName(at.getBrandKey())).append("</td>\n");
-		sb.append("<td class=\"articleBoRi\">").append(readSizeName(at.getSizeKey())).append("</td>\n");
-		sb.append("</tr>\n");
-		sb.append("</table>\n");
-		sb.append("</td>\n");
-		sb.append("<td class=\"price\">").append(getPriceFromArticle(shop, at)).append("</td>\n");
-		sb.append("<td class=\"pieces\">").append(aa.getAmount()).append("</td><td class=\"piecesLabel\">Stk.</td>\n");
 		sb.append("</tr>\n");
 		return sb.toString();
 	}
 
-	private String getPriceFromArticle(ShopDTO s, ArticleTypeDTO a) {
+	private Integer getPriceFromArticle(ShopDTO s, ArticleTypeDTO a) {
 		Integer price = a.getSellPriceAt();
 		if (UserCountry.DE == s.getCountry()) {
 			price = a.getSellPriceDe();
 		}
-		return currencyFormat.format(((price.doubleValue()) ) / 100);
+		return price;
 	}
 	
-	private String renderFooter(int sum) {
+	private String formatPrice(Integer price) {
+		if (price == null) {
+			return "n/a";
+		} else {
+			return currencyFormat.format(((price.doubleValue()) ) / 100);
+		}
+	}
+	
+	private String renderFooter(int priceSum, int piecesSum) {
 		StringBuffer sb = new StringBuffer();
+		sb.append("<tfoot>\n");
 		sb.append("<tr>\n");
-		sb.append("<td></td><td class=\"piecesSumHeader\">Gesamt:</td>\n");
-		sb.append("<td class=\"piecesSum\">").append(sum).append("</td><td class=\"piecesSumLabel\">Stk.</td>\n");
+		sb.append("<td colspan=\"8\">&nbsp;</td>\n");
 		sb.append("</tr>\n");
-		sb.append("\n");
-		sb.append("</table>\n");
-		sb.append("\n");
-		sb.append("</td>\n");
+		sb.append("<tr>\n");
+		sb.append("<td colspan=\"5\"></td>\n");
+		sb.append("<td class=\"articleTableSumLabel\">Gesamt:</td>\n");
+		sb.append("<td class=\"articleTableSum\">").append(formatPrice(priceSum)).append("</td>\n");
+		sb.append("<td class=\"articleTableSum\">").append(piecesSum).append("</td>\n");
 		sb.append("</tr>\n");
+		sb.append("</tfoot>\n");
 		sb.append("</table>\n");
 		sb.append("\n");
 		sb.append("</body>\n");
@@ -180,134 +209,128 @@ public class DeliveryNotice extends HttpServlet {
 		return sb.toString();
 	}
 
-	private StringBuffer createStyles() {
-		StringBuffer sb = new StringBuffer();
-		sb.append("<style type=\"text/css\">\n");
-		sb.append("body td {\n");
-		sb.append("	font-family: Verdana;\n");
-		sb.append("	font-size: 24px;\n");
-		sb.append("}\n");
-		sb.append(".headline {\n");
-		sb.append("	width: 50%;\n");
-		sb.append("	font-size: 48;\n");
-		sb.append("	font-family: Verdana;\n");
-		sb.append("	font-style: italic;\n");
-		sb.append("	font-weight: bolder;\n");
-		sb.append("	text-align: left;\n");
-		sb.append("}\n");
-		sb.append(".date {\n");
-		sb.append("	font-style: italic;\n");
-		sb.append("	font-weight: bold;\n");
-		sb.append("	width: 50%;\n");
-		sb.append("	direction: rtl;\n");
-		sb.append("	text-align: right;\n");
-		sb.append("}\n");
-		sb.append(".barcode {\n");
-		sb.append("	width: 50%;\n");
-		sb.append("	text-align: center;\n");
-		sb.append("}\n");
-		sb.append(".logo {\n");
-		sb.append("	width: 50%;\n");
-		sb.append("	text-align: right;\n");
-		sb.append("}\n");
-		sb.append(".addressTo {\n");
-		sb.append("	font-style: italic;\n");
-		sb.append("	width: 50%;\n");
-		sb.append("	text-align: left;\n");
-		sb.append("}\n");
-		sb.append(".addressFrom {\n");
-		sb.append("	font-style: italic;\n");
-		sb.append("	width: 50%;\n");
-		sb.append("	text-align: right;\n");
-		sb.append("}\n");
-		sb.append(".articleTableHeader {\n");
-		sb.append("	font-style: italic;\n");
-		sb.append("	font-weight: bold;\n");
-		sb.append("	width: 100%;\n");
-		sb.append("	text-align: center;\n");
-		sb.append("}\n");
-		sb.append(".articleTable {\n");
-		sb.append("	widht: 100%;\n");
-		sb.append("}\n");
-		sb.append(".articleMatrix {\n");
-		sb.append("	border-collapse: collapse;\n");
-		sb.append("	width: 95%;\n");
-		sb.append("}\n");
-		sb.append(".articleUpLe {\n");
-		sb.append("	font-size: 18px;\n");
-		sb.append("	font-weight: bolder;\n");
-		sb.append("	font-style: italic;\n");
-		sb.append("	text-transform: uppercase;\n");
-		sb.append("	text-align: center;\n");
-		sb.append("	width: 33%;\n");
-		sb.append("	height: 20px;\n");
-		sb.append("	border-bottom: 1px solid black;\n");
-		sb.append("}\n");
-		sb.append(".articleUpCe {\n");
-		sb.append("	font-size: 16px;\n");
-		sb.append("	text-align: center;\n");
-		sb.append("	width: 33%;\n");
-		sb.append("	border-bottom: 1px solid black;\n");
-		sb.append("	border-left: 1px solid black;\n");
-		sb.append("	border-right: 1px solid black;\n");
-		sb.append("}\n");
-		sb.append(".articleUpRi {\n");
-		sb.append("	font-size: 16px;\n");
-		sb.append("	text-align: center;\n");
-		sb.append("	width: 33%;\n");
-		sb.append("	border-bottom: 1px solid black;\n");
-		sb.append("}\n");
-		sb.append(".articleBoLe {\n");
-		sb.append("	font-size: 16px;\n");
-		sb.append("	text-align: center;\n");
-		sb.append("	width: 33%;\n");
-		sb.append("}\n");
-		sb.append(".articleBoCe {\n");
-		sb.append("	font-size: 16px;\n");
-		sb.append("	text-align: center;\n");
-		sb.append("	width: 33%;\n");
-		sb.append("	border-left: 1px solid black;\n");
-		sb.append("	border-right: 1px solid black;\n");
-		sb.append("}\n");
-		sb.append(".articleBoRi {\n");
-		sb.append("	font-size: 16px;\n");
-		sb.append("	text-align: center;\n");
-		sb.append("	width: 33%;\n");
-		sb.append("}\n");
-		sb.append(".price {\n");
-		sb.append("	width: 18%;\n");
-		sb.append("	margin: 0;\n");
-		sb.append("	padding: 0;\n");
-		sb.append("	text-align: right;\n");
-		sb.append("}\n");
-		sb.append(".pieces {\n");
-		sb.append("	width: 8%;\n");
-		sb.append("	text-align: right;\n");
-		sb.append("}\n");
-		sb.append(".piecesLabel {\n");
-		sb.append("	width: 8%;\n");
-		sb.append("	text-align: left;\n");
-		sb.append("}\n");
-		sb.append(".piecesSumHeader {\n");
-		sb.append("	font-style: italic;\n");
-		sb.append("	font-weight: bold;\n");
-		sb.append("	width: 18%;\n");
-		sb.append("	text-align: right;\n");
-		sb.append("}\n");
-		sb.append(".piecesSum {\n");
-		sb.append("	font-weight: bold;\n");
-		sb.append("	font-style: italic;\n");
-		sb.append("	width: 8%;\n");
-		sb.append("	text-align: right;\n");
-		sb.append("}\n");
-		sb.append(".piecesSumLabel {\n");
-		sb.append("	font-weight: bold;\n");
-		sb.append("	font-style: italic;\n");
-		sb.append("	width: 8%;\n");
-		sb.append("	text-align: left;\n");
-		sb.append("}\n");
-		sb.append("</style>\n");
-		return sb;
+	private String createStyles() {
+		String s = "<style type=\"text/css\">\n\n" +
+		"body,td,th {\n" +
+		"	font-family: Verdana;\n" +
+		"	font-size: 24px;\n" +
+		"}\n" +
+		".headline {\n" +
+		"	width: 50%;\n" +
+		"	font-size: 48;\n" +
+		"	font-family: Verdana;\n" +
+		"	font-style: italic;\n" +
+		"	font-weight: bolder;\n" +
+		"	text-align: left;\n" +
+		"}\n" +
+		".date {\n" +
+		"	font-style: italic;\n" +
+		"	font-weight: bold;\n" +
+		"	width: 50%;\n" +
+		"	direction: rtl;\n" +
+		"	text-align: right;\n" +
+		"}\n" +
+		".barcode {\n" +
+		"	width: 50%;\n" +
+		"	text-align: center;\n" +
+		"}\n" +
+		".logo {\n" +
+		"	width: 50%;\n" +
+		"	text-align: right;\n" +
+		"}\n" +
+		".addressTo {\n" +
+		"	font-style: italic;\n" +
+		"	width: 50%;\n" +
+		"	text-align: left;\n" +
+		"}\n" +
+		".addressFrom {\n" +
+		"	font-style: italic;\n" +
+		"	width: 50%;\n" +
+		"	text-align: right;\n" +
+		"}\n" +
+		".articleTableHeader0 {\n" +
+		"	font-style: italic;\n" +
+		"	font-weight: bold;\n" +
+		"	width: 100%;\n" +
+		"	text-align: center;\n" +
+		"}\n" +
+		".hHeader {\n" +
+		"	font-weight: bold;\n" +
+		"	font-size: 13px;\n" +
+		"	border-bottom: 1px;\n" +
+		"}\n" +
+		".hCategory {\n" +
+		"	text-align: left;\n" +
+		"	width: 15%\n" +
+		"}\n" +
+		".hBrand {\n" +
+		"	text-align: left;\n" +
+		"	width: 13%\n" +
+		"}\n" +
+		".hStyle {\n" +
+		"	text-align: left;\n" +
+		"	width: 10%\n" +
+		"}\n" +
+		".hName {\n" +
+		"	text-align: left;\n" +
+		"	width: 13%\n" +
+		"}\n" +
+		".hColor {\n" +
+		"	text-align: left;\n" +
+		"	width: 15%\n" +
+		"}\n" +
+		".hSize {\n" +
+		"	text-align: center;\n" +
+		"	width: 10%\n" +
+		"}\n" +
+		".hPrice {\n" +
+		"	text-align: right;\n" +
+		"	width: 12%\n" +
+		"}\n" +
+		".hPieces {\n" +
+		"	text-align: right;\n" +
+		"	width: 12%\n" +
+		"}\n" +
+		"\n" +
+		".articleTableHeader1 {\n" +
+		"	font-weight: bold;\n" +
+		"	font-size: 13px;\n" +
+		"	border-bottom: 1px;\n" +
+		"	text-align: left;\n" +
+		"}\n" +
+		".articleTableHeader2 {\n" +
+		"	font-weight: bold;\n" +
+		"	font-size: 13px;\n" +
+		"	border-bottom: 1px;\n" +
+		"	text-align: center;\n" +
+		"}\n" +
+		".articleTable {\n" +
+		"	widht: 100%;\n" +
+		"}\n" +
+		".articleTable td {\n" +
+		"	font-size: 13px;\n" +
+		"}\n" +
+		".articleCell1 {\n" +
+		"	text-align: left;\n" +
+		"}\n" +
+		".articleCell2 {\n" +
+		"	text-align: center;\n" +
+		"}\n" +
+		".articleCell3 {\n" +
+		"	text-align: right;\n" +
+		"}\n" +
+		".articleTableSumLabel {\n" +
+		"	border-top: 1px solid black;\n" +
+		"	font-weight: bold;\n" +
+		"	text-align: left;\n" +
+		"}\n" +
+		".articleTableSum {\n" +
+		"	border-top: 1px solid black;\n" +
+		"	font-weight: bold;\n" +
+		"	text-align: right;\n" +
+		"}\n" +
+		"</style>\n";
+		return s;
 	}
 
 	private ArticleTypeDTO readArticleType(String id) {

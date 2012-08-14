@@ -119,8 +119,7 @@ DONE - price on delivery-notice for target shop
 DONE - fix bug: new articles cannot be added to notepad, only after re-login
 DONE - no 2 scrollbars: for window and article-type-panel 
 DONE - automatic image management
-
-redesign of delivery notice
+DONE - redesign of delivery notice
 
 screen width adaption: 1440 - different article-matrix
 
