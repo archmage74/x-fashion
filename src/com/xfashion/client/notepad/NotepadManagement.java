@@ -6,13 +6,15 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.xfashion.client.Xfashion;
-import com.xfashion.client.at.ArticleTypeDataProvider;
+import com.xfashion.client.at.ArticleFilterProvider;
 import com.xfashion.client.at.bulk.UpdateArticleTypesEvent;
 import com.xfashion.client.at.price.GetAtPriceFromArticleTypeStrategy;
 import com.xfashion.client.at.price.GetDePriceFromArticleTypeStrategy;
 import com.xfashion.client.notepad.event.ClearNotepadEvent;
 import com.xfashion.client.notepad.event.ClearNotepadHandler;
 import com.xfashion.client.notepad.event.DeliveryNoticeUpdatedEvent;
+import com.xfashion.client.notepad.event.HideNotepadEvent;
+import com.xfashion.client.notepad.event.HideNotepadHandler;
 import com.xfashion.client.notepad.event.IntoStockEvent;
 import com.xfashion.client.notepad.event.NotepadAddArticleEvent;
 import com.xfashion.client.notepad.event.NotepadAddArticleHandler;
@@ -39,7 +41,11 @@ import com.xfashion.client.notepad.event.SaveDeliveryNoticeEvent;
 import com.xfashion.client.notepad.event.SaveDeliveryNoticeHandler;
 import com.xfashion.client.notepad.event.SaveNotepadEvent;
 import com.xfashion.client.notepad.event.SaveNotepadHandler;
+import com.xfashion.client.notepad.event.ShowNotepadEvent;
+import com.xfashion.client.notepad.event.ShowNotepadHandler;
 import com.xfashion.client.resources.ErrorMessages;
+import com.xfashion.client.user.LoginEvent;
+import com.xfashion.client.user.LoginHandler;
 import com.xfashion.client.user.UserManagement;
 import com.xfashion.client.user.UserService;
 import com.xfashion.client.user.UserServiceAsync;
@@ -51,7 +57,8 @@ import com.xfashion.shared.UserCountry;
 
 public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemoveArticleHandler, PrintNotepadStickersHandler, ClearNotepadHandler,
 		OpenNotepadHandler, OpenDeliveryNoticeHandler, RequestOpenNotepadHandler, SaveDeliveryNoticeHandler, SaveNotepadHandler,
-		RequestSaveNotepadHandler, PrintDeliveryNoticeHandler, RecordArticlesHandler, RequestIntoStockHandler {
+		RequestSaveNotepadHandler, PrintDeliveryNoticeHandler, RecordArticlesHandler, RequestIntoStockHandler,
+		ShowNotepadHandler, HideNotepadHandler, LoginHandler {
 
 	public GetPriceFromArticleAmountStrategy<ArticleAmountDTO> atPriceStrategy = null;
 	public GetPriceFromArticleAmountStrategy<ArticleAmountDTO> dePriceStrategy = null;
@@ -64,32 +71,31 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 	private DeliveryNoticeDTO currentDeliveryNotice;
 
 	private ArticleAmountDataProvider articleProvider;
+	private ArticleFilterProvider filterProvider;
 	protected NotepadPrinter notepadPrinter;
 
+	protected NotepadPopup notepadPopup;
 	protected SaveNotepadPopup saveNotepadPopup;
 	protected OpenNotepadPopup openNotepadPopup;
 	protected ScanArticlePopup scanArticlePopup;
 
 	private static NotepadManagement notepadManagement;
-
+	
 	public static NotepadManagement getInstance() {
 		if (notepadManagement == null) {
-			throw new RuntimeException("NotepadManagement is not yet initialized");
+			notepadManagement = new NotepadManagement();
 		}
 		return notepadManagement;
 	}
 	
-	public static NotepadManagement getInstance(ArticleTypeDataProvider articleTypeDataProvider) {
-		if (notepadManagement == null) {
-			notepadManagement = new NotepadManagement(articleTypeDataProvider);
-		}
-		return notepadManagement;
-	}
-
-	protected NotepadManagement(ArticleTypeDataProvider articleTypeProvider) {
-		this.articleProvider = new ArticleAmountDataProvider(articleTypeProvider);
-		this.notepadPrinter = new NotepadPrinter();
+	protected NotepadManagement() {
 		this.errorMessages = GWT.create(ErrorMessages.class);
+	}
+	
+	public void init(ArticleFilterProvider filterProvider) {
+		this.articleProvider = new ArticleAmountDataProvider(filterProvider.getArticleTypeProvider());
+		this.filterProvider = filterProvider;
+		this.notepadPrinter = new NotepadPrinter();
 		this.currentNotepad = new NotepadDTO();
 		this.saveNotepadPopup = new SaveNotepadPopup();
 		this.openNotepadPopup = new OpenNotepadPopup();
@@ -98,7 +104,7 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 		this.dePriceStrategy = new GetPriceFromArticleAmountStrategy<ArticleAmountDTO>(this.articleProvider, new GetDePriceFromArticleTypeStrategy());
 		registerForEvents();
 	}
-
+	
 	public GetPriceFromArticleAmountStrategy<ArticleAmountDTO> currentPriceStrategy() {
 		UserCountry country = UserManagement.user.getCountry();
 		if (currentDeliveryNotice != null) {
@@ -148,6 +154,7 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 				}
 			});
 		}
+		notepadPopup.show();
 	}
 
 	@Override
@@ -229,7 +236,23 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 		}
 		Xfashion.eventBus.fireEvent(new IntoStockEvent(currentNotepad));
 	}
+	
+	@Override
+	public void onShowNotepad(ShowNotepadEvent event) {
+		notepadPopup.show();
+	}
 
+	@Override
+	public void onHideNotepad(HideNotepadEvent event) {
+		notepadPopup.showMinimized();
+	}
+
+	@Override
+	public void onLogin(LoginEvent event) {
+		notepadPopup = new NotepadPopup(articleProvider, filterProvider);
+		notepadPopup.showMinimized();
+	}
+	
 	public ArticleAmountDataProvider getArticleProvider() {
 		return articleProvider;
 	}
@@ -329,6 +352,10 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 		Xfashion.eventBus.addHandler(PrintDeliveryNoticeEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(RequestOpenNotepadEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(RequestIntoStockEvent.TYPE, this);
+
+		Xfashion.eventBus.addHandler(LoginEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(ShowNotepadEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(HideNotepadEvent.TYPE, this);
 	}
 
 }

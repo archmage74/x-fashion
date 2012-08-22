@@ -32,7 +32,10 @@ public class StockFilterProvider extends ArticleFilterProvider {
 		Collection<ArticleAmountDTO> amounts = stockProvider.getStock().values();
 		ArrayList<ArticleTypeDTO> articles = new ArrayList<ArticleTypeDTO>(amounts.size());
 		for (ArticleAmountDTO a : amounts) {
-			articles.add(stockProvider.retrieveArticleType(a));
+			ArticleTypeDTO at = stockProvider.retrieveArticleType(a);
+			if (at != null) {
+				articles.add(at);
+			}
 		}
 		return articles;
 	}

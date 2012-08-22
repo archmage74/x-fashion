@@ -30,6 +30,8 @@ import com.xfashion.client.resources.TextMessages;
 
 public class NamePanel implements IsMinimizable, MinimizeAllFilterPanelsHandler, MaximizeAllFilterPanelsHandler {
 
+	public static final int PANEL_WIDTH = 130;
+	
 	protected EventBus eventBus;
 
 	protected Panel listPanel;
@@ -57,6 +59,7 @@ public class NamePanel implements IsMinimizable, MinimizeAllFilterPanelsHandler,
 		createListPanel();
 		scrollPanel = new SimplePanel();
 		scrollPanel.setStyleName("filterPanel");
+		scrollPanel.setWidth(PANEL_WIDTH + "px");
 		scrollPanel.add(listPanel);
 		return scrollPanel;
 	}
@@ -97,7 +100,7 @@ public class NamePanel implements IsMinimizable, MinimizeAllFilterPanelsHandler,
 		};
 		cellTable.addHandler(cellPreviewHandler, CellPreviewEvent.getType());
 
-		cellTable.setWidth("160px");
+		cellTable.setWidth(PANEL_WIDTH + "px");
 		dataProvider.addDataDisplay(cellTable);
 		listPanel.add(cellTable);
 		
@@ -149,14 +152,14 @@ public class NamePanel implements IsMinimizable, MinimizeAllFilterPanelsHandler,
 	
 	public void minimize() {
 		if (!isMinimized()) {
-			PanelWidthAnimation pwa = new PanelWidthAnimation(this, 130, 25);
+			PanelWidthAnimation pwa = new PanelWidthAnimation(this, PANEL_WIDTH, 25);
 			pwa.run(300);
 		}
 	}
 	
 	public void maximize() {
 		if (isMinimized()) {
-			PanelWidthAnimation pwa = new PanelWidthAnimation(this, 25, 130);
+			PanelWidthAnimation pwa = new PanelWidthAnimation(this, 25, PANEL_WIDTH);
 			pwa.run(300);
 		}
 	}
@@ -169,7 +172,7 @@ public class NamePanel implements IsMinimizable, MinimizeAllFilterPanelsHandler,
 	protected Panel createHeaderPanel() {
 		headerPanel = new HorizontalPanel();
 		headerPanel.addStyleName("filterHeader");
-		headerPanel.setWidth("160px");
+		headerPanel.setWidth(PANEL_WIDTH + "px");
 
 		minmaxButton = new Image();
 		if (isMinimized()) {

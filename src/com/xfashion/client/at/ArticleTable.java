@@ -13,6 +13,7 @@ import com.xfashion.client.Formatter;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.event.RequestShowArticleTypeDetailsEvent;
 import com.xfashion.client.at.price.IGetPriceStrategy;
+import com.xfashion.client.at.render.ArticleTableMatrixTemplates;
 import com.xfashion.client.resources.FilterTableResources;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.shared.ArticleTypeDTO;
@@ -25,7 +26,7 @@ import com.xfashion.shared.StyleDTO;
 public abstract class ArticleTable<T> {
 
 	private IProvideArticleFilter provider;
-	
+
 	protected ArticleDataProvider<T> articleProvider;
 	
 	protected CellTable<T> cellTable;
@@ -34,13 +35,14 @@ public abstract class ArticleTable<T> {
 	protected TextMessages textMessages;
 	protected Formatter formatter;
 	
+	protected ArticleTableMatrixTemplates matrixTemplates;
+	
 	public ArticleTable(IProvideArticleFilter provider) {
 		this.textMessages = GWT.create(TextMessages.class);
 		this.formatter = Formatter.getInstance();
 		this.provider = provider;
+		this.matrixTemplates = GWT.create(ArticleTableMatrixTemplates.class);
 	}
-	
-	protected abstract void addNavColumns(CellTable<T> cellTable);
 	
 	protected abstract IGetPriceStrategy<T> currentPriceStrategy();
 	
@@ -62,19 +64,17 @@ public abstract class ArticleTable<T> {
 		cellTable = new CellTable<T>(10000, GWT.<FilterTableResources> create(FilterTableResources.class));
 
 		cellTable.addColumn(createImageColumn(ap));
-		cellTable.addColumn(createCategoryStyleColumn(ap));
-		cellTable.addColumn(createNameBrandColumn(ap));
-		cellTable.addColumn(createColorSizeColumn(ap));
+		cellTable.addColumn(createPlaceHolderLineColumn());
+		cellTable.addColumn(createCBSColumn(ap));
+		cellTable.addColumn(createNCSColumn(ap));
 		
 		cellTable.addColumn(createPriceColumn(ap));
-
-		addNavColumns(cellTable);
 
 		CellPreviewEvent.Handler<T> cellPreviewHandler = new CellPreviewEvent.Handler<T>() {
 			@Override
 			public void onCellPreview(CellPreviewEvent<T> event) {
 				ArticleTypeDTO at = ap.retrieveArticleType(event.getValue());
-				if ("click".equals(event.getNativeEvent().getType()) && event.getColumn() < 5) {
+				if ("click".equals(event.getNativeEvent().getType()) && event.getColumn() < 4) {
 					Xfashion.eventBus.fireEvent(new RequestShowArticleTypeDetailsEvent(at));
 				}
 			}
@@ -96,139 +96,123 @@ public abstract class ArticleTable<T> {
 		return null;
 	}
 	
-	protected Column<T, SafeHtml> createPriceColumn(final ArticleDataProvider<T> ap) {
-		Column<T, SafeHtml> price = new Column<T, SafeHtml>(new SafeHtmlCell()) {
-			@Override
-			public SafeHtml getValue(T a) {
-				SafeHtmlBuilder sb = new SafeHtmlBuilder();
-				String styles = concatStyles("articlePrice", getAdditionalPriceStyles(a));
-				sb.appendHtmlConstant("<div class=\"" + styles + "\">");
-				String priceString = textMessages.unknownPrice();
-				if (a != null) {
-					Integer price = currentPriceStrategy().getPrice(a);
-					if (price != null) {
-						priceString = formatter.formatCentsToCurrency(price);
-					}
-				}
-				sb.appendEscaped(priceString);
-				sb.appendHtmlConstant("</div>");
-				return sb.toSafeHtml();
-			}
-		};
-		return price;
+	abstract protected Column<T, T> createPriceColumn(final ArticleDataProvider<T> ap);
+
+	protected String formatPriceString(Integer price) {
+		if (price != null) {
+			return formatter.formatCentsToCurrency(price);
+		} else {
+			return textMessages.unknownPrice();
+		}
+	}
+	
+	protected String resolveCategory(ArticleTypeDTO at) {
+		CategoryDTO category = null;
+		if (at != null) {
+			category = provider.getCategoryProvider().resolveData(at.getCategoryKey());
+		}
+		String name = textMessages.unknownCategory();
+		if (category != null) {
+			name = category.getName();
+		}
+		return name;
 	}
 
-	private Column<T, SafeHtml> createColorSizeColumn(final ArticleDataProvider<T> ap) {
+	protected String resolveStyle(ArticleTypeDTO at) {
+		StyleDTO style = null;
+		if (at != null) {
+			style = provider.getCategoryProvider().resolveStyle(at.getStyleKey());
+		}
+		String name = textMessages.unknownStyle();
+		if (style != null) {
+			name = style.getName();
+		}
+		return name;
+	}
+
+	protected String resolveBrand(ArticleTypeDTO at) {
+		BrandDTO brand = null;
+		if (at != null) {
+			brand = provider.getBrandProvider().resolveData(at.getBrandKey());
+		}
+		String name = textMessages.unknownBrand();
+		if (brand != null) {
+			name = brand.getName();
+		}
+		return name;
+	}
+
+	protected String resolveName(ArticleTypeDTO at) {
+		String name = textMessages.unknownName();
+		if (at != null && at.getName() != null) {
+			name = at.getName();
+		}
+		return name;
+	}
+
+	protected String resolveColor(ArticleTypeDTO at) {
+		ColorDTO color = null;
+		if (at != null) {
+			color = provider.getColorProvider().resolveData(at.getColorKey());
+		}
+		String name = textMessages.unknownCategory();
+		if (color != null) {
+			name = color.getName();
+		}
+		return name;
+	}
+
+	protected String resolveSize(ArticleTypeDTO at) {
+		SizeDTO size = null;
+		if (at != null) {
+			size = provider.getSizeProvider().resolveData(at.getSizeKey());
+		}
+		String name = textMessages.unknownCategory();
+		if (size!= null) {
+			name = size.getName();
+		}
+		return name;
+	}
+
+	protected Column<T, SafeHtml> createCBSColumn(final ArticleDataProvider<T> ap) {
 		Column<T, SafeHtml> colorSize = new Column<T, SafeHtml>(new SafeHtmlCell()) {
 			@Override
 			public SafeHtml getValue(T a) {
 				ArticleTypeDTO at = ap.retrieveArticleType(a);
-				SafeHtmlBuilder sb = new SafeHtmlBuilder();
-				String styles = concatStyles("articleUpLe", getAdditionalMatrixStyles(a));
-				sb.appendHtmlConstant("<div class=\"" + styles + "\">");
-				ColorDTO color = null;
-				if (at != null) {
-					color = provider.getColorProvider().resolveData(at.getColorKey());
-				}
-				String name = textMessages.unknownColor();
-				if (color != null) {
-					name = color.getName();
-				}
-				sb.appendEscaped(name);
-				sb.appendHtmlConstant("</div>");
-				styles = concatStyles("articleBoLe", getAdditionalMatrixStyles(a));
-				sb.appendHtmlConstant("<div class=\"" + styles + "\">");
-				SizeDTO size = null;
-				if (at != null) {
-					size = provider.getSizeProvider().resolveData(at.getSizeKey());
-				}
-				name = textMessages.unknownSize();
-				if (size != null) {
-					name = size.getName();
-				}
-				sb.appendEscaped(name);
-				sb.appendHtmlConstant("</div>");
-				return sb.toSafeHtml();
+				String category = resolveCategory(at);
+				String brand = resolveBrand(at);
+				String style = resolveStyle(at);
+				return matrixTemplates.cbsColumn(category, brand, style);
+			}
+		};
+		return colorSize;
+	}
+	
+	private Column<T, SafeHtml> createPlaceHolderLineColumn() {
+		Column<T, SafeHtml> colorSize = new Column<T, SafeHtml>(new SafeHtmlCell()) {
+			@Override
+			public SafeHtml getValue(T a) {
+				return matrixTemplates.placeHolderLineColumn();
 			}
 		};
 		return colorSize;
 	}
 
-	private Column<T, SafeHtml> createNameBrandColumn(final ArticleDataProvider<T> ap) {
-		Column<T, SafeHtml> nameBrand = new Column<T, SafeHtml>(new SafeHtmlCell()) {
+	protected Column<T, SafeHtml> createNCSColumn(final ArticleDataProvider<T> ap) {
+		Column<T, SafeHtml> colorSize = new Column<T, SafeHtml>(new SafeHtmlCell()) {
 			@Override
 			public SafeHtml getValue(T a) {
 				ArticleTypeDTO at = ap.retrieveArticleType(a);
-				SafeHtmlBuilder html = new SafeHtmlBuilder();
-				StringBuffer sb = new StringBuffer();
-				String styles = concatStyles("articleUpCe", getAdditionalMatrixStyles(a));
-				String name = textMessages.unknownName();
-				if (at != null && at.getName() != null) {
-					name = at.getName();
-				}
-				sb.append("<div class=\"" + styles + "\"");
-				if (name.length() > 14) {
-					sb.append(" style=\"font-size: 10px;\"");
-				}
-				sb.append(">");
-				html.appendHtmlConstant(sb.toString());
-				html.appendEscaped(name);
-				html.appendHtmlConstant("</div>");
-				styles = concatStyles("articleBoCe", getAdditionalMatrixStyles(a));
-				html.appendHtmlConstant("<div class=\"" + styles + "\">");
-				StyleDTO style = null;
-				if (at != null) {
-					style = provider.getCategoryProvider().resolveStyle(at.getStyleKey());
-				}
-				name = textMessages.unknownStyle();
-				if (style != null) {
-					name = style.getName();
-				}
-				html.appendEscaped(name);
-				html.appendHtmlConstant("</div>");
-				return html.toSafeHtml();
+				String name = resolveName(at);
+				String color = resolveColor(at);
+				String size = resolveSize(at);
+				return matrixTemplates.ncsColumn(name, color, size);
 			}
 		};
-		return nameBrand;
+		return colorSize;
 	}
 
-	private Column<T, SafeHtml> createCategoryStyleColumn(final ArticleDataProvider<T> ap) {
-		Column<T, SafeHtml> categoryStyle = new Column<T, SafeHtml>(new SafeHtmlCell()) {
-			@Override
-			public SafeHtml getValue(T a) {
-				ArticleTypeDTO at = ap.retrieveArticleType(a);
-				SafeHtmlBuilder sb = new SafeHtmlBuilder();
-				String styles = concatStyles("articleUpLe", getAdditionalMatrixStyles(a));
-				sb.appendHtmlConstant("<div class=\"" + styles + "\">");
-				CategoryDTO category = null;
-				if (at != null) {
-					category = provider.getCategoryProvider().resolveData(at.getCategoryKey());
-				}
-				String name = textMessages.unknownCategory();
-				if (category != null) {
-					name = category.getName();
-				}
-				sb.appendEscaped(name);
-				sb.appendHtmlConstant("</div>");
-				styles = concatStyles("articleBoLe", getAdditionalMatrixStyles(a));
-				sb.appendHtmlConstant("<div class=\"" + styles + "\">");
-				BrandDTO brand = null;
-				if (at != null) {
-					brand = provider.getBrandProvider().resolveData(at.getBrandKey());
-				}
-				name = textMessages.unknownBrand();
-				if (brand != null) {
-					name = brand.getName();
-				}
-				sb.appendEscaped(name);
-				sb.appendHtmlConstant("</div>");
-				return sb.toSafeHtml();
-			}
-		};
-		return categoryStyle;
-	}
-
-	private Column<T, SafeHtml> createImageColumn(final ArticleDataProvider<T> ap) {
+	protected Column<T, SafeHtml> createImageColumn(final ArticleDataProvider<T> ap) {
 		Column<T, SafeHtml> image = new Column<T, SafeHtml>(new SafeHtmlCell()) {
 			@Override
 			public SafeHtml getValue(T a) {
@@ -259,3 +243,4 @@ public abstract class ArticleTable<T> {
 	}
 
 }
+

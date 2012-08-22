@@ -1,84 +1,86 @@
 package com.xfashion.client.pricechange;
 
-import com.google.gwt.cell.client.ButtonCell;
-import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.SafeHtmlCell;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
-import com.xfashion.client.Xfashion;
+import com.xfashion.client.at.ArticleDataProvider;
 import com.xfashion.client.at.ArticleTable;
 import com.xfashion.client.at.IProvideArticleFilter;
 import com.xfashion.client.at.price.IGetPriceStrategy;
-import com.xfashion.client.pricechange.event.PrintChangePriceStickersEvent;
+import com.xfashion.client.at.render.PriceChangePriceCell;
 import com.xfashion.shared.ArticleAmountDTO;
+import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.PriceChangeDTO;
 
 public class PriceChangeArticleTable extends ArticleTable<ArticleAmountDTO> {
 
 	protected PriceChangeArticleAmountDataProvider priceChangeProvider;
-	
+
 	protected IGetPriceStrategy<ArticleAmountDTO> priceStrategy;
-	
+
+	protected PriceChangeMatrixTemplates priceChangeTemplates;
+
 	public PriceChangeArticleTable(IProvideArticleFilter provider, IGetPriceStrategy<ArticleAmountDTO> priceStrategy,
 			PriceChangeArticleAmountDataProvider priceChangeProvider) {
 		super(provider);
 		this.priceChangeProvider = priceChangeProvider;
 		this.priceStrategy = priceStrategy;
+		this.priceChangeTemplates = GWT.create(PriceChangeMatrixTemplates.class);
 	}
 
 	@Override
 	protected IGetPriceStrategy<ArticleAmountDTO> currentPriceStrategy() {
 		return priceStrategy;
 	}
-	
-	protected void addNavColumns(CellTable<ArticleAmountDTO> cellTable) {
-		Column<ArticleAmountDTO, SafeHtml> amount = new Column<ArticleAmountDTO, SafeHtml>(new SafeHtmlCell()) {
+
+	protected Column<ArticleAmountDTO, SafeHtml> createCBSColumn(final ArticleDataProvider<ArticleAmountDTO> ap) {
+		Column<ArticleAmountDTO, SafeHtml> colorSize = new Column<ArticleAmountDTO, SafeHtml>(new SafeHtmlCell()) {
 			@Override
 			public SafeHtml getValue(ArticleAmountDTO a) {
-				SafeHtmlBuilder sb = new SafeHtmlBuilder();
-				String styles = concatStyles("articleAmount", getAdditionalPriceStyles(a));
-				sb.appendHtmlConstant("<div class=\"" + styles + "\">");
-				sb.appendEscaped(a.getAmount().toString());
-				sb.appendHtmlConstant("</div>");
-				return sb.toSafeHtml();
+				ArticleTypeDTO at = ap.retrieveArticleType(a);
+				String category = resolveCategory(at);
+				String brand = resolveBrand(at);
+				String style = resolveStyle(at);
+				if (isPriceChangeAccepted(a)) {
+					return matrixTemplates.cbsColumn(category, brand, style);
+				} else {
+					return matrixTemplates.cbsHighlightedColumn(category, brand, style);
+				}
 			}
 		};
-		cellTable.addColumn(amount);
-
-		Column<ArticleAmountDTO, String> notepadButton = new Column<ArticleAmountDTO, String>(new ButtonCell()) {
+		return colorSize;
+	}
+	
+	@Override
+	protected Column<ArticleAmountDTO, SafeHtml> createNCSColumn(final ArticleDataProvider<ArticleAmountDTO> ap) {
+		Column<ArticleAmountDTO, SafeHtml> colorSize = new Column<ArticleAmountDTO, SafeHtml>(new SafeHtmlCell()) {
 			@Override
-			public String getValue(ArticleAmountDTO at) {
-				return textMessages.printChangePriceStickers();
+			public SafeHtml getValue(ArticleAmountDTO a) {
+				ArticleTypeDTO at = ap.retrieveArticleType(a);
+				String name = resolveName(at);
+				String color = resolveColor(at);
+				String size = resolveSize(at);
+				if (isPriceChangeAccepted(a)) {
+					return matrixTemplates.ncsColumn(name, color, size);
+				} else {
+					return matrixTemplates.ncsHighlightedColumn(name, color, size);
+				}
 			}
 		};
-		cellTable.addColumn(notepadButton);
-		notepadButton.setFieldUpdater(new FieldUpdater<ArticleAmountDTO, String>() {
-			@Override
-			public void update(int index, ArticleAmountDTO am, String value) {
-				Xfashion.eventBus.fireEvent(new PrintChangePriceStickersEvent(am));
-			}
-		});
-
+		return colorSize;
 	}
 
 	@Override
-	protected String getAdditionalMatrixStyles(ArticleAmountDTO am) {
-		if (isPriceChangeAccepted(am)) {
-			return null;
-		} else {
-			return "priceChangeNotAcceptedMatrix";
-		}
-	}
-
-	@Override
-	protected String getAdditionalPriceStyles(ArticleAmountDTO am) {
-		if (isPriceChangeAccepted(am)) {
-			return null;
-		} else {
-			return "priceChangeNotAcceptedColumn";
-		}
+	protected Column<ArticleAmountDTO, ArticleAmountDTO> createPriceColumn(ArticleDataProvider<ArticleAmountDTO> ap) {
+		Column<ArticleAmountDTO, ArticleAmountDTO> price = new Column<ArticleAmountDTO, ArticleAmountDTO>(new PriceChangePriceCell(
+				priceChangeProvider, priceStrategy)) {
+			@Override
+			public ArticleAmountDTO getValue(ArticleAmountDTO a) {
+				return a;
+			}
+		};
+		return price;
 	}
 
 	private boolean isPriceChangeAccepted(ArticleAmountDTO am) {
@@ -89,5 +91,5 @@ public class PriceChangeArticleTable extends ArticleTable<ArticleAmountDTO> {
 		}
 		return true;
 	}
-	
+
 }

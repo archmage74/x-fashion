@@ -87,6 +87,7 @@ public interface TextMessages extends Messages {
 	String printStickersHint();
 	String recordArticlesHint();
 	String intoStockHint();
+	String minWinHint();
 	String stock();
 	String removeFromStock();
 	String confirmRemoveFromStock();
@@ -100,7 +101,7 @@ public interface TextMessages extends Messages {
 	String sellStatisticHeader();
 	String allShops();
 	String sellStatisticDate(Date sellDate);
-	String addedToStockDate(Date addDate);
+	String dateTime(Date addDate);
 	String addMore();
 	String removedArticleHeader();
 

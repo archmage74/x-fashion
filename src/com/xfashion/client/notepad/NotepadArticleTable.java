@@ -1,106 +1,53 @@
 package com.xfashion.client.notepad;
 
-import java.util.Date;
-
-import com.google.gwt.cell.client.ButtonCell;
-import com.google.gwt.cell.client.FieldUpdater;
-import com.google.gwt.cell.client.SafeHtmlCell;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.cellview.client.Column;
-import com.xfashion.client.Xfashion;
+import com.xfashion.client.at.ArticleDataProvider;
 import com.xfashion.client.at.ArticleTable;
 import com.xfashion.client.at.IProvideArticleFilter;
 import com.xfashion.client.at.price.IGetPriceStrategy;
-import com.xfashion.client.notepad.event.NotepadRemoveArticleEvent;
+import com.xfashion.client.at.render.NotepadPriceCell;
 import com.xfashion.shared.ArticleAmountDTO;
-import com.xfashion.shared.ArticleTypeDTO;
 
 public class NotepadArticleTable extends ArticleTable<ArticleAmountDTO> {
 
-	public static final long HIGHLIGHT_TIME = 5000;
-
 	protected NotepadManagement notepadManagement;
-	
-	protected String lastUpdatedArticleTypeKey = null;
-	protected Date lastUpdatedTime = null;
+
+	protected HighlightLastUpdated highlightLastUpdated;
+
+	protected NotepadMatrixTemplates notepadTemplates;
 
 	public NotepadArticleTable(IProvideArticleFilter provider) {
 		super(provider);
-		notepadManagement = NotepadManagement.getInstance();
+		this.notepadTemplates = GWT.create(NotepadMatrixTemplates.class);
+		this.highlightLastUpdated = new HighlightLastUpdated();
+		this.notepadManagement = NotepadManagement.getInstance();
 	}
 
 	public String getLastUpdatedArticleTypeKey() {
-		return lastUpdatedArticleTypeKey;
+		return highlightLastUpdated.getLastUpdatedArticleTypeKey();
 	}
 
 	public void setLastUpdatedArticleTypeKey(String lastUpdatedArticleTypeKey) {
-		this.lastUpdatedArticleTypeKey = lastUpdatedArticleTypeKey;
-		this.lastUpdatedTime = new Date();
+		highlightLastUpdated.setLastUpdatedArticleTypeKey(lastUpdatedArticleTypeKey);
 	}
 
 	@Override
 	protected IGetPriceStrategy<ArticleAmountDTO> currentPriceStrategy() {
 		return notepadManagement.currentPriceStrategy();
 	}
-	
-	protected void addNavColumns(CellTable<ArticleAmountDTO> cellTable) {
-		Column<ArticleAmountDTO, SafeHtml> amount = new Column<ArticleAmountDTO, SafeHtml>(new SafeHtmlCell()) {
+
+	@Override
+	protected Column<ArticleAmountDTO, ArticleAmountDTO> createPriceColumn(ArticleDataProvider<ArticleAmountDTO> ap) {
+		Column<ArticleAmountDTO, ArticleAmountDTO> price = new Column<ArticleAmountDTO, ArticleAmountDTO>(new NotepadPriceCell(ap,
+				highlightLastUpdated)) {
 			@Override
-			public SafeHtml getValue(ArticleAmountDTO a) {
-				SafeHtmlBuilder sb = new SafeHtmlBuilder();
-				String styles = concatStyles("articleAmount", getAmountStyle(a));
-				sb.appendHtmlConstant("<div class=\"" + styles + "\">");
-				sb.append(a.getAmount());
-				sb.appendHtmlConstant("</div>");
-				return sb.toSafeHtml();
+			public ArticleAmountDTO getValue(ArticleAmountDTO a) {
+				return a;
 			}
 		};
-		cellTable.addColumn(amount);
-
-		Column<ArticleAmountDTO, String> notepadButton = new Column<ArticleAmountDTO, String>(new ButtonCell()) {
-			@Override
-			public String getValue(ArticleAmountDTO at) {
-				return textMessages.removeOneFromNotepadButton();
-			}
-		};
-		cellTable.addColumn(notepadButton);
-		notepadButton.setFieldUpdater(new FieldUpdater<ArticleAmountDTO, String>() {
-			@Override
-			public void update(int index, ArticleAmountDTO a, String value) {
-				ArticleTypeDTO at = articleProvider.retrieveArticleType(a);
-				Xfashion.eventBus.fireEvent(new NotepadRemoveArticleEvent(at));
-			}
-		});
-
-		Column<ArticleAmountDTO, String> removeTenFromNotepadButton = new Column<ArticleAmountDTO, String>(new ButtonCell()) {
-			@Override
-			public String getValue(ArticleAmountDTO at) {
-				return textMessages.removeTenFromNotepadButton();
-			}
-		};
-		cellTable.addColumn(removeTenFromNotepadButton);
-		removeTenFromNotepadButton.setFieldUpdater(new FieldUpdater<ArticleAmountDTO, String>() {
-			@Override
-			public void update(int index, ArticleAmountDTO a, String value) {
-				ArticleTypeDTO at = articleProvider.retrieveArticleType(a);
-				Xfashion.eventBus.fireEvent(new NotepadRemoveArticleEvent(at, 10));
-			}
-		});
-
-	}
-
-	protected String getAmountStyle(ArticleAmountDTO a) {
-		Date now = new Date();
-		if (lastUpdatedTime != null &&
-				lastUpdatedArticleTypeKey != null &&
-				lastUpdatedTime.getTime() + HIGHLIGHT_TIME > now.getTime() &&
-				lastUpdatedArticleTypeKey.equals(a.getArticleTypeKey())) {
-			return "articleAmountHighlighted";
-		} else {
-			return null;
-		}
+		
+		return price;
 	}
 
 }

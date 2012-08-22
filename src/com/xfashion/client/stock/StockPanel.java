@@ -42,7 +42,7 @@ import com.xfashion.shared.UserRole;
 
 public class StockPanel implements NotepadStartMinimizeHandler, NotepadStartMaximizeHandler, ContentPanelResizeHandler {
 
-	public static final int PANEL_MAX_WIDTH = 550;
+	public static final int PANEL_MAX_WIDTH = 350;
 	public static final int PANEL_MIN_WIDTH = 25;
 
 	protected EventBus stockBus;
@@ -108,8 +108,8 @@ public class StockPanel implements NotepadStartMinimizeHandler, NotepadStartMaxi
 			panel.add(createColorPanel(articleTypeManagement));
 			panel.add(createSizePanel(articleTypeManagement));
 			panel.add(createArticlePanel(stockProvider));
-			NotepadPanel notepadPanel = new NotepadPanel(stockFilterProvider, stockBus);
-			panel.add(notepadPanel.createPanel(notepadArticleProvider, true));
+//			NotepadPanel notepadPanel = new NotepadPanel(stockFilterProvider);
+//			panel.add(notepadPanel.createPanel(notepadArticleProvider));
 		}
 		return panel;
 	}

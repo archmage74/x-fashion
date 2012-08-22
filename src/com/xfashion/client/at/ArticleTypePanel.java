@@ -66,7 +66,7 @@ public class ArticleTypePanel implements ContentPanelResizeHandler {
 		createArticleTypePopup = new CreateArticleTypePopup(articleFilterProvider);
 
 		VerticalPanel panel = new VerticalPanel();
-		panel.setWidth("580px");
+		panel.setWidth("350px");
 		
 		headerPanel = createHeaderPanel(nameOracle);
 		panel.add(headerPanel);

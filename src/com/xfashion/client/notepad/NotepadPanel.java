@@ -14,22 +14,16 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.web.bindery.event.shared.EventBus;
-import com.xfashion.client.IsMinimizable;
 import com.xfashion.client.MainPanel;
-import com.xfashion.client.PanelWidthAnimation;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.IProvideArticleFilter;
 import com.xfashion.client.at.price.IGetPriceStrategy;
-import com.xfashion.client.event.ContentPanelResizeEvent;
-import com.xfashion.client.event.ContentPanelResizeHandler;
 import com.xfashion.client.notepad.event.ClearNotepadEvent;
 import com.xfashion.client.notepad.event.DeliveryNoticeUpdatedEvent;
 import com.xfashion.client.notepad.event.DeliveryNoticeUpdatedHandler;
+import com.xfashion.client.notepad.event.HideNotepadEvent;
 import com.xfashion.client.notepad.event.NotepadAddArticleEvent;
 import com.xfashion.client.notepad.event.NotepadAddArticleHandler;
-import com.xfashion.client.notepad.event.NotepadStartMaximizeEvent;
-import com.xfashion.client.notepad.event.NotepadStartMinimizeEvent;
 import com.xfashion.client.notepad.event.OpenNotepadEvent;
 import com.xfashion.client.notepad.event.OpenNotepadHandler;
 import com.xfashion.client.notepad.event.PrintDeliveryNoticeEvent;
@@ -50,36 +44,29 @@ import com.xfashion.shared.BarcodeHelper;
 import com.xfashion.shared.DeliveryNoticeDTO;
 import com.xfashion.shared.NotepadDTO;
 
-public class NotepadPanel implements IsMinimizable, OpenNotepadHandler, SaveNotepadHandler, DeliveryNoticeUpdatedHandler, NotepadAddArticleHandler,
-		RequestCheckNotepadPositionHandler, ContentPanelResizeHandler {
+public class NotepadPanel implements OpenNotepadHandler, SaveNotepadHandler, DeliveryNoticeUpdatedHandler, NotepadAddArticleHandler,
+		RequestCheckNotepadPositionHandler {
 
-	public static final int PANEL_MAX_WIDTH = 560;
-	public static final int PANEL_MIN_WIDTH = 25;
+	public static final int PANEL_MAX_WIDTH = 440;
 
 	private IProvideArticleFilter provider;
 
-	protected EventBus eventBus;
-
 	protected Panel scrollPanel;
 	protected Panel resizePanel;
-	protected Label headerLabel;
+//	protected Label headerLabel;
 	protected Label notepadInfoLabel1;
 	protected Label notepadInfoLabel2;
 	protected HorizontalPanel headerPanel;
 	protected NotepadArticleTable notepadArticleTable;
 
-	protected boolean minimized = true;
-	protected Image minmaxButton;
-
 	protected TextMessages textMessages;
 	protected ImageResources images;
 	protected BarcodeHelper barcodeHelper;
 
-	public NotepadPanel(IProvideArticleFilter provider, EventBus eventBus) {
+	public NotepadPanel(IProvideArticleFilter provider) {
 		this.textMessages = GWT.create(TextMessages.class);
 		this.images = GWT.<ImageResources> create(ImageResources.class);
 		this.barcodeHelper = new BarcodeHelper();
-		this.eventBus = eventBus;
 		this.provider = provider;
 		registerForEvents();
 	}
@@ -89,74 +76,24 @@ public class NotepadPanel implements IsMinimizable, OpenNotepadHandler, SaveNote
 	}
 
 	public Panel createPanel(ArticleAmountDataProvider notepadArticleProvider) {
-		return createPanel(notepadArticleProvider, true);
-	}
-
-	public Panel createPanel(ArticleAmountDataProvider notepadArticleProvider, boolean minimized) {
 		resizePanel = new SimplePanel();
 		resizePanel.setStyleName("filterPanel");
 		
 		Panel articlePanel = createArticlePanel(notepadArticleProvider);
 		resizePanel.add(articlePanel);
 		
-		if (minimized) {
-			this.minimized = minimized;
-			setWidth(PANEL_MIN_WIDTH);
-		} else {
-			this.minimized = minimized;
-			setWidth(PANEL_MAX_WIDTH);
-		}
+		setWidth(PANEL_MAX_WIDTH);
 		setHeight(MainPanel.contentPanelHeight);
 		return resizePanel;
 	}
 
-	@Override
-	public void onContentPanelResize(ContentPanelResizeEvent event) {
-		setHeight(event.getHeight());
-	}
-	
 	public void setHeight(int height) {
 		int panelHeight = height - 40;
 		scrollPanel.setHeight(panelHeight + "px");
 	}
 	
-	public void minmax() {
-		if (isMinimized()) {
-			PanelWidthAnimation pwa = new PanelWidthAnimation(this, PANEL_MIN_WIDTH, PANEL_MAX_WIDTH);
-			pwa.run(300);
-			if (eventBus != null) {
-				eventBus.fireEvent(new NotepadStartMaximizeEvent());
-			}
-		} else {
-			PanelWidthAnimation pwa = new PanelWidthAnimation(this, PANEL_MAX_WIDTH, PANEL_MIN_WIDTH);
-			pwa.run(300);
-			if (eventBus != null) {
-				eventBus.fireEvent(new NotepadStartMinimizeEvent());
-			}
-		}
-	}
-
 	public void setWidth(int width) {
 		resizePanel.setWidth(width + "px");
-	}
-
-	@Override
-	public boolean isMinimized() {
-		return minimized;
-	}
-
-	@Override
-	public void setMinimized(boolean minimized) {
-		if (minimized) {
-			if (!this.minimized) {
-				minmaxButton.setResource(images.iconMaximize());
-			}
-		} else {
-			if (this.minimized) {
-				minmaxButton.setResource(images.iconMinimize());
-			}
-		}
-		this.minimized = minimized;
 	}
 
 	@Override
@@ -220,8 +157,7 @@ public class NotepadPanel implements IsMinimizable, OpenNotepadHandler, SaveNote
 		headerPanel.addStyleName("filterHeader");
 		headerPanel.setWidth(PANEL_MAX_WIDTH + "px");
 
-		headerPanel.add(createMinmaxButton());
-		headerPanel.add(createHeaderLabel());
+//		headerPanel.add(createHeaderLabel());
 		headerPanel.add(createNotepadInfoPanel());
 
 		HorizontalPanel toolPanel = new HorizontalPanel();
@@ -233,35 +169,18 @@ public class NotepadPanel implements IsMinimizable, OpenNotepadHandler, SaveNote
 		toolPanel.add(createPrintStickerIcon());
 		toolPanel.add(createRecordArticlesIcon());
 		toolPanel.add(createIntoStockIcon());
+		toolPanel.add(createMinimizeWindowIcon());
 		headerPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		headerPanel.add(toolPanel);
 
 		return headerPanel;
 	}
 
-	private Image createMinmaxButton() {
-		minmaxButton = new Image();
-		if (isMinimized()) {
-			minmaxButton.setResource(images.iconMaximize());
-		} else {
-			minmaxButton.setResource(images.iconMinimize());
-		}
-		minmaxButton.setStyleName("buttonMinMax");
-		ClickHandler minmaxClickHandler = new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				minmax();
-			}
-		};
-		minmaxButton.addClickHandler(minmaxClickHandler);
-		return minmaxButton;
-	}
-
-	private Label createHeaderLabel() {
-		headerLabel = new Label(textMessages.notepadManagementHeader());
-		headerLabel.addStyleName("filterLabel attributeFilterLabel");
-		return headerLabel;
-	}
+//	private Label createHeaderLabel() {
+//		headerLabel = new Label(textMessages.notepadManagementHeader());
+//		headerLabel.addStyleName("filterLabel attributeFilterLabel");
+//		return headerLabel;
+//	}
 
 	private Panel createNotepadInfoPanel() {
 		VerticalPanel vp = new VerticalPanel();
@@ -358,6 +277,18 @@ public class NotepadPanel implements IsMinimizable, OpenNotepadHandler, SaveNote
 		return icon;
 	}
 
+	private Image createMinimizeWindowIcon() {
+		Image icon = Buttons.minwin();
+		icon.setTitle(textMessages.minWinHint());
+		icon.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Xfashion.eventBus.fireEvent(new HideNotepadEvent());
+			}
+		});
+		return icon;
+	}
+
 	private void clearNotepad() {
 		Xfashion.eventBus.fireEvent(new ClearNotepadEvent());
 		clearHeaderInfo();
@@ -380,7 +311,7 @@ public class NotepadPanel implements IsMinimizable, OpenNotepadHandler, SaveNote
 	}
 
 	private void setHeaderInfo(String type, String info1, String info2) {
-		headerLabel.setText(type);
+//		headerLabel.setText(type);
 		notepadInfoLabel1.setText(info1);
 		notepadInfoLabel2.setText(info2);
 	}
@@ -391,6 +322,5 @@ public class NotepadPanel implements IsMinimizable, OpenNotepadHandler, SaveNote
 		Xfashion.eventBus.addHandler(DeliveryNoticeUpdatedEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(NotepadAddArticleEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(RequestCheckNotepadPositionEvent.TYPE, this);
-		Xfashion.eventBus.addHandler(ContentPanelResizeEvent.TYPE, this);
 	}
 }

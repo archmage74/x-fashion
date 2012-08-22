@@ -81,7 +81,7 @@ public class MenuPanel implements LoginHandler, PriceChangesUpdatedHandler {
 
 	private Panel createMenuPanel() {
 		HorizontalPanel menuPanel = new HorizontalPanel();
-		menuPanel.setWidth("1280px");
+		menuPanel.setWidth("1200px");
 
 		menuPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
 		menuPanel.add(createMenuBar());
@@ -130,7 +130,7 @@ public class MenuPanel implements LoginHandler, PriceChangesUpdatedHandler {
 	private MenuBar createMenuBar() {
 		MenuBar menu = new MenuBar();
 		menu.setAutoOpen(true);
-		menu.setSize("1065px", "30px");
+		menu.setSize("985px", "30px");
 		menu.setAnimationEnabled(true);
 
 		if (UserManagement.hasRole(UserRole.DEVELOPER, UserRole.ADMIN)) {

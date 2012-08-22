@@ -43,7 +43,7 @@ public class ArticleTypeView implements NotepadStartMaximizeHandler, NotepadStar
 	protected CategoryManagement categoryManagement;
 	
 	protected NamePanel namePanel;
-	protected NotepadPanel notepadPanel;
+//	protected NotepadPanel notepadPanel;
 	protected ArticleTypePanel articleTypePanel;
 
 	protected ArticleTypePopup articleTypePopup = null;
@@ -101,7 +101,7 @@ public class ArticleTypeView implements NotepadStartMaximizeHandler, NotepadStar
 			panel = new HorizontalPanel();
 			namePanel = new NamePanel(articleFilterProvider.getNameProvider(), adminBus);
 			articleTypePanel = new ArticleTypePanel(articleFilterProvider);
-			notepadPanel = new NotepadPanel(articleFilterProvider, adminBus);
+//			notepadPanel = new NotepadPanel(articleFilterProvider);
 
 			panel.add(categoryManagement.getCategoryAdminPanel());
 			panel.add(brandManagement.getAdminPanel());
@@ -111,7 +111,7 @@ public class ArticleTypeView implements NotepadStartMaximizeHandler, NotepadStar
 			panel.add(sizeManagement.getAdminPanel());
 
 			panel.add(articleTypePanel.createPanel(articleFilterProvider.getArticleTypeProvider(), articleFilterProvider.getNameProvider().getNameOracle()));
-			panel.add(notepadPanel.createPanel(notepadArticleProvider, true));
+//			panel.add(notepadPanel.createPanel(notepadArticleProvider));
 			adminBus.fireEvent(new RefreshFilterEvent());
 		}
 		return panel;

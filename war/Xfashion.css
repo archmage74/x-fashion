@@ -207,66 +207,75 @@
 	padding-top: 1px;
 }
 .articleIconImage {
-	width: 45px;
-	height: 45px;
+	width: 52px;
+	height: 52px;
 	border: 1px solid silver;
 	padding: 1px;
 	margin: 0px;
 }
-.articleUpLe {
+.matrixCell {
 	margin: 0px;
 	padding: 0px;
 	text-align: center; 
 	width: 100px;
-	height: 25px;
-	border-bottom: 1px solid silver;
-	overflow-y: auto;
+	height: 18px;
 }
-.articleUpCe {
-	margin: 0px;
-	padding: 0px;
-	text-align: center; 
-	width: 100px;
-	height: 25px;
-	border-bottom: 1px solid silver;
+.matrixLe {
 	border-left: 1px solid silver;
-	border-right: 1px solid silver; 
-	overflow-y: auto;
 }
-.articleUpRi {
-	margin: 0px;
-	padding: 0px;
-	text-align: center;
-	width: 100px;
-	height: 25px;
-	border-bottom: 1px solid silver; 
-	overflow-y: auto;
+.matrixRi {
+	border-right: 1px solid silver;
+	text-align: right;
+	padding-right: 5px;
+	width:65px
 }
-.articleBoLe {
-	margin: 0px;
-	padding: 0px;
-	text-align: center;
-	width: 100px;
-	height: 25px;
-	overflow-y: auto;
+.matrixUp {
+	border-top: 1px solid silver;
 }
-.articleBoCe {
-	margin: 0px;
-	padding: 0px;
-	text-align: center;
-	width: 100px;
-	height: 25px;
-	border-left: 1px solid silver;
-	border-right: 1px solid silver; 
-	overflow-y: auto;
+.matrixBo {
+	border-bottom: 1px solid silver;
 }
-.articleBoRi {
-	margin: 0px;
+.matrixBold {
+	font-weight: bold;
+}
+.matrixPlaceHolderLineUp {
+	width: 4px;
+	height: 26px;
+	border-bottom: 1px solid silver;
+}
+.matrixPlaceHolderLineBo {
+	width: 4px;
+}
+.matrixButton {
+	font-size: 10px;
 	padding: 0px;
-	text-align: center;
-	width: 100px;
-	height: 25px;
-	overflow-y: auto;
+	margin: 0px;
+	height: 18px;
+}
+.matrixNotepadButton {
+	width: 30px;
+}
+.matrixPrice {
+	color: #B36029;
+}
+.matrixPriceMarker {
+	font-size: 10px;
+	width: 20px;
+	margin-left: 3px;
+}
+.matrixHighlighted {
+	background-color: #F1DDC5; 
+}
+.matrixPiecesMarker {
+	font-size: 10px;
+	width: 22px;
+	margin-left: 3px;
+}
+.matrixCountryPrice {
+	text-color: #F1DDC5;
+}
+.matrixDateTime {
+	font-size: 10px;
 }
 .articleTypePrice {
 	margin: 0px;
@@ -291,9 +300,6 @@
 	font-size: 20px;
 	width: 40px;
 	height: 50;
-}
-.articleAmountHighlighted {
-	background-color: #F1DDC5; 
 }
 .articleSellDate {
 	text-align: center;
@@ -415,12 +421,6 @@ table.toolGrid * td {
 .rightDialogButton {
 	align: right;
 }
-
-.floatingNotepad {
-	position: absolute;
-	right: 0px;
-	top: 100px;
-}
 .editBulkChanged {
 	background: #D68543;
 }
@@ -431,12 +431,13 @@ table.toolGrid * td {
 	font-size: 12px;
 	color: #ffffff;
 }
-.priceChangeNotAcceptedMatrix {
-	background-color: #F1DDC5;
-}
-.priceChangeNotAcceptedColumn {
-	background-color: #F1DDC5;
-	height: 51px;
+.notepadMinimized {
+	margin: 0px;
+	height: 30px;
+	font-size: 20px;
+	font-weight: bold;
+	color: white;
+	background-color: #777;
 }
 .scanPanel {
 

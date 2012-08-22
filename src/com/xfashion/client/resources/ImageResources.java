@@ -50,6 +50,10 @@ public interface ImageResources extends ClientBundle {
 	@ImageOptions(width=23, height=23)
 	ImageResource iconIntostock();
 
+	@Source("icon-minwin.png")
+	@ImageOptions(width=23, height=23)
+	ImageResource iconMinwin();
+
 	@Source("icon-delete.png")
 	@ImageOptions(width=10, height=11)
 	ImageResource iconDelete();

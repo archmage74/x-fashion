@@ -1,12 +1,12 @@
 package com.xfashion.client.removed;
 
-import com.google.gwt.cell.client.TextCell;
-import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.xfashion.client.Formatter;
+import com.xfashion.client.at.ArticleDataProvider;
 import com.xfashion.client.at.ArticleTable;
 import com.xfashion.client.at.IProvideArticleFilter;
 import com.xfashion.client.at.price.IGetPriceStrategy;
+import com.xfashion.client.at.render.RemovedArticlePriceCell;
 import com.xfashion.client.notepad.GetPriceFromArticleAmountStrategy;
 import com.xfashion.shared.RemovedArticleDTO;
 
@@ -27,31 +27,15 @@ public class RemovedArticleTable extends ArticleTable<RemovedArticleDTO> {
 		return priceStrategy;
 	}
 
-	protected void addNavColumns(CellTable<RemovedArticleDTO> cellTable) {
-		cellTable.addColumn(createAmountColumn());
-		cellTable.addColumn(createAddedDateColumn());
-	}
-
-	private Column<RemovedArticleDTO, String> createAddedDateColumn() {
-		Column<RemovedArticleDTO, String> amount = new Column<RemovedArticleDTO, String>(new TextCell()) {
+	@Override
+	protected Column<RemovedArticleDTO, RemovedArticleDTO> createPriceColumn(ArticleDataProvider<RemovedArticleDTO> ap) {
+		Column<RemovedArticleDTO, RemovedArticleDTO> price = new Column<RemovedArticleDTO, RemovedArticleDTO>(new RemovedArticlePriceCell(priceStrategy)) {
 			@Override
-			public String getValue(RemovedArticleDTO sa) {
-				return textMessages.addedToStockDate(sa.getRemoveDate());
+			public RemovedArticleDTO getValue(RemovedArticleDTO a) {
+				return a;
 			}
 		};
-		amount.setCellStyleNames("articleSellDate");
-		return amount;
-	}
-
-	protected Column<RemovedArticleDTO, String> createAmountColumn() {
-		Column<RemovedArticleDTO, String> amount = new Column<RemovedArticleDTO, String>(new TextCell()) {
-			@Override
-			public String getValue(RemovedArticleDTO a) {
-				return a.getAmount().toString();
-			}
-		};
-		amount.setCellStyleNames("articleAmount");
-		return amount;
+		return price;
 	}
 
 }
