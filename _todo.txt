@@ -122,14 +122,13 @@ DONE - automatic image management
 DONE - redesign of delivery notice
 DONE - screen width adaption: 1440 - different article-matrix
 DONE - notepad as popup
+REMOVED - image management has been automated; lazy loading of images in image management
 
 --------------------
 
 differenz anzeige - lieferschein vs bestandsaufnahme
 
 prevent application from sleeping (needed any more?) or progress indication during login
-
-NEW - lazy loading of images in image management
 
 NEW - favicon (format an roman 32x32 or 16x16 pixel, for IE only win-icon-format)
 

@@ -82,7 +82,7 @@ public class NotepadPopup implements ContentPanelResizeHandler {
 	
 	protected void positionPopup() {
 		if (notepadPanel != null && dialogBox != null) {
-			notepadPanel.setHeight(Window.getClientHeight() - POPUP_Y - 15); 
+			notepadPanel.setHeight(Window.getClientHeight() - POPUP_Y - 30); 
 		}
 	}
 
