@@ -162,6 +162,7 @@ public class MenuPanel implements LoginHandler, PriceChangesUpdatedHandler {
 	}
 	
 	private void addShopMenuItems(MenuBar menu) {
+		menu.addItem(createArticleTypeMenuItem());
 		menu.addItem(createStockMenuItem());
 		menu.addItem(createUserProfileMenuItem());
 		menu.addItem(createSellArticleMenuItem());

@@ -26,7 +26,6 @@ import com.xfashion.client.event.ContentPanelResizeEvent;
 import com.xfashion.client.event.ContentPanelResizeHandler;
 import com.xfashion.client.notepad.ArticleAmountDataProvider;
 import com.xfashion.client.notepad.GetPriceFromArticleAmountStrategy;
-import com.xfashion.client.notepad.NotepadPanel;
 import com.xfashion.client.notepad.event.NotepadStartMaximizeEvent;
 import com.xfashion.client.notepad.event.NotepadStartMaximizeHandler;
 import com.xfashion.client.notepad.event.NotepadStartMinimizeEvent;

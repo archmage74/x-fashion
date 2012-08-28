@@ -53,7 +53,6 @@ public class NotepadPanel implements OpenNotepadHandler, SaveNotepadHandler, Del
 
 	protected Panel scrollPanel;
 	protected Panel resizePanel;
-//	protected Label headerLabel;
 	protected Label notepadInfoLabel1;
 	protected Label notepadInfoLabel2;
 	protected HorizontalPanel headerPanel;
@@ -175,12 +174,6 @@ public class NotepadPanel implements OpenNotepadHandler, SaveNotepadHandler, Del
 
 		return headerPanel;
 	}
-
-//	private Label createHeaderLabel() {
-//		headerLabel = new Label(textMessages.notepadManagementHeader());
-//		headerLabel.addStyleName("filterLabel attributeFilterLabel");
-//		return headerLabel;
-//	}
 
 	private Panel createNotepadInfoPanel() {
 		VerticalPanel vp = new VerticalPanel();
@@ -311,7 +304,6 @@ public class NotepadPanel implements OpenNotepadHandler, SaveNotepadHandler, Del
 	}
 
 	private void setHeaderInfo(String type, String info1, String info2) {
-//		headerLabel.setText(type);
 		notepadInfoLabel1.setText(info1);
 		notepadInfoLabel2.setText(info2);
 	}

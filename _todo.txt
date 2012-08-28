@@ -123,7 +123,24 @@ DONE - redesign of delivery notice
 DONE - screen width adaption: 1440 - different article-matrix
 DONE - notepad as popup
 REMOVED - image management has been automated; lazy loading of images in image management
+----- phone call on 2012-08-28
+DONE - bulk edit: size (or color does not work)
+DONE - article types for shops
 
+admin can add delivery notice to shop
+
+alle protokolle loeschen 
+
+sold article extension to all attributes
+
+-
+stock: alle von einem articles loeschen
+
+staging system
+
+statistic
+ detail -> so wie jetzt
+ tag/jahr/woche/monat statistic (KW 13)
 --------------------
 
 differenz anzeige - lieferschein vs bestandsaufnahme

@@ -128,7 +128,8 @@ public class ColorManagement implements CreateColorHandler, UpdateColorHandler, 
 		adminBus.addHandler(UpdateColorEvent.TYPE, this);
 		adminBus.addHandler(MoveUpColorEvent.TYPE, this);
 		adminBus.addHandler(MoveDownColorEvent.TYPE, this);
-		adminBus.addHandler(ShowChooseColorPopupEvent.TYPE, this);
+		
+		Xfashion.eventBus.addHandler(ShowChooseColorPopupEvent.TYPE, this);
 	}
 
 }
