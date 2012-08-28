@@ -54,6 +54,7 @@ import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.DeliveryNoticeDTO;
 import com.xfashion.shared.NotepadDTO;
 import com.xfashion.shared.UserCountry;
+import com.xfashion.shared.UserRole;
 
 public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemoveArticleHandler, PrintNotepadStickersHandler, ClearNotepadHandler,
 		OpenNotepadHandler, OpenDeliveryNoticeHandler, RequestOpenNotepadHandler, SaveDeliveryNoticeHandler, SaveNotepadHandler,
@@ -226,7 +227,7 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 
 	@Override
 	public void onRequestIntoStock(RequestIntoStockEvent event) {
-		if (currentDeliveryNotice != null) {
+		if (!UserManagement.hasRole(UserRole.SHOP) && currentDeliveryNotice != null) {
 			Xfashion.fireError(errorMessages.cannotAddDeliveryNoticeToStock());
 			return;
 		}
