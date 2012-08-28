@@ -33,9 +33,11 @@ import com.xfashion.client.event.ContentPanelResizeHandler;
 import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.client.tool.Buttons;
+import com.xfashion.client.user.UserManagement;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.CategoryDTO;
 import com.xfashion.shared.SizeDTO;
+import com.xfashion.shared.UserRole;
 
 public class ArticleTypePanel implements ContentPanelResizeHandler {
 
@@ -134,6 +136,15 @@ public class ArticleTypePanel implements ContentPanelResizeHandler {
 		headerPanel.add(nameSuggestPanel);
 		
 		headerPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		if (UserManagement.hasRole(UserRole.ADMIN, UserRole.DEVELOPER)) {
+			headerPanel.add(createAddArticleButton());
+			headerPanel.add(createEditBulkButton());
+		}
+
+		return headerPanel;
+	}
+
+	private Button createAddArticleButton() {
 		Button addArticleButton = new Button(textMessages.createArticle());
 		addArticleButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -141,14 +152,9 @@ public class ArticleTypePanel implements ContentPanelResizeHandler {
 				addArticle();
 			}
 		});
-		headerPanel.add(addArticleButton);
-
-		headerPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-		headerPanel.add(createEditBulkButton());
-
-		return headerPanel;
+		return addArticleButton;
 	}
-
+	
 	private Image createEditBulkButton() {
 		Image editBulkButton = Buttons.editBulk();
 		ClickHandler editBulkButtonClickHandler = new ClickHandler() {

@@ -129,8 +129,14 @@ DONE - article types for shops
 DONE - admin can add delivery notice to shop
 DONE - sold article extension to all attributes
 DONE - alle protokolle loeschen 
+DONE - bugfix: remove bulk edit button for shops
+DONE - delete all deactivated articles and all notepads/delivery notices
 
--
+delete notepad
+sort notepad / delivery notice (by creation date, desc)
+bugfix: why does delivery notice loading take so long
+
+----
 stock: delete all of one article type (beside delete 1)
 
 staging system
