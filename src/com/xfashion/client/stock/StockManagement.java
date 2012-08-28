@@ -53,21 +53,24 @@ import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.PromoDTO;
 import com.xfashion.shared.SoldArticleDTO;
+import com.xfashion.shared.UserDTO;
 import com.xfashion.shared.UserRole;
 
 public class StockManagement implements IntoStockHandler, SellFromStockHandler, RequestOpenSellPopupHandler, LoginHandler, ArticlesLoadedHandler,
-		RequestShowArticleTypeDetailsHandler, RequestShowArticleTypeDetailsByEanHandler, RemoveFromStockHandler, RefreshFilterHandler, LoadStockHandler {
+		RequestShowArticleTypeDetailsHandler, RequestShowArticleTypeDetailsByEanHandler, RemoveFromStockHandler, RefreshFilterHandler,
+		LoadStockHandler {
 
 	private UserServiceAsync userService = (UserServiceAsync) GWT.create(UserService.class);
 	private PromoServiceAsync promoService = (PromoServiceAsync) GWT.create(PromoService.class);
 
-	protected EventBus stockBus; 
-	
+	protected EventBus stockBus;
+
 	private HashMap<Long, PromoDTO> promos;
 
 	protected StockFilterProvider stockFilterProvider;
 	protected IArticleAmountComparator sortStrategy;
-	
+	protected UserDTO currentUser;
+
 	protected ArticleTypeManagement articleTypeManagement;
 
 	private StockPanel stockPanel;
@@ -75,7 +78,7 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 	private SellFromStockPopup sellFromStockPopup;
 	protected ArticleTypePopup articleTypePopup;
 
-	TextMessages textMessages;
+	protected TextMessages textMessages;
 
 	public StockManagement(ArticleFilterProvider articleFilterProvider, ArticleTypeManagement atm) {
 		this.articleTypeManagement = atm;
@@ -103,12 +106,22 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 			cnt += articleAmount.getAmount();
 		}
 		final long addedArticleNumber = cnt;
-		YesNoPopup confirmIntoStock = new YesNoPopup(textMessages.confirmIntoStock(addedArticleNumber), new YesNoCallback() {
+		confirmIntoStock(currentUser, event.getNotepad().getArticles(), addedArticleNumber);
+	}
+	
+	private void confirmIntoStock(final UserDTO user, final Collection<ArticleAmountDTO> articles, final long addedArticleNumber) {
+		String confirmMessage = null;
+		if (currentUser == null) {
+			confirmMessage = textMessages.confirmIntoStock(addedArticleNumber);
+		} else {
+			confirmMessage = textMessages.confirmForeignIntoStock(addedArticleNumber, currentUser.getShop().getShortName());
+		}
+
+		YesNoPopup confirmIntoStock = new YesNoPopup(confirmMessage, new YesNoCallback() {
 			@Override
 			public void yes() {
-				intoStock(event.getNotepad().getArticles(), addedArticleNumber);
+				intoStock(user, articles, addedArticleNumber);
 			}
-
 			@Override
 			public void no() {
 				// nothing to do
@@ -117,7 +130,7 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 		confirmIntoStock.show();
 	}
 
-	private void intoStock(final Collection<ArticleAmountDTO> articles, final long addedArticleNumber) {
+	private void intoStock(final UserDTO user, final Collection<ArticleAmountDTO> articles, final long addedArticleNumber) {
 		AsyncCallback<Collection<ArticleAmountDTO>> callback = new AsyncCallback<Collection<ArticleAmountDTO>>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -130,7 +143,11 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 				Xfashion.fireError(textMessages.intoStockResult(addedArticleNumber));
 			}
 		};
-		userService.addStockEntries(articles, callback);
+		if (user == null) {
+			userService.addStockEntries(articles, callback);
+		} else {
+			userService.addStockEntriesToUser(user.getKey(), articles, callback);
+		}
 		Xfashion.eventBus.fireEvent(new ClearNotepadEvent());
 	}
 
@@ -207,16 +224,17 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 			if (articleTypePopup == null) {
 				articleTypePopup = new ArticleTypeDetailPopup(stockFilterProvider, stockFilterProvider.getStockProvider());
 			}
-			ArticleTypeDTO articleType = stockFilterProvider.getArticleTypeProvider().retrieveArticleType(event.getEan()); 
+			ArticleTypeDTO articleType = stockFilterProvider.getArticleTypeProvider().retrieveArticleType(event.getEan());
 			articleTypePopup.showPopup(articleType);
 		}
 	}
 
 	@Override
 	public void onLoadStock(LoadStockEvent event) {
+		currentUser = event.getUser();
 		readStock(event.getUser().getKey());
 	}
-	
+
 	@Override
 	public void onLogin(LoginEvent event) {
 		readStock(null);

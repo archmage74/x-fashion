@@ -596,37 +596,12 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 	}
 
 	private Shop addStockEntries(PersistenceManager pm, Map<String, ArticleAmountDTO> dtos) {
-		Collection<ArticleAmountDTO> toAdd = new ArrayList<ArticleAmountDTO>(dtos.values());
-
 		Transaction tx = pm.currentTransaction();
 		Shop shop = null;
 		try {
 			tx.begin();
 			shop = readOwnStock(pm);
-
-			for (StockArticle stockArticle : shop.getArticles()) {
-				ArticleAmountDTO dto = dtos.get(KeyFactory.keyToString(stockArticle.getArticleTypeKey()));
-				if (dto != null) {
-					stockArticle.setAmount(stockArticle.getAmount() + dto.getAmount());
-					toAdd.remove(dto);
-				}
-			}
-			pm.flush();
-
-			for (ArticleAmountDTO dto : toAdd) {
-				StockArticle stockArticle = new StockArticle(dto);
-				shop.addArticle(stockArticle);
-				if (stockArticle.getKey() == null) {
-					log.warning("added stockArticle, key is still null");
-				}
-			}
-			pm.flush();
-			
-			for (ArticleAmountDTO dto : dtos.values()) {
-				shop.addAddedArticle(new AddedArticle(dto));
-			}
-			pm.flush();
-
+			addStockEntriesToShop(pm, shop, dtos);
 			pm.makePersistent(shop);
 			tx.commit();
 		} catch (Exception e) {
@@ -639,6 +614,75 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		return shop;
 	}
 
+	@Override
+	public Collection<ArticleAmountDTO> addStockEntriesToUser(String userKey, Collection<ArticleAmountDTO> dtos) {
+		Map<String, ArticleAmountDTO> dtoMap = new HashMap<String, ArticleAmountDTO>();
+		for (ArticleAmountDTO dto : dtos) {
+			dtoMap.put(dto.getArticleTypeKey(), dto);
+		}
+		Shop shop = null;
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			shop = addStockEntriesToUser(pm, userKey, dtoMap);
+		} catch (Exception e) {
+			log.warning("error while adding articles to stock: " + e.getMessage());
+		} finally {
+			pm.close();
+		}
+		if (shop != null) {
+			dtos = shop.createStock();
+		}
+		
+		return dtos;
+	}
+
+	private Shop addStockEntriesToUser(PersistenceManager pm, String userKey, Map<String, ArticleAmountDTO> dtos) {
+		Transaction tx = pm.currentTransaction();
+		Shop shop = null;
+		try {
+			tx.begin();
+			User user = readUser(pm, userKey);
+			shop = user.getShop();
+			addStockEntriesToShop(pm, shop, dtos);
+			pm.makePersistent(shop);
+			tx.commit();
+		} catch (Exception e) {
+			log.warning("error while adding articles to stock: " + e.getMessage());
+		} finally {
+			if (tx.isActive()) {
+				tx.rollback();
+			}
+		}
+		return shop;
+	}
+
+	private void addStockEntriesToShop(PersistenceManager pm, Shop shop, Map<String, ArticleAmountDTO> dtos) {
+		Collection<ArticleAmountDTO> toAdd = new ArrayList<ArticleAmountDTO>(dtos.values());
+
+		for (StockArticle stockArticle : shop.getArticles()) {
+			ArticleAmountDTO dto = dtos.get(KeyFactory.keyToString(stockArticle.getArticleTypeKey()));
+			if (dto != null) {
+				stockArticle.setAmount(stockArticle.getAmount() + dto.getAmount());
+				toAdd.remove(dto);
+			}
+		}
+		pm.flush();
+
+		for (ArticleAmountDTO dto : toAdd) {
+			StockArticle stockArticle = new StockArticle(dto);
+			shop.addArticle(stockArticle);
+			if (stockArticle.getKey() == null) {
+				log.warning("added stockArticle, key is still null");
+			}
+		}
+		pm.flush();
+		
+		for (ArticleAmountDTO dto : dtos.values()) {
+			shop.addAddedArticle(new AddedArticle(dto));
+		}
+		pm.flush();
+	}
+	
 	@Override
 	public Collection<ArticleAmountDTO> sellArticlesFromStock(Collection<SoldArticleDTO> dtos) {
 		Collection<ArticleAmountDTO> stock = null;

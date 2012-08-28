@@ -73,6 +73,8 @@ public interface UserService extends RemoteService {
 	List<ArticleAmountDTO> readStockOfUser(String userKey) throws IllegalArgumentException;
 	
 	Collection<ArticleAmountDTO> addStockEntries(Collection<ArticleAmountDTO> dtos) throws IllegalArgumentException;
+
+	Collection<ArticleAmountDTO> addStockEntriesToUser(String userKey, Collection<ArticleAmountDTO> dtos) throws IllegalArgumentException;
 		
 	void updateStockEntry(ArticleAmountDTO articleAmount) throws IllegalArgumentException;
 	

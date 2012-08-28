@@ -107,8 +107,6 @@ public class StockPanel implements NotepadStartMinimizeHandler, NotepadStartMaxi
 			panel.add(createColorPanel(articleTypeManagement));
 			panel.add(createSizePanel(articleTypeManagement));
 			panel.add(createArticlePanel(stockProvider));
-//			NotepadPanel notepadPanel = new NotepadPanel(stockFilterProvider);
-//			panel.add(notepadPanel.createPanel(notepadArticleProvider));
 		}
 		return panel;
 	}

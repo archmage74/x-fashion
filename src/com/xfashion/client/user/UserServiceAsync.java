@@ -61,6 +61,8 @@ public interface UserServiceAsync {
 	
 	void addStockEntries(Collection<ArticleAmountDTO> dtos, AsyncCallback<Collection<ArticleAmountDTO>> callback);
 	
+	void addStockEntriesToUser(String userKey, Collection<ArticleAmountDTO> dtos, AsyncCallback<Collection<ArticleAmountDTO>> callback);
+
 	void updateStockEntry(ArticleAmountDTO articleAmount, AsyncCallback<Void> callback);
 
 	void sellArticlesFromStock(Collection<SoldArticleDTO> articles, AsyncCallback<Collection<ArticleAmountDTO>> callback);

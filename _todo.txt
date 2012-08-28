@@ -126,21 +126,22 @@ REMOVED - image management has been automated; lazy loading of images in image m
 ----- phone call on 2012-08-28
 DONE - bulk edit: size (or color does not work)
 DONE - article types for shops
-
-admin can add delivery notice to shop
-
-alle protokolle loeschen 
+DONE - admin can add delivery notice to shop
 
 sold article extension to all attributes
 
+alle protokolle loeschen 
+
 -
-stock: alle von einem articles loeschen
+stock: delete all of one article type (beside delete 1)
 
 staging system
 
 statistic
  detail -> so wie jetzt
- tag/jahr/woche/monat statistic (KW 13)
+ tag/jahr/woche(KW 13)/monat statistic 
+ % = ertrag / umsatz
+ flop: to be defined by roman
 --------------------
 
 differenz anzeige - lieferschein vs bestandsaufnahme

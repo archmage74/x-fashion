@@ -156,7 +156,6 @@ public class NotepadPanel implements OpenNotepadHandler, SaveNotepadHandler, Del
 		headerPanel.addStyleName("filterHeader");
 		headerPanel.setWidth(PANEL_MAX_WIDTH + "px");
 
-//		headerPanel.add(createHeaderLabel());
 		headerPanel.add(createNotepadInfoPanel());
 
 		HorizontalPanel toolPanel = new HorizontalPanel();

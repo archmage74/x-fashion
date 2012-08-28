@@ -94,6 +94,7 @@ public interface TextMessages extends Messages {
 
 	String stockManagementHeader();
 	String confirmIntoStock(long addedArticleNumber);
+	String confirmForeignIntoStock(long addedArticleNumber, String shopName);
 	String intoStockResult(long addedArticleNumber);
 	String sellStockResult(long soldArticleNumber);
 	String sellArticles();
