@@ -25,6 +25,21 @@ public class SoldArticle {
 	protected String articleName;
 
 	@Persistent
+	protected String category;
+	
+	@Persistent
+	protected String style;
+	
+	@Persistent
+	protected String brand;
+	
+	@Persistent
+	protected String color;
+	
+	@Persistent
+	protected String size;
+	
+	@Persistent
 	protected Integer amount;
 
 	@Persistent
@@ -55,6 +70,11 @@ public class SoldArticle {
 	public SoldArticle(SoldArticleDTO dto) {
 		this.articleTypeKey = KeyFactory.stringToKey(dto.getArticleTypeKey());
 		this.articleName = dto.getArticleName();
+		this.category = dto.getCategory();
+		this.style = dto.getStyle();
+		this.brand = dto.getBrand();
+		this.color = dto.getColor();
+		this.size = dto.getSize();
 		this.amount = dto.getAmount();
 		this.shopKey = KeyFactory.stringToKey(dto.getShopKey());
 		this.shopName = dto.getShopName();
@@ -72,6 +92,11 @@ public class SoldArticle {
 		dto.setKey(getKeyAsString());
 		dto.setArticleTypeKey(getArticleTypeKeyAsString());
 		dto.setArticleName(getArticleName());
+		dto.setCategory(getCategory());
+		dto.setStyle(getStyle());
+		dto.setBrand(getBrand());
+		dto.setColor(getColor());
+		dto.setSize(getSize());
 		dto.setAmount(getAmount());
 		dto.setShopKey(getShopKeyAsString());
 		dto.setShopName(getShopName());
@@ -109,6 +134,46 @@ public class SoldArticle {
 
 	public void setArticleName(String articleName) {
 		this.articleName = articleName;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
+	public String getStyle() {
+		return style;
+	}
+
+	public void setStyle(String style) {
+		this.style = style;
+	}
+
+	public String getBrand() {
+		return brand;
+	}
+
+	public void setBrand(String brand) {
+		this.brand = brand;
+	}
+
+	public String getColor() {
+		return color;
+	}
+
+	public void setColor(String color) {
+		this.color = color;
+	}
+
+	public String getSize() {
+		return size;
+	}
+
+	public void setSize(String size) {
+		this.size = size;
 	}
 
 	public Integer getAmount() {

@@ -106,7 +106,8 @@ public abstract class ArticleTable<T> {
 		}
 	}
 	
-	protected String resolveCategory(ArticleTypeDTO at) {
+	protected String resolveCategory(T a) {
+		ArticleTypeDTO at = articleProvider.retrieveArticleType(a);
 		CategoryDTO category = null;
 		if (at != null) {
 			category = provider.getCategoryProvider().resolveData(at.getCategoryKey());
@@ -118,7 +119,8 @@ public abstract class ArticleTable<T> {
 		return name;
 	}
 
-	protected String resolveStyle(ArticleTypeDTO at) {
+	protected String resolveStyle(T a) {
+		ArticleTypeDTO at = articleProvider.retrieveArticleType(a);
 		StyleDTO style = null;
 		if (at != null) {
 			style = provider.getCategoryProvider().resolveStyle(at.getStyleKey());
@@ -130,7 +132,8 @@ public abstract class ArticleTable<T> {
 		return name;
 	}
 
-	protected String resolveBrand(ArticleTypeDTO at) {
+	protected String resolveBrand(T a) {
+		ArticleTypeDTO at = articleProvider.retrieveArticleType(a);
 		BrandDTO brand = null;
 		if (at != null) {
 			brand = provider.getBrandProvider().resolveData(at.getBrandKey());
@@ -142,7 +145,8 @@ public abstract class ArticleTable<T> {
 		return name;
 	}
 
-	protected String resolveName(ArticleTypeDTO at) {
+	protected String resolveName(T a) {
+		ArticleTypeDTO at = articleProvider.retrieveArticleType(a);
 		String name = textMessages.unknownName();
 		if (at != null && at.getName() != null) {
 			name = at.getName();
@@ -150,7 +154,8 @@ public abstract class ArticleTable<T> {
 		return name;
 	}
 
-	protected String resolveColor(ArticleTypeDTO at) {
+	protected String resolveColor(T a) {
+		ArticleTypeDTO at = articleProvider.retrieveArticleType(a);
 		ColorDTO color = null;
 		if (at != null) {
 			color = provider.getColorProvider().resolveData(at.getColorKey());
@@ -162,7 +167,8 @@ public abstract class ArticleTable<T> {
 		return name;
 	}
 
-	protected String resolveSize(ArticleTypeDTO at) {
+	protected String resolveSize(T a) {
+		ArticleTypeDTO at = articleProvider.retrieveArticleType(a);
 		SizeDTO size = null;
 		if (at != null) {
 			size = provider.getSizeProvider().resolveData(at.getSizeKey());
@@ -178,10 +184,9 @@ public abstract class ArticleTable<T> {
 		Column<T, SafeHtml> colorSize = new Column<T, SafeHtml>(new SafeHtmlCell()) {
 			@Override
 			public SafeHtml getValue(T a) {
-				ArticleTypeDTO at = ap.retrieveArticleType(a);
-				String category = resolveCategory(at);
-				String brand = resolveBrand(at);
-				String style = resolveStyle(at);
+				String category = resolveCategory(a);
+				String brand = resolveBrand(a);
+				String style = resolveStyle(a);
 				return matrixTemplates.cbsColumn(category, brand, style);
 			}
 		};
@@ -202,10 +207,9 @@ public abstract class ArticleTable<T> {
 		Column<T, SafeHtml> colorSize = new Column<T, SafeHtml>(new SafeHtmlCell()) {
 			@Override
 			public SafeHtml getValue(T a) {
-				ArticleTypeDTO at = ap.retrieveArticleType(a);
-				String name = resolveName(at);
-				String color = resolveColor(at);
-				String size = resolveSize(at);
+				String name = resolveName(a);
+				String color = resolveColor(a);
+				String size = resolveSize(a);
 				return matrixTemplates.ncsColumn(name, color, size);
 			}
 		};

@@ -38,4 +38,59 @@ public class SoldArticleTable extends ArticleTable<SoldArticleDTO> {
 		return price;
 	}
 
+	@Override
+	protected String resolveCategory(SoldArticleDTO a) {
+		String s = a.getCategory();
+		if (s == null) {
+			s = textMessages.unknownCategory();
+		}
+		return s;
+	}
+
+	@Override
+	protected String resolveStyle(SoldArticleDTO a) {
+		String s = a.getStyle();
+		if (s == null) {
+			s = textMessages.unknownStyle();
+		}
+		return s;
+	}
+
+	@Override
+	protected String resolveBrand(SoldArticleDTO a) {
+		String s = a.getBrand();
+		if (s == null) {
+			s = textMessages.unknownBrand();
+		}
+		return s;
+	}
+
+	@Override
+	protected String resolveName(SoldArticleDTO a) {
+		String s = a.getArticleName();
+		if (s == null) {
+			s = textMessages.unknownName();
+		}
+		return s;
+
+	}
+
+	@Override
+	protected String resolveColor(SoldArticleDTO a) {
+		String s = a.getColor();
+		if (s == null) {
+			s = textMessages.unknownColor();
+		}
+		return s;
+	}
+
+	@Override
+	protected String resolveSize(SoldArticleDTO a) {
+		String s = a.getSize();
+		if (s == null) {
+			s = textMessages.unknownSize();
+		}
+		return s;
+	}
+	
 }

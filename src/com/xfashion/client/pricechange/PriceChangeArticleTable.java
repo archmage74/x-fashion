@@ -10,7 +10,6 @@ import com.xfashion.client.at.IProvideArticleFilter;
 import com.xfashion.client.at.price.IGetPriceStrategy;
 import com.xfashion.client.at.render.PriceChangePriceCell;
 import com.xfashion.shared.ArticleAmountDTO;
-import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.PriceChangeDTO;
 
 public class PriceChangeArticleTable extends ArticleTable<ArticleAmountDTO> {
@@ -38,10 +37,9 @@ public class PriceChangeArticleTable extends ArticleTable<ArticleAmountDTO> {
 		Column<ArticleAmountDTO, SafeHtml> colorSize = new Column<ArticleAmountDTO, SafeHtml>(new SafeHtmlCell()) {
 			@Override
 			public SafeHtml getValue(ArticleAmountDTO a) {
-				ArticleTypeDTO at = ap.retrieveArticleType(a);
-				String category = resolveCategory(at);
-				String brand = resolveBrand(at);
-				String style = resolveStyle(at);
+				String category = resolveCategory(a);
+				String brand = resolveBrand(a);
+				String style = resolveStyle(a);
 				if (isPriceChangeAccepted(a)) {
 					return matrixTemplates.cbsColumn(category, brand, style);
 				} else {
@@ -57,10 +55,9 @@ public class PriceChangeArticleTable extends ArticleTable<ArticleAmountDTO> {
 		Column<ArticleAmountDTO, SafeHtml> colorSize = new Column<ArticleAmountDTO, SafeHtml>(new SafeHtmlCell()) {
 			@Override
 			public SafeHtml getValue(ArticleAmountDTO a) {
-				ArticleTypeDTO at = ap.retrieveArticleType(a);
-				String name = resolveName(at);
-				String color = resolveColor(at);
-				String size = resolveSize(at);
+				String name = resolveName(a);
+				String color = resolveColor(a);
+				String size = resolveSize(a);
 				if (isPriceChangeAccepted(a)) {
 					return matrixTemplates.ncsColumn(name, color, size);
 				} else {

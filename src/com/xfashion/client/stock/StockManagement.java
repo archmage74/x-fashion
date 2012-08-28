@@ -154,7 +154,7 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 	@Override
 	public void onRequestOpenSellPopup(RequestOpenSellPopupEvent event) {
 		if (sellFromStockPopup == null) {
-			sellFromStockPopup = new SellFromStockPopup(stockFilterProvider.getStockProvider());
+			sellFromStockPopup = new SellFromStockPopup(stockFilterProvider.getStockProvider(), stockFilterProvider);
 		}
 		sellFromStockPopup.show(promos);
 	}

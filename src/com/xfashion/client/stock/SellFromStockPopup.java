@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.xfashion.client.Formatter;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleTypeManagement;
+import com.xfashion.client.at.IProvideArticleFilter;
 import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.client.stock.event.SellFromStockEvent;
@@ -45,14 +46,17 @@ public class SellFromStockPopup {
 	protected TextBox eanTextBox;
 	protected Label lastArticlePriceLabel;
 
+	protected SoldArticleFactory soldArticleFactory;
 	protected TextMessages textMessages;
 	protected ErrorMessages errorMessages;
 	protected Formatter formatter;
 
-	public SellFromStockPopup(StockDataProvider stockProvider) {
+	public SellFromStockPopup(StockDataProvider stockProvider, IProvideArticleFilter filterProvider) {
 		this.stockProvider = stockProvider;
 		this.sellArticles = new ArrayList<SoldArticleDTO>();
 		this.articleAmounts = new HashMap<Long, ArticleAmountDTO>();
+		
+		this.soldArticleFactory = new SoldArticleFactory(filterProvider);
 		this.textMessages = GWT.create(TextMessages.class);
 		this.errorMessages = GWT.create(ErrorMessages.class);
 		this.formatter = Formatter.getInstance();
@@ -141,7 +145,7 @@ public class SellFromStockPopup {
 
 		ArticleTypeDTO articleType = stockProvider.retrieveArticleType(ean);
 		Integer sellPrice = ArticleTypeManagement.getArticleTypePriceStrategy.getPrice(articleType);
-		SoldArticleDTO sellArticle = new SoldArticleDTO(articleType, sellPrice, UserManagement.user.getShop(), 1);
+		SoldArticleDTO sellArticle = soldArticleFactory.createSoldArticleDTO(articleType, sellPrice, UserManagement.user.getShop());
 
 		ArticleAmountDTO sellArticleAmount = articleAmounts.get(ean);
 		if (sellArticleAmount == null) {

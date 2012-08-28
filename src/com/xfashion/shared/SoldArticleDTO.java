@@ -12,6 +12,16 @@ public class SoldArticleDTO implements IsSerializable {
 	
 	protected String articleName;
 	
+	protected String category;
+	
+	protected String style;
+	
+	protected String brand;
+	
+	protected String color;
+	
+	protected String size;
+	
 	protected Integer amount;
 	
 	protected String shopKey;
@@ -33,17 +43,6 @@ public class SoldArticleDTO implements IsSerializable {
 
 	public SoldArticleDTO() {
 		
-	}
-	
-	public SoldArticleDTO(ArticleTypeDTO articleTypeDTO, Integer sellPrice, ShopDTO shopDTO, Integer amount) {
-		this.articleTypeKey = articleTypeDTO.getKey();
-		this.articleName = articleTypeDTO.getName();
-		this.amount = amount;
-		this.shopKey = shopDTO.getKeyString();
-		this.shopName = shopDTO.getName();
-		this.buyPrice = articleTypeDTO.getBuyPrice();
-		this.sellPrice = sellPrice;
-		this.originalSellPrice = sellPrice;
 	}
 	
 	public String getKey() {
@@ -68,6 +67,46 @@ public class SoldArticleDTO implements IsSerializable {
 
 	public void setArticleName(String articleName) {
 		this.articleName = articleName;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
+	public String getStyle() {
+		return style;
+	}
+
+	public void setStyle(String style) {
+		this.style = style;
+	}
+
+	public String getBrand() {
+		return brand;
+	}
+
+	public void setBrand(String brand) {
+		this.brand = brand;
+	}
+
+	public String getColor() {
+		return color;
+	}
+
+	public void setColor(String color) {
+		this.color = color;
+	}
+
+	public String getSize() {
+		return size;
+	}
+
+	public void setSize(String size) {
+		this.size = size;
 	}
 
 	public Integer getAmount() {

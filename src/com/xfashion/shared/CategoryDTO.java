@@ -22,6 +22,15 @@ public class CategoryDTO extends FilterCellData implements IsSerializable {
 	public List<StyleDTO> getStyles() {
 		return styles;
 	}
+	
+	public StyleDTO getStyleByStyleKey(String styleKey) {
+		for (StyleDTO style : styles) {
+			if (styleKey.equals(style.getKey())) {
+				return style;
+			}
+		}
+		return null;
+	}
 
 	public void setStyles(List<StyleDTO> styles) {
 		this.styles = styles;

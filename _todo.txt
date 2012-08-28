@@ -127,10 +127,8 @@ REMOVED - image management has been automated; lazy loading of images in image m
 DONE - bulk edit: size (or color does not work)
 DONE - article types for shops
 DONE - admin can add delivery notice to shop
-
-sold article extension to all attributes
-
-alle protokolle loeschen 
+DONE - sold article extension to all attributes
+DONE - alle protokolle loeschen 
 
 -
 stock: delete all of one article type (beside delete 1)
