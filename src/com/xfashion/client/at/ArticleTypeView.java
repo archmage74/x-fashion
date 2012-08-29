@@ -155,8 +155,6 @@ public class ArticleTypeView implements NotepadStartMaximizeHandler, NotepadStar
 	}
 
 	private void registerForEvents() {
-		adminBus.addHandler(NotepadStartMaximizeEvent.TYPE, this);
-		adminBus.addHandler(NotepadStartMinimizeEvent.TYPE, this);
 		adminBus.addHandler(RefreshFilterEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(RequestShowArticleTypeDetailsEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(RequestShowArticleTypeDetailsByEanEvent.TYPE, this);

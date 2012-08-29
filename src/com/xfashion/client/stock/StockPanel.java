@@ -102,7 +102,7 @@ public class StockPanel implements NotepadStartMinimizeHandler, NotepadStartMaxi
 			panel = new HorizontalPanel();
 			panel.add(createCategoryPanel(articleTypeManagement));
 			panel.add(createBrandPanel(articleTypeManagement));
-			panel.add(createStylePanel(articleTypeManagement));
+			panel.add(createStylePanel(articleTypeManagement, categoryPanel));
 			panel.add(createNamePanel());
 			panel.add(createColorPanel(articleTypeManagement));
 			panel.add(createSizePanel(articleTypeManagement));
@@ -147,8 +147,8 @@ public class StockPanel implements NotepadStartMinimizeHandler, NotepadStartMaxi
 		return brandPanel.createAdminPanel();
 	}
 
-	private Widget createStylePanel(ArticleTypeManagement articleTypeManagement) {
-		stylePanel = articleTypeManagement.getCategoryManagement().createStylePanel(stockBus);
+	private Widget createStylePanel(ArticleTypeManagement articleTypeManagement, CategoryPanel categoryPanel) {
+		stylePanel = articleTypeManagement.getCategoryManagement().createStylePanel(categoryPanel);
 		return stylePanel.createAdminPanel();
 	}
 

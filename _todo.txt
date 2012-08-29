@@ -137,6 +137,9 @@ DONE - bugfix: why does delivery notice loading take so long
 DONE - sort notepad / delivery notice (by creation date, desc)
 DONE - delete notepad
 DONE - remove all of one article type from stock
+DONE - bugfix: styles for stock are not displayed
+
+refresh for everything (like re-login)
 
 staging system
 

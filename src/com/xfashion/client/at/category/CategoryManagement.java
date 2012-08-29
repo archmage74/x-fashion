@@ -21,7 +21,6 @@ import com.xfashion.client.at.category.event.ShowChooseCategoryAndStylePopupEven
 import com.xfashion.client.at.category.event.ShowChooseCategoryAndStylePopupHandler;
 import com.xfashion.client.at.category.event.UpdateCategoryEvent;
 import com.xfashion.client.at.category.event.UpdateCategoryHandler;
-import com.xfashion.client.at.style.StyleDataProvider;
 import com.xfashion.client.at.style.StyleEditor;
 import com.xfashion.client.at.style.StylePanel;
 import com.xfashion.client.at.style.event.CreateStyleEvent;
@@ -108,9 +107,10 @@ DeleteCategoryHandler, MoveUpCategoryHandler, MoveDownCategoryHandler, ShowChoos
 		return categoryPanel;
 	}
 
-	public StylePanel createStylePanel(EventBus eventBus) {
-		StyleDataProvider provider = new StyleDataProvider(articleTypeProvider, eventBus);
-		StylePanel stylePanel = new StylePanel(provider, eventBus);
+	public StylePanel createStylePanel(CategoryPanel categoryPanel) {
+		EventBus eventBus = categoryPanel.getEventBus();
+		CategoryDataProvider cdp = (CategoryDataProvider) categoryPanel.getDataProvider();
+		StylePanel stylePanel = new StylePanel(cdp.getStyleProvider(), eventBus);
 		stylePanels.add(stylePanel);
 		return stylePanel;
 	}

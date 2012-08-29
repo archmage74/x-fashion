@@ -99,6 +99,7 @@ public class CategoryDataProvider extends FilterDataProvider<CategoryDTO> implem
 				scd.setSelected(styleFilter.contains(scd.getKey()));
 			}
 			refresh();
+			styleProvider.refresh();
 		} else {
 			styleProvider.clearAllItems();
 		}

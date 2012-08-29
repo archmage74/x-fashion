@@ -69,6 +69,10 @@ public abstract class FilterPanel<T extends FilterCellData> implements IsMinimiz
 	
 	public abstract void redrawPanel();
 
+	public EventBus getEventBus() {
+		return eventBus;
+	}
+
 	public FilterEditor<T> getFilterEditor() {
 		return filterEditor;
 	}
