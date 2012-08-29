@@ -136,8 +136,7 @@ DONE - bugfix: bulk edit: only partially executed - why? improvement: made bulk 
 DONE - bugfix: why does delivery notice loading take so long
 DONE - sort notepad / delivery notice (by creation date, desc)
 DONE - delete notepad
-
-stock: delete all of one article type (beside delete 1)
+DONE - remove all of one article type from stock
 
 staging system
 

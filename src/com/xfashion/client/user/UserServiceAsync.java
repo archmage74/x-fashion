@@ -89,7 +89,7 @@ public interface UserServiceAsync {
 	
 	void readOwnWareInput(int from, int to, AsyncCallback<List<AddedArticleDTO>> callback);
 
-	void removeOneFromStock(ArticleAmountDTO dto, AsyncCallback<ArticleAmountDTO> callback);
+	void removeFromStock(ArticleAmountDTO dto, int amount, AsyncCallback<ArticleAmountDTO> callback);
 
 	void readOwnRemovedArticles(int from, int to, AsyncCallback<List<RemovedArticleDTO>> callback);
 

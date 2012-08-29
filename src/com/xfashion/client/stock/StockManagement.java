@@ -34,6 +34,7 @@ import com.xfashion.client.notepad.event.IntoStockEvent;
 import com.xfashion.client.notepad.event.IntoStockHandler;
 import com.xfashion.client.promo.PromoService;
 import com.xfashion.client.promo.PromoServiceAsync;
+import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.client.stock.event.LoadStockEvent;
 import com.xfashion.client.stock.event.LoadStockHandler;
@@ -79,6 +80,7 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 	protected ArticleTypePopup articleTypePopup;
 
 	protected TextMessages textMessages;
+	protected ErrorMessages errorMessages;
 
 	public StockManagement(ArticleFilterProvider articleFilterProvider, ArticleTypeManagement atm) {
 		this.articleTypeManagement = atm;
@@ -184,6 +186,11 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 	@Override
 	public void onRemoveFromStock(RemoveFromStockEvent event) {
 		final ArticleAmountDTO articleToRemove = stockFilterProvider.getStockProvider().getStock().get(event.getArticleType().getKey());
+		final int amount = event.getAmount();
+		if (amount > articleToRemove.getAmount()) {
+			Xfashion.fireError(errorMessages.cannotRemoveMoreThanPresent(amount, articleToRemove.getAmount()));
+			return;
+		}
 		AsyncCallback<ArticleAmountDTO> callback = new AsyncCallback<ArticleAmountDTO>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -195,7 +202,7 @@ public class StockManagement implements IntoStockHandler, SellFromStockHandler, 
 				storeRemoveResult(articleToRemove, result);
 			}
 		};
-		userService.removeOneFromStock(articleToRemove, callback);
+		userService.removeFromStock(articleToRemove, amount, callback);
 	}
 
 	protected void storeRemoveResult(ArticleAmountDTO articleToRemove, ArticleAmountDTO result) {

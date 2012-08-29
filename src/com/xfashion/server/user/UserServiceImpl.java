@@ -902,10 +902,10 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 	}
 	
 	@Override
-	public ArticleAmountDTO removeOneFromStock(ArticleAmountDTO dto) throws IllegalArgumentException {
+	public ArticleAmountDTO removeFromStock(ArticleAmountDTO dto, int amount) throws IllegalArgumentException {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
-			StockArticle articleAmount = removeOneFromStock(pm, dto);
+			StockArticle articleAmount = removeFromStock(pm, dto, amount);
 			if (articleAmount != null) {
 				dto = articleAmount.createDTO();
 			} else {
@@ -917,7 +917,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		return dto;
 	}
 	
-	private StockArticle removeOneFromStock(PersistenceManager pm, ArticleAmountDTO dto) {
+	private StockArticle removeFromStock(PersistenceManager pm, ArticleAmountDTO dto, int amount) {
 		Transaction tx = pm.currentTransaction();
 		StockArticle foundArticle = null;
 		try {
@@ -926,11 +926,14 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 			Key key = KeyFactory.stringToKey(dto.getKey());
 			for (StockArticle articleAmount : shop.getArticles()) {
 				if (key.equals(articleAmount.getKey())) {
-					articleAmount.setAmount(articleAmount.getAmount() - 1);
+					if (articleAmount.getAmount() < amount) {
+						throw new RuntimeException("Cannot remove " + amount + " because only " + articleAmount.getAmount() + " are present.");
+					}
+					articleAmount.setAmount(articleAmount.getAmount() - amount);
 
 					RemovedArticle removedArticle = new RemovedArticle();
 					removedArticle.setArticleTypeKey(articleAmount.getArticleTypeKey());
-					removedArticle.setAmount(1);
+					removedArticle.setAmount(amount);
 					shop.addRemovedArticle(removedArticle);
 
 					if (articleAmount.getAmount() <= 0) {

@@ -100,7 +100,7 @@ public interface UserService extends RemoteService {
 
 	List<AddedArticleDTO> readOwnWareInput(int from, int to) throws IllegalArgumentException;
 	
-	ArticleAmountDTO removeOneFromStock(ArticleAmountDTO dto) throws IllegalArgumentException;
+	ArticleAmountDTO removeFromStock(ArticleAmountDTO dto, int amount) throws IllegalArgumentException;
 	
 	List<RemovedArticleDTO> readOwnRemovedArticles(int from, int to) throws IllegalArgumentException;
 	

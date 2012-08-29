@@ -91,8 +91,8 @@ public interface TextMessages extends Messages {
 	String intoStockHint();
 	String minWinHint();
 	String stock();
-	String removeFromStock();
-	String confirmRemoveFromStock();
+	String removeFromStock(int amount);
+	String confirmRemoveFromStock(@PluralCount int amount);
 
 	String stockManagementHeader();
 	String confirmIntoStock(long addedArticleNumber);

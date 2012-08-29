@@ -8,15 +8,26 @@ public class RemoveFromStockEvent extends Event<RemoveFromStockHandler> {
 	public static Type<RemoveFromStockHandler> TYPE = new Type<RemoveFromStockHandler>();
 	
 	protected ArticleTypeDTO articleType;
+	
+	protected int amount;
 
 	public RemoveFromStockEvent(ArticleTypeDTO articleType) {
+		this(articleType, 1);
+	}
+	
+	public RemoveFromStockEvent(ArticleTypeDTO articleType, int amount) {
 		this.articleType = articleType;
+		this.amount = amount;
 	}
 	
 	public ArticleTypeDTO getArticleType() {
 		return articleType;
 	}
 	
+	public int getAmount() {
+		return amount;
+	}
+
 	@Override
 	public Type<RemoveFromStockHandler> getAssociatedType() {
 		return TYPE;

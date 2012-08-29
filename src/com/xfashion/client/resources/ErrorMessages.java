@@ -56,4 +56,6 @@ public interface ErrorMessages extends Messages {
 	String onlyOnePromoAllowed();
 	String bothPromoValueSpecified();
 
+	String cannotRemoveMoreThanPresent(int wantToRemove, Integer present);
+
 }
