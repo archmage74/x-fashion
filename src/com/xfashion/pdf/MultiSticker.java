@@ -1,8 +1,6 @@
 package com.xfashion.pdf;
 
 import java.io.IOException;
-import java.text.NumberFormat;
-import java.util.Locale;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
@@ -10,8 +8,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.xfashion.client.notepad.NotepadService;
+import com.xfashion.client.user.UserService;
 import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.NotepadDTO;
+import com.xfashion.shared.UserDTO;
 
 public class MultiSticker extends HttpServlet {
 
@@ -32,11 +32,11 @@ public class MultiSticker extends HttpServlet {
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
 		NotepadDTO notepad = (NotepadDTO) req.getSession().getAttribute(NotepadService.SESSION_NOTEPAD);
+		UserDTO user = (UserDTO) req.getSession().getAttribute(UserService.SESSION_USER);
 		
 		res.setContentType("text/html; charset=iso-8859-15");
 		res.setCharacterEncoding("iso-8859-15");
 		
-		NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.GERMAN);
 		ServletOutputStream out = res.getOutputStream();
 		
 		out.print(stickerRenderer.renderHeader());
@@ -44,7 +44,7 @@ public class MultiSticker extends HttpServlet {
 		for (ArticleAmountDTO aa : notepad.getArticles()) {
 			String articleTypeKey = aa.getArticleTypeKey();
 			for (int i=0; i<aa.getAmount(); i++) {
-				out.print(stickerRenderer.render(articleTypeKey, currencyFormat, !firstpage));
+				out.print(stickerRenderer.render(articleTypeKey, user.getShop().getCountry(), !firstpage));
 				firstpage = false;
 			}
 		}

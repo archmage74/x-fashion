@@ -1,18 +1,22 @@
 package com.xfashion.pdf;
 
 import java.text.NumberFormat;
+import java.util.Locale;
 
 import com.xfashion.client.at.ArticleTypeService;
 import com.xfashion.server.ArticleTypeServiceImpl;
 import com.xfashion.shared.ArticleTypeDTO;
 import com.xfashion.shared.BarcodeHelper;
+import com.xfashion.shared.UserCountry;
 
 public class StickerRenderer {
 
 	private ArticleTypeService articleTypeService;
+	private NumberFormat currencyFormat;
 	
 	public StickerRenderer() {
-		articleTypeService = new ArticleTypeServiceImpl();
+		this.articleTypeService = new ArticleTypeServiceImpl();
+		this.currencyFormat = NumberFormat.getCurrencyInstance(Locale.GERMAN);
 	}
 
 	public String renderHeader() {
@@ -24,17 +28,17 @@ public class StickerRenderer {
 		return sb.toString();
 	}
 	
-	public String render(Long productNumber, NumberFormat nf) {
+	public String render(Long productNumber, UserCountry country) {
 		ArticleTypeDTO articleType = readArticleType(productNumber);
-		return render(articleType, nf, false);
+		return render(articleType, country, false);
 	}
 	
-	public String render(String articleTypeKey, NumberFormat nf, boolean pagebreakBefore) {
+	public String render(String articleTypeKey, UserCountry country, boolean pagebreakBefore) {
 		ArticleTypeDTO articleType = readArticleType(articleTypeKey);
-		return render(articleType, nf, pagebreakBefore);
+		return render(articleType, country, pagebreakBefore);
 	}
 	
-	public String render(ArticleTypeDTO articleType, NumberFormat nf, boolean pagebreakBefore) {
+	public String render(ArticleTypeDTO articleType, UserCountry country, boolean pagebreakBefore) {
 		
 		StringBuffer sb = new StringBuffer();
 		String pagebreak = "";
@@ -62,12 +66,20 @@ public class StickerRenderer {
 		sb.append("&type=ean13&imgtype=png\" />");
 		sb.append("</td>");
 		sb.append("<td class=\"articlePrice\">");
-		sb.append(nf.format(((double) articleType.getSellPriceAt()) / 100));
+		sb.append(currencyFormat.format(((double) getSellPrice(articleType, country)) / 100));
 		sb.append("</td>");
 		sb.append("</tr>");
 		sb.append("</table>");
 
 		return sb.toString();
+	}
+	
+	private Integer getSellPrice(ArticleTypeDTO articleType, UserCountry country) {
+		if (country == UserCountry.DE) {
+			return articleType.getSellPriceDe();
+		} else {
+			return articleType.getSellPriceAt();
+		}
 	}
 	
 	public String renderFooter() {

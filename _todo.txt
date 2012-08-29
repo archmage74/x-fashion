@@ -126,15 +126,17 @@ REMOVED - image management has been automated; lazy loading of images in image m
 ----- phone call on 2012-08-28
 DONE - bulk edit: size (or color does not work)
 DONE - article types for shops
-DONE - admin can add delivery notice to shop
 DONE - sold article extension to all attributes
 DONE - alle protokolle loeschen 
 DONE - bugfix: remove bulk edit button for shops
 DONE - delete all deactivated articles and all notepads/delivery notices
+DONE - bugfix: Sticker does not print de-prices
+DONE - admin can add delivery notice to shop
+DONE - bugfix: bulk edit: only partially executed - why? improvement: made bulk transfer of all articles to server
 
-delete notepad
-sort notepad / delivery notice (by creation date, desc)
 bugfix: why does delivery notice loading take so long
+sort notepad / delivery notice (by creation date, desc)
+delete notepad
 
 ----
 stock: delete all of one article type (beside delete 1)

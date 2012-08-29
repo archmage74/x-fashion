@@ -227,7 +227,7 @@ public class NotepadManagement implements NotepadAddArticleHandler, NotepadRemov
 
 	@Override
 	public void onRequestIntoStock(RequestIntoStockEvent event) {
-		if (!UserManagement.hasRole(UserRole.SHOP) && currentDeliveryNotice != null) {
+		if (currentDeliveryNotice != null && UserManagement.hasRole(UserRole.SHOP)) {
 			Xfashion.fireError(errorMessages.cannotAddDeliveryNoticeToStock());
 			return;
 		}

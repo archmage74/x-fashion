@@ -1,12 +1,12 @@
 package com.xfashion.pdf;
 
-import java.text.NumberFormat;
-import java.util.Locale;
-
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.xfashion.client.user.UserService;
+import com.xfashion.shared.UserDTO;
 
 public class Sticker extends HttpServlet {
 
@@ -42,12 +42,12 @@ public class Sticker extends HttpServlet {
 
 	private void service2(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		Long productNumber = Long.parseLong(request.getParameter("productNumber"));
+		UserDTO user = (UserDTO) request.getSession().getAttribute(UserService.SESSION_USER);
 
-		NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.GERMAN);
 		ServletOutputStream out = response.getOutputStream();
 		
 		out.print(stickerRenderer.renderHeader());
-		out.print(stickerRenderer.render(productNumber, currencyFormat));
+		out.print(stickerRenderer.render(productNumber, user.getShop().getCountry()));
 		out.print(stickerRenderer.renderFooter());
 	}
 

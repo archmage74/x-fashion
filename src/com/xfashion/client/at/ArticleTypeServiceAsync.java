@@ -84,6 +84,8 @@ public interface ArticleTypeServiceAsync {
 
 	void updateArticleType(ArticleTypeDTO articleType, AsyncCallback<Void> callback);
 
+	void updateArticleTypes(Collection<ArticleTypeDTO> articleTypes, AsyncCallback<Void> callback);
+
 	void deleteArticleType(ArticleTypeDTO articleType, AsyncCallback<Void> callback);
 
 	

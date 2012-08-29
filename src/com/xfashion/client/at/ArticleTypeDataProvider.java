@@ -69,9 +69,7 @@ public class ArticleTypeDataProvider extends ArticleDataProvider<ArticleTypeDTO>
 	
 	@Override
 	public void onUpdateArticleTypes(UpdateArticleTypesEvent event) {
-		for (ArticleTypeDTO at : event.getArticleTypes()) {
-			updateArticleType(at);
-		}
+		updateArticleTypes(event.getArticleTypes());
 		createPriceChanges(event.getPriceChanges());
 	}
 
@@ -156,7 +154,7 @@ public class ArticleTypeDataProvider extends ArticleDataProvider<ArticleTypeDTO>
 		setIsLoading(false);
 	}
 
-	protected void updateArticleType(final ArticleTypeDTO articleType) {
+	protected void updateArticleTypes(final Collection<ArticleTypeDTO> articleTypes) {
 		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -168,7 +166,7 @@ public class ArticleTypeDataProvider extends ArticleDataProvider<ArticleTypeDTO>
 				Xfashion.eventBus.fireEvent(new RefreshFilterEvent());
 			}
 		};
-		articleTypeService.updateArticleType(articleType, callback);
+		articleTypeService.updateArticleTypes(articleTypes, callback);
 	}
 
 	protected void deleteArticleType(final ArticleTypeDTO articleType) {

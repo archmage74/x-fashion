@@ -659,9 +659,22 @@ public class ArticleTypeServiceImpl extends RemoteServiceServlet implements Arti
 		}
 	}
 
+	@Override
+	public void updateArticleTypes(Collection<ArticleTypeDTO> dtos) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			for (ArticleTypeDTO dto : dtos) {
+				updateArticleType(pm, dto);
+			}
+		} finally {
+			pm.close();
+		}
+	}
+
 	private void updateArticleType(PersistenceManager pm, ArticleTypeDTO dto) {
 		ArticleType item = readArticleType(pm, dto.getKey());
 		item.updateFromDTO(dto);
+		pm.flush();
 		pm.makePersistent(item);
 	}
 
