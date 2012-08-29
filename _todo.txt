@@ -133,12 +133,10 @@ DONE - delete all deactivated articles and all notepads/delivery notices
 DONE - bugfix: Sticker does not print de-prices
 DONE - admin can add delivery notice to shop
 DONE - bugfix: bulk edit: only partially executed - why? improvement: made bulk transfer of all articles to server
+DONE - bugfix: why does delivery notice loading take so long
+DONE - sort notepad / delivery notice (by creation date, desc)
+DONE - delete notepad
 
-bugfix: why does delivery notice loading take so long
-sort notepad / delivery notice (by creation date, desc)
-delete notepad
-
-----
 stock: delete all of one article type (beside delete 1)
 
 staging system

@@ -41,6 +41,7 @@ public interface ErrorMessages extends Messages {
 
 	String noNotepadNameSpecified();
 	String noNotepadToOpenSelected();
+	String noNotepadToDeleteSelected();
 	String notepadNotEmpty();
 	String notepadEmpty();
 	String noDeliveryNotice();
@@ -54,6 +55,5 @@ public interface ErrorMessages extends Messages {
 	String unknownPromo();
 	String onlyOnePromoAllowed();
 	String bothPromoValueSpecified();
-
 
 }

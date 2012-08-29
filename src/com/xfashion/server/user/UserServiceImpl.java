@@ -44,6 +44,7 @@ import com.xfashion.shared.NotepadDTO;
 import com.xfashion.shared.PriceChangeDTO;
 import com.xfashion.shared.RemovedArticleDTO;
 import com.xfashion.shared.ResetPasswordDTO;
+import com.xfashion.shared.ShopDTO;
 import com.xfashion.shared.SoldArticleDTO;
 import com.xfashion.shared.UserCountry;
 import com.xfashion.shared.UserDTO;
@@ -352,6 +353,19 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		return notepads;
 	}
 
+	@Override
+	public NotepadDTO readNotepad(String keyString) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		NotepadDTO dto = null;
+		try {
+			Notepad notepad = readNotepad(pm, keyString);
+			dto = notepad.createDTO();
+		} finally {
+			pm.close();
+		}
+		return dto;
+	}
+	
 	public Notepad readNotepad(PersistenceManager pm, String keyString) {
 		Notepad notepad = pm.getObjectById(Notepad.class, KeyFactory.stringToKey(keyString));
 		return notepad;
@@ -386,6 +400,21 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		Notepad notepad = readNotepad(pm, dto.getKey());
 		notepad.updateFromDTO(dto);
 	}
+	
+	@Override
+	public void deleteNotepad(String keyString) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			deleteNotepad(pm, keyString);
+		} finally {
+			pm.close();
+		}
+	}
+	
+	private void deleteNotepad(PersistenceManager pm, String keyString) {
+		Notepad notepad = readNotepad(pm, keyString);
+		pm.deletePersistent(notepad);
+	}
 
 	// *****************
 	// DeliveryNotice
@@ -400,20 +429,31 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		try {
 			DeliveryNotice deliveryNotice = createDeliveryNotice(pm, dto);
 			dto = deliveryNotice.createDTO();
-			setShopsToDeliveryNoticeDTO(pm, dto);
+			setShopsToDeliveryNoticeDTOs(pm, dto);
 		} finally {
 			pm.close();
 		}
 		return dto;
 	}
 
-	public void setShopsToDeliveryNoticeDTO(PersistenceManager pm, DeliveryNoticeDTO dto) {
-		if (dto.getSourceShopKey() != null) {
-			Shop source = pm.getObjectById(Shop.class, KeyFactory.stringToKey(dto.getSourceShopKey()));
-			dto.setSourceShop(source.createDTO());
+	public void setShopsToDeliveryNoticeDTOs(PersistenceManager pm, DeliveryNoticeDTO... dtos) {
+		HashMap<String, ShopDTO> shops = new HashMap<String, ShopDTO>();
+		for (DeliveryNoticeDTO dto : dtos) {
+			if (dto.getSourceShopKey() != null) {
+				dto.setSourceShop(readCashedShopDTO(pm, shops, dto.getSourceShopKey()));
+			}
+			dto.setTargetShop(readCashedShopDTO(pm, shops, dto.getTargetShopKey()));
 		}
-		Shop target = pm.getObjectById(Shop.class, KeyFactory.stringToKey(dto.getTargetShopKey()));
-		dto.setTargetShop(target.createDTO());
+	}
+	
+	private ShopDTO readCashedShopDTO(PersistenceManager pm, Map<String, ShopDTO> cache, String shopKey) {
+		ShopDTO dto = cache.get(shopKey);
+		if (dto == null) {
+			Shop source = pm.getObjectById(Shop.class, KeyFactory.stringToKey(shopKey));
+			dto = source.createDTO();
+			cache.put(shopKey, dto);
+		}
+		return dto;
 	}
 
 	public DeliveryNotice createDeliveryNotice(PersistenceManager pm, DeliveryNoticeDTO dto) {
@@ -430,15 +470,27 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		try {
 			Shop shop = readOwnStock(pm);
 			dtos = shop.createDeliveryNoticeDTOs();
-			for (DeliveryNoticeDTO dto : dtos) {
-				setShopsToDeliveryNoticeDTO(pm, dto);
-			}
+			setShopsToDeliveryNoticeDTOs(pm, dtos.toArray(new DeliveryNoticeDTO[] { }));
 		} finally {
 			pm.close();
 		}
 		return dtos;
 	}
-
+	
+	@Override
+	public DeliveryNoticeDTO readDeliveryNotice(String keyString) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		DeliveryNoticeDTO dto = null;
+		try {
+			DeliveryNotice deliveryNotice = readDeliveryNotice(pm, keyString);
+			dto = deliveryNotice.createDTO();
+			setShopsToDeliveryNoticeDTOs(pm, dto);
+		} finally {
+			pm.close();
+		}
+		return dto;
+	}
+	
 	public DeliveryNotice readDeliveryNotice(PersistenceManager pm, String keyString) {
 		DeliveryNotice deliveryNotice = pm.getObjectById(DeliveryNotice.class, KeyFactory.stringToKey(keyString));
 		return deliveryNotice;
@@ -452,7 +504,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 			DeliveryNotice deliveryNotice = readDeliveryNoticeById(pm, id);
 			if (deliveryNotice != null) {
 				dto = deliveryNotice.createDTO();
-				setShopsToDeliveryNoticeDTO(pm, dto);
+				setShopsToDeliveryNoticeDTOs(pm, dto);
 			}
 		} finally {
 			pm.close();

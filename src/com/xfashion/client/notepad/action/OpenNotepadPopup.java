@@ -1,4 +1,4 @@
-package com.xfashion.client.notepad;
+package com.xfashion.client.notepad.action;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyUpEvent;
@@ -92,14 +92,28 @@ public class OpenNotepadPopup extends NotepadActionPopup {
 	}
 
 	private void loadNotepad() {
-		if (notepadListBox.getSelectedIndex() != -1) {
-			NotepadDTO stored = savedNotepads.get(notepadListBox.getSelectedIndex());
-			Xfashion.eventBus.fireEvent(new OpenNotepadEvent(stored));
-			resetListBoxes();
-			hide();
-		} else {
+		if (notepadListBox.getSelectedIndex() == -1) {
 			Xfashion.fireError(errorMessages.noNotepadToOpenSelected());
+			return;
 		}
+		AsyncCallback<NotepadDTO> callback = new AsyncCallback<NotepadDTO>() {
+			@Override
+			public void onSuccess(NotepadDTO result) {
+				loadNotepad(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
+			}
+		};
+		NotepadDTO stored = savedNotepads.get(notepadListBox.getSelectedIndex());
+		userService.readNotepad(stored.getKey(), callback);
+	}
+
+	private void loadNotepad(NotepadDTO result) {
+		Xfashion.eventBus.fireEvent(new OpenNotepadEvent(result));
+		resetListBoxes();
+		hide();
 	}
 
 	private void validateLoadDeliveryNotice(DeliveryNoticeDTO deliveryNotice) {
@@ -114,12 +128,22 @@ public class OpenNotepadPopup extends NotepadActionPopup {
 	}
 	
 	private void loadDeliveryNotice() {
-		if (notepadListBox.getSelectedIndex() != -1) {
-			DeliveryNoticeDTO deliveryNotice = savedDeliveryNotices.get(notepadListBox.getSelectedIndex());
-			loadDeliveryNotice(deliveryNotice);
-		} else {
+		if (notepadListBox.getSelectedIndex() == -1) {
 			Xfashion.fireError(errorMessages.noNotepadToOpenSelected());
+			return;
 		}
+		AsyncCallback<DeliveryNoticeDTO> callback = new AsyncCallback<DeliveryNoticeDTO>() {
+			@Override
+			public void onSuccess(DeliveryNoticeDTO result) {
+				loadDeliveryNotice(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
+			}
+		};
+		DeliveryNoticeDTO deliveryNotice = savedDeliveryNotices.get(notepadListBox.getSelectedIndex());
+		userService.readDeliveryNotice(deliveryNotice.getKey(), callback);
 	}
 
 	private void loadDeliveryNotice(DeliveryNoticeDTO deliveryNotice) {

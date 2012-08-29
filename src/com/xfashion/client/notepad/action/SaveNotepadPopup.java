@@ -1,4 +1,4 @@
-package com.xfashion.client.notepad;
+package com.xfashion.client.notepad.action;
 
 import java.util.Date;
 

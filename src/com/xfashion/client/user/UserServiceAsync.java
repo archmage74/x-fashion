@@ -37,17 +37,25 @@ public interface UserServiceAsync {
 
 	void deleteResetPassword(ResetPasswordDTO resetPassword, AsyncCallback<Void> callback);
 
+	// Notepad
 	void createNotepad(NotepadDTO notepad, AsyncCallback<NotepadDTO> callback);
 	
 	void readOwnNotepads(AsyncCallback<Set<NotepadDTO>> callback);
 	
-	void readDeliveryNoticeById(Long id, AsyncCallback<DeliveryNoticeDTO> callback);
+	void readNotepad(String keyString, AsyncCallback<NotepadDTO> callback);
 
 	void updateOwnNotepad(NotepadDTO notepad, AsyncCallback<NotepadDTO> callback);
 
+	void deleteNotepad(String keyString, AsyncCallback<Void> callback);
+
+	// DeliveryNotice
 	void createDeliveryNotice(DeliveryNoticeDTO deliverNotice, AsyncCallback<DeliveryNoticeDTO> callback);
 
 	void readOwnDeliveryNotices(AsyncCallback<Set<DeliveryNoticeDTO>> callback);
+
+	void readDeliveryNotice(String keyString, AsyncCallback<DeliveryNoticeDTO> callback);
+
+	void readDeliveryNoticeById(Long id, AsyncCallback<DeliveryNoticeDTO> callback);
 
 	void updateDeliveryNotice(DeliveryNoticeDTO notepad, AsyncCallback<DeliveryNoticeDTO> callback);
 

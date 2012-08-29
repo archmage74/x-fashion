@@ -1,4 +1,4 @@
-package com.xfashion.client.notepad;
+package com.xfashion.client.notepad.action;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,6 +15,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -24,6 +25,8 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.xfashion.client.Xfashion;
+import com.xfashion.client.dialog.YesNoCallback;
+import com.xfashion.client.dialog.YesNoPopup;
 import com.xfashion.client.resources.ErrorMessages;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.client.user.UserService;
@@ -53,6 +56,7 @@ public abstract class NotepadActionPopup {
 	protected Label nameLabel;
 	protected TextBox nameTextBox;
 	protected ListBox userListBox;
+	protected Button deleteButton;
 
 	protected TextMessages textMessages;
 	protected ErrorMessages errorMessages;
@@ -101,7 +105,11 @@ public abstract class NotepadActionPopup {
 		vp.add(createUserListBox());
 
 		HorizontalPanel nav = new HorizontalPanel();
+		nav.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
 		nav.add(createOkButton());
+		nav.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		nav.add(createDeleteButton());
+		nav.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		nav.add(createCancelButton());
 		vp.add(nav);
 
@@ -133,6 +141,17 @@ public abstract class NotepadActionPopup {
 			}
 		});
 		return okButton;
+	}
+
+	private Widget createDeleteButton() {
+		deleteButton = new Button(textMessages.delete());
+		deleteButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				requestDelete();
+			}
+		});
+		return deleteButton;
 	}
 
 	private Widget createCancelButton() {
@@ -193,8 +212,11 @@ public abstract class NotepadActionPopup {
 	}
 
 	private void updateListBoxNotepads(Collection<NotepadDTO> notepads) {
+		NotepadByCreationDateDesc comparator = new NotepadByCreationDateDesc();
+		List<NotepadDTO> sorted = new ArrayList<NotepadDTO>(notepads);
+		Collections.sort(sorted, comparator);
 		notepadListBox.clear();
-		for (NotepadDTO dto : notepads) {
+		for (NotepadDTO dto : sorted) {
 			String notepadName = dto.getName();
 			Date creationDate = dto.getCreationDate();
 			notepadListBox.addItem(textMessages.notepadListBoxLine(notepadName, creationDate));
@@ -203,9 +225,10 @@ public abstract class NotepadActionPopup {
 	}
 
 	private void updateListBoxDeliveryNotices(Collection<DeliveryNoticeDTO> deliveryNotices) {
-		notepadListBox.clear();
+		DeliveryNoticeByCreationDateDesc comparator = new DeliveryNoticeByCreationDateDesc();
 		List<DeliveryNoticeDTO> sorted = new ArrayList<DeliveryNoticeDTO>(deliveryNotices);
-		Collections.sort(sorted, new DeliveryNoticeById());
+		Collections.sort(sorted, comparator);
+		notepadListBox.clear();
 		for (DeliveryNoticeDTO deliveryNotice : sorted) {
 			String deliveryNoticeId = "";
 			try {
@@ -287,10 +310,12 @@ public abstract class NotepadActionPopup {
 		switch (currentType) {
 		case TYPE_NOTEPAD:
 			loadNotepads();
+			deleteButton.setEnabled(true);
 			break;
 		case TYPE_DELIVERY_NOTICE:
 			loadDeliveryNotices();
 			loadUsers();
+			deleteButton.setEnabled(false);
 			break;
 		}
 	}
@@ -302,4 +327,42 @@ public abstract class NotepadActionPopup {
 		knownUsers = null;
 		userListBox.clear();
 	}
+	
+	private void requestDelete() {
+		if (notepadListBox.getSelectedIndex() == -1) {
+			Xfashion.fireError(errorMessages.noNotepadToDeleteSelected());
+			return;
+		}
+		final NotepadDTO notepad = savedNotepads.get(notepadListBox.getSelectedIndex());
+		String notepadName = notepad.getName();
+		Date creationDate = notepad.getCreationDate();
+		String desc = textMessages.notepadListBoxLine(notepadName, creationDate);
+
+		YesNoPopup confirm = new YesNoPopup(textMessages.confirmDeleteNotepad(desc), new YesNoCallback() {
+			@Override
+			public void yes() {
+				deleteNotepad(notepad);
+			}
+			@Override
+			public void no() {
+				// nothing to do
+			}
+		});
+		confirm.createDialogBox().center();
+	}
+
+	private void deleteNotepad(NotepadDTO notepad) {
+		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+			@Override
+			public void onSuccess(Void result) {
+				loadNotepads();
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
+			}
+		};
+		userService.deleteNotepad(notepad.getKey(), callback);
+	}
+	
 }

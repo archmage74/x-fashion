@@ -10,6 +10,8 @@ import com.xfashion.client.at.ArticleFilterProvider;
 import com.xfashion.client.at.bulk.UpdateArticleTypesEvent;
 import com.xfashion.client.at.price.GetAtPriceFromArticleTypeStrategy;
 import com.xfashion.client.at.price.GetDePriceFromArticleTypeStrategy;
+import com.xfashion.client.notepad.action.OpenNotepadPopup;
+import com.xfashion.client.notepad.action.SaveNotepadPopup;
 import com.xfashion.client.notepad.event.ClearNotepadEvent;
 import com.xfashion.client.notepad.event.ClearNotepadHandler;
 import com.xfashion.client.notepad.event.DeliveryNoticeUpdatedEvent;

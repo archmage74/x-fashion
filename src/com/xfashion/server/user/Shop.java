@@ -229,7 +229,7 @@ public class Shop {
 	public Set<NotepadDTO> createNotepadDTOs() {
 		Set<NotepadDTO> dtos = new HashSet<NotepadDTO>();
 		for (Notepad notepad : notepads) {
-			dtos.add(notepad.createDTO());
+			dtos.add(notepad.createFlatDTO());
 		}
 		return dtos;
 	}
@@ -237,7 +237,7 @@ public class Shop {
 	public Set<DeliveryNoticeDTO> createDeliveryNoticeDTOs() {
 		Set<DeliveryNoticeDTO> dtos = new HashSet<DeliveryNoticeDTO>();
 		for (DeliveryNotice deliveryNotice : deliveryNotices) {
-			dtos.add(deliveryNotice.createDTO());
+			dtos.add(deliveryNotice.createFlatDTO());
 		}
 		return dtos;
 	}

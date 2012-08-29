@@ -118,6 +118,15 @@ public class Notepad {
 		return dto;
 	}
 
+	public NotepadDTO createFlatDTO() {
+		NotepadDTO dto = new NotepadDTO();
+		dto.setCreationDate(getCreationDate());
+		dto.setKey(getKeyAsString());
+		dto.setName(getName());
+		dto.setArticles(null);
+		return dto;
+	}
+
 	public List<ArticleAmountDTO> createArticleAmountDTOs() {
 		List<ArticleAmountDTO> dtos = new ArrayList<ArticleAmountDTO>();
 		for (ArticleAmount article : articles) {

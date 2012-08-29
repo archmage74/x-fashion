@@ -104,6 +104,16 @@ public class DeliveryNotice {
 		return dto;
 	}
 	
+	public DeliveryNoticeDTO createFlatDTO() {
+		DeliveryNoticeDTO dto = new DeliveryNoticeDTO();
+		dto.setKey(getKeyAsString());
+		dto.setId(getId());
+		dto.setNotepad(notepad.createFlatDTO());
+		dto.setTargetShopKey(getTargetShopKeyAsString());
+		dto.setSourceShopKey(getSourceShopKeyAsString());
+		return dto;
+	}
+	
 	public void updateFromDTO(DeliveryNoticeDTO dto) {
 		if (notepad != null) {
 			notepad.updateFromDTO(dto.getNotepad());

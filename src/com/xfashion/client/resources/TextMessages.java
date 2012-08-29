@@ -56,6 +56,7 @@ public interface TextMessages extends Messages {
 	String close();
 	String open();
 	String create();
+	String delete();
 
 	String notepadManagementHeader();
 	String printSticker();
@@ -85,6 +86,7 @@ public interface TextMessages extends Messages {
 	String saveNotepadHint();
 	String printDeliveryNoticeHint();
 	String printStickersHint();
+	String confirmDeleteNotepad(String desc);
 	String recordArticlesHint();
 	String intoStockHint();
 	String minWinHint();

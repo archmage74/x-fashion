@@ -52,15 +52,21 @@ public interface UserService extends RemoteService {
 	
 	Set<NotepadDTO> readOwnNotepads();
 	
-	DeliveryNoticeDTO readDeliveryNoticeById(Long id);
-		
+	NotepadDTO readNotepad(String keyString);
+	
 	NotepadDTO updateOwnNotepad(NotepadDTO notepad);
 
+	void deleteNotepad(String keyString);
+	
 	
 	// DeliveryNotice
 	DeliveryNoticeDTO createDeliveryNotice(DeliveryNoticeDTO deliverNotice);
 	
 	Set<DeliveryNoticeDTO> readOwnDeliveryNotices();
+
+	DeliveryNoticeDTO readDeliveryNotice(String keyString);
+	
+	DeliveryNoticeDTO readDeliveryNoticeById(Long id);
 	
 	DeliveryNoticeDTO updateDeliveryNotice(DeliveryNoticeDTO deliveryNotice);
 
@@ -109,5 +115,5 @@ public interface UserService extends RemoteService {
 	Collection<PriceChangeDTO> updatePriceChanges(Collection<PriceChangeDTO> dtos) throws IllegalArgumentException;
 
 	void deletePriceChanges(Collection<PriceChangeDTO> dtos) throws IllegalArgumentException;
-	
+
 }
