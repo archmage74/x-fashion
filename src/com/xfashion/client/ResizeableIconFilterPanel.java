@@ -78,7 +78,8 @@ public abstract class ResizeableIconFilterPanel<T extends FilterCellData> extend
 			@Override
 			public ImageResource getValue(T dto) {
 				if (dto.getArticleAmount() > 0) {
-					if (dto.isSelected()) {
+					boolean isSelected = getDataProvider().getFilter().contains(dto.getKey());
+					if (isSelected) {
 						return getSelectedIcon();
 					} else {
 						return getAvailableIcon();

@@ -2,7 +2,6 @@ package com.xfashion.client;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -15,21 +14,14 @@ import com.xfashion.shared.FilterCellData;
 
 public abstract class SimpleFilterDataProvider<T extends FilterCellData> extends FilterDataProvider<T> {
 
-	protected Set<String> filter;
-	
 	public SimpleFilterDataProvider(ArticleTypeDataProvider articleProvider, EventBus eventBus) {
 		super(articleProvider, eventBus);
-		filter = new HashSet<String>();
 	}
 
 	protected abstract void saveItem(T item);
 	
 	protected abstract void saveList();
 	
-	public Set<String> getFilter() {
-		return filter;
-	}
-
 	public void moveDown(int idx) {
 		if (idx < 0) {
 			return;
@@ -93,7 +85,6 @@ public abstract class SimpleFilterDataProvider<T extends FilterCellData> extends
 				availableArticles = 0;
 			}
 			fcd.setArticleAmount(availableArticles);
-			fcd.setSelected(getFilter().contains(fcd.getKey()));
 		}
 	}
 

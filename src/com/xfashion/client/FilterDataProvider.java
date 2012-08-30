@@ -2,7 +2,9 @@ package com.xfashion.client;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.view.client.ListDataProvider;
@@ -22,6 +24,8 @@ public abstract class FilterDataProvider<T extends FilterCellData> extends ListD
 	protected HashMap<String, T> idToItem;
 	
 	protected List<T> allItems;
+	
+	protected Set<String> filter;
 	
 	protected boolean filterHidden = true;
 	
@@ -45,6 +49,7 @@ public abstract class FilterDataProvider<T extends FilterCellData> extends ListD
 		this.errorMessages = GWT.create(ErrorMessages.class);
 		this.idToItem = new HashMap<String, T>();
 		this.allItems = new ArrayList<T>();
+		this.filter = new HashSet<String>();
 		this.eventBus = eventBus;
 	}
 	
@@ -94,6 +99,10 @@ public abstract class FilterDataProvider<T extends FilterCellData> extends ListD
 		setProviderList(this.allItems);
 	}
 
+	public Set<String> getFilter() {
+		return filter;
+	}
+
 	public T resolveData(String id) {
 		return idToItem.get(id);
 	}
@@ -112,6 +121,15 @@ public abstract class FilterDataProvider<T extends FilterCellData> extends ListD
 		for (T item : list) {
 			idToItem.put(item.getKey(), item);
 		}
+	}
+	
+	protected void toggleSelect(String key) {
+		if (getFilter().contains(key)) {
+			getFilter().remove(key);
+		} else {
+			getFilter().add(key);
+		}
+		fireRefreshEvent();
 	}
 	
 	protected void fireRefreshEvent() {

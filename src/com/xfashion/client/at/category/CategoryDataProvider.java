@@ -29,10 +29,6 @@ import com.xfashion.shared.StyleDTO;
 public class CategoryDataProvider extends FilterDataProvider<CategoryDTO> implements SelectStyleHandler, ClearStyleSelectionHandler,
 		SelectCategoryHandler {
 
-	protected CategoryDTO categoryFilter = null;
-
-	protected Set<String> styleFilter;
-
 	protected Map<String, StyleDTO> styles;
 
 	protected StyleDataProvider styleProvider;
@@ -41,7 +37,6 @@ public class CategoryDataProvider extends FilterDataProvider<CategoryDTO> implem
 		super(articleTypeProvider, eventBus);
 		
 		this.styleProvider = new StyleDataProvider(articleTypeProvider, eventBus);
-		this.styleFilter = new HashSet<String>();
 		this.styles = new HashMap<String, StyleDTO>();
 		
 		registerForEvents();
@@ -54,11 +49,11 @@ public class CategoryDataProvider extends FilterDataProvider<CategoryDTO> implem
 	}
 
 	public CategoryDTO getCategoryFilter() {
-		return categoryFilter;
-	}
-
-	public void setCategoryFilter(CategoryDTO categoryFilter) {
-		this.categoryFilter = categoryFilter;
+		if (getFilter().size() > 0) {
+			return idToItem.get(getFilter().iterator().next());
+		} else {
+			return null; 
+		}
 	}
 
 	public void updateStyles(List<ArticleTypeDTO> articleTypes) {
@@ -66,6 +61,7 @@ public class CategoryDataProvider extends FilterDataProvider<CategoryDTO> implem
 	}
 
 	public void updateStyles(List<ArticleTypeDTO> articleTypes, Map<String, ArticleAmountDTO> articleAmounts) {
+		CategoryDTO categoryFilter = getCategoryFilter(); 
 		if (categoryFilter != null) {
 			styleProvider.setAllItems(new ArrayList<StyleDTO>(categoryFilter.getStyles()));
 			HashMap<String, Integer> articleAmountPerAttribute = new HashMap<String, Integer>();
@@ -96,7 +92,6 @@ public class CategoryDataProvider extends FilterDataProvider<CategoryDTO> implem
 					availableArticles = 0;
 				}
 				scd.setArticleAmount(availableArticles);
-				scd.setSelected(styleFilter.contains(scd.getKey()));
 			}
 			refresh();
 			styleProvider.refresh();
@@ -106,11 +101,7 @@ public class CategoryDataProvider extends FilterDataProvider<CategoryDTO> implem
 	}
 
 	public Set<String> getStyleFilter() {
-		return styleFilter;
-	}
-
-	public void setStyleFilter(Set<String> styleFilter) {
-		this.styleFilter = styleFilter;
+		return styleProvider.getFilter();
 	}
 
 	public StyleDTO resolveStyle(String styleId) {
@@ -143,6 +134,7 @@ public class CategoryDataProvider extends FilterDataProvider<CategoryDTO> implem
 	}
 
 	public List<ArticleTypeDTO> applyCategoryFilter(List<ArticleTypeDTO> articleTypes) {
+		CategoryDTO categoryFilter = getCategoryFilter();
 		if (categoryFilter != null) {
 			ArrayList<ArticleTypeDTO> temp = new ArrayList<ArticleTypeDTO>();
 			for (ArticleTypeDTO at : articleTypes) {
@@ -156,13 +148,13 @@ public class CategoryDataProvider extends FilterDataProvider<CategoryDTO> implem
 	}
 
 	public List<ArticleTypeDTO> applyStyleFilter(List<ArticleTypeDTO> articleTypes) {
-		if (categoryFilter != null) {
+		if (getCategoryFilter() != null) {
 			ArrayList<ArticleTypeDTO> temp = new ArrayList<ArticleTypeDTO>();
 
-			if (styleFilter != null && styleFilter.size() > 0) {
+			if (getStyleFilter() != null && getStyleFilter().size() > 0) {
 				temp.clear();
 				for (ArticleTypeDTO at : articleTypes) {
-					if (styleFilter.contains(at.getStyleKey())) {
+					if (getStyleFilter().contains(at.getStyleKey())) {
 						temp.add(at);
 					}
 				}
@@ -175,7 +167,6 @@ public class CategoryDataProvider extends FilterDataProvider<CategoryDTO> implem
 	@Override
 	public void refresh() {
 		super.refresh();
-		// updateStyles(articles);
 	}
 
 	@Override
@@ -231,13 +222,10 @@ public class CategoryDataProvider extends FilterDataProvider<CategoryDTO> implem
 
 	@Override
 	public void onSelectCategory(SelectCategoryEvent event) {
-		if (getCategoryFilter() != null) {
-			getCategoryFilter().setSelected(false);
-		}
+		getFilter().clear();
 		CategoryDTO dto = event.getCellData();
-		setCategoryFilter(dto);
 		if (dto != null) {
-			dto.setSelected(true);
+			getFilter().add(dto.getKey());
 		}
 		clearStyleSelection();
 		fireRefreshEvent();
@@ -258,12 +246,11 @@ public class CategoryDataProvider extends FilterDataProvider<CategoryDTO> implem
 	@Override
 	public void onSelectStyle(SelectStyleEvent event) {
 		StyleDTO dto = event.getCellData();
-		if (dto.isSelected()) {
+		boolean isSelected = getStyleFilter().contains(dto.getKey());
+		if (isSelected) {
 			getStyleFilter().remove(dto.getKey());
-			dto.setSelected(false);
 		} else {
 			getStyleFilter().add(dto.getKey());
-			dto.setSelected(true);
 		}
 		fireRefreshEvent();
 	}

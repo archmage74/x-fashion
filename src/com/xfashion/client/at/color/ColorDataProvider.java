@@ -29,14 +29,7 @@ public class ColorDataProvider extends SimpleFilterDataProvider<ColorDTO> implem
 	@Override
 	public void onSelectColor(SelectColorEvent event) {
 		ColorDTO dto = event.getCellData();
-		if (dto.isSelected()) {
-			getFilter().remove(dto.getKey());
-			dto.setSelected(false);
-		} else {
-			getFilter().add(dto.getKey());
-			dto.setSelected(true);
-		}
-		fireRefreshEvent();
+		toggleSelect(dto.getKey());
 	}
 
 	@Override

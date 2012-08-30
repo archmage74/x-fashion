@@ -177,7 +177,7 @@ public abstract class FilterPanel<T extends FilterCellData> implements IsMinimiz
 		Column<T, SafeHtml> column = new Column<T, SafeHtml>(new SafeHtmlCell()) {
 			@Override
 			public SafeHtml getValue(T dto) {
-				return renderColumn(dto.getName(), false, dto.isSelected());
+				return renderColumn(dto, dto.getName(), false);
 			}
 		};
 		column.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
@@ -188,7 +188,7 @@ public abstract class FilterPanel<T extends FilterCellData> implements IsMinimiz
 		Column<T, SafeHtml> column = new Column<T, SafeHtml>(new SafeHtmlCell()) {
 			@Override
 			public SafeHtml getValue(T dto) {
-				return renderColumn("" + dto.getArticleAmount(), true, dto.isSelected());
+				return renderColumn(dto, "" + dto.getArticleAmount(), true);
 			}
 		};
 		column.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
@@ -207,7 +207,8 @@ public abstract class FilterPanel<T extends FilterCellData> implements IsMinimiz
 		return cellPreviewHandler;
 	}
 
-	protected SafeHtml renderColumn(String txt, boolean isRight, boolean isSelected) {
+	protected SafeHtml renderColumn(T dto, String txt, boolean isRight) {
+		boolean isSelected = getDataProvider().getFilter().contains(dto.getKey()); 
 		SafeHtmlBuilder sb = new SafeHtmlBuilder();
 		StringBuffer b = new StringBuffer();
 		b.append("<div style=\"outline:none;\"");

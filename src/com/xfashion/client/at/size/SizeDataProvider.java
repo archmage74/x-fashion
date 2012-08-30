@@ -42,14 +42,7 @@ public class SizeDataProvider extends SimpleFilterDataProvider<SizeDTO> implemen
 	@Override
 	public void onSelectSize(SelectSizeEvent event) {
 		SizeDTO dto = event.getCellData();
-		if (dto.isSelected()) {
-			getFilter().remove(dto.getKey());
-			dto.setSelected(false);
-		} else {
-			getFilter().add(dto.getKey());
-			dto.setSelected(true);
-		}
-		fireRefreshEvent();
+		toggleSelect(dto.getKey());
 	}
 
 	@Override

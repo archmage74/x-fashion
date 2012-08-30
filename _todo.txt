@@ -138,6 +138,7 @@ DONE - sort notepad / delivery notice (by creation date, desc)
 DONE - delete notepad
 DONE - remove all of one article type from stock
 DONE - bugfix: styles for stock are not displayed
+DONE - bugfix: caegory in stock shows as selected when selected in types
 
 refresh for everything (like re-login)
 

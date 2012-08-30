@@ -30,14 +30,7 @@ public class BrandDataProvider extends SimpleFilterDataProvider<BrandDTO> implem
 	@Override
 	public void onSelectBrand(SelectBrandEvent event) {
 		BrandDTO dto = event.getCellData();
-		if (dto.isSelected()) {
-			getFilter().remove(dto.getKey());
-			dto.setSelected(false);
-		} else {
-			getFilter().add(dto.getKey());
-			dto.setSelected(true);
-		}
-		fireRefreshEvent();
+		toggleSelect(dto.getKey());
 	}
 
 	@Override

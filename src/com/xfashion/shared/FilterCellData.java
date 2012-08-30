@@ -1,18 +1,16 @@
 package com.xfashion.shared;
 
 
+
 public abstract class FilterCellData extends DTO {
 	
 	private String name;
-	
-	private boolean selected;
 	
 	private Integer articleAmount;
 	
 	private Boolean hidden;
 	
 	public FilterCellData() {
-		this.selected = false;
 		articleAmount = 0;
 	}
 	
@@ -22,14 +20,6 @@ public abstract class FilterCellData extends DTO {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public boolean isSelected() {
-		return selected;
-	}
-
-	public void setSelected(boolean selected) {
-		this.selected = selected;
 	}
 
 	public Integer getArticleAmount() {
@@ -54,7 +44,6 @@ public abstract class FilterCellData extends DTO {
 		int result = super.hashCode();
 		result = prime * result + ((articleAmount == null) ? 0 : articleAmount.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + (selected ? 1231 : 1237);
 		return result;
 	}
 
@@ -76,8 +65,6 @@ public abstract class FilterCellData extends DTO {
 			if (other.name != null)
 				return false;
 		} else if (!name.equals(other.name))
-			return false;
-		if (selected != other.selected)
 			return false;
 		return true;
 	}
