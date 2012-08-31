@@ -824,6 +824,24 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 	}
 
 	@Override
+	public SoldArticleDTO readSoldArticle(String keyString) throws IllegalArgumentException {
+		SoldArticleDTO dto = null;
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			SoldArticle soldArticle = readSoldArticle(pm, keyString);
+			dto = soldArticle.createDTO();
+		} finally {
+			pm.close();
+		}
+		return dto;
+	}
+	
+	private SoldArticle readSoldArticle(PersistenceManager pm, String keyString) {
+		SoldArticle soldArticle = pm.getObjectById(SoldArticle.class, KeyFactory.stringToKey(keyString));
+		return soldArticle;
+	}
+
+	@Override
 	public List<SoldArticleDTO> readSoldArticles(int from, int to) throws IllegalArgumentException {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		List<SoldArticleDTO> dtos = new ArrayList<SoldArticleDTO>();
