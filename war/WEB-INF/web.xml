@@ -29,6 +29,11 @@
 		<servlet-name>promoServlet</servlet-name>
 		<servlet-class>com.xfashion.server.PromoServiceImpl</servlet-class>
 	</servlet>
+
+	<servlet>
+		<servlet-name>statisticServlet</servlet-name>
+		<servlet-class>com.xfashion.server.statistic.StatisticServiceImpl</servlet-class>
+	</servlet>
 	
 	<servlet>
 		<servlet-name>resetPasswordServlet</servlet-name>
@@ -69,6 +74,11 @@
 		<servlet-name>distributepricechange</servlet-name>
 		<servlet-class>com.xfashion.server.task.DistributePriceChangeServlet</servlet-class>	
 	</servlet>
+	<servlet>
+		<servlet-name>updatesellstatistic</servlet-name>
+		<servlet-class>com.xfashion.server.task.UpdateSellStatisticServlet</servlet-class>
+	</servlet>
+
   
   	<servlet-mapping>
 		<servlet-name>articleTypeServlet</servlet-name>
@@ -93,6 +103,11 @@
   	<servlet-mapping>
 		<servlet-name>promoServlet</servlet-name>
 		<url-pattern>/xfashion/promoService</url-pattern>
+	</servlet-mapping>
+
+  	<servlet-mapping>
+		<servlet-name>statisticServlet</servlet-name>
+		<url-pattern>/xfashion/statisticService</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
@@ -133,6 +148,11 @@
 	<servlet-mapping>
 		<servlet-name>distributepricechange</servlet-name>
 		<url-pattern>/task/distributepricechange</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>updatesellstatistic</servlet-name>
+		<url-pattern>/task/updatesellstatistic</url-pattern>
 	</servlet-mapping>
 
 	<!-- Default page to serve -->

@@ -25,6 +25,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.taskqueue.Queue;
+import com.google.appengine.api.taskqueue.QueueFactory;
+import com.google.appengine.api.taskqueue.TaskOptions;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.xfashion.client.user.UserService;
 import com.xfashion.client.util.IdCounterService;
@@ -35,6 +38,7 @@ import com.xfashion.server.RemovedArticle;
 import com.xfashion.server.SoldArticle;
 import com.xfashion.server.StockArticle;
 import com.xfashion.server.notepad.Notepad;
+import com.xfashion.server.task.UpdateSellStatisticServlet;
 import com.xfashion.server.util.IdCounterServiceImpl;
 import com.xfashion.server.util.IdCounterType;
 import com.xfashion.shared.AddedArticleDTO;
@@ -49,7 +53,7 @@ import com.xfashion.shared.SoldArticleDTO;
 import com.xfashion.shared.UserCountry;
 import com.xfashion.shared.UserDTO;
 import com.xfashion.shared.UserRole;
- 
+
 public class UserServiceImpl extends RemoteServiceServlet implements UserService {
 
 	private static final Logger log = Logger.getLogger(UserServiceImpl.class.getName());
@@ -365,7 +369,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		}
 		return dto;
 	}
-	
+
 	public Notepad readNotepad(PersistenceManager pm, String keyString) {
 		Notepad notepad = pm.getObjectById(Notepad.class, KeyFactory.stringToKey(keyString));
 		return notepad;
@@ -384,7 +388,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		Shop shop = pm.getObjectById(Shop.class, KeyFactory.stringToKey(shopKey));
 		return shop;
 	}
-	
+
 	@Override
 	public NotepadDTO updateOwnNotepad(NotepadDTO dto) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
@@ -400,7 +404,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		Notepad notepad = readNotepad(pm, dto.getKey());
 		notepad.updateFromDTO(dto);
 	}
-	
+
 	@Override
 	public void deleteNotepad(String keyString) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
@@ -410,7 +414,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 			pm.close();
 		}
 	}
-	
+
 	private void deleteNotepad(PersistenceManager pm, String keyString) {
 		Notepad notepad = readNotepad(pm, keyString);
 		pm.deletePersistent(notepad);
@@ -445,7 +449,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 			dto.setTargetShop(readCashedShopDTO(pm, shops, dto.getTargetShopKey()));
 		}
 	}
-	
+
 	private ShopDTO readCashedShopDTO(PersistenceManager pm, Map<String, ShopDTO> cache, String shopKey) {
 		ShopDTO dto = cache.get(shopKey);
 		if (dto == null) {
@@ -470,13 +474,13 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		try {
 			Shop shop = readOwnStock(pm);
 			dtos = shop.createDeliveryNoticeDTOs();
-			setShopsToDeliveryNoticeDTOs(pm, dtos.toArray(new DeliveryNoticeDTO[] { }));
+			setShopsToDeliveryNoticeDTOs(pm, dtos.toArray(new DeliveryNoticeDTO[] {}));
 		} finally {
 			pm.close();
 		}
 		return dtos;
 	}
-	
+
 	@Override
 	public DeliveryNoticeDTO readDeliveryNotice(String keyString) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
@@ -490,7 +494,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		}
 		return dto;
 	}
-	
+
 	public DeliveryNotice readDeliveryNotice(PersistenceManager pm, String keyString) {
 		DeliveryNotice deliveryNotice = pm.getObjectById(DeliveryNotice.class, KeyFactory.stringToKey(keyString));
 		return deliveryNotice;
@@ -596,7 +600,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		return articleAmount;
 	}
 
-	@Override 
+	@Override
 	public List<ArticleAmountDTO> readStockOfUser(String userKey) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		List<ArticleAmountDTO> dtos = null;
@@ -609,7 +613,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		}
 		return dtos;
 	}
-	
+
 	@Override
 	public void updateStockEntry(ArticleAmountDTO dto) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
@@ -643,7 +647,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		if (shop != null) {
 			dtos = shop.createStock();
 		}
-		
+
 		return dtos;
 	}
 
@@ -684,7 +688,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		if (shop != null) {
 			dtos = shop.createStock();
 		}
-		
+
 		return dtos;
 	}
 
@@ -728,13 +732,13 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 			}
 		}
 		pm.flush();
-		
+
 		for (ArticleAmountDTO dto : dtos.values()) {
 			shop.addAddedArticle(new AddedArticle(dto));
 		}
 		pm.flush();
 	}
-	
+
 	@Override
 	public Collection<ArticleAmountDTO> sellArticlesFromStock(Collection<SoldArticleDTO> dtos) {
 		Collection<ArticleAmountDTO> stock = null;
@@ -788,11 +792,18 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 			}
 			shop.getArticles().removeAll(toRemove);
 
+			List<SoldArticle> newSoldArticles = new ArrayList<SoldArticle>();
 			for (SoldArticleDTO soldArticleDTO : dtos) {
-				createSoldArticle(pm, shop, soldArticleDTO);
+				newSoldArticles.add(createSoldArticle(pm, shop, soldArticleDTO));
 			}
 
 			tx.commit();
+
+			Queue queue = QueueFactory.getDefaultQueue();
+			for (SoldArticle soldArticle : newSoldArticles) {
+				queue.add(TaskOptions.Builder.withUrl("/task/updatesellstatistic")
+						.param(UpdateSellStatisticServlet.PARAM_SOLD_ARTICLE_KEY, soldArticle.getKeyAsString()));
+			}
 		} finally {
 			if (tx.isActive()) {
 				tx.rollback();
@@ -835,7 +846,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		}
 		return dto;
 	}
-	
+
 	private SoldArticle readSoldArticle(PersistenceManager pm, String keyString) {
 		SoldArticle soldArticle = pm.getObjectById(SoldArticle.class, KeyFactory.stringToKey(keyString));
 		return soldArticle;
@@ -872,7 +883,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		try {
 			Shop shop = readShop(pm, shopKey);
 			int cnt = (int) from;
-			List<SoldArticle> soldArticles = shop.getSoldArticles(); 
+			List<SoldArticle> soldArticles = shop.getSoldArticles();
 			while (cnt < to && cnt < soldArticles.size()) {
 				dtos.add(soldArticles.get(cnt).createDTO());
 				cnt++;
@@ -882,10 +893,10 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		}
 		return dtos;
 	}
-	
+
 	@Override
 	public List<SoldArticleDTO> readOwnSoldArticles(int from, int to) throws IllegalArgumentException {
-		UserDTO userDTO = (UserDTO) this.getThreadLocalRequest().getSession().getAttribute(SESSION_USER); 
+		UserDTO userDTO = (UserDTO) this.getThreadLocalRequest().getSession().getAttribute(SESSION_USER);
 		return readSoldArticlesOfShop(userDTO.getShop().getKeyString(), from, to);
 	}
 
@@ -894,7 +905,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		List<AddedArticleDTO> dtos = new ArrayList<AddedArticleDTO>();
 		return dtos;
 	}
-	
+
 	@Override
 	public List<AddedArticleDTO> readWareInputOfShop(String shopKey, int from, int to) throws IllegalArgumentException {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
@@ -902,7 +913,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		try {
 			Shop shop = readShop(pm, shopKey);
 			int cnt = (int) from;
-			List<AddedArticle> addedArticles = shop.getAddedArticles(); 
+			List<AddedArticle> addedArticles = shop.getAddedArticles();
 			while (cnt < to && cnt < addedArticles.size()) {
 				dtos.add(addedArticles.get(cnt).createDTO());
 				cnt++;
@@ -915,10 +926,10 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 
 	@Override
 	public List<AddedArticleDTO> readOwnWareInput(int from, int to) throws IllegalArgumentException {
-		UserDTO userDTO = (UserDTO) this.getThreadLocalRequest().getSession().getAttribute(SESSION_USER); 
+		UserDTO userDTO = (UserDTO) this.getThreadLocalRequest().getSession().getAttribute(SESSION_USER);
 		return readWareInputOfShop(userDTO.getShop().getKeyString(), from, to);
 	}
-	
+
 	@Override
 	public ArticleAmountDTO removeFromStock(ArticleAmountDTO dto, int amount) throws IllegalArgumentException {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
@@ -934,7 +945,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		}
 		return dto;
 	}
-	
+
 	private StockArticle removeFromStock(PersistenceManager pm, ArticleAmountDTO dto, int amount) {
 		Transaction tx = pm.currentTransaction();
 		StockArticle foundArticle = null;
@@ -973,7 +984,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 
 	@Override
 	public List<RemovedArticleDTO> readOwnRemovedArticles(int from, int to) throws IllegalArgumentException {
-		UserDTO userDTO = (UserDTO) this.getThreadLocalRequest().getSession().getAttribute(SESSION_USER); 
+		UserDTO userDTO = (UserDTO) this.getThreadLocalRequest().getSession().getAttribute(SESSION_USER);
 		return readRemovedArticlesOfShop(userDTO.getShop().getKeyString(), from, to);
 	}
 
@@ -984,7 +995,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		try {
 			Shop shop = readShop(pm, shopKey);
 			int cnt = (int) from;
-			List<RemovedArticle> removedArticles = shop.getRemovedArticles(); 
+			List<RemovedArticle> removedArticles = shop.getRemovedArticles();
 			while (cnt < to && cnt < removedArticles.size()) {
 				dtos.add(removedArticles.get(cnt).createDTO());
 				cnt++;
@@ -1026,7 +1037,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		}
 		return dtos;
 	}
-	
+
 	@Override
 	public Collection<PriceChangeDTO> updatePriceChanges(Collection<PriceChangeDTO> dtos) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
@@ -1061,7 +1072,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 			pm.close();
 		}
 	}
-	
+
 	private void deletePriceChanges(PersistenceManager pm, Set<String> deleteKeys) {
 		ArrayList<PriceChange> toRemove = new ArrayList<PriceChange>();
 		Shop shop = readOwnStock(pm);

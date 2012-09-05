@@ -8,6 +8,7 @@ import java.util.TimeZone;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
 import com.xfashion.shared.SoldArticleDTO;
@@ -15,13 +16,11 @@ import com.xfashion.shared.SoldArticleDTO;
 @PersistenceCapable
 public class DaySellStatistic {
 
+	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Key key;
 
-	/** Calendar.DATE / .WEEK_OF_YEAR / .MONTH / .YEAR */
-	private int periodType;
-
-	/** start-date when the respective period starts */
+	/** start-date of the statistic period */
 	private Date startDate;
 
 	private Integer pieces;
@@ -51,14 +50,6 @@ public class DaySellStatistic {
 		this.profit = new Integer(0);
 	}
 	
-	public int getPeriodType() {
-		return periodType;
-	}
-
-	public void setPeriodType(int periodType) {
-		this.periodType = periodType;
-	}
-
 	public Date getStartDate() {
 		return startDate;
 	}
@@ -95,8 +86,24 @@ public class DaySellStatistic {
 		return key;
 	}
 
-	public void addSoldArticle(SoldArticleDTO soldArticle) {
-		
+	public void add(SoldArticleDTO soldArticle) {
+		pieces += soldArticle.getAmount();
+		turnover += soldArticle.getSellPrice();
+		profit += soldArticle.getSellPrice() - soldArticle.getBuyPrice();
+	}
+
+	public boolean isWithinPeriod(Date sellDate) {
+		long check = sellDate.getTime();
+		GregorianCalendar gc = new GregorianCalendar(TimeZone.getTimeZone("Europe/Vienna"));
+		gc.setTime(startDate);
+		long start = gc.getTime().getTime();
+		gc.add(Calendar.DAY_OF_MONTH, 1);
+		long end = gc.getTime().getTime();
+		if (start <= check && end > check) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 }

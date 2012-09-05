@@ -174,7 +174,8 @@ public class SellFromStockPopup {
 
 	protected void addArticleToGrid(SoldArticleDTO sellArticle, ArticleTypeDTO articleType) {
 		Label articleNameLabel = new Label(articleType.getName());
-		lastArticlePriceLabel = new Label(formatter.formatCentsToCurrency(articleType.getSellPriceAt()));
+		Integer sellPrice = ArticleTypeManagement.getArticleTypePriceStrategy.getPrice(articleType);
+		lastArticlePriceLabel = new Label(formatter.formatCentsToCurrency(sellPrice));
 		Button removeArticleButton = new Button(textMessages.sellRemoveArticle());
 		removeArticleButton.addClickHandler(new RemoveArticleFromSellListClickHandler(this, sellArticle));
 		articleGrid.resizeRows(sellArticles.size() + 1);
