@@ -6,12 +6,12 @@ import com.xfashion.shared.SoldArticleDTO;
 
 public class StatisticAdder {
 
-	public void addToDayStatistic(List<DaySellStatistic> dtos, SoldArticleDTO soldArticle) {
-		DaySellStatistic dto = null;
+	public <T extends SellStatistic> void addToStatistic(Class<T> clazz, List<T> dtos, SoldArticleDTO soldArticle) {
+		T dto = null;
 		int index = 0;
 		if (dtos.size() != 0) {
 			while (dto == null && index < dtos.size()) {
-				DaySellStatistic search = dtos.get(index);
+				T search = dtos.get(index);
 				if (search.isWithinPeriod(soldArticle.getSellDate())) {
 					dto = search;
 				} else {
@@ -23,7 +23,13 @@ public class StatisticAdder {
 			}
 		}
 		if (dto == null) {
-			dto = new DaySellStatistic();
+			try {
+				dto = clazz.newInstance();
+			} catch (InstantiationException e) {
+				throw new RuntimeException(e);
+			} catch (IllegalAccessException e) {
+				throw new RuntimeException(e);
+			}
 			dtos.add(index, dto);
 		}
 		dto.add(soldArticle);

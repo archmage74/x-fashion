@@ -101,7 +101,7 @@ public interface TextMessages extends Messages {
 	String sellStockResult(long soldArticleNumber);
 	String sellArticles();
 	String sellRemoveArticle();
-	String sellStatisticHeader();
+	String protocolsHeader();
 	String allShops();
 	String sellStatisticDate(Date sellDate);
 	String dateTime(Date addDate);
@@ -128,5 +128,7 @@ public interface TextMessages extends Messages {
 	String priceChangeManagementHeader();
 	String printChangePriceStickers();
 	String acceptChangesPopupQuestion();
+
+	String statisticsHeader();
 
 }

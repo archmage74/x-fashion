@@ -153,6 +153,7 @@ public class MenuPanel implements LoginHandler, PriceChangesUpdatedHandler {
 		menu.addItem(createStockMenuItem());
 		menu.addItem(createUserProfileMenuItem());
 		menu.addItem(createSellStatisticMenuItem());
+		menu.addItem(createStatisticMenuItem());
 		menu.addItem(createPromoMenuItem());
 		menu.addItem(createUserManagementMenuItem());
 		menu.addItem(createPriceChangeMenuItem());
@@ -236,6 +237,16 @@ public class MenuPanel implements LoginHandler, PriceChangesUpdatedHandler {
 		};
 		MenuItem sellStatisticItem = new MenuItem(menuMessages.sellStatistic(), showStock);
 		return sellStatisticItem;
+	}
+
+	private MenuItem createStatisticMenuItem() {
+		Command showStatistic = new Command() {
+			public void execute() {
+				mainPanel.showStatsticPanel();
+			}
+		};
+		MenuItem statisticItem = new MenuItem(menuMessages.statistic(), showStatistic);
+		return statisticItem;
 	}
 
 	private MenuItem createPromoMenuItem() {

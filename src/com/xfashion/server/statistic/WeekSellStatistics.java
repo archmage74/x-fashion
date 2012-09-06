@@ -12,7 +12,7 @@ import javax.jdo.annotations.PrimaryKey;
 import com.google.appengine.api.datastore.Key;
 
 @PersistenceCapable
-public class DaySellStatistics {
+public class WeekSellStatistics {
 
 	@PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -20,17 +20,17 @@ public class DaySellStatistics {
 
 	@Persistent
 	@Order(extensions = @Extension(vendorName="datanucleus", key="list-ordering", value="startDate desc"))
-	private List<DaySellStatistic> sellStatistics;
+	private List<WeekSellStatistic> sellStatistics;
 
 	public Key getKey() {
 		return key;
 	}
 	
-	public List<DaySellStatistic> getSellStatistics() {
+	public List<WeekSellStatistic> getSellStatistics() {
 		return sellStatistics;
 	}
 
-	public void setSellStatistics(List<DaySellStatistic> sellStatistics) {
+	public void setSellStatistics(List<WeekSellStatistic> sellStatistics) {
 		this.sellStatistics = sellStatistics;
 	}
 }

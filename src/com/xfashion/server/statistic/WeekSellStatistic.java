@@ -11,10 +11,10 @@ import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
-import com.xfashion.shared.DaySellStatisticDTO;
+import com.xfashion.shared.WeekSellStatisticDTO;
 
 @PersistenceCapable
-public class DaySellStatistic extends SellStatistic {
+public class WeekSellStatistic extends SellStatistic {
 
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -29,11 +29,11 @@ public class DaySellStatistic extends SellStatistic {
 	
 	protected Integer profit;
 
-	public DaySellStatistic() {
+	public WeekSellStatistic() {
 		super();
 	}
 	
-	public DaySellStatistic(Date startDate) {
+	public WeekSellStatistic(Date startDate) {
 		super(startDate);
 	}
 
@@ -45,7 +45,7 @@ public class DaySellStatistic extends SellStatistic {
 	public String getKeyString() {
 		return KeyFactory.keyToString(key);
 	}
-	
+
 	public Date getStartDate() {
 		return startDate;
 	}
@@ -77,21 +77,21 @@ public class DaySellStatistic extends SellStatistic {
 	public void setProfit(Integer profit) {
 		this.profit = profit;
 	}
-	
-	public DaySellStatisticDTO createDTO() {
-		DaySellStatisticDTO dto = new DaySellStatisticDTO();
+
+	public WeekSellStatisticDTO createDTO() {
+		WeekSellStatisticDTO dto = new WeekSellStatisticDTO();
 		fillDTO(dto);
 		return dto;
 	}
 
 	@Override
 	protected void dayToPeriodStart(GregorianCalendar gc) {
-		
+		gc.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);		
 	}
 	
 	@Override
 	protected void addPeriod(GregorianCalendar gc) {
-		gc.add(Calendar.DAY_OF_MONTH, 1);
+		gc.add(Calendar.WEEK_OF_MONTH, 1);
 	}
 
 }

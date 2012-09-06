@@ -39,7 +39,6 @@ public class ProtocolsManagement implements ShowSellStatisticHandler, AddMoreSol
 	private AddedArticleDataProvider addedArticleProvider;
 	
 	TextMessages textMessages;
-
 	
 	public ProtocolsManagement(ArticleFilterProvider articleProvider) {
 		this.textMessages = GWT.create(TextMessages.class);

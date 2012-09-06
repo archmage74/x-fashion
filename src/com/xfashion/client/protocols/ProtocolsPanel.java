@@ -225,7 +225,7 @@ public class ProtocolsPanel implements ContentPanelResizeHandler {
 	}
 
 	private Label createHeaderLabel() {
-		Label headerLabel = new Label(textMessages.sellStatisticHeader());
+		Label headerLabel = new Label(textMessages.protocolsHeader());
 		headerLabel.addStyleName("filterLabel attributeFilterLabel");
 		return headerLabel;
 	}

@@ -24,6 +24,7 @@ import com.xfashion.client.pricechange.PriceChangeManagement;
 import com.xfashion.client.promo.PromoManagement;
 import com.xfashion.client.protocols.ProtocolsManagement;
 import com.xfashion.client.removed.RemovedArticleManagement;
+import com.xfashion.client.stat.StatisticManagement;
 import com.xfashion.client.stock.StockManagement;
 import com.xfashion.client.user.LoginEvent;
 import com.xfashion.client.user.LoginHandler;
@@ -52,6 +53,8 @@ public class MainPanel implements ErrorHandler, LoginHandler {
 	
 	private ProtocolsManagement protocolsManagement;
 	
+	private StatisticManagement statisticManagement;
+	
 	private RemovedArticleManagement removedArticleManagement;
 
 	private ErrorPopup errorPopup;
@@ -70,6 +73,7 @@ public class MainPanel implements ErrorHandler, LoginHandler {
 		stockManagement = new StockManagement(articleFilterProvider, articleTypeManagement);
 		stockManagement.init();
 		protocolsManagement = new ProtocolsManagement(articleFilterProvider);
+		statisticManagement = new StatisticManagement(articleFilterProvider);
 		removedArticleManagement = new RemovedArticleManagement(articleFilterProvider);
 		promoManagement = new PromoManagement();
 		priceChangeManagement = new PriceChangeManagement(articleFilterProvider);
@@ -130,6 +134,12 @@ public class MainPanel implements ErrorHandler, LoginHandler {
 	public void showSellStatsticPanel() {
 		contentPanel.clear();
 		Panel panel = protocolsManagement.getPanel();
+		contentPanel.add(panel);
+	}
+
+	public void showStatsticPanel() {
+		contentPanel.clear();
+		Panel panel = statisticManagement.getPanel();
 		contentPanel.add(panel);
 	}
 

@@ -43,5 +43,7 @@ public interface MenuMessages extends Messages {
 	@DefaultMessage("Artikel scannen:")
 	String scanArticle();
 
+	@DefaultMessage("Statistik")
+	String statistic();
 
 }

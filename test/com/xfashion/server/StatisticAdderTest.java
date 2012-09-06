@@ -46,7 +46,6 @@ public class StatisticAdderTest {
 		return dss;
 	}
 	
-
 	private SoldArticleDTO createSoldArticle(int month, int day, int amount, int sellPrice, int buyPrice) {
 		SoldArticleDTO sa = new SoldArticleDTO();
 		GregorianCalendar gc = new GregorianCalendar(TimeZone.getTimeZone("Europe/Vienna"));
@@ -62,7 +61,7 @@ public class StatisticAdderTest {
 	public void addDayStatisticTest1() {
 		List<DaySellStatistic> statistics = new ArrayList<DaySellStatistic>();
 		SoldArticleDTO soldArticle = createSoldArticle(5, 8, 1, 1200, 600);
-		statisticAdder.addToDayStatistic(statistics, soldArticle);
+		statisticAdder.addToStatistic(DaySellStatistic.class, statistics, soldArticle);
 		
 		Integer expectedPieces = new Integer(1);
 		Integer expectedTurnover = new Integer(1200);
@@ -78,7 +77,7 @@ public class StatisticAdderTest {
 	public void addDayStatisticTest2() {
 		List<DaySellStatistic> statistics = createDaySellStatisticList();
 		SoldArticleDTO soldArticle = createSoldArticle(5, 9, 1, 1200, 600);
-		statisticAdder.addToDayStatistic(statistics, soldArticle);
+		statisticAdder.addToStatistic(DaySellStatistic.class, statistics, soldArticle);
 		
 		Integer expectedPieces = new Integer(94);
 		Integer expectedTurnover = new Integer(92000 + 1200);
@@ -94,7 +93,7 @@ public class StatisticAdderTest {
 	public void addDayStatisticTest3() {
 		List<DaySellStatistic> statistics = createDaySellStatisticList();
 		SoldArticleDTO soldArticle = createSoldArticle(5, 8, 1, 1200, 600);
-		statisticAdder.addToDayStatistic(statistics, soldArticle);
+		statisticAdder.addToStatistic(DaySellStatistic.class, statistics, soldArticle);
 		
 		Integer expectedPieces = new Integer(84);
 		Integer expectedTurnover = new Integer(82000 + 1200);
@@ -110,7 +109,7 @@ public class StatisticAdderTest {
 	public void addDayStatisticTest4() {
 		List<DaySellStatistic> statistics = createDaySellStatisticList();
 		SoldArticleDTO soldArticle = createSoldArticle(5, 7, 1, 1200, 600);
-		statisticAdder.addToDayStatistic(statistics, soldArticle);
+		statisticAdder.addToStatistic(DaySellStatistic.class, statistics, soldArticle);
 		
 		Integer expectedPieces = new Integer(74);
 		Integer expectedTurnover = new Integer(72000 + 1200);
@@ -126,7 +125,7 @@ public class StatisticAdderTest {
 	public void addDayStatisticTest5() {
 		List<DaySellStatistic> statistics = createDaySellStatisticList();
 		SoldArticleDTO soldArticle = createSoldArticle(5, 6, 1, 1200, 600);
-		statisticAdder.addToDayStatistic(statistics, soldArticle);
+		statisticAdder.addToStatistic(DaySellStatistic.class, statistics, soldArticle);
 		
 		Integer expectedPieces = new Integer(1);
 		Integer expectedTurnover = new Integer(1200);
@@ -142,7 +141,7 @@ public class StatisticAdderTest {
 	public void addDayStatisticTest6() {
 		List<DaySellStatistic> statistics = createDaySellStatisticList();
 		SoldArticleDTO soldArticle = createSoldArticle(5, 5, 1, 1200, 600);
-		statisticAdder.addToDayStatistic(statistics, soldArticle);
+		statisticAdder.addToStatistic(DaySellStatistic.class, statistics, soldArticle);
 		
 		Integer expectedPieces = new Integer(54);
 		Integer expectedTurnover = new Integer(52000 + 1200);
@@ -158,7 +157,7 @@ public class StatisticAdderTest {
 	public void addDayStatisticTest7() {
 		List<DaySellStatistic> statistics = createDaySellStatisticList();
 		SoldArticleDTO soldArticle = createSoldArticle(5, 4, 1, 1200, 600);
-		statisticAdder.addToDayStatistic(statistics, soldArticle);
+		statisticAdder.addToStatistic(DaySellStatistic.class, statistics, soldArticle);
 		
 		Integer expectedPieces = new Integer(1);
 		Integer expectedTurnover = new Integer(1200);
@@ -174,7 +173,7 @@ public class StatisticAdderTest {
 	public void addDayStatisticTest8() {
 		List<DaySellStatistic> statistics = createDaySellStatisticList();
 		SoldArticleDTO soldArticle = createSoldArticle(5, 12, 1, 1200, 600);
-		statisticAdder.addToDayStatistic(statistics, soldArticle);
+		statisticAdder.addToStatistic(DaySellStatistic.class, statistics, soldArticle);
 		
 		Integer expectedPieces = new Integer(1);
 		Integer expectedTurnover = new Integer(1200);
@@ -190,7 +189,7 @@ public class StatisticAdderTest {
 	public void addDayStatisticTest9() {
 		List<DaySellStatistic> statistics = createDaySellStatisticList();
 		SoldArticleDTO soldArticle = createSoldArticle(5, 1, 1, 1200, 600);
-		statisticAdder.addToDayStatistic(statistics, soldArticle);
+		statisticAdder.addToStatistic(DaySellStatistic.class, statistics, soldArticle);
 		
 		Integer expectedPieces = new Integer(1);
 		Integer expectedTurnover = new Integer(1200);
