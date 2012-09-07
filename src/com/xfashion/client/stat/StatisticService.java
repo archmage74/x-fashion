@@ -14,5 +14,6 @@ public interface StatisticService extends RemoteService {
 
 	void writeStatistic(SoldArticleDTO soldArticle);
 
+	void rewriteStatistic();
 	
 }

@@ -12,5 +12,7 @@ public interface StatisticServiceAsync {
 
 	void writeStatistic(SoldArticleDTO soldArticle, AsyncCallback<Void> callback);
 
+	void rewriteStatistic(AsyncCallback<Void> callback);
+
 
 }

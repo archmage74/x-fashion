@@ -79,6 +79,11 @@
 		<servlet-class>com.xfashion.server.task.UpdateSellStatisticServlet</servlet-class>
 	</servlet>
 
+	<servlet>
+		<servlet-name>RewriteStatisticBackend</servlet-name>
+		<servlet-class>com.xfashion.server.statistic.RewriteStatisticBackendServlet</servlet-class>
+	</servlet>
+
   
   	<servlet-mapping>
 		<servlet-name>articleTypeServlet</servlet-name>
@@ -153,6 +158,11 @@
 	<servlet-mapping>
 		<servlet-name>updatesellstatistic</servlet-name>
 		<url-pattern>/task/updatesellstatistic</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>RewriteStatisticBackend</servlet-name>
+		<url-pattern>/backend/rewritestatisticbackend</url-pattern>
 	</servlet-mapping>
 
 	<!-- Default page to serve -->

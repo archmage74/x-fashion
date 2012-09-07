@@ -32,23 +32,23 @@ public abstract class SellStatistic {
 	 */
 	abstract protected void addPeriod(GregorianCalendar gc);
 	
-	abstract public String getKeyString();
+	public abstract String getKeyString();
 	
-	abstract public Date getStartDate();
+	public abstract Date getStartDate();
 
-	abstract public void setStartDate(Date startDate);
+	public abstract void setStartDate(Date startDate);
 
-	abstract public Integer getPieces();
+	public abstract Integer getPieces();
 
-	abstract public void setPieces(Integer pieces);
+	public abstract void setPieces(Integer pieces);
 
-	abstract public Integer getTurnover();
+	public abstract Integer getTurnover();
 
-	abstract public void setTurnover(Integer turnover);
+	public abstract void setTurnover(Integer turnover);
 
-	abstract public Integer getProfit();
+	public abstract Integer getProfit();
 
-	abstract public void setProfit(Integer profit);
+	public abstract void setProfit(Integer profit);
 	
 	public void init(Date date) {
 		GregorianCalendar gc = createCalendar();

@@ -3,8 +3,11 @@ package com.xfashion.server.statistic;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
+import javax.jdo.annotations.Extension;
 import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.Order;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
@@ -28,6 +31,22 @@ public class YearSellStatistic extends SellStatistic {
 	protected Integer turnover;
 	
 	protected Integer profit;
+
+	@Persistent
+	@Order(extensions = @Extension(vendorName="datanucleus", key="list-ordering", value="pieces desc"))
+	private List<SizeStatistic> sizeStatistics;
+
+	@Persistent
+	@Order(extensions = @Extension(vendorName="datanucleus", key="list-ordering", value="pieces desc"))
+	private List<CategoryStatistic> categoryStatistics;
+
+	@Persistent
+	@Order(extensions = @Extension(vendorName="datanucleus", key="list-ordering", value="pieces desc"))
+	private List<PromoStatistic> promoStatistics;
+
+	@Persistent
+	@Order(extensions = @Extension(vendorName="datanucleus", key="list-ordering", value="pieces desc"))
+	private List<TopStatistic> topStatistics;
 
 	public YearSellStatistic() {
 		super();
@@ -77,7 +96,38 @@ public class YearSellStatistic extends SellStatistic {
 	public void setProfit(Integer profit) {
 		this.profit = profit;
 	}
-	
+	public List<SizeStatistic> getSizeStatistics() {
+		return sizeStatistics;
+	}
+
+	public void setSizeStatistics(List<SizeStatistic> sizeStatistics) {
+		this.sizeStatistics = sizeStatistics;
+	}
+
+	public List<CategoryStatistic> getCategoryStatistics() {
+		return categoryStatistics;
+	}
+
+	public void setCategoryStatistics(List<CategoryStatistic> categoryStatistics) {
+		this.categoryStatistics = categoryStatistics;
+	}
+
+	public List<PromoStatistic> getPromoStatistics() {
+		return promoStatistics;
+	}
+
+	public void setPromoStatistics(List<PromoStatistic> promoStatistics) {
+		this.promoStatistics = promoStatistics;
+	}
+
+	public List<TopStatistic> getTopStatistics() {
+		return topStatistics;
+	}
+
+	public void setTopStatistics(List<TopStatistic> topStatistics) {
+		this.topStatistics = topStatistics;
+	}
+
 	public YearSellStatisticDTO createDTO() {
 		YearSellStatisticDTO dto = new YearSellStatisticDTO();
 		fillDTO(dto);
@@ -86,7 +136,8 @@ public class YearSellStatistic extends SellStatistic {
 
 	@Override
 	protected void dayToPeriodStart(GregorianCalendar gc) {
-		gc.set(Calendar.MONTH, Calendar.JANUARY);		
+		gc.set(Calendar.MONTH, Calendar.JANUARY);
+		gc.set(Calendar.DAY_OF_MONTH, 1);
 	}
 	
 	@Override

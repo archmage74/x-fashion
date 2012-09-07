@@ -3,6 +3,7 @@ package com.xfashion.server.statistic;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
@@ -28,6 +29,14 @@ public class MonthSellStatistic extends SellStatistic {
 	protected Integer turnover;
 	
 	protected Integer profit;
+
+	private List<SizeStatistic> sizeStatistics;
+
+	private List<CategoryStatistic> categoryStatistics;
+
+	private List<PromoStatistic> promoStatistics;
+
+	private List<TopStatistic> topStatistics;
 
 	public MonthSellStatistic() {
 		super();
@@ -76,6 +85,37 @@ public class MonthSellStatistic extends SellStatistic {
 
 	public void setProfit(Integer profit) {
 		this.profit = profit;
+	}
+	public List<SizeStatistic> getSizeStatistics() {
+		return sizeStatistics;
+	}
+
+	public void setSizeStatistics(List<SizeStatistic> sizeStatistics) {
+		this.sizeStatistics = sizeStatistics;
+	}
+
+	public List<CategoryStatistic> getCategoryStatistics() {
+		return categoryStatistics;
+	}
+
+	public void setCategoryStatistics(List<CategoryStatistic> categoryStatistics) {
+		this.categoryStatistics = categoryStatistics;
+	}
+
+	public List<PromoStatistic> getPromoStatistics() {
+		return promoStatistics;
+	}
+
+	public void setPromoStatistics(List<PromoStatistic> promoStatistics) {
+		this.promoStatistics = promoStatistics;
+	}
+
+	public List<TopStatistic> getTopStatistics() {
+		return topStatistics;
+	}
+
+	public void setTopStatistics(List<TopStatistic> topStatistics) {
+		this.topStatistics = topStatistics;
 	}
 	
 	public MonthSellStatisticDTO createDTO() {

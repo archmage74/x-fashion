@@ -1,23 +1,18 @@
 package com.xfashion.client;
 
-import java.util.List;
-
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.xfashion.client.admin.AdminPanel;
 import com.xfashion.client.at.ArticleFilterProvider;
 import com.xfashion.client.at.ArticleTypeManagement;
-import com.xfashion.client.at.ArticleTypeService;
-import com.xfashion.client.at.ArticleTypeServiceAsync;
 import com.xfashion.client.event.ContentPanelResizeEvent;
 import com.xfashion.client.notepad.NotepadManagement;
 import com.xfashion.client.pricechange.PriceChangeManagement;
@@ -30,7 +25,6 @@ import com.xfashion.client.user.LoginEvent;
 import com.xfashion.client.user.LoginHandler;
 import com.xfashion.client.user.UserManagement;
 import com.xfashion.client.user.UserProfile;
-import com.xfashion.shared.SizeDTO;
 import com.xfashion.shared.UserRole;
 
 public class MainPanel implements ErrorHandler, LoginHandler {
@@ -179,22 +173,9 @@ public class MainPanel implements ErrorHandler, LoginHandler {
 	}
 
 	public void test() {
-		ArticleTypeServiceAsync articleTypeService = (ArticleTypeServiceAsync) GWT.create(ArticleTypeService.class);
-		AsyncCallback<List<SizeDTO>> callback = new AsyncCallback<List<SizeDTO>>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				Xfashion.fireError(caught.getMessage());
-			}
-
-			@Override
-			public void onSuccess(List<SizeDTO> result) {
-				String str = "";
-				for (SizeDTO s : result) {
-					str = str + s.getName() + ", ";
-				}
-			}
-		};
-		articleTypeService.readSizes(callback);
+		contentPanel.clear();
+		AdminPanel adminPanel = new AdminPanel();
+		contentPanel.add(adminPanel.createPanel());
 	}
 
 	private Widget createLogo() {
