@@ -6,51 +6,53 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
-import com.xfashion.shared.SizeStatisticDTO;
 
 @PersistenceCapable
-public class SizeStatistic {
+public class WeekTopStatistic extends ATopStatistic {
 
 	@PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Key key;
 
-	@Persistent
-	private String size;
+	private String category;
 	
-	@Persistent
+	private String articleName;
+	
 	private Integer pieces;
 
+	@Override
 	public Key getKey() {
 		return key;
 	}
-	
-	public SizeStatistic(String size) {
-		this.size = size;
-		this.pieces = 0;
-	}
-	
-	public String getSize() {
-		return size;
+
+	@Override
+	public String getCategory() {
+		return category;
 	}
 
-	public void setSize(String size) {
-		this.size = size;
+	@Override
+	public void setCategory(String category) {
+		this.category = category;
 	}
 
+	@Override
+	public String getArticleName() {
+		return articleName;
+	}
+
+	@Override
+	public void setArticleName(String articleName) {
+		this.articleName = articleName;
+	}
+
+	@Override
 	public Integer getPieces() {
 		return pieces;
 	}
 
+	@Override
 	public void setPieces(Integer pieces) {
 		this.pieces = pieces;
 	}
 
-	public SizeStatisticDTO createDTO() {
-		SizeStatisticDTO dto = new SizeStatisticDTO();
-		dto.setSize(size);
-		dto.setPieces(pieces);
-		return dto;
-	}
-	
 }

@@ -3,10 +3,11 @@ package com.xfashion.server.statistic;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.TimeZone;
 
-import com.xfashion.shared.SellStatisticDTO;
 import com.xfashion.shared.SoldArticleDTO;
+import com.xfashion.shared.statistic.SellStatisticDTO;
 
 public abstract class SellStatistic {
 
@@ -94,6 +95,31 @@ public abstract class SellStatistic {
 		gc.set(Calendar.MINUTE, 0);
 		gc.set(Calendar.SECOND, 0);
 		gc.set(Calendar.MILLISECOND, 0);
+	}
+
+	protected <T extends IStatisticDetail> void addToDetailList(List<T> list, SoldArticleDTO soldArticleDTO, Class<T> detailClass) {
+		T detail = null;
+		for (T s : list) {
+			if (s.matchesStatistic(soldArticleDTO)) {
+				detail = s;
+				break;
+			}
+		}
+		if (detail == null) {
+			try {
+				detail = detailClass.newInstance();
+				if (!detail.isRelevant(soldArticleDTO)) {
+					return;
+				}
+				detail.initFromSoldArticleDTO(soldArticleDTO);
+				list.add(detail);
+			} catch (InstantiationException e) {
+				throw new RuntimeException(e);
+			} catch (IllegalAccessException e) {
+				throw new RuntimeException(e);
+			}
+		}
+		detail.addToStatistic(soldArticleDTO);
 	}
 
 	private GregorianCalendar createCalendar() {

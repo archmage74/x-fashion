@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
+import javax.jdo.Transaction;
 
 import com.google.appengine.api.backends.BackendService;
 import com.google.appengine.api.backends.BackendServiceFactory;
@@ -14,8 +15,8 @@ import com.google.appengine.api.taskqueue.TaskOptions;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.xfashion.client.stat.StatisticService;
 import com.xfashion.server.PMF;
-import com.xfashion.shared.DaySellStatisticDTO;
 import com.xfashion.shared.SoldArticleDTO;
+import com.xfashion.shared.statistic.DaySellStatisticDTO;
 
 public class StatisticServiceImpl extends RemoteServiceServlet implements StatisticService {
 
@@ -54,10 +55,17 @@ public class StatisticServiceImpl extends RemoteServiceServlet implements Statis
 
 	private void writeCommonDaySellStatistic(SoldArticleDTO soldArticle) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
+		Transaction tx = pm.currentTransaction();
 		try {
+			tx.setOptimistic(false);
+			tx.begin();
 			SellStatistics statistics = readCommonSellStatistics(pm);
 			adder.addToStatistic(DaySellStatistic.class, statistics.getDaySellStatistics(), soldArticle);
+			tx.commit();
 		} finally {
+			if (tx.isActive()) {
+				tx.rollback();
+			}
 			pm.close();
 		}
 	}

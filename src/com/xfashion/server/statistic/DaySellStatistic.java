@@ -15,8 +15,8 @@ import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
-import com.xfashion.shared.DaySellStatisticDTO;
 import com.xfashion.shared.SoldArticleDTO;
+import com.xfashion.shared.statistic.DaySellStatisticDTO;
 
 @PersistenceCapable
 public class DaySellStatistic extends SellStatistic {
@@ -35,35 +35,29 @@ public class DaySellStatistic extends SellStatistic {
 	protected Integer profit;
 
 	@Persistent
-	@Order(extensions = @Extension(vendorName = "datanucleus", key = "list-ordering", value = "pieces desc"))
+	@Order(extensions = @Extension(vendorName = "datanucleus", key = "list-ordering", value = "key asc"))
 	private List<DaySizeStatistic> sizeStatistics;
 
 	@Persistent
-	@Order(extensions = @Extension(vendorName = "datanucleus", key = "list-ordering", value = "pieces desc"))
-	private List<CategoryStatistic> categoryStatistics;
+	@Order(extensions = @Extension(vendorName = "datanucleus", key = "list-ordering", value = "key asc"))
+	private List<DayCategoryStatistic> categoryStatistics;
 
 	@Persistent
-	@Order(extensions = @Extension(vendorName = "datanucleus", key = "list-ordering", value = "pieces desc"))
-	private List<PromoStatistic> promoStatistics;
+	@Order(extensions = @Extension(vendorName = "datanucleus", key = "list-ordering", value = "key asc"))
+	private List<DayPromoStatistic> promoStatistics;
 
 	@Persistent
-	@Order(extensions = @Extension(vendorName = "datanucleus", key = "list-ordering", value = "pieces desc"))
-	private List<TopStatistic> topStatistics;
+	@Order(extensions = @Extension(vendorName = "datanucleus", key = "list-ordering", value = "key asc"))
+	private List<DayTopStatistic> topStatistics;
 
 	public DaySellStatistic() {
 		super();
-		setDaySizeStatistics(new ArrayList<DaySizeStatistic>());
-		setCategoryStatistics(new ArrayList<CategoryStatistic>());
-		setPromoStatistics(new ArrayList<PromoStatistic>());
-		setTopStatistics(new ArrayList<TopStatistic>());
+		initLists();
 	}
 
 	public DaySellStatistic(Date startDate) {
 		super(startDate);
-		setDaySizeStatistics(new ArrayList<DaySizeStatistic>());
-		setCategoryStatistics(new ArrayList<CategoryStatistic>());
-		setPromoStatistics(new ArrayList<PromoStatistic>());
-		setTopStatistics(new ArrayList<TopStatistic>());
+		initLists();
 	}
 
 	public Key getKey() {
@@ -75,34 +69,42 @@ public class DaySellStatistic extends SellStatistic {
 		return KeyFactory.keyToString(key);
 	}
 
+	@Override
 	public Date getStartDate() {
 		return startDate;
 	}
 
+	@Override
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
 	}
 
+	@Override
 	public Integer getPieces() {
 		return pieces;
 	}
 
+	@Override
 	public void setPieces(Integer pieces) {
 		this.pieces = pieces;
 	}
 
+	@Override
 	public Integer getTurnover() {
 		return turnover;
 	}
 
+	@Override
 	public void setTurnover(Integer turnover) {
 		this.turnover = turnover;
 	}
 
+	@Override
 	public Integer getProfit() {
 		return profit;
 	}
 
+	@Override
 	public void setProfit(Integer profit) {
 		this.profit = profit;
 	}
@@ -111,53 +113,41 @@ public class DaySellStatistic extends SellStatistic {
 		return sizeStatistics;
 	}
 
-	public void setDaySizeStatistics(List<DaySizeStatistic> sizeStatistics) {
+	public void setSizeStatistics(List<DaySizeStatistic> sizeStatistics) {
 		this.sizeStatistics = sizeStatistics;
 	}
 
-	public List<CategoryStatistic> getCategoryStatistics() {
+	public List<DayCategoryStatistic> getCategoryStatistics() {
 		return categoryStatistics;
 	}
 
-	public void setCategoryStatistics(List<CategoryStatistic> categoryStatistics) {
+	public void setCategoryStatistics(List<DayCategoryStatistic> categoryStatistics) {
 		this.categoryStatistics = categoryStatistics;
 	}
 
-	public List<PromoStatistic> getPromoStatistics() {
+	public List<DayPromoStatistic> getPromoStatistics() {
 		return promoStatistics;
 	}
 
-	public void setPromoStatistics(List<PromoStatistic> promoStatistics) {
+	public void setPromoStatistics(List<DayPromoStatistic> promoStatistics) {
 		this.promoStatistics = promoStatistics;
 	}
 
-	public List<TopStatistic> getTopStatistics() {
+	public List<DayTopStatistic> getTopStatistics() {
 		return topStatistics;
 	}
 
-	public void setTopStatistics(List<TopStatistic> topStatistics) {
+	public void setTopStatistics(List<DayTopStatistic> topStatistics) {
 		this.topStatistics = topStatistics;
 	}
 
-	public void add(SoldArticleDTO soldArticle) {
-		super.add(soldArticle);
-		addSizeStatistic(soldArticle);
-	}
-
-	private void addSizeStatistic(SoldArticleDTO soldArticle) {
-		System.out.print("addSizeStatistic() called");
-		DaySizeStatistic sizeStatistic = null;
-		for (DaySizeStatistic s : getDaySizeStatistics()) {
-			if (soldArticle.getSize().equals(s.getSize())) {
-				sizeStatistic = s;
-				break;
-			}
-		}
-		if (sizeStatistic == null) {
-			sizeStatistic = new DaySizeStatistic(soldArticle.getSize());
-			getDaySizeStatistics().add(sizeStatistic);
-		}
-		sizeStatistic.setPieces(sizeStatistic.getPieces() + soldArticle.getAmount());
+	public void add(SoldArticleDTO soldArticleDTO) {
+		System.out.println("DaySellStatistic.add() called for soldArticle.name=" + soldArticleDTO.getArticleName());
+		super.add(soldArticleDTO);
+		addToDetailList(sizeStatistics, soldArticleDTO, DaySizeStatistic.class);
+		addToDetailList(categoryStatistics, soldArticleDTO, DayCategoryStatistic.class);
+		addToDetailList(promoStatistics, soldArticleDTO, DayPromoStatistic.class);
+		addToDetailList(topStatistics, soldArticleDTO, DayTopStatistic.class);
 	}
 
 	public DaySellStatisticDTO createDTO() {
@@ -174,6 +164,28 @@ public class DaySellStatistic extends SellStatistic {
 	@Override
 	protected void addPeriod(GregorianCalendar gc) {
 		gc.add(Calendar.DAY_OF_MONTH, 1);
+	}
+	
+//	private void addSizeStatistic(SoldArticleDTO soldArticleDTO) {
+//		DaySizeStatistic sizeStatistic = null;
+//		for (DaySizeStatistic s : getDaySizeStatistics()) {
+//			if (soldArticle.getSize().equals(s.getSize())) {
+//				sizeStatistic = s;
+//				break;
+//			}
+//		}
+//		if (sizeStatistic == null) {
+//			sizeStatistic = new DaySizeStatistic(soldArticle.getSize());
+//			getDaySizeStatistics().add(sizeStatistic);
+//		}
+//		sizeStatistic.setPieces(sizeStatistic.getPieces() + soldArticle.getAmount());
+//	}
+
+	private void initLists() {
+		setSizeStatistics(new ArrayList<DaySizeStatistic>());
+		setCategoryStatistics(new ArrayList<DayCategoryStatistic>());
+		setPromoStatistics(new ArrayList<DayPromoStatistic>());
+		setTopStatistics(new ArrayList<DayTopStatistic>());
 	}
 
 }

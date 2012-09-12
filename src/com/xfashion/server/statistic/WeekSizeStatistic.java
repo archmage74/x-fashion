@@ -1,39 +1,53 @@
 package com.xfashion.server.statistic;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
 
-public class CategoryStatistic {
+@PersistenceCapable
+public class WeekSizeStatistic extends ASizeStatistic {
 
 	@PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Key key;
 
-	private String category;
+	@Persistent
+	private String size;
 	
+	@Persistent
 	private Integer pieces;
 
+	@Override
 	public Key getKey() {
 		return key;
 	}
-
-	public String getCategory() {
-		return category;
+	
+	public WeekSizeStatistic(String size) {
+		this.size = size;
+		this.pieces = 0;
+	}
+	
+	@Override
+	public String getSize() {
+		return size;
 	}
 
-	public void setCategory(String category) {
-		this.category = category;
+	@Override
+	public void setSize(String size) {
+		this.size = size;
 	}
 
+	@Override
 	public Integer getPieces() {
 		return pieces;
 	}
 
+	@Override
 	public void setPieces(Integer pieces) {
 		this.pieces = pieces;
 	}
-	
+
 }

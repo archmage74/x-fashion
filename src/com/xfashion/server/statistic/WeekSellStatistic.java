@@ -1,5 +1,6 @@
 package com.xfashion.server.statistic;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -14,7 +15,7 @@ import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
-import com.xfashion.shared.WeekSellStatisticDTO;
+import com.xfashion.shared.statistic.WeekSellStatisticDTO;
 
 @PersistenceCapable
 public class WeekSellStatistic extends SellStatistic {
@@ -31,29 +32,31 @@ public class WeekSellStatistic extends SellStatistic {
 	protected Integer turnover;
 	
 	protected Integer profit;
+	
+	@Persistent
+	@Order(extensions = @Extension(vendorName="datanucleus", key="list-ordering", value="key asc"))
+	private List<WeekSizeStatistic> sizeStatistics;
 
 	@Persistent
-	@Order(extensions = @Extension(vendorName="datanucleus", key="list-ordering", value="pieces desc"))
-	private List<SizeStatistic> sizeStatistics;
+	@Order(extensions = @Extension(vendorName="datanucleus", key="list-ordering", value="key asc"))
+	private List<WeekCategoryStatistic> categoryStatistics;
 
 	@Persistent
-	@Order(extensions = @Extension(vendorName="datanucleus", key="list-ordering", value="pieces desc"))
-	private List<CategoryStatistic> categoryStatistics;
+	@Order(extensions = @Extension(vendorName="datanucleus", key="list-ordering", value="key asc"))
+	private List<WeekPromoStatistic> promoStatistics;
 
 	@Persistent
-	@Order(extensions = @Extension(vendorName="datanucleus", key="list-ordering", value="pieces desc"))
-	private List<PromoStatistic> promoStatistics;
-
-	@Persistent
-	@Order(extensions = @Extension(vendorName="datanucleus", key="list-ordering", value="pieces desc"))
-	private List<TopStatistic> topStatistics;
+	@Order(extensions = @Extension(vendorName="datanucleus", key="list-ordering", value="key asc"))
+	private List<WeekTopStatistic> topStatistics;
 
 	public WeekSellStatistic() {
 		super();
+		initLists();
 	}
 	
 	public WeekSellStatistic(Date startDate) {
 		super(startDate);
+		initLists();
 	}
 
 	public Key getKey() {
@@ -96,35 +99,35 @@ public class WeekSellStatistic extends SellStatistic {
 	public void setProfit(Integer profit) {
 		this.profit = profit;
 	}
-	public List<SizeStatistic> getSizeStatistics() {
+	public List<WeekSizeStatistic> getSizeStatistics() {
 		return sizeStatistics;
 	}
 
-	public void setSizeStatistics(List<SizeStatistic> sizeStatistics) {
+	public void setSizeStatistics(List<WeekSizeStatistic> sizeStatistics) {
 		this.sizeStatistics = sizeStatistics;
 	}
 
-	public List<CategoryStatistic> getCategoryStatistics() {
+	public List<WeekCategoryStatistic> getCategoryStatistics() {
 		return categoryStatistics;
 	}
 
-	public void setCategoryStatistics(List<CategoryStatistic> categoryStatistics) {
+	public void setCategoryStatistics(List<WeekCategoryStatistic> categoryStatistics) {
 		this.categoryStatistics = categoryStatistics;
 	}
 
-	public List<PromoStatistic> getPromoStatistics() {
+	public List<WeekPromoStatistic> getPromoStatistics() {
 		return promoStatistics;
 	}
 
-	public void setPromoStatistics(List<PromoStatistic> promoStatistics) {
+	public void setPromoStatistics(List<WeekPromoStatistic> promoStatistics) {
 		this.promoStatistics = promoStatistics;
 	}
 
-	public List<TopStatistic> getTopStatistics() {
+	public List<WeekTopStatistic> getTopStatistics() {
 		return topStatistics;
 	}
 
-	public void setTopStatistics(List<TopStatistic> topStatistics) {
+	public void setTopStatistics(List<WeekTopStatistic> topStatistics) {
 		this.topStatistics = topStatistics;
 	}
 
@@ -142,6 +145,13 @@ public class WeekSellStatistic extends SellStatistic {
 	@Override
 	protected void addPeriod(GregorianCalendar gc) {
 		gc.add(Calendar.WEEK_OF_MONTH, 1);
+	}
+
+	private void initLists() {
+		setSizeStatistics(new ArrayList<WeekSizeStatistic>());
+		setCategoryStatistics(new ArrayList<WeekCategoryStatistic>());
+		setPromoStatistics(new ArrayList<WeekPromoStatistic>());
+		setTopStatistics(new ArrayList<WeekTopStatistic>());
 	}
 
 }

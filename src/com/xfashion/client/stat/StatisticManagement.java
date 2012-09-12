@@ -7,7 +7,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Panel;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleFilterProvider;
-import com.xfashion.shared.DaySellStatisticDTO;
+import com.xfashion.shared.statistic.DaySellStatisticDTO;
 
 public class StatisticManagement {
 

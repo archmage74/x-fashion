@@ -24,10 +24,10 @@ import com.xfashion.client.protocols.event.ShowSellStatisticEvent;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.client.user.UserManagement;
 import com.xfashion.client.user.UserService;
-import com.xfashion.shared.SellStatisticDTO;
 import com.xfashion.shared.ShopDTO;
 import com.xfashion.shared.UserDTO;
 import com.xfashion.shared.UserRole;
+import com.xfashion.shared.statistic.SellStatisticDTO;
 
 public class StatisticPanel implements ContentPanelResizeHandler {
 

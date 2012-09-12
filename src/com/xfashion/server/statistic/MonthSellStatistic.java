@@ -1,18 +1,21 @@
 package com.xfashion.server.statistic;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import javax.jdo.annotations.Extension;
 import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.Order;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
-import com.xfashion.shared.MonthSellStatisticDTO;
+import com.xfashion.shared.statistic.MonthSellStatisticDTO;
 
 @PersistenceCapable
 public class MonthSellStatistic extends SellStatistic {
@@ -30,20 +33,30 @@ public class MonthSellStatistic extends SellStatistic {
 	
 	protected Integer profit;
 
-	private List<SizeStatistic> sizeStatistics;
+	@Persistent
+	@Order(extensions = @Extension(vendorName = "datanucleus", key = "list-ordering", value = "key asc"))
+	private List<MonthSizeStatistic> sizeStatistics;
 
-	private List<CategoryStatistic> categoryStatistics;
+	@Persistent
+	@Order(extensions = @Extension(vendorName = "datanucleus", key = "list-ordering", value = "key asc"))
+	private List<MonthCategoryStatistic> categoryStatistics;
 
-	private List<PromoStatistic> promoStatistics;
+	@Persistent
+	@Order(extensions = @Extension(vendorName = "datanucleus", key = "list-ordering", value = "key asc"))
+	private List<MonthPromoStatistic> promoStatistics;
 
-	private List<TopStatistic> topStatistics;
+	@Persistent
+	@Order(extensions = @Extension(vendorName = "datanucleus", key = "list-ordering", value = "key asc"))
+	private List<MonthTopStatistic> topStatistics;
 
 	public MonthSellStatistic() {
 		super();
+		initLists();
 	}
 	
 	public MonthSellStatistic(Date startDate) {
 		super(startDate);
+		initLists();
 	}
 
 	public Key getKey() {
@@ -86,35 +99,35 @@ public class MonthSellStatistic extends SellStatistic {
 	public void setProfit(Integer profit) {
 		this.profit = profit;
 	}
-	public List<SizeStatistic> getSizeStatistics() {
+	public List<MonthSizeStatistic> getSizeStatistics() {
 		return sizeStatistics;
 	}
 
-	public void setSizeStatistics(List<SizeStatistic> sizeStatistics) {
+	public void setSizeStatistics(List<MonthSizeStatistic> sizeStatistics) {
 		this.sizeStatistics = sizeStatistics;
 	}
 
-	public List<CategoryStatistic> getCategoryStatistics() {
+	public List<MonthCategoryStatistic> getCategoryStatistics() {
 		return categoryStatistics;
 	}
 
-	public void setCategoryStatistics(List<CategoryStatistic> categoryStatistics) {
+	public void setCategoryStatistics(List<MonthCategoryStatistic> categoryStatistics) {
 		this.categoryStatistics = categoryStatistics;
 	}
 
-	public List<PromoStatistic> getPromoStatistics() {
+	public List<MonthPromoStatistic> getPromoStatistics() {
 		return promoStatistics;
 	}
 
-	public void setPromoStatistics(List<PromoStatistic> promoStatistics) {
+	public void setPromoStatistics(List<MonthPromoStatistic> promoStatistics) {
 		this.promoStatistics = promoStatistics;
 	}
 
-	public List<TopStatistic> getTopStatistics() {
+	public List<MonthTopStatistic> getTopStatistics() {
 		return topStatistics;
 	}
 
-	public void setTopStatistics(List<TopStatistic> topStatistics) {
+	public void setTopStatistics(List<MonthTopStatistic> topStatistics) {
 		this.topStatistics = topStatistics;
 	}
 	
@@ -134,4 +147,11 @@ public class MonthSellStatistic extends SellStatistic {
 		gc.add(Calendar.MONTH, 1);
 	}
 	
+	private void initLists() {
+		setSizeStatistics(new ArrayList<MonthSizeStatistic>());
+		setCategoryStatistics(new ArrayList<MonthCategoryStatistic>());
+		setPromoStatistics(new ArrayList<MonthPromoStatistic>());
+		setTopStatistics(new ArrayList<MonthTopStatistic>());
+	}
+
 }

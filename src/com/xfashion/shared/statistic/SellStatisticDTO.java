@@ -1,4 +1,4 @@
-package com.xfashion.shared;
+package com.xfashion.shared.statistic;
 
 import java.util.Date;
 

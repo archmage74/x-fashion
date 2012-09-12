@@ -3,8 +3,8 @@ package com.xfashion.client.stat;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.xfashion.shared.DaySellStatisticDTO;
 import com.xfashion.shared.SoldArticleDTO;
+import com.xfashion.shared.statistic.DaySellStatisticDTO;
 
 public interface StatisticServiceAsync {
 

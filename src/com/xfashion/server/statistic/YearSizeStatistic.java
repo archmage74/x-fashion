@@ -8,7 +8,7 @@ import javax.jdo.annotations.PrimaryKey;
 import com.google.appengine.api.datastore.Key;
 
 @PersistenceCapable
-public class DaySizeStatistic extends ASizeStatistic {
+public class YearSizeStatistic extends ASizeStatistic {
 
 	@PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -23,6 +23,11 @@ public class DaySizeStatistic extends ASizeStatistic {
 	@Override
 	public Key getKey() {
 		return key;
+	}
+	
+	public YearSizeStatistic(String size) {
+		this.size = size;
+		this.pieces = 0;
 	}
 	
 	@Override

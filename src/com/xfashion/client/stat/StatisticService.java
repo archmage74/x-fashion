@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
-import com.xfashion.shared.DaySellStatisticDTO;
 import com.xfashion.shared.SoldArticleDTO;
+import com.xfashion.shared.statistic.DaySellStatisticDTO;
 
 @RemoteServiceRelativePath("statisticService")
 public interface StatisticService extends RemoteService {

@@ -1,4 +1,4 @@
-package com.xfashion.shared;
+package com.xfashion.shared.statistic;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
