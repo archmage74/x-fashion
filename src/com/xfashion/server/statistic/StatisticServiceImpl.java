@@ -13,7 +13,7 @@ import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-import com.xfashion.client.stat.StatisticService;
+import com.xfashion.client.statistic.StatisticService;
 import com.xfashion.server.PMF;
 import com.xfashion.shared.SoldArticleDTO;
 import com.xfashion.shared.statistic.DaySellStatisticDTO;

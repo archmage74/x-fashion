@@ -19,7 +19,7 @@ import com.xfashion.client.pricechange.PriceChangeManagement;
 import com.xfashion.client.promo.PromoManagement;
 import com.xfashion.client.protocols.ProtocolsManagement;
 import com.xfashion.client.removed.RemovedArticleManagement;
-import com.xfashion.client.stat.StatisticManagement;
+import com.xfashion.client.statistic.StatisticManagement;
 import com.xfashion.client.stock.StockManagement;
 import com.xfashion.client.user.LoginEvent;
 import com.xfashion.client.user.LoginHandler;

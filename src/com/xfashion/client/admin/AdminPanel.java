@@ -8,8 +8,8 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.xfashion.client.Xfashion;
-import com.xfashion.client.stat.StatisticService;
-import com.xfashion.client.stat.StatisticServiceAsync;
+import com.xfashion.client.statistic.StatisticService;
+import com.xfashion.client.statistic.StatisticServiceAsync;
 
 public class AdminPanel {
 

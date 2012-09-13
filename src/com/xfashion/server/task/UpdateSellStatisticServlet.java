@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.xfashion.client.stat.StatisticService;
+import com.xfashion.client.statistic.StatisticService;
 import com.xfashion.client.user.UserService;
 import com.xfashion.server.statistic.StatisticServiceImpl;
 import com.xfashion.server.user.UserServiceImpl;

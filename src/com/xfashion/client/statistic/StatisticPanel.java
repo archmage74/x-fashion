@@ -1,4 +1,4 @@
-package com.xfashion.client.stat;
+package com.xfashion.client.statistic;
 
 import java.util.ArrayList;
 import java.util.Collection;
