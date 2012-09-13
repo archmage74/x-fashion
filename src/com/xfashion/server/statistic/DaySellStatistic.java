@@ -142,7 +142,7 @@ public class DaySellStatistic extends SellStatistic {
 	}
 
 	public void add(SoldArticleDTO soldArticleDTO) {
-		System.out.println("DaySellStatistic.add() called for soldArticle.name=" + soldArticleDTO.getArticleName());
+//		System.out.println("DaySellStatistic.add() called for soldArticle.name=" + soldArticleDTO.getArticleName());
 		super.add(soldArticleDTO);
 		addToDetailList(sizeStatistics, soldArticleDTO, DaySizeStatistic.class);
 		addToDetailList(categoryStatistics, soldArticleDTO, DayCategoryStatistic.class);
@@ -166,21 +166,6 @@ public class DaySellStatistic extends SellStatistic {
 		gc.add(Calendar.DAY_OF_MONTH, 1);
 	}
 	
-//	private void addSizeStatistic(SoldArticleDTO soldArticleDTO) {
-//		DaySizeStatistic sizeStatistic = null;
-//		for (DaySizeStatistic s : getDaySizeStatistics()) {
-//			if (soldArticle.getSize().equals(s.getSize())) {
-//				sizeStatistic = s;
-//				break;
-//			}
-//		}
-//		if (sizeStatistic == null) {
-//			sizeStatistic = new DaySizeStatistic(soldArticle.getSize());
-//			getDaySizeStatistics().add(sizeStatistic);
-//		}
-//		sizeStatistic.setPieces(sizeStatistic.getPieces() + soldArticle.getAmount());
-//	}
-
 	private void initLists() {
 		setSizeStatistics(new ArrayList<DaySizeStatistic>());
 		setCategoryStatistics(new ArrayList<DayCategoryStatistic>());

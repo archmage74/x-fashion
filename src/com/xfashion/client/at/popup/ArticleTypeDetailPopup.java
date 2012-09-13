@@ -35,10 +35,10 @@ public class ArticleTypeDetailPopup extends ArticleTypePopup {
 
 	@Override
 	protected void updateDetails() {
-		buyPrice.setText(formatter.formatCentsToValue(this.articleType.getBuyPrice()));
+		buyPrice.setText(formatter.centsToValue(this.articleType.getBuyPrice()));
 		Integer p = ArticleTypeManagement.getArticleTypePriceStrategy.getPrice(this.articleType);
 		if (p != null) {
-			sellPrice.setText(formatter.formatCentsToValue(p));
+			sellPrice.setText(formatter.centsToValue(p));
 		} else {
 			sellPrice.setText(textMessages.unknownPrice());
 		}

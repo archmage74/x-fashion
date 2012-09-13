@@ -30,6 +30,7 @@ public class StatisticAdder {
 			} catch (IllegalAccessException e) {
 				throw new RuntimeException(e);
 			}
+			dto.init(soldArticle.getSellDate());
 			dtos.add(index, dto);
 		}
 		dto.add(soldArticle);

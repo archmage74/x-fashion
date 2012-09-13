@@ -166,19 +166,19 @@ public class BulkEditArticleTypePopup implements CloseHandler<PopupPanel>, Choos
 		if (bulk.getSourceBuyPrice() == null) {
 			buyPriceTextBox.setValue(textMessages.bulkMultipleAttributes());
 		} else {
-			buyPriceTextBox.setValue(formatter.formatCentsToValue(bulk.getSourceBuyPrice()));
+			buyPriceTextBox.setValue(formatter.centsToValue(bulk.getSourceBuyPrice()));
 		}
 
 		if (bulk.getSourceSellPriceAt() == null) {
 			sellPriceAtTextBox.setValue(textMessages.bulkMultipleAttributes());
 		} else {
-			sellPriceAtTextBox.setValue(formatter.formatCentsToValue(bulk.getSourceSellPriceAt()));
+			sellPriceAtTextBox.setValue(formatter.centsToValue(bulk.getSourceSellPriceAt()));
 		}
 
 		if (bulk.getSourceSellPriceDe() == null) {
 			sellPriceDeTextBox.setValue(textMessages.bulkMultipleAttributes());
 		} else {
-			sellPriceDeTextBox.setValue(formatter.formatCentsToValue(bulk.getSourceSellPriceDe()));
+			sellPriceDeTextBox.setValue(formatter.centsToValue(bulk.getSourceSellPriceDe()));
 		}
 
 		articleTypeDetailPopup.setPopupPosition(500, 50);

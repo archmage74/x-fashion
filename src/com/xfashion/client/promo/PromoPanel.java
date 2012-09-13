@@ -129,7 +129,7 @@ public class PromoPanel {
 					ean = barcodeHelper.generatePromoEan(promo.getEan());
 					if (promo.isActivated()) {
 						if (promo.getPrice() != null) {
-							String price = formatter.formatCentsToCurrency(promo.getPrice());
+							String price = formatter.centsToCurrency(promo.getPrice());
 							promoListBox.addItem(textMessages.pricePromoListBoxLine(price, ean));
 						} else if (promo.getPercent() != null) {
 							promoListBox.addItem(textMessages.percentPromoListBoxLine(promo.getPercent(), ean));
@@ -138,7 +138,7 @@ public class PromoPanel {
 						}
 					} else {
 						if (promo.getPrice() != null) {
-							String price = formatter.formatCentsToCurrency(promo.getPrice());
+							String price = formatter.centsToCurrency(promo.getPrice());
 							promoListBox.addItem(textMessages.pricePromoDeactivatedListBoxLine(price, ean));
 						} else if (promo.getPercent() != null) {
 							promoListBox.addItem(textMessages.percentPromoDeactivatedListBoxLine(promo.getPercent(), ean));

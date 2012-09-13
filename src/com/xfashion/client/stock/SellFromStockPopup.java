@@ -169,13 +169,13 @@ public class SellFromStockPopup {
 		for (SoldArticleDTO sellArticle : sellArticles) {
 			sum += sellArticle.getSellPrice();
 		}
-		priceSumLabel.setText(formatter.formatCentsToCurrency(sum));
+		priceSumLabel.setText(formatter.centsToCurrency(sum));
 	}
 
 	protected void addArticleToGrid(SoldArticleDTO sellArticle, ArticleTypeDTO articleType) {
 		Label articleNameLabel = new Label(articleType.getName());
 		Integer sellPrice = ArticleTypeManagement.getArticleTypePriceStrategy.getPrice(articleType);
-		lastArticlePriceLabel = new Label(formatter.formatCentsToCurrency(sellPrice));
+		lastArticlePriceLabel = new Label(formatter.centsToCurrency(sellPrice));
 		Button removeArticleButton = new Button(textMessages.sellRemoveArticle());
 		removeArticleButton.addClickHandler(new RemoveArticleFromSellListClickHandler(this, sellArticle));
 		articleGrid.resizeRows(sellArticles.size() + 1);
@@ -243,7 +243,7 @@ public class SellFromStockPopup {
 			soldArticle.setSellPrice(newPrice);
 		}
 
-		lastArticlePriceLabel.setText(formatter.formatCentsToCurrency(soldArticle.getSellPrice()));
+		lastArticlePriceLabel.setText(formatter.centsToCurrency(soldArticle.getSellPrice()));
 		refreshPriceSum();
 	}
 

@@ -41,7 +41,7 @@ public class StockPriceCell extends TwoButtonsCell<ArticleAmountDTO> {
 	public void render(Context context, ArticleAmountDTO data, SafeHtmlBuilder sb) {
 		sb.append(matrixTemplates.piecesCell(data.getAmount()));
 		Integer price = priceStrategy.getPrice(data);
-		String priceString = formatter.formatCentsToCurrencyOrUnknown(price);
+		String priceString = formatter.centsToCurrencyOrUnknown(price);
 		sb.append(matrixTemplates.priceCell(priceString));
 		super.render(context, data, sb);
 	}

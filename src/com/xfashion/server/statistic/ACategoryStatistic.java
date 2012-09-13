@@ -47,7 +47,7 @@ public abstract class ACategoryStatistic implements IStatisticDetail {
 	
 	@Override
 	public void addToStatistic(SoldArticleDTO soldArticleDTO) {
-		System.out.println("CategoryStatistic: add() called, pieces = " + getPieces());
+//		System.out.println("CategoryStatistic: add() called, pieces = " + getPieces());
 		setPieces(getPieces() + soldArticleDTO.getAmount());
 		setTurnover(getTurnover() + soldArticleDTO.getSellPrice());
 		setProfit(getProfit() + soldArticleDTO.getSellPrice() - soldArticleDTO.getBuyPrice());

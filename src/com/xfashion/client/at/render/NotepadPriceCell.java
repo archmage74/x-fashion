@@ -41,7 +41,7 @@ public class NotepadPriceCell extends TwoButtonsCell<ArticleAmountDTO> {
 	@Override
 	public void render(Context context, ArticleAmountDTO data, SafeHtmlBuilder sb) {
 		Integer price = NotepadManagement.getInstance().currentPriceStrategy().getPrice(data);
-		String priceString = formatter.formatCentsToCurrencyOrUnknown(price);
+		String priceString = formatter.centsToCurrencyOrUnknown(price);
 		if (highlightLastUpdated.isLastUpdated(data)) {
 			sb.append(matrixTemplates.piecesHighlightedCell(data.getAmount()));
 		} else {

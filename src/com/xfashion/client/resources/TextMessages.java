@@ -131,4 +131,24 @@ public interface TextMessages extends Messages {
 
 	String statisticsHeader();
 
+	String dayButton();
+	String weekButton();
+	String monthButton();
+	String yearButton();
+	String statisticSizes();
+	String statisticCategories();
+	String statisticPromos();
+	String statisticTop();
+	String tableHeaderPieces();
+	String tableHeaderTurnover();
+	String tableHeaderProfit();
+	String tableHeaderPercent();
+	String statisticAllDetails();
+
+	String day(Date date);
+	String week(Date date, Long week);
+	String month(Date date);
+	String year(Date date);
+	String pieces(int amount);
+
 }

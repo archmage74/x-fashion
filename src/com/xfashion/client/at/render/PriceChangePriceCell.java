@@ -46,12 +46,12 @@ public class PriceChangePriceCell extends AbstractArticleTableCell<ArticleAmount
 	public void render(Context context, ArticleAmountDTO data, SafeHtmlBuilder sb) {
 		if (isPriceChangeAccepted(data)) {
 			sb.append(matrixTemplates.piecesCell(data.getAmount()));
-			String priceString = formatter.formatCentsToCurrencyOrUnknown(priceStrategy.getPrice(data));
+			String priceString = formatter.centsToCurrencyOrUnknown(priceStrategy.getPrice(data));
 			sb.append(matrixTemplates.priceCell(priceString));
 			sb.append(priceChangeTemplates.printStickerCell());
 		} else {
 			sb.append(matrixTemplates.piecesHighlightedCell(data.getAmount()));
-			String priceString = formatter.formatCentsToCurrencyOrUnknown(priceStrategy.getPrice(data));
+			String priceString = formatter.centsToCurrencyOrUnknown(priceStrategy.getPrice(data));
 			sb.append(matrixTemplates.priceHighlightedCell(priceString));
 			sb.append(priceChangeTemplates.printStickerHighlightedCell());
 		}

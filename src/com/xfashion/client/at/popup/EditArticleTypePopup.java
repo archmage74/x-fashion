@@ -82,14 +82,14 @@ public class EditArticleTypePopup extends ArticleTypePopup implements ChooseBran
 
 	@Override
 	protected void updateDetails() {
-		buyPriceTextBox.setValue(formatter.formatCentsToValue(updatedArticleType.getBuyPrice()));
+		buyPriceTextBox.setValue(formatter.centsToValue(updatedArticleType.getBuyPrice()));
 		if (updatedArticleType.getSellPriceAt() != null) {
-			sellPriceAtTextBox.setValue(formatter.formatCentsToValue(updatedArticleType.getSellPriceAt()));
+			sellPriceAtTextBox.setValue(formatter.centsToValue(updatedArticleType.getSellPriceAt()));
 		} else {
 			sellPriceAtTextBox.setValue("");
 		}
 		if (updatedArticleType.getSellPriceDe() != null) {
-			sellPriceDeTextBox.setValue(formatter.formatCentsToValue(updatedArticleType.getSellPriceDe()));
+			sellPriceDeTextBox.setValue(formatter.centsToValue(updatedArticleType.getSellPriceDe()));
 		} else {
 			sellPriceDeTextBox.setValue("");
 		}

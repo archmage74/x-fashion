@@ -35,9 +35,9 @@ public class ArticleTypePriceCell<T> extends TwoButtonsCell<T> {
 	@Override
 	public void render(Context context, T data, SafeHtmlBuilder sb) {
 		ArticleTypeDTO at = provider.retrieveArticleType(data);
-		String atPriceString = formatter.formatCentsToCurrencyOrUnknown(at.getSellPriceAt());
+		String atPriceString = formatter.centsToCurrencyOrUnknown(at.getSellPriceAt());
 		sb.append(matrixTemplates.atPriceCell(atPriceString));
-		String dePriceString = formatter.formatCentsToCurrencyOrUnknown(at.getSellPriceDe());
+		String dePriceString = formatter.centsToCurrencyOrUnknown(at.getSellPriceDe());
 		sb.append(matrixTemplates.dePriceCell(dePriceString));
 		super.render(context, data, sb);
 	}

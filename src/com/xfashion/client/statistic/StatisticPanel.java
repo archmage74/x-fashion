@@ -7,6 +7,10 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -14,6 +18,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ListDataProvider;
 import com.xfashion.client.Formatter;
 import com.xfashion.client.MainPanel;
 import com.xfashion.client.Xfashion;
@@ -22,6 +27,16 @@ import com.xfashion.client.event.ContentPanelResizeEvent;
 import com.xfashion.client.event.ContentPanelResizeHandler;
 import com.xfashion.client.protocols.event.ShowSellStatisticEvent;
 import com.xfashion.client.resources.TextMessages;
+import com.xfashion.client.statistic.event.ShowAllDetailsStatisticEvent;
+import com.xfashion.client.statistic.event.ShowCategoriesDetailStatisticEvent;
+import com.xfashion.client.statistic.event.ShowDayStatisticEvent;
+import com.xfashion.client.statistic.event.ShowMonthStatisticEvent;
+import com.xfashion.client.statistic.event.ShowPromosDetailStatisticEvent;
+import com.xfashion.client.statistic.event.ShowSizesDetailStatisticEvent;
+import com.xfashion.client.statistic.event.ShowTopDetailStatisticEvent;
+import com.xfashion.client.statistic.event.ShowWeekStatisticEvent;
+import com.xfashion.client.statistic.event.ShowYearStatisticEvent;
+import com.xfashion.client.statistic.render.StatisticPeriodTableProvider;
 import com.xfashion.client.user.UserManagement;
 import com.xfashion.client.user.UserService;
 import com.xfashion.shared.ShopDTO;
@@ -37,13 +52,14 @@ public class StatisticPanel implements ContentPanelResizeHandler {
 	protected IProvideArticleFilter filterProvider;
 
 	protected HorizontalPanel headerPanel;
-	protected VerticalPanel mainPanel;
+	protected Panel mainPanel;
 	protected ListBox shopListBox;
 
+	protected CellTable<SellStatisticDTO> periodTable;
+	
 	protected TextMessages textMessages;
 	protected Formatter formatter;
-
-	private ListBox sellPeriodListBox;
+	protected StatisticPeriodTableProvider tableProvider = new StatisticPeriodTableProvider();
 
 	public StatisticPanel(IProvideArticleFilter filterProvider) {
 		this.knownShops = new ArrayList<ShopDTO>();
@@ -55,10 +71,12 @@ public class StatisticPanel implements ContentPanelResizeHandler {
 		registerForEvents();
 	}
 
-	public Panel createPanel() {
+	public Panel createPanel(ListDataProvider<SellStatisticDTO> periodProvider) {
 		VerticalPanel panel = new VerticalPanel();
 		panel.add(createHeaderPanel());
 		panel.add(createStatisticPanel());
+		
+		periodProvider.addDataDisplay(periodTable);
 		return panel;
 	}
 
@@ -75,11 +93,16 @@ public class StatisticPanel implements ContentPanelResizeHandler {
 		}
 	}
 
+	public void setPeriodType(int statisticPeriodType) {
+		tableProvider.changePeriodType(periodTable, statisticPeriodType);
+	}
+
 	protected Panel createStatisticPanel() {
-		HorizontalPanel hp = new HorizontalPanel();
+		mainPanel = new HorizontalPanel();
 		setHeight(MainPanel.contentPanelHeight);
-		hp.add(createSellPeriodList());
-		return hp;
+		mainPanel.add(createPeriodPanel());
+		mainPanel.add(createDetailPanel());
+		return mainPanel;
 	}
 
 	@Override
@@ -93,28 +116,151 @@ public class StatisticPanel implements ContentPanelResizeHandler {
 			mainPanel.setHeight(panelHeight + "px");
 		}
 	}
+	
+	private Panel createPeriodPanel() {
+		VerticalPanel vp = new VerticalPanel();
+		vp.add(createPeriodSelectionPanel());
+		vp.add(createSellPeriodTable());
+		return vp;
+	}
+	
+	private Panel createPeriodSelectionPanel() {
+		HorizontalPanel hp = new HorizontalPanel();
+		hp.add(createDayButton());
+		hp.add(createWeekButton());
+		hp.add(createMonthButton());
+		hp.add(createYearButton());
+		return hp;
+	}
 
-	private Panel createSellPeriodList() {
-		mainPanel = new VerticalPanel();
-		sellPeriodListBox = new ListBox();
-		sellPeriodListBox.setVisibleItemCount(30);
-		mainPanel.add(sellPeriodListBox);
-		return mainPanel;
+	private Widget createDayButton() {
+		Button dayButton = new Button(textMessages.dayButton());
+		dayButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Xfashion.eventBus.fireEvent(new ShowDayStatisticEvent());
+			}
+		});
+		return dayButton;
+	}
+
+	private Widget createWeekButton() {
+		Button weekButton = new Button(textMessages.weekButton());
+		weekButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Xfashion.eventBus.fireEvent(new ShowWeekStatisticEvent());
+			}
+		});
+		return weekButton;
+	}
+
+	private Widget createMonthButton() {
+		Button monthButton = new Button(textMessages.monthButton());
+		monthButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Xfashion.eventBus.fireEvent(new ShowMonthStatisticEvent());
+			}
+		});
+		return monthButton;
+	}
+
+	private Widget createYearButton() {
+		Button yearButton = new Button(textMessages.yearButton());
+		yearButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Xfashion.eventBus.fireEvent(new ShowYearStatisticEvent());
+			}
+		});
+		return yearButton;
 	}
 	
-	// TODO remove when cell listbox is replaced by celltable
-	public <T extends SellStatisticDTO> void setEntries(List<T> entries) {
-		sellPeriodListBox.clear();
-		for (T entry : entries) {
-			StringBuffer sb = new StringBuffer();
-			sb.append(entry.getStartDate()).append(" - ");
-			sb.append(entry.getAmount()).append(" - ");
-			sb.append(entry.getTurnover()).append(" - ");
-			sb.append(entry.getProfit());
-			sellPeriodListBox.addItem(sb.toString());
-		}
+	private Panel createSellPeriodTable() {
+		VerticalPanel vp = new VerticalPanel();
+		periodTable = tableProvider.createTable();
+		vp.add(periodTable);
+		return vp;
 	}
 	
+	private Panel createDetailPanel() {
+		VerticalPanel vp = new VerticalPanel();
+		vp.add(createDetailSelectionPanel());
+		vp.add(createDetailListPanel());
+		return vp;
+	}
+	
+	private Widget createDetailSelectionPanel() {
+		HorizontalPanel hp = new HorizontalPanel();
+		hp.add(createSizesButton());
+		hp.add(createCategoriesButton());
+		hp.add(createPromosButton());
+		hp.add(createTopButton());
+		hp.add(createAllDetailsButton());
+		return hp;
+	}
+
+	private Widget createSizesButton() {
+		Button sizesButton = new Button(textMessages.statisticSizes());
+		sizesButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Xfashion.eventBus.fireEvent(new ShowSizesDetailStatisticEvent());
+			}
+		});
+		return sizesButton;
+	}
+
+	private Widget createCategoriesButton() {
+		Button categoriesButton = new Button(textMessages.statisticCategories());
+		categoriesButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Xfashion.eventBus.fireEvent(new ShowCategoriesDetailStatisticEvent());
+			}
+		});
+		return categoriesButton;
+	}
+
+	private Widget createPromosButton() {
+		Button promosButton = new Button(textMessages.statisticPromos());
+		promosButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Xfashion.eventBus.fireEvent(new ShowPromosDetailStatisticEvent());
+			}
+		});
+		return promosButton;
+	}
+
+	private Widget createTopButton() {
+		Button topButton = new Button(textMessages.statisticTop());
+		topButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Xfashion.eventBus.fireEvent(new ShowTopDetailStatisticEvent());
+			}
+		});
+		return topButton;
+	}
+
+	private Widget createAllDetailsButton() {
+		Button allDetailsButton = new Button(textMessages.statisticAllDetails());
+		allDetailsButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Xfashion.eventBus.fireEvent(new ShowAllDetailsStatisticEvent());
+			}
+		});
+		return allDetailsButton;
+	}
+
+	private Widget createDetailListPanel() {
+		VerticalPanel vp = new VerticalPanel();
+		return vp;
+	}
+
 	private Widget createShopList() {
 		shopListBox = new ListBox();
 		shopListBox.setVisibleItemCount(1);

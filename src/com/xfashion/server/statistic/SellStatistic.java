@@ -51,6 +51,10 @@ public abstract class SellStatistic {
 
 	public abstract void setProfit(Integer profit);
 	
+	/** 
+	 * Initializes the SellStatistic so that its period start is set to the period that contains the given date. 
+	 * @param date
+	 */
 	public void init(Date date) {
 		GregorianCalendar gc = createCalendar();
 		gc.setTime(date);

@@ -16,7 +16,7 @@ public class AddedArticlePriceCell extends AbstractArticleTableCell<AddedArticle
 	@Override
 	public void render(Context context, AddedArticleDTO data, SafeHtmlBuilder sb) {
 		sb.append(matrixTemplates.piecesCell(data.getAmount()));
-		String priceString = formatter.formatCentsToCurrencyOrUnknown(priceStrategy.getPrice(data));
+		String priceString = formatter.centsToCurrencyOrUnknown(priceStrategy.getPrice(data));
 		sb.append(matrixTemplates.priceCell(priceString));
 		sb.append(matrixTemplates.dateTimeCell(textMessages.dateTime(data.getAddDate())));
 	}

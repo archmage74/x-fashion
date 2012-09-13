@@ -100,7 +100,7 @@ public abstract class ArticleTable<T> {
 
 	protected String formatPriceString(Integer price) {
 		if (price != null) {
-			return formatter.formatCentsToCurrency(price);
+			return formatter.centsToCurrency(price);
 		} else {
 			return textMessages.unknownPrice();
 		}
