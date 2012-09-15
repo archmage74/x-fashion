@@ -9,6 +9,8 @@ import javax.jdo.Transaction;
 
 import com.google.appengine.api.backends.BackendService;
 import com.google.appengine.api.backends.BackendServiceFactory;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
@@ -16,8 +18,13 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.xfashion.client.statistic.StatisticService;
 import com.xfashion.server.PMF;
 import com.xfashion.shared.SoldArticleDTO;
+import com.xfashion.shared.statistic.CategoryStatisticDTO;
 import com.xfashion.shared.statistic.DaySellStatisticDTO;
 import com.xfashion.shared.statistic.MonthSellStatisticDTO;
+import com.xfashion.shared.statistic.PromoStatisticDTO;
+import com.xfashion.shared.statistic.SellStatisticDTO;
+import com.xfashion.shared.statistic.SizeStatisticDTO;
+import com.xfashion.shared.statistic.TopStatisticDTO;
 import com.xfashion.shared.statistic.WeekSellStatisticDTO;
 import com.xfashion.shared.statistic.YearSellStatisticDTO;
 
@@ -171,4 +178,72 @@ public class StatisticServiceImpl extends RemoteServiceServlet implements Statis
 	private void deleteAllStatistics() {
 		deleteAllCommonStatistics();
 	}
+
+	@Override
+	public List<SizeStatisticDTO> readSizeStatistic(SellStatisticDTO sellStatisticDTO) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		List<SizeStatisticDTO> dtos = new ArrayList<SizeStatisticDTO>();
+		try {
+			SellStatistic<?, ?, ?, ?> sellStatistic = readSellStatistic(pm, sellStatisticDTO);
+			dtos = sellStatistic.createSizeStatisticDTOs();
+		} finally {
+			pm.close();
+		}
+		return dtos;
+	}
+
+	@Override
+	public List<CategoryStatisticDTO> readCategoryStatistic(SellStatisticDTO sellStatisticDTO) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		List<CategoryStatisticDTO> dtos = new ArrayList<CategoryStatisticDTO>();
+		try {
+			SellStatistic<?, ?, ?, ?> sellStatistic = readSellStatistic(pm, sellStatisticDTO);
+			dtos = sellStatistic.createCategoryStatisticDTOs();
+		} finally {
+			pm.close();
+		}
+		return dtos;
+	}
+
+	@Override
+	public List<PromoStatisticDTO> readPromoStatistic(SellStatisticDTO sellStatisticDTO) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		List<PromoStatisticDTO> dtos = new ArrayList<PromoStatisticDTO>();
+		try {
+			SellStatistic<?, ?, ?, ?> sellStatistic = readSellStatistic(pm, sellStatisticDTO);
+			dtos = sellStatistic.createPromoStatisticDTOs();
+		} finally {
+			pm.close();
+		}
+		return dtos;
+	}
+
+	@Override
+	public List<TopStatisticDTO> readTopStatistic(SellStatisticDTO sellStatisticDTO) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		List<TopStatisticDTO> dtos = new ArrayList<TopStatisticDTO>();
+		try {
+			SellStatistic<?, ?, ?, ?> sellStatistic = readSellStatistic(pm, sellStatisticDTO);
+			dtos = sellStatistic.createTopStatisticDTOs();
+		} finally {
+			pm.close();
+		}
+		return dtos;
+	}
+
+	private SellStatistic<?, ?, ?, ?> readSellStatistic(PersistenceManager pm, SellStatisticDTO sellStatisticDTO) {
+		Key key = KeyFactory.stringToKey(sellStatisticDTO.getKeyString());
+		SellStatistic<?, ?, ?, ?> sellStatistic = null;
+		if (sellStatisticDTO instanceof DaySellStatisticDTO) {
+			sellStatistic = pm.getObjectById(DaySellStatistic.class, key);
+		} else if (sellStatisticDTO instanceof WeekSellStatisticDTO) {
+			sellStatistic = pm.getObjectById(WeekSellStatistic.class, key);
+		} else if (sellStatisticDTO instanceof MonthSellStatisticDTO) {
+			sellStatistic = pm.getObjectById(MonthSellStatistic.class, key);
+		} else if (sellStatisticDTO instanceof YearSellStatisticDTO) {
+			sellStatistic = pm.getObjectById(YearSellStatistic.class, key);
+		}
+		return sellStatistic;
+	}
+	
 }

@@ -4,35 +4,38 @@ import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SingleSelectionModel;
 import com.ibm.icu.util.Calendar;
 import com.xfashion.client.Formatter;
+import com.xfashion.client.Xfashion;
+import com.xfashion.client.resources.FilterTableResources;
 import com.xfashion.client.resources.TextMessages;
+import com.xfashion.client.statistic.event.SelectSellStatisticEvent;
 import com.xfashion.shared.statistic.SellStatisticDTO;
 
 public class StatisticPeriodTableProvider {
 
-	protected CellTable<? extends SellStatisticDTO> cellTable;
-	
 	protected Formatter formatter = Formatter.getInstance();
 	protected TextMessages textMessages = GWT.create(TextMessages.class);
 
 	public CellTable<SellStatisticDTO> createTable() {
-		CellTable<SellStatisticDTO> cellTable = new CellTable<SellStatisticDTO>(30);
+		CellTable<SellStatisticDTO> cellTable = new CellTable<SellStatisticDTO>(30, GWT.<FilterTableResources> create(FilterTableResources.class));
 
-		// TODO add header (in columns?)
-		
 		cellTable.addColumn(createDayPeriodColumn(), textMessages.dayButton());
 		cellTable.addColumn(createPiecesColumn(), textMessages.tableHeaderPieces());
 		cellTable.addColumn(createTurnoverColumn(), textMessages.tableHeaderTurnover());
 		cellTable.addColumn(createProfitColumn(), textMessages.tableHeaderProfit());
 
+		addSelectionHandler(cellTable);
+
 		return cellTable;
 	}
-	
+
 	public void changePeriodType(CellTable<SellStatisticDTO> cellTable, int periodType) {
 		Column<SellStatisticDTO, String> newColumn = null;
 		String header = null;
-		switch(periodType) {
+		switch (periodType) {
 		case Calendar.DATE:
 			newColumn = createDayPeriodColumn();
 			header = textMessages.dayButton();
@@ -53,7 +56,17 @@ public class StatisticPeriodTableProvider {
 		cellTable.removeColumn(0);
 		cellTable.insertColumn(0, newColumn, header);
 	}
-	
+
+	private void addSelectionHandler(CellTable<SellStatisticDTO> cellTable) {
+		final SingleSelectionModel<SellStatisticDTO> selectionModel = new SingleSelectionModel<SellStatisticDTO>();
+		cellTable.setSelectionModel(selectionModel);
+		selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+			public void onSelectionChange(SelectionChangeEvent event) {
+				Xfashion.eventBus.fireEvent(new SelectSellStatisticEvent(selectionModel.getSelectedObject()));
+			}
+		});
+	}
+
 	private Column<SellStatisticDTO, String> createDayPeriodColumn() {
 		Column<SellStatisticDTO, String> column = new Column<SellStatisticDTO, String>(new TextCell()) {
 			@Override

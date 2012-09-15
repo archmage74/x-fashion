@@ -1,5 +1,6 @@
 package com.xfashion.server.statistic;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -7,9 +8,13 @@ import java.util.List;
 import java.util.TimeZone;
 
 import com.xfashion.shared.SoldArticleDTO;
+import com.xfashion.shared.statistic.CategoryStatisticDTO;
+import com.xfashion.shared.statistic.PromoStatisticDTO;
 import com.xfashion.shared.statistic.SellStatisticDTO;
+import com.xfashion.shared.statistic.SizeStatisticDTO;
+import com.xfashion.shared.statistic.TopStatisticDTO;
 
-public abstract class SellStatistic {
+public abstract class SellStatistic <S extends ASizeStatistic, C extends ACategoryStatistic, P extends APromoStatistic, T extends ATopStatistic> {
 
 	public SellStatistic() {
 		this(new Date());
@@ -50,6 +55,14 @@ public abstract class SellStatistic {
 	public abstract Integer getProfit();
 
 	public abstract void setProfit(Integer profit);
+
+	public abstract List<S> getSizeStatistics();
+	
+	public abstract List<C> getCategoryStatistics();
+	
+	public abstract List<P> getPromoStatistics();
+	
+	public abstract List<T> getTopStatistics();
 	
 	/** 
 	 * Initializes the SellStatistic so that its period start is set to the period that contains the given date. 
@@ -86,6 +99,38 @@ public abstract class SellStatistic {
 		}
 	}
 	
+	public List<SizeStatisticDTO> createSizeStatisticDTOs() {
+		List<SizeStatisticDTO> dtos = new ArrayList<SizeStatisticDTO>();
+		for (S s : getSizeStatistics()) {
+			dtos.add(s.createDTO());
+		}
+		return dtos;
+	}
+	
+	public List<CategoryStatisticDTO> createCategoryStatisticDTOs() {
+		List<CategoryStatisticDTO> dtos = new ArrayList<CategoryStatisticDTO>();
+		for (C s : getCategoryStatistics()) {
+			dtos.add(s.createDTO());
+		}
+		return dtos;
+	}
+	
+	public List<PromoStatisticDTO> createPromoStatisticDTOs() {
+		List<PromoStatisticDTO> dtos = new ArrayList<PromoStatisticDTO>();
+		for (P s : getPromoStatistics()) {
+			dtos.add(s.createDTO());
+		}
+		return dtos;
+	}
+	
+	public List<TopStatisticDTO> createTopStatisticDTOs() {
+		List<TopStatisticDTO> dtos = new ArrayList<TopStatisticDTO>();
+		for (T s : getTopStatistics()) {
+			dtos.add(s.createDTO());
+		}
+		return dtos;
+	}
+	
 	protected void fillDTO(SellStatisticDTO dto) {
 		dto.setKeyString(getKeyString());
 		dto.setStartDate(getStartDate());
@@ -101,9 +146,9 @@ public abstract class SellStatistic {
 		gc.set(Calendar.MILLISECOND, 0);
 	}
 
-	protected <T extends IStatisticDetail> void addToDetailList(List<T> list, SoldArticleDTO soldArticleDTO, Class<T> detailClass) {
-		T detail = null;
-		for (T s : list) {
+	protected <D extends IStatisticDetail> void addToDetailList(List<D> list, SoldArticleDTO soldArticleDTO, Class<D> detailClass) {
+		D detail = null;
+		for (D s : list) {
 			if (s.matchesStatistic(soldArticleDTO)) {
 				detail = s;
 				break;

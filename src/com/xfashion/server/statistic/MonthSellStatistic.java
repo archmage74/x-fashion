@@ -15,10 +15,11 @@ import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.xfashion.shared.SoldArticleDTO;
 import com.xfashion.shared.statistic.MonthSellStatisticDTO;
 
 @PersistenceCapable
-public class MonthSellStatistic extends SellStatistic {
+public class MonthSellStatistic extends SellStatistic<MonthSizeStatistic, MonthCategoryStatistic, MonthPromoStatistic, MonthTopStatistic> {
 
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -131,6 +132,14 @@ public class MonthSellStatistic extends SellStatistic {
 		this.topStatistics = topStatistics;
 	}
 	
+	public void add(SoldArticleDTO soldArticleDTO) {
+		super.add(soldArticleDTO);
+		addToDetailList(sizeStatistics, soldArticleDTO, MonthSizeStatistic.class);
+		addToDetailList(categoryStatistics, soldArticleDTO, MonthCategoryStatistic.class);
+		addToDetailList(promoStatistics, soldArticleDTO, MonthPromoStatistic.class);
+		addToDetailList(topStatistics, soldArticleDTO, MonthTopStatistic.class);
+	}
+
 	public MonthSellStatisticDTO createDTO() {
 		MonthSellStatisticDTO dto = new MonthSellStatisticDTO();
 		fillDTO(dto);

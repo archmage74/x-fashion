@@ -56,17 +56,22 @@ public class DeliveryNotice extends HttpServlet {
 		out.print(renderAddresses(dn));
 		out.print(renderTableHeader());
 		int piecesSum = 0;
-		int priceSum = 0;
+		int buyPriceSum = 0;
+		int sellPriceSum = 0;
 		for (ArticleAmountDTO aa : dn.getNotepad().getArticles()) {
 			piecesSum += aa.getAmount();
 			ArticleTypeDTO at = readArticleType(aa.getArticleTypeKey());
-			Integer ap = getPriceFromArticle(dn.getTargetShop(), at);
-			if (ap != null) {
-				priceSum += aa.getAmount() * ap;
+			Integer buyPrice = at.getBuyPrice();
+			Integer sellPrice = getPriceFromArticle(dn.getTargetShop(), at);
+			if (sellPrice != null) {
+				sellPriceSum += aa.getAmount() * sellPrice;
+			}
+			if (buyPrice != null) {
+				buyPriceSum += aa.getAmount() * buyPrice;
 			}
 			out.print(renderArticle(dn.getTargetShop(), aa, at));
 		}
-		out.print(renderFooter(priceSum, piecesSum));
+		out.print(renderFooter(buyPriceSum, sellPriceSum, piecesSum));
 	}
 
 	public String renderTableHeader() {
@@ -120,7 +125,8 @@ public class DeliveryNotice extends HttpServlet {
 		sb.append("<th class=\"hHeader hName\">Name</td>\n");
 		sb.append("<th class=\"hHeader hColor\">Farbe</td>\n");
 		sb.append("<th class=\"hHeader hSize\">Größe</td>\n");
-		sb.append("<th class=\"hHeader hPrice\">VK</td>\n");
+		sb.append("<th class=\"hHeader hBuyPrice\">EK</td>\n");
+		sb.append("<th class=\"hHeader hSellPrice\">VK</td>\n");
 		sb.append("<th class=\"hHeader hPieces\">Stück</td>\n");
 		sb.append("</tr>\n");
 		sb.append("</thead>\n");
@@ -158,7 +164,8 @@ public class DeliveryNotice extends HttpServlet {
 
 	public String renderArticle(ShopDTO shop, ArticleAmountDTO aa, ArticleTypeDTO at) {
 		StringBuffer sb = new StringBuffer();
-		String price = formatPrice(getPriceFromArticle(shop, at));
+		String buyPrice = formatPrice(at.getBuyPrice());
+		String sellPrice = formatPrice(getPriceFromArticle(shop, at));
 		sb.append("<tr>\n");
 		sb.append("<td class=\"articleCell1\">").append(readCategoryName(at.getCategoryKey())).append("</td>\n");
 		sb.append("<td class=\"articleCell1\">").append(readBrandName(at.getBrandKey())).append("</td>\n");
@@ -166,9 +173,10 @@ public class DeliveryNotice extends HttpServlet {
 		sb.append("<td class=\"articleCell1\">").append(at.getName()).append("</td>\n");
 		sb.append("<td class=\"articleCell1\">").append(readColorName(at.getColorKey())).append("</td>\n");
 		sb.append("<td class=\"articleCell2\">").append(readSizeName(at.getSizeKey())).append("</td>\n");
-		sb.append("<td class=\"articleCell3\">").append(price).append("</td>\n");
+		sb.append("<td class=\"articleCell3\">").append(buyPrice).append("</td>\n");
+		sb.append("<td class=\"articleCell3\">").append(sellPrice).append("</td>\n");
 		sb.append("<td class=\"articleCell3\">").append(aa.getAmount()).append("</td>");
-		sb.append("<td width=\"66%\">\n");
+		// sb.append("<td width=\"66%\">\n");
 		sb.append("</tr>\n");
 		return sb.toString();
 	}
@@ -189,7 +197,7 @@ public class DeliveryNotice extends HttpServlet {
 		}
 	}
 	
-	private String renderFooter(int priceSum, int piecesSum) {
+	private String renderFooter(int buyPriceSum, int sellPriceSum, int piecesSum) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<tfoot>\n");
 		sb.append("<tr>\n");
@@ -198,7 +206,8 @@ public class DeliveryNotice extends HttpServlet {
 		sb.append("<tr>\n");
 		sb.append("<td colspan=\"5\"></td>\n");
 		sb.append("<td class=\"articleTableSumLabel\">Gesamt:</td>\n");
-		sb.append("<td class=\"articleTableSum\">").append(formatPrice(priceSum)).append("</td>\n");
+		sb.append("<td class=\"articleTableSum\">").append(formatPrice(buyPriceSum)).append("</td>\n");
+		sb.append("<td class=\"articleTableSum\">").append(formatPrice(sellPriceSum)).append("</td>\n");
 		sb.append("<td class=\"articleTableSum\">").append(piecesSum).append("</td>\n");
 		sb.append("</tr>\n");
 		sb.append("</tfoot>\n");
@@ -261,35 +270,39 @@ public class DeliveryNotice extends HttpServlet {
 		"}\n" +
 		".hCategory {\n" +
 		"	text-align: left;\n" +
-		"	width: 15%\n" +
+		"	width: 14%\n" +
 		"}\n" +
 		".hBrand {\n" +
 		"	text-align: left;\n" +
-		"	width: 13%\n" +
+		"	width: 12%\n" +
 		"}\n" +
 		".hStyle {\n" +
 		"	text-align: left;\n" +
-		"	width: 10%\n" +
+		"	width: 9%\n" +
 		"}\n" +
 		".hName {\n" +
 		"	text-align: left;\n" +
-		"	width: 13%\n" +
+		"	width: 12%\n" +
 		"}\n" +
 		".hColor {\n" +
 		"	text-align: left;\n" +
-		"	width: 15%\n" +
+		"	width: 14%\n" +
 		"}\n" +
 		".hSize {\n" +
 		"	text-align: center;\n" +
+		"	width: 9%\n" +
+		"}\n" +
+		".hSellPrice {\n" +
+		"	text-align: right;\n" +
 		"	width: 10%\n" +
 		"}\n" +
-		".hPrice {\n" +
+		".hBuyPrice {\n" +
 		"	text-align: right;\n" +
-		"	width: 12%\n" +
+		"	width: 10%\n" +
 		"}\n" +
 		".hPieces {\n" +
 		"	text-align: right;\n" +
-		"	width: 12%\n" +
+		"	width: 10%\n" +
 		"}\n" +
 		"\n" +
 		".articleTableHeader1 {\n" +
@@ -308,7 +321,7 @@ public class DeliveryNotice extends HttpServlet {
 		"	widht: 100%;\n" +
 		"}\n" +
 		".articleTable td {\n" +
-		"	font-size: 13px;\n" +
+		"	font-size: 11px;\n" +
 		"}\n" +
 		".articleCell1 {\n" +
 		"	text-align: left;\n" +

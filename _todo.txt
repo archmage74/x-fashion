@@ -139,17 +139,22 @@ DONE - delete notepad
 DONE - remove all of one article type from stock
 DONE - bugfix: styles for stock are not displayed
 DONE - bugfix: caegory in stock shows as selected when selected in types
+DONE - add buy price to delivery-notice
+DONE - initial version of statistic
 
 refresh for everything (like re-login)
 
 staging system
 
 statistic
- detail -> so wie jetzt
- tag/jahr/woche(KW 13)/monat statistic 
- % = ertrag / umsatz
- flop: to be defined by roman
---------------------
+  statistics per shop
+  sorting
+  detail-statistic (like protocols)
+  % = % of turnover of this period?  
+  flop: to be defined by roman
+  determined end of rewrite statistic
+
+-------------------------------------------------------
 
 differenz anzeige - lieferschein vs bestandsaufnahme
 

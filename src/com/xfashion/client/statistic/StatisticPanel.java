@@ -36,13 +36,21 @@ import com.xfashion.client.statistic.event.ShowSizesDetailStatisticEvent;
 import com.xfashion.client.statistic.event.ShowTopDetailStatisticEvent;
 import com.xfashion.client.statistic.event.ShowWeekStatisticEvent;
 import com.xfashion.client.statistic.event.ShowYearStatisticEvent;
+import com.xfashion.client.statistic.render.CategoryStatisticTableProvider;
+import com.xfashion.client.statistic.render.PromoStatisticTableProvider;
+import com.xfashion.client.statistic.render.SizeStatisticTableProvider;
 import com.xfashion.client.statistic.render.StatisticPeriodTableProvider;
+import com.xfashion.client.statistic.render.TopStatisticTableProvider;
 import com.xfashion.client.user.UserManagement;
 import com.xfashion.client.user.UserService;
 import com.xfashion.shared.ShopDTO;
 import com.xfashion.shared.UserDTO;
 import com.xfashion.shared.UserRole;
+import com.xfashion.shared.statistic.CategoryStatisticDTO;
+import com.xfashion.shared.statistic.PromoStatisticDTO;
 import com.xfashion.shared.statistic.SellStatisticDTO;
+import com.xfashion.shared.statistic.SizeStatisticDTO;
+import com.xfashion.shared.statistic.TopStatisticDTO;
 
 public class StatisticPanel implements ContentPanelResizeHandler {
 
@@ -56,16 +64,31 @@ public class StatisticPanel implements ContentPanelResizeHandler {
 	protected ListBox shopListBox;
 
 	protected CellTable<SellStatisticDTO> periodTable;
-	
+	protected CellTable<SizeStatisticDTO> sizeTable;
+	protected CellTable<CategoryStatisticDTO> categoryTable;
+	protected CellTable<PromoStatisticDTO> promoTable;
+	protected CellTable<TopStatisticDTO> topTable;
+	private VerticalPanel detailListPanel;
+
 	protected TextMessages textMessages;
 	protected Formatter formatter;
-	protected StatisticPeriodTableProvider tableProvider = new StatisticPeriodTableProvider();
+	protected StatisticPeriodTableProvider tableProvider;
+	protected SizeStatisticTableProvider sizeTableProvider;
+	protected CategoryStatisticTableProvider categoryTableProvider;
+	protected PromoStatisticTableProvider promoTableProvider;
+	protected TopStatisticTableProvider topTableProvider;
 
 	public StatisticPanel(IProvideArticleFilter filterProvider) {
 		this.knownShops = new ArrayList<ShopDTO>();
 		this.textMessages = GWT.create(TextMessages.class);
 		this.formatter = Formatter.getInstance();
 		
+		this.tableProvider = new StatisticPeriodTableProvider();
+		this.sizeTableProvider = new SizeStatisticTableProvider();
+		this.categoryTableProvider = new CategoryStatisticTableProvider();
+		this.promoTableProvider = new PromoStatisticTableProvider();
+		this.topTableProvider = new TopStatisticTableProvider();
+
 		this.filterProvider = filterProvider;
 		
 		registerForEvents();
@@ -97,6 +120,42 @@ public class StatisticPanel implements ContentPanelResizeHandler {
 		tableProvider.changePeriodType(periodTable, statisticPeriodType);
 	}
 
+	public void clearDetailStatistic() {
+		showDetailTable(null);
+	}
+	
+	public void showSizeStatistic(ListDataProvider<SizeStatisticDTO> sizeProvider) {
+		if (sizeTable == null) {
+			sizeTable = sizeTableProvider.createTable();
+			sizeProvider.addDataDisplay(sizeTable);
+		}
+		showDetailTable(sizeTable);
+	}
+	
+	public void showCategoryStatistic(ListDataProvider<CategoryStatisticDTO> categoryProvider) {
+		if (categoryTable == null) {
+			categoryTable = categoryTableProvider.createTable();
+			categoryProvider.addDataDisplay(categoryTable);
+		}
+		showDetailTable(categoryTable);
+	}
+
+	public void showPromoStatistic(ListDataProvider<PromoStatisticDTO> promoProvider) {
+		if (promoTable == null) {
+			promoTable = promoTableProvider.createTable();
+			promoProvider.addDataDisplay(promoTable);
+		}
+		showDetailTable(promoTable);
+	}
+
+	public void showTopStatistic(ListDataProvider<TopStatisticDTO> topProvider) {
+		if (topTable == null) {
+			topTable = topTableProvider.createTable();
+			topProvider.addDataDisplay(topTable);
+		}
+		showDetailTable(topTable);
+	}
+
 	protected Panel createStatisticPanel() {
 		mainPanel = new HorizontalPanel();
 		setHeight(MainPanel.contentPanelHeight);
@@ -114,6 +173,13 @@ public class StatisticPanel implements ContentPanelResizeHandler {
 		int panelHeight = height - 100;
 		if (mainPanel != null) {
 			mainPanel.setHeight(panelHeight + "px");
+		}
+	}
+
+	private void showDetailTable(CellTable<?> cellTable) {
+		detailListPanel.clear();
+		if (cellTable != null) {
+			detailListPanel.add(cellTable);
 		}
 	}
 	
@@ -257,8 +323,8 @@ public class StatisticPanel implements ContentPanelResizeHandler {
 	}
 
 	private Widget createDetailListPanel() {
-		VerticalPanel vp = new VerticalPanel();
-		return vp;
+		detailListPanel = new VerticalPanel();
+		return detailListPanel;
 	}
 
 	private Widget createShopList() {

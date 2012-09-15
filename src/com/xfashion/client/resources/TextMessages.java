@@ -143,6 +143,9 @@ public interface TextMessages extends Messages {
 	String tableHeaderTurnover();
 	String tableHeaderProfit();
 	String tableHeaderPercent();
+	String tableHeaderSize();
+	String tableHeaderCategory();
+	String tableHeaderArticle();
 	String statisticAllDetails();
 
 	String day(Date date);
@@ -150,5 +153,6 @@ public interface TextMessages extends Messages {
 	String month(Date date);
 	String year(Date date);
 	String pieces(int amount);
+	String percentNoDecimal(float f);
 
 }

@@ -19,7 +19,7 @@ import com.xfashion.shared.SoldArticleDTO;
 import com.xfashion.shared.statistic.DaySellStatisticDTO;
 
 @PersistenceCapable
-public class DaySellStatistic extends SellStatistic {
+public class DaySellStatistic extends SellStatistic<DaySizeStatistic, DayCategoryStatistic, DayPromoStatistic, DayTopStatistic> {
 
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -109,7 +109,7 @@ public class DaySellStatistic extends SellStatistic {
 		this.profit = profit;
 	}
 
-	public List<DaySizeStatistic> getDaySizeStatistics() {
+	public List<DaySizeStatistic> getSizeStatistics() {
 		return sizeStatistics;
 	}
 

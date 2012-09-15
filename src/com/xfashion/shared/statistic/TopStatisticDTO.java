@@ -2,7 +2,7 @@ package com.xfashion.shared.statistic;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class TopStatisticDTO implements IsSerializable {
+public class TopStatisticDTO implements IDetailStatistic, IsSerializable {
 
 	private String category;
 	
