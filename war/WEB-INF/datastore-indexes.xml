@@ -19,4 +19,16 @@
     <datastore-index kind="StockArticle" ancestor="true" source="manual">
         <property name="__key__" direction="desc"/>
     </datastore-index>
+    <datastore-index kind="DaySellStatistic" ancestor="true" source="manual">
+        <property name="startDate" direction="desc"/>
+    </datastore-index>
+    <datastore-index kind="WeekSellStatistic" ancestor="true" source="manual">
+        <property name="startDate" direction="desc"/>
+    </datastore-index>
+    <datastore-index kind="MonthSellStatistic" ancestor="true" source="manual">
+        <property name="startDate" direction="desc"/>
+    </datastore-index>
+    <datastore-index kind="YearSellStatistic" ancestor="true" source="manual">
+        <property name="startDate" direction="desc"/>
+    </datastore-index>
 </datastore-indexes>

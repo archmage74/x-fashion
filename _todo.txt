@@ -141,18 +141,20 @@ DONE - bugfix: styles for stock are not displayed
 DONE - bugfix: caegory in stock shows as selected when selected in types
 DONE - add buy price to delivery-notice
 DONE - initial version of statistic
+DONE - statistic: % = % of turnover of this period?  
+DONE - statistic: show promos
+DONE - statistic: sorting
+DONE - statistic: paging
+
+statistic: per shop
+statistic: detail-statistic (like protocols)
+statistic: determined end of rewrite statistic
+statistic: categoy and percent of profit: profit can be negative, what shall be displayed for profit then?
+statistic: flop: to be defined by roman
 
 refresh for everything (like re-login)
 
 staging system
-
-statistic
-  statistics per shop
-  sorting
-  detail-statistic (like protocols)
-  % = % of turnover of this period?  
-  flop: to be defined by roman
-  determined end of rewrite statistic
 
 -------------------------------------------------------
 

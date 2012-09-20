@@ -27,6 +27,8 @@ public class PromoManagement implements ActivatePromoHandler, DeactivatePromoHan
 
 	private PromoServiceAsync promoService = (PromoServiceAsync) GWT.create(PromoService.class);
 
+	private PromoDistributor promoProvider;
+	
 	protected PromoPanel promoPanel;
 
 	protected Panel panel;
@@ -34,10 +36,11 @@ public class PromoManagement implements ActivatePromoHandler, DeactivatePromoHan
 	protected Urls urls;
 
 	public PromoManagement() {
-		promoPanel = new PromoPanel();
+		this.promoPanel = new PromoPanel();
+		this.promoProvider = PromoDistributor.getInstance();
+		this.urls = GWT.create(Urls.class);
 
-		urls = GWT.create(Urls.class);
-		
+		readPromos();
 		registerForEvents();
 	}
 
@@ -128,7 +131,10 @@ public class PromoManagement implements ActivatePromoHandler, DeactivatePromoHan
 		promos.add(new PromoDTO(null, -1, null));
 		PromoListComparator promoListComparator = new PromoListComparator();
 		Collections.sort(promos, promoListComparator);
-		promoPanel.setPromos(promos);
+		promoProvider.setPromos(promos);
+		if (promoPanel != null) {
+			promoPanel.setPromos(promos);
+		}
 	}
 
 	private void registerForEvents() {

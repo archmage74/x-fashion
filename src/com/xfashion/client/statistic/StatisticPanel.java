@@ -5,10 +5,13 @@ import java.util.Collection;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.ScrollEvent;
+import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -16,9 +19,11 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.RowCountChangeEvent;
 import com.xfashion.client.Formatter;
 import com.xfashion.client.MainPanel;
 import com.xfashion.client.Xfashion;
@@ -27,6 +32,7 @@ import com.xfashion.client.event.ContentPanelResizeEvent;
 import com.xfashion.client.event.ContentPanelResizeHandler;
 import com.xfashion.client.protocols.event.ShowSellStatisticEvent;
 import com.xfashion.client.resources.TextMessages;
+import com.xfashion.client.statistic.event.AddMoreSellStatisticEvent;
 import com.xfashion.client.statistic.event.ShowAllDetailsStatisticEvent;
 import com.xfashion.client.statistic.event.ShowCategoriesDetailStatisticEvent;
 import com.xfashion.client.statistic.event.ShowDayStatisticEvent;
@@ -52,23 +58,25 @@ import com.xfashion.shared.statistic.SellStatisticDTO;
 import com.xfashion.shared.statistic.SizeStatisticDTO;
 import com.xfashion.shared.statistic.TopStatisticDTO;
 
-public class StatisticPanel implements ContentPanelResizeHandler {
+public class StatisticPanel implements ContentPanelResizeHandler, RowCountChangeEvent.Handler {
 
 	private static final int SOLD_ARTICLE_PANEL_WIDTH = 1200;
-	
+
 	protected List<ShopDTO> knownShops;
 	protected IProvideArticleFilter filterProvider;
+	protected boolean allStatisticLoaded = false;
 
 	protected HorizontalPanel headerPanel;
 	protected Panel mainPanel;
 	protected ListBox shopListBox;
+	protected ScrollPanel periodPanel;
 
 	protected CellTable<SellStatisticDTO> periodTable;
 	protected CellTable<SizeStatisticDTO> sizeTable;
 	protected CellTable<CategoryStatisticDTO> categoryTable;
 	protected CellTable<PromoStatisticDTO> promoTable;
 	protected CellTable<TopStatisticDTO> topTable;
-	private VerticalPanel detailListPanel;
+	protected VerticalPanel detailListPanel;
 
 	protected TextMessages textMessages;
 	protected Formatter formatter;
@@ -82,7 +90,7 @@ public class StatisticPanel implements ContentPanelResizeHandler {
 		this.knownShops = new ArrayList<ShopDTO>();
 		this.textMessages = GWT.create(TextMessages.class);
 		this.formatter = Formatter.getInstance();
-		
+
 		this.tableProvider = new StatisticPeriodTableProvider();
 		this.sizeTableProvider = new SizeStatisticTableProvider();
 		this.categoryTableProvider = new CategoryStatisticTableProvider();
@@ -90,16 +98,27 @@ public class StatisticPanel implements ContentPanelResizeHandler {
 		this.topTableProvider = new TopStatisticTableProvider();
 
 		this.filterProvider = filterProvider;
-		
+
 		registerForEvents();
+	}
+
+	public boolean isAllStatisticLoaded() {
+		return allStatisticLoaded;
+	}
+
+	public void setAllStatisticLoaded(boolean allStatisticLoaded) {
+		this.allStatisticLoaded = allStatisticLoaded;
 	}
 
 	public Panel createPanel(ListDataProvider<SellStatisticDTO> periodProvider) {
 		VerticalPanel panel = new VerticalPanel();
 		panel.add(createHeaderPanel());
 		panel.add(createStatisticPanel());
-		
+		setHeight(MainPanel.contentPanelHeight);
+
 		periodProvider.addDataDisplay(periodTable);
+		periodTable.addRowCountChangeHandler(this);
+
 		return panel;
 	}
 
@@ -123,7 +142,7 @@ public class StatisticPanel implements ContentPanelResizeHandler {
 	public void clearDetailStatistic() {
 		showDetailTable(null);
 	}
-	
+
 	public void showSizeStatistic(ListDataProvider<SizeStatisticDTO> sizeProvider) {
 		if (sizeTable == null) {
 			sizeTable = sizeTableProvider.createTable();
@@ -131,7 +150,7 @@ public class StatisticPanel implements ContentPanelResizeHandler {
 		}
 		showDetailTable(sizeTable);
 	}
-	
+
 	public void showCategoryStatistic(ListDataProvider<CategoryStatisticDTO> categoryProvider) {
 		if (categoryTable == null) {
 			categoryTable = categoryTableProvider.createTable();
@@ -167,12 +186,35 @@ public class StatisticPanel implements ContentPanelResizeHandler {
 	@Override
 	public void onContentPanelResize(ContentPanelResizeEvent event) {
 		setHeight(event.getHeight());
+		checkLoadMore();
 	}
-	
+
+	@Override
+	public void onRowCountChange(RowCountChangeEvent event) {
+		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+			public void execute() {
+				checkLoadMore();
+			}
+		});
+	}
+
+	private void checkLoadMore() {
+		if (periodTable != null && !allStatisticLoaded && periodTable.getRowCount() > 0 && periodPanel.getMaximumVerticalScrollPosition() == 0) {
+			fireLoadMoreSellStatisticEvent();
+		}
+	}
+
+	private void fireLoadMoreSellStatisticEvent() {
+		Xfashion.eventBus.fireEvent(new AddMoreSellStatisticEvent());
+	}
+
 	public void setHeight(int height) {
-		int panelHeight = height - 100;
+		int panelHeight = height - 40;
 		if (mainPanel != null) {
 			mainPanel.setHeight(panelHeight + "px");
+		}
+		if (periodPanel != null) {
+			periodPanel.setHeight(panelHeight - 50 + "px");
 		}
 	}
 
@@ -182,14 +224,14 @@ public class StatisticPanel implements ContentPanelResizeHandler {
 			detailListPanel.add(cellTable);
 		}
 	}
-	
+
 	private Panel createPeriodPanel() {
 		VerticalPanel vp = new VerticalPanel();
 		vp.add(createPeriodSelectionPanel());
 		vp.add(createSellPeriodTable());
 		return vp;
 	}
-	
+
 	private Panel createPeriodSelectionPanel() {
 		HorizontalPanel hp = new HorizontalPanel();
 		hp.add(createDayButton());
@@ -242,21 +284,30 @@ public class StatisticPanel implements ContentPanelResizeHandler {
 		});
 		return yearButton;
 	}
-	
+
 	private Panel createSellPeriodTable() {
-		VerticalPanel vp = new VerticalPanel();
 		periodTable = tableProvider.createTable();
-		vp.add(periodTable);
-		return vp;
+		periodPanel = new ScrollPanel(periodTable);
+		periodPanel.setWidth("300px");
+		periodPanel.setHeight("200px");
+		periodPanel.addScrollHandler(new ScrollHandler() {
+			@Override
+			public void onScroll(ScrollEvent event) {
+				if (!allStatisticLoaded && periodPanel.getMaximumVerticalScrollPosition() - periodPanel.getVerticalScrollPosition() < 100) {
+					fireLoadMoreSellStatisticEvent();
+				}
+			}
+		});
+		return periodPanel;
 	}
-	
+
 	private Panel createDetailPanel() {
 		VerticalPanel vp = new VerticalPanel();
 		vp.add(createDetailSelectionPanel());
 		vp.add(createDetailListPanel());
 		return vp;
 	}
-	
+
 	private Widget createDetailSelectionPanel() {
 		HorizontalPanel hp = new HorizontalPanel();
 		hp.add(createSizesButton());
@@ -374,6 +425,11 @@ public class StatisticPanel implements ContentPanelResizeHandler {
 
 	private void registerForEvents() {
 		Xfashion.eventBus.addHandler(ContentPanelResizeEvent.TYPE, this);
+	}
+
+	@Override
+	public String toString() {
+		return "StatisticPanel [allStatisticLoaded=" + allStatisticLoaded + "]";
 	}
 
 }

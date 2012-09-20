@@ -24,4 +24,12 @@ public class SizeStatisticDTO implements IDetailStatistic, IsSerializable {
 		this.pieces = pieces;
 	}
 
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("SizeStatisticDTO { ");
+		sb.append("size=").append(size).append(", ");
+		sb.append("pieces=").append(pieces);
+		sb.append(" }");
+		return sb.toString();
+	}
 }

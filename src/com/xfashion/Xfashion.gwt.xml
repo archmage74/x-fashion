@@ -21,6 +21,7 @@
 
   <!-- Specify the paths for translatable code                    -->
   <source path='client'/>
+  <source path="com.xfashion.client.statistic.sort" />
   <source path='shared'/>
 <set-configuration-property name="CssResource.style" value="pretty"/> 
 </module>

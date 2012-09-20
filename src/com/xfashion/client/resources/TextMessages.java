@@ -153,6 +153,7 @@ public interface TextMessages extends Messages {
 	String month(Date date);
 	String year(Date date);
 	String pieces(int amount);
-	String percentNoDecimal(float f);
+	String percentNoDecimal(int f);
+	String notAvailable();
 
 }

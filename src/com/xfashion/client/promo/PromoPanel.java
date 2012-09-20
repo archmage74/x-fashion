@@ -75,6 +75,9 @@ public class PromoPanel {
 	}
 
 	public void setPromos(List<PromoDTO> newPromos) {
+		if (panel == null) {
+			return;
+		}
 		promos.clear();
 		promos.addAll(newPromos);
 		refreshPromoListBox();

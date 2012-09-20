@@ -11,6 +11,8 @@ public class CategoryStatisticDTO implements IDetailStatistic, IsSerializable {
 	private Integer turnover;
 	
 	private Integer profit;
+	
+	private Integer percent;
 
 	public String getCategory() {
 		return category;
@@ -42,6 +44,14 @@ public class CategoryStatisticDTO implements IDetailStatistic, IsSerializable {
 
 	public void setProfit(Integer profit) {
 		this.profit = profit;
+	}
+
+	public Integer getPercent() {
+		return percent;
+	}
+
+	public void setPercent(Integer percent) {
+		this.percent = percent;
 	}
 	
 }

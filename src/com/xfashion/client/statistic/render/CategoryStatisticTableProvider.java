@@ -73,8 +73,11 @@ public class CategoryStatisticTableProvider {
 		Column<CategoryStatisticDTO, String> column = new Column<CategoryStatisticDTO, String>(new TextCell()) {
 			@Override
 			public String getValue(CategoryStatisticDTO dto) {
-				float percent = Float.valueOf(dto.getProfit()) / Float.valueOf(dto.getTurnover()) * 100.f;
-				return textMessages.percentNoDecimal(percent);
+				if (dto.getPercent() != null) {
+					return textMessages.percentNoDecimal(dto.getPercent());
+				} else {
+					return textMessages.notAvailable();
+				}
 			}
 		};
 		column.setCellStyleNames("statisticValue");
