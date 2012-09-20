@@ -6,6 +6,7 @@ war/com.xfashion.Xfashion.JUnit
 gwt-unitCache
 test-classes
 www-test
+.~lock.zeiterfassung.ods#
 *.class
 .git
 .gwt
