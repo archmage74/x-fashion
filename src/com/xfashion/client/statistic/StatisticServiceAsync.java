@@ -36,4 +36,12 @@ public interface StatisticServiceAsync {
 
 	void rewriteStatistic(AsyncCallback<Void> callback);
 
+	void readSoldArticle(String soldArticleKey, AsyncCallback<SoldArticleDTO> callback);
+	
+	void readSoldArticles(int from, int to, AsyncCallback<List<SoldArticleDTO>> callback);
+	
+	void readSoldArticlesOfShop(String shopKey, int from, int to, AsyncCallback<List<SoldArticleDTO>> callback);
+
+	void readOwnSoldArticles(int from, int to, AsyncCallback<List<SoldArticleDTO>> callback);
+	
 }

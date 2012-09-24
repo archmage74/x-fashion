@@ -38,4 +38,12 @@ public interface StatisticService extends RemoteService {
 
 	void rewriteStatistic();
 
+	SoldArticleDTO readSoldArticle(String soldArticleKey);
+
+	List<SoldArticleDTO> readSoldArticles(int from, int to) throws IllegalArgumentException;
+	
+	List<SoldArticleDTO> readSoldArticlesOfShop(String shopKey, int from, int to) throws IllegalArgumentException;
+
+	List<SoldArticleDTO> readOwnSoldArticles(int from, int to) throws IllegalArgumentException;
+	
 }

@@ -1,6 +1,7 @@
 package com.xfashion.server.statistic;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.jdo.PersistenceManager;
@@ -17,7 +18,11 @@ import com.google.appengine.api.taskqueue.TaskOptions;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.xfashion.client.statistic.StatisticService;
 import com.xfashion.server.PMF;
+import com.xfashion.server.SoldArticle;
+import com.xfashion.server.user.Shop;
+import com.xfashion.server.user.UserServiceImpl;
 import com.xfashion.shared.SoldArticleDTO;
+import com.xfashion.shared.UserDTO;
 import com.xfashion.shared.statistic.CategoryStatisticDTO;
 import com.xfashion.shared.statistic.DaySellStatisticDTO;
 import com.xfashion.shared.statistic.MonthSellStatisticDTO;
@@ -33,6 +38,8 @@ public class StatisticServiceImpl extends RemoteServiceServlet implements Statis
 	private static final long serialVersionUID = 1L;
 
 	private StatisticAdder adder = new StatisticAdder();
+
+	UserServiceImpl userService = new UserServiceImpl();
 	
 	@Override
 	public List<DaySellStatisticDTO> readCommonDaySellStatistic(int from, int to) {
@@ -245,5 +252,72 @@ public class StatisticServiceImpl extends RemoteServiceServlet implements Statis
 		}
 		return sellStatistic;
 	}
-	
+
+	@Override
+	public SoldArticleDTO readSoldArticle(String keyString) throws IllegalArgumentException {
+		SoldArticleDTO dto = null;
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			SoldArticle soldArticle = readSoldArticle(pm, keyString);
+			dto = soldArticle.createDTO();
+		} finally {
+			pm.close();
+		}
+		return dto;
+	}
+
+	private SoldArticle readSoldArticle(PersistenceManager pm, String keyString) {
+		SoldArticle soldArticle = pm.getObjectById(SoldArticle.class, KeyFactory.stringToKey(keyString));
+		return soldArticle;
+	}
+
+	@Override
+	public List<SoldArticleDTO> readSoldArticles(int from, int to) throws IllegalArgumentException {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		List<SoldArticleDTO> dtos = new ArrayList<SoldArticleDTO>();
+		try {
+			Collection<SoldArticle> soldArticles = readSoldArticles(pm, from, to);
+			for (SoldArticle soldArticle : soldArticles) {
+				dtos.add(soldArticle.createDTO());
+			}
+		} finally {
+			pm.close();
+		}
+		return dtos;
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<SoldArticle> readSoldArticles(PersistenceManager pm, int from, int to) {
+		Query soldArticleQuery = pm.newQuery(SoldArticle.class);
+		soldArticleQuery.setRange(from, to);
+		soldArticleQuery.setOrdering("sellDate desc");
+		List<SoldArticle> soldArticles = (List<SoldArticle>) soldArticleQuery.execute();
+		return soldArticles;
+	}
+
+	@Override
+	public List<SoldArticleDTO> readSoldArticlesOfShop(String shopKey, int from, int to) throws IllegalArgumentException {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		List<SoldArticleDTO> dtos = new ArrayList<SoldArticleDTO>();
+		try {
+			Shop shop = userService.readShop(pm, shopKey);
+			int cnt = (int) from;
+			List<SoldArticle> soldArticles = shop.getSoldArticles();
+			while (cnt < to && cnt < soldArticles.size()) {
+				dtos.add(soldArticles.get(cnt).createDTO());
+				cnt++;
+			}
+		} finally {
+			pm.close();
+		}
+		return dtos;
+	}
+
+	@Override
+	public List<SoldArticleDTO> readOwnSoldArticles(int from, int to) throws IllegalArgumentException {
+		UserDTO userDTO = userService.getOwnUser();
+		
+		return readSoldArticlesOfShop(userDTO.getShop().getKeyString(), from, to);
+	}
+
 }

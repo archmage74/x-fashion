@@ -108,6 +108,10 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		return dto;
 	}
 
+	public UserDTO getOwnUser() {
+		return (UserDTO) this.getThreadLocalRequest().getSession().getAttribute(SESSION_USER);
+	}
+	
 	@Override
 	public UserDTO readUserByUsername(String username) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
@@ -835,72 +839,6 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 	}
 
 	@Override
-	public SoldArticleDTO readSoldArticle(String keyString) throws IllegalArgumentException {
-		SoldArticleDTO dto = null;
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		try {
-			SoldArticle soldArticle = readSoldArticle(pm, keyString);
-			dto = soldArticle.createDTO();
-		} finally {
-			pm.close();
-		}
-		return dto;
-	}
-
-	private SoldArticle readSoldArticle(PersistenceManager pm, String keyString) {
-		SoldArticle soldArticle = pm.getObjectById(SoldArticle.class, KeyFactory.stringToKey(keyString));
-		return soldArticle;
-	}
-
-	@Override
-	public List<SoldArticleDTO> readSoldArticles(int from, int to) throws IllegalArgumentException {
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		List<SoldArticleDTO> dtos = new ArrayList<SoldArticleDTO>();
-		try {
-			Collection<SoldArticle> soldArticles = readSoldArticles(pm, from, to);
-			for (SoldArticle soldArticle : soldArticles) {
-				dtos.add(soldArticle.createDTO());
-			}
-		} finally {
-			pm.close();
-		}
-		return dtos;
-	}
-
-	@SuppressWarnings("unchecked")
-	private List<SoldArticle> readSoldArticles(PersistenceManager pm, int from, int to) {
-		Query soldArticleQuery = pm.newQuery(SoldArticle.class);
-		soldArticleQuery.setRange(from, to);
-		soldArticleQuery.setOrdering("sellDate desc");
-		List<SoldArticle> soldArticles = (List<SoldArticle>) soldArticleQuery.execute();
-		return soldArticles;
-	}
-
-	@Override
-	public List<SoldArticleDTO> readSoldArticlesOfShop(String shopKey, int from, int to) throws IllegalArgumentException {
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		List<SoldArticleDTO> dtos = new ArrayList<SoldArticleDTO>();
-		try {
-			Shop shop = readShop(pm, shopKey);
-			int cnt = (int) from;
-			List<SoldArticle> soldArticles = shop.getSoldArticles();
-			while (cnt < to && cnt < soldArticles.size()) {
-				dtos.add(soldArticles.get(cnt).createDTO());
-				cnt++;
-			}
-		} finally {
-			pm.close();
-		}
-		return dtos;
-	}
-
-	@Override
-	public List<SoldArticleDTO> readOwnSoldArticles(int from, int to) throws IllegalArgumentException {
-		UserDTO userDTO = (UserDTO) this.getThreadLocalRequest().getSession().getAttribute(SESSION_USER);
-		return readSoldArticlesOfShop(userDTO.getShop().getKeyString(), from, to);
-	}
-
-	@Override
 	public List<AddedArticleDTO> readWareInput(int from, int to) throws IllegalArgumentException {
 		List<AddedArticleDTO> dtos = new ArrayList<AddedArticleDTO>();
 		return dtos;
@@ -923,7 +861,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		}
 		return dtos;
 	}
-
+	
 	@Override
 	public List<AddedArticleDTO> readOwnWareInput(int from, int to) throws IllegalArgumentException {
 		UserDTO userDTO = (UserDTO) this.getThreadLocalRequest().getSession().getAttribute(SESSION_USER);

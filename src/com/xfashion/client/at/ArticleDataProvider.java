@@ -19,6 +19,7 @@ public abstract class ArticleDataProvider<T> extends ListDataProvider<T> {
 	public abstract ArticleTypeDTO retrieveArticleType(Long productNumber);
 
 	public void setIsLoading(boolean isLoading) {
+		System.out.println("setIsLoading() started, isLoading=" + isLoading);
 		if (this.isLoading == isLoading) {
 			return;
 		}
@@ -32,14 +33,17 @@ public abstract class ArticleDataProvider<T> extends ListDataProvider<T> {
 			}
 		}
 		this.isLoading = isLoading;
+//		System.out.println("setIsLoading() finished");
 	}
 	
 	@Override 
 	public void addDataDisplay(HasData<T> display) {
+//		System.out.println("addDataDisplay() started");
 		cellTables.add(display);
 		if (!isLoading) {
 			super.addDataDisplay(display);
 		}
+//		System.out.println("addDataDisplay() finished");
 	}
 	
 	@Override

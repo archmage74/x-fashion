@@ -48,7 +48,7 @@ public class UpdateSellStatisticServlet extends HttpServlet {
 
 		String soldArticleKey = request.getParameter(PARAM_SOLD_ARTICLE_KEY);
 
-		SoldArticleDTO soldArticle = userService.readSoldArticle(soldArticleKey);
+		SoldArticleDTO soldArticle = statisticService.readSoldArticle(soldArticleKey);
 		
 		statisticService.writeStatistic(soldArticle);
 		

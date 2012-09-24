@@ -88,14 +88,6 @@ public interface UserService extends RemoteService {
 
 	void deleteStockEntry(ArticleAmountDTO articleAmount) throws IllegalArgumentException;
 	
-	SoldArticleDTO readSoldArticle(String soldArticleKey);
-
-	List<SoldArticleDTO> readSoldArticles(int from, int to) throws IllegalArgumentException;
-	
-	List<SoldArticleDTO> readSoldArticlesOfShop(String shopKey, int from, int to) throws IllegalArgumentException;
-
-	List<SoldArticleDTO> readOwnSoldArticles(int from, int to) throws IllegalArgumentException;
-	
 	List<AddedArticleDTO> readWareInput(int from, int to) throws IllegalArgumentException;
 
 	List<AddedArticleDTO> readWareInputOfShop(String shopKey, int from, int to) throws IllegalArgumentException;

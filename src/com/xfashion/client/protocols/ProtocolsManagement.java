@@ -14,6 +14,8 @@ import com.xfashion.client.protocols.event.AddMoreSoldArticlesHandler;
 import com.xfashion.client.protocols.event.ShowSellStatisticEvent;
 import com.xfashion.client.protocols.event.ShowSellStatisticHandler;
 import com.xfashion.client.resources.TextMessages;
+import com.xfashion.client.statistic.StatisticService;
+import com.xfashion.client.statistic.StatisticServiceAsync;
 import com.xfashion.client.user.UserManagement;
 import com.xfashion.client.user.UserService;
 import com.xfashion.client.user.UserServiceAsync;
@@ -28,6 +30,7 @@ public class ProtocolsManagement implements ShowSellStatisticHandler, AddMoreSol
 	public static final int CHUNK_SIZE = 50;
 	
 	private UserServiceAsync userService = (UserServiceAsync) GWT.create(UserService.class);
+	private StatisticServiceAsync statisticService = (StatisticServiceAsync) GWT.create(StatisticService.class);
 
 	private ProtocolsPanel protocolsPanel;
 	private Panel panel;
@@ -90,9 +93,9 @@ public class ProtocolsManagement implements ShowSellStatisticHandler, AddMoreSol
 			}
 		};
 		if (currentShop == null) {
-			userService.readSoldArticles(from, to, callback);
+			statisticService.readSoldArticles(from, to, callback);
 		} else {
-			userService.readSoldArticlesOfShop(currentShop.getKeyString(), from, to, callback);
+			statisticService.readSoldArticlesOfShop(currentShop.getKeyString(), from, to, callback);
 		}
 	}
 	

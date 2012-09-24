@@ -83,6 +83,7 @@ public class ArticleTypeDataProvider extends ArticleDataProvider<ArticleTypeDTO>
 	}
 
 	public void readArticleTypes() {
+//		System.out.println("readArticleTypes() started");
 		setIsLoading(true);
 		AsyncCallback<Set<ArticleTypeDTO>> callback = new AsyncCallback<Set<ArticleTypeDTO>>() {
 			@Override

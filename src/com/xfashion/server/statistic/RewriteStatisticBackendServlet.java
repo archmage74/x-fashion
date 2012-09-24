@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.xfashion.server.task.DistributePriceChangeServlet;
 import com.xfashion.server.task.UpdateSellStatisticServlet;
-import com.xfashion.server.user.UserServiceImpl;
 import com.xfashion.shared.SoldArticleDTO;
 
 public class RewriteStatisticBackendServlet extends HttpServlet {
@@ -18,7 +17,7 @@ public class RewriteStatisticBackendServlet extends HttpServlet {
 	private static final Logger log = Logger.getLogger(DistributePriceChangeServlet.class.getName());
 	private static final String sourceClass = UpdateSellStatisticServlet.class.getName();
 
-	private UserServiceImpl userService = new UserServiceImpl();
+//	private UserServiceImpl userService = new UserServiceImpl();
 	private StatisticServiceImpl statisticService = new StatisticServiceImpl();
 	
 	@Override
@@ -39,7 +38,7 @@ public class RewriteStatisticBackendServlet extends HttpServlet {
 		int batch = 0;
 		int batchSize = 30;
 		while (true) {
-			List<SoldArticleDTO> soldArticles = userService.readSoldArticles(batch * batchSize, batch * batchSize + batchSize);
+			List<SoldArticleDTO> soldArticles = statisticService.readSoldArticles(batch * batchSize, batch * batchSize + batchSize);
 			if (soldArticles == null || soldArticles.size() == 0) {
 				break;
 			}
