@@ -5,7 +5,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.TimeZone;
 
 import com.xfashion.shared.SoldArticleDTO;
 import com.xfashion.shared.statistic.CategoryStatisticDTO;
@@ -16,6 +15,8 @@ import com.xfashion.shared.statistic.TopStatisticDTO;
 
 public abstract class SellStatistic <S extends ASizeStatistic, C extends ACategoryStatistic, P extends APromoStatistic, T extends ATopStatistic> {
 
+	protected static PeriodHelper periodHelper = new PeriodHelper();
+	
 	public SellStatistic() {
 		this(new Date());
 	}
@@ -69,7 +70,7 @@ public abstract class SellStatistic <S extends ASizeStatistic, C extends ACatego
 	 * @param date
 	 */
 	public void init(Date date) {
-		GregorianCalendar gc = createCalendar();
+		GregorianCalendar gc = periodHelper.createCalendar();
 		gc.setTime(date);
 		timeToZero(gc);
 		dayToPeriodStart(gc);
@@ -87,7 +88,7 @@ public abstract class SellStatistic <S extends ASizeStatistic, C extends ACatego
 
 	public boolean isWithinPeriod(Date sellDate) {
 		long check = sellDate.getTime();
-		GregorianCalendar gc = createCalendar();
+		GregorianCalendar gc = periodHelper.createCalendar();
 		gc.setTime(getStartDate());
 		long start = gc.getTime().getTime();
 		addPeriod(gc);
@@ -171,10 +172,4 @@ public abstract class SellStatistic <S extends ASizeStatistic, C extends ACatego
 		detail.addToStatistic(soldArticleDTO);
 	}
 
-	private GregorianCalendar createCalendar() {
-		GregorianCalendar gc = new GregorianCalendar(TimeZone.getTimeZone("Europe/Vienna"));
-		gc.setFirstDayOfWeek(Calendar.MONDAY);
-		return gc;
-	}
-	
 }

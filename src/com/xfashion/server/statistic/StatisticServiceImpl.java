@@ -2,6 +2,7 @@ package com.xfashion.server.statistic;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import javax.jdo.PersistenceManager;
@@ -39,7 +40,8 @@ public class StatisticServiceImpl extends RemoteServiceServlet implements Statis
 
 	private StatisticAdder adder = new StatisticAdder();
 
-	UserServiceImpl userService = new UserServiceImpl();
+	private PeriodHelper periodHelper = new PeriodHelper();
+	private UserServiceImpl userService = new UserServiceImpl();
 	
 	@Override
 	public List<DaySellStatisticDTO> readCommonDaySellStatistic(int from, int to) {
@@ -292,6 +294,33 @@ public class StatisticServiceImpl extends RemoteServiceServlet implements Statis
 		soldArticleQuery.setRange(from, to);
 		soldArticleQuery.setOrdering("sellDate desc");
 		List<SoldArticle> soldArticles = (List<SoldArticle>) soldArticleQuery.execute();
+		return soldArticles;
+	}
+
+	@Override
+	public List<SoldArticleDTO> readSoldArticles(SellStatisticDTO sellStatisticDTO, int fromIndex, int toIndex) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		List<SoldArticleDTO> dtos = new ArrayList<SoldArticleDTO>();
+		DateRange range = periodHelper.getDateRange(sellStatisticDTO.getStartDate(), sellStatisticDTO.getPeriodType());
+		try {
+			Collection<SoldArticle> soldArticles = readSoldArticles(pm, range.getStartDate(), range.getEndDate(), fromIndex, toIndex);
+			for (SoldArticle soldArticle : soldArticles) {
+				dtos.add(soldArticle.createDTO());
+			}
+		} finally {
+			pm.close();
+		}
+		return dtos;
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<SoldArticle> readSoldArticles(PersistenceManager pm, Date fromDate, Date toDate, int fromIndex, int toIndex) {
+		Query soldArticleQuery = pm.newQuery(SoldArticle.class);
+		soldArticleQuery.setFilter("sellDate >= fromDateParam && sellDate <= toDateParam");
+		soldArticleQuery.declareParameters("java.util.Date fromDateParam, java.util.Date toDateParam");
+		soldArticleQuery.setRange(fromIndex, toIndex);
+		soldArticleQuery.setOrdering("sellDate desc");
+		List<SoldArticle> soldArticles = (List<SoldArticle>) soldArticleQuery.execute(fromDate, toDate);
 		return soldArticles;
 	}
 

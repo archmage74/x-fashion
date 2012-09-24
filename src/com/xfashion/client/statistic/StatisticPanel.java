@@ -28,10 +28,14 @@ import com.xfashion.client.Formatter;
 import com.xfashion.client.MainPanel;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.IProvideArticleFilter;
+import com.xfashion.client.at.price.GetSellPriceFromSoldArticleStrategy;
 import com.xfashion.client.event.ContentPanelResizeEvent;
 import com.xfashion.client.event.ContentPanelResizeHandler;
+import com.xfashion.client.protocols.SoldArticleDataProvider;
+import com.xfashion.client.protocols.SoldArticleTable;
 import com.xfashion.client.protocols.event.ShowSellStatisticEvent;
 import com.xfashion.client.resources.TextMessages;
+import com.xfashion.client.statistic.event.AddMoreSellStatisticDetailsEvent;
 import com.xfashion.client.statistic.event.AddMoreSellStatisticEvent;
 import com.xfashion.client.statistic.event.ShowAllDetailsStatisticEvent;
 import com.xfashion.client.statistic.event.ShowCategoriesDetailStatisticEvent;
@@ -50,6 +54,7 @@ import com.xfashion.client.statistic.render.TopStatisticTableProvider;
 import com.xfashion.client.user.UserManagement;
 import com.xfashion.client.user.UserService;
 import com.xfashion.shared.ShopDTO;
+import com.xfashion.shared.SoldArticleDTO;
 import com.xfashion.shared.UserDTO;
 import com.xfashion.shared.UserRole;
 import com.xfashion.shared.statistic.CategoryStatisticDTO;
@@ -60,11 +65,14 @@ import com.xfashion.shared.statistic.TopStatisticDTO;
 
 public class StatisticPanel implements ContentPanelResizeHandler, RowCountChangeEvent.Handler {
 
-	private static final int SOLD_ARTICLE_PANEL_WIDTH = 1200;
+	private static final int STATISTIC_PANEL_WIDTH = 1200;
 
+	private static final int SOLD_ARTICLE_ELEMENT_HEIGHT = 80;
+	
+	private static final int SELL_STATISTIC_ELEMENT_HEIGHT = 18;
+	
 	protected List<ShopDTO> knownShops;
 	protected IProvideArticleFilter filterProvider;
-	protected boolean allStatisticLoaded = false;
 
 	protected HorizontalPanel headerPanel;
 	protected Panel mainPanel;
@@ -76,6 +84,8 @@ public class StatisticPanel implements ContentPanelResizeHandler, RowCountChange
 	protected CellTable<CategoryStatisticDTO> categoryTable;
 	protected CellTable<PromoStatisticDTO> promoTable;
 	protected CellTable<TopStatisticDTO> topTable;
+	protected CellTable<SoldArticleDTO> soldArticleTable;
+	protected ScrollPanel soldArticlePanel;
 	protected VerticalPanel detailListPanel;
 
 	protected TextMessages textMessages;
@@ -85,6 +95,7 @@ public class StatisticPanel implements ContentPanelResizeHandler, RowCountChange
 	protected CategoryStatisticTableProvider categoryTableProvider;
 	protected PromoStatisticTableProvider promoTableProvider;
 	protected TopStatisticTableProvider topTableProvider;
+	protected SoldArticleTable soldArticlePanelProvider;
 
 	public StatisticPanel(IProvideArticleFilter filterProvider) {
 		this.knownShops = new ArrayList<ShopDTO>();
@@ -96,18 +107,11 @@ public class StatisticPanel implements ContentPanelResizeHandler, RowCountChange
 		this.categoryTableProvider = new CategoryStatisticTableProvider();
 		this.promoTableProvider = new PromoStatisticTableProvider();
 		this.topTableProvider = new TopStatisticTableProvider();
+		this.soldArticlePanelProvider = new SoldArticleTable(filterProvider, new GetSellPriceFromSoldArticleStrategy());
 
 		this.filterProvider = filterProvider;
 
 		registerForEvents();
-	}
-
-	public boolean isAllStatisticLoaded() {
-		return allStatisticLoaded;
-	}
-
-	public void setAllStatisticLoaded(boolean allStatisticLoaded) {
-		this.allStatisticLoaded = allStatisticLoaded;
 	}
 
 	public Panel createPanel(ListDataProvider<SellStatisticDTO> periodProvider) {
@@ -175,6 +179,23 @@ public class StatisticPanel implements ContentPanelResizeHandler, RowCountChange
 		showDetailTable(topTable);
 	}
 
+	public void showSoldArticles(SoldArticleDataProvider soldProvider) {
+		if (soldArticlePanel == null) {
+			soldArticlePanel = soldArticlePanelProvider.create(soldProvider);
+			soldArticlePanel.setWidth("360px");
+			soldArticleTable = soldArticlePanelProvider.getCellTable();
+			soldArticleTable.addRowCountChangeHandler(this);
+			soldArticlePanel.addScrollHandler(new ScrollHandler() {
+				@Override
+				public void onScroll(ScrollEvent event) {
+					checkLoadMore();
+				}
+			});
+			setHeight(MainPanel.contentPanelHeight);
+		}
+		showDetailTable(soldArticlePanel);
+	}
+	
 	protected Panel createStatisticPanel() {
 		mainPanel = new HorizontalPanel();
 		setHeight(MainPanel.contentPanelHeight);
@@ -199,13 +220,24 @@ public class StatisticPanel implements ContentPanelResizeHandler, RowCountChange
 	}
 
 	private void checkLoadMore() {
-		if (periodTable != null && !allStatisticLoaded && periodTable.getRowCount() > 0 && periodPanel.getMaximumVerticalScrollPosition() == 0) {
+		// check if half there is at least 25% of the paging-size more data within the tables, if not load more data
+		if (periodTable != null && periodTable.getRowCount() > 0 && 
+				soldArticlePanel.getVerticalScrollPosition() > soldArticlePanel.getMaximumVerticalScrollPosition() - SELL_STATISTIC_ELEMENT_HEIGHT * StatisticManagement.PERIOD_PAGE_SIZE / 4) {
 			fireLoadMoreSellStatisticEvent();
+		}
+		if (soldArticleTable != null && 
+				soldArticleTable.getRowCount() > 0 && 
+				soldArticlePanel.getVerticalScrollPosition() > soldArticlePanel.getMaximumVerticalScrollPosition() - SOLD_ARTICLE_ELEMENT_HEIGHT * StatisticManagement.ALL_DETAIL_PAGE_SIZE / 4) {
+			fireLoadMoreSellStatisticDetailsEvent();
 		}
 	}
 
 	private void fireLoadMoreSellStatisticEvent() {
 		Xfashion.eventBus.fireEvent(new AddMoreSellStatisticEvent());
+	}
+
+	private void fireLoadMoreSellStatisticDetailsEvent() {
+		Xfashion.eventBus.fireEvent(new AddMoreSellStatisticDetailsEvent());
 	}
 
 	public void setHeight(int height) {
@@ -216,12 +248,15 @@ public class StatisticPanel implements ContentPanelResizeHandler, RowCountChange
 		if (periodPanel != null) {
 			periodPanel.setHeight(panelHeight - 50 + "px");
 		}
+		if (soldArticlePanel != null) {
+			soldArticlePanel.setHeight(panelHeight - 50 + "px");
+		}
 	}
 
-	private void showDetailTable(CellTable<?> cellTable) {
+	private void showDetailTable(Widget table) {
 		detailListPanel.clear();
-		if (cellTable != null) {
-			detailListPanel.add(cellTable);
+		if (table != null) {
+			detailListPanel.add(table);
 		}
 	}
 
@@ -293,9 +328,7 @@ public class StatisticPanel implements ContentPanelResizeHandler, RowCountChange
 		periodPanel.addScrollHandler(new ScrollHandler() {
 			@Override
 			public void onScroll(ScrollEvent event) {
-				if (!allStatisticLoaded && periodPanel.getMaximumVerticalScrollPosition() - periodPanel.getVerticalScrollPosition() < 100) {
-					fireLoadMoreSellStatisticEvent();
-				}
+				checkLoadMore();
 			}
 		});
 		return periodPanel;
@@ -401,7 +434,7 @@ public class StatisticPanel implements ContentPanelResizeHandler, RowCountChange
 	protected HorizontalPanel createHeaderPanel() {
 		headerPanel = new HorizontalPanel();
 		headerPanel.addStyleName("contentHeader");
-		headerPanel.setWidth(SOLD_ARTICLE_PANEL_WIDTH + "px");
+		headerPanel.setWidth(STATISTIC_PANEL_WIDTH + "px");
 
 		headerPanel.add(createHeaderLabel());
 		headerPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
@@ -429,7 +462,7 @@ public class StatisticPanel implements ContentPanelResizeHandler, RowCountChange
 
 	@Override
 	public String toString() {
-		return "StatisticPanel [allStatisticLoaded=" + allStatisticLoaded + "]";
+		return "StatisticPanel { }";
 	}
 
 }

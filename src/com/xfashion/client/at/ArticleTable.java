@@ -6,7 +6,6 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.view.client.CellPreviewEvent;
 import com.xfashion.client.Formatter;
@@ -58,7 +57,7 @@ public abstract class ArticleTable<T> {
 		return articleTypePanel;
 	}
 
-	public Panel create(final ArticleDataProvider<T> ap) {
+	public ScrollPanel create(final ArticleDataProvider<T> ap) {
 		articleProvider = ap; 
 
 		cellTable = new CellTable<T>(10000, GWT.<FilterTableResources> create(FilterTableResources.class));

@@ -10,6 +10,9 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.view.client.ListDataProvider;
 import com.xfashion.client.Xfashion;
 import com.xfashion.client.at.ArticleFilterProvider;
+import com.xfashion.client.protocols.SoldArticleDataProvider;
+import com.xfashion.client.statistic.event.AddMoreSellStatisticDetailsEvent;
+import com.xfashion.client.statistic.event.AddMoreSellStatisticDetailsHandler;
 import com.xfashion.client.statistic.event.AddMoreSellStatisticEvent;
 import com.xfashion.client.statistic.event.AddMoreSellStatisticHandler;
 import com.xfashion.client.statistic.event.SelectSellStatisticEvent;
@@ -36,9 +39,9 @@ import com.xfashion.client.statistic.sort.CategoryStatisticComparator;
 import com.xfashion.client.statistic.sort.PromoStatisticComparator;
 import com.xfashion.client.statistic.sort.SizeStatisticComparator;
 import com.xfashion.client.statistic.sort.TopStatisticComparator;
+import com.xfashion.shared.SoldArticleDTO;
 import com.xfashion.shared.statistic.CategoryStatisticDTO;
 import com.xfashion.shared.statistic.DaySellStatisticDTO;
-import com.xfashion.shared.statistic.IDetailStatistic;
 import com.xfashion.shared.statistic.MonthSellStatisticDTO;
 import com.xfashion.shared.statistic.PromoStatisticDTO;
 import com.xfashion.shared.statistic.SellStatisticDTO;
@@ -49,9 +52,11 @@ import com.xfashion.shared.statistic.YearSellStatisticDTO;
 
 public class StatisticManagement implements ShowDayStatisticHandler, ShowWeekStatisticHandler, ShowMonthStatisticHandler, ShowYearStatisticHandler,
 		ShowSizesDetailStatisticHandler, ShowCategoriesDetailStatisticHandler, ShowPromosDetailStatisticHandler, ShowTopDetailStatisticHandler,
-		ShowAllDetailsStatisticHandler, SelectSellStatisticHandler, AddMoreSellStatisticHandler {
+		ShowAllDetailsStatisticHandler, SelectSellStatisticHandler, AddMoreSellStatisticHandler, AddMoreSellStatisticDetailsHandler {
 
-	private static final int PERIOD_PAGE_SIZE = 5;
+	public static final int PERIOD_PAGE_SIZE = 30;
+	public static final int ALL_DETAIL_PAGE_SIZE = 30;
+
 	protected StatisticPanel statisticPanel;
 	protected Panel panel;
 
@@ -60,10 +65,16 @@ public class StatisticManagement implements ShowDayStatisticHandler, ShowWeekSta
 	protected ListDataProvider<CategoryStatisticDTO> categoryProvider;
 	protected ListDataProvider<PromoStatisticDTO> promoProvider;
 	protected ListDataProvider<TopStatisticDTO> topProvider;
+	protected SoldArticleDataProvider soldArticleProvider;
+
+	protected boolean allStatisticLoaded = false;
+	protected boolean statisticLoadInProgress = false;
+	protected boolean allDetailsLoaded = false;;
+	protected boolean detailLoadInProgress = false;
 
 	/** possible values: Calendar.DATE / WEEK_OF_YEAR / MONTH / YEAR */
 	protected int statisticPeriodType = Calendar.DATE;
-	protected Class<? extends IDetailStatistic> currentDetailType = null;
+	protected Class<?> currentDetailType = null;
 	protected SellStatisticDTO currentSellStatistic = null;
 
 	protected SizeStatisticComparator sizeComparator;
@@ -80,6 +91,8 @@ public class StatisticManagement implements ShowDayStatisticHandler, ShowWeekSta
 		this.categoryProvider = new ListDataProvider<CategoryStatisticDTO>();
 		this.promoProvider = new ListDataProvider<PromoStatisticDTO>();
 		this.topProvider = new ListDataProvider<TopStatisticDTO>();
+		this.soldArticleProvider = new SoldArticleDataProvider(articleProvider.getArticleTypeProvider());
+		
 		this.sizeComparator = new SizeStatisticComparator(articleProvider.getSizeProvider());
 		this.topComparator = new TopStatisticComparator();
 		this.categoryComparator = new CategoryStatisticComparator(articleProvider.getCategoryProvider());
@@ -154,7 +167,8 @@ public class StatisticManagement implements ShowDayStatisticHandler, ShowWeekSta
 
 	@Override
 	public void onShowAllDetailsStatistic(ShowAllDetailsStatisticEvent event) {
-		// TODO Auto-generated method stub
+		currentDetailType = SoldArticleDTO.class;
+		loadSoldArticles();
 	}
 
 	@Override
@@ -165,9 +179,20 @@ public class StatisticManagement implements ShowDayStatisticHandler, ShowWeekSta
 
 	@Override
 	public void onAddMoreSellStatistic(AddMoreSellStatisticEvent event) {
+		if (statisticLoadInProgress || allStatisticLoaded) { 
+			return;
+		}
 		addStatistic();
 	}
 	
+	@Override
+	public void onAddMoreSellStatisticDetails(AddMoreSellStatisticDetailsEvent event) {
+		if (detailLoadInProgress || allDetailsLoaded) { 
+			return;
+		}
+		addMoreSoldArticles();
+	}
+
 	private void clearDetailSelection() {
 		currentSellStatistic = null;
 		currentDetailType = null;
@@ -176,12 +201,15 @@ public class StatisticManagement implements ShowDayStatisticHandler, ShowWeekSta
 	
 	private void loadStatistic() {
 		periodProvider.getList().clear();
+		soldArticleProvider.getList().clear();
 		statisticPanel.setPeriodType(statisticPeriodType);
-		statisticPanel.setAllStatisticLoaded(false);
+		allStatisticLoaded = false;
+		statisticLoadInProgress = false;
 		addStatistic();
 	}
 
 	private void addStatistic() {
+		statisticLoadInProgress = true;
 		if (statisticPeriodType == Calendar.DATE) {
 			loadDayCommonStatistic();
 		} else if (statisticPeriodType == Calendar.WEEK_OF_YEAR) {
@@ -190,6 +218,8 @@ public class StatisticManagement implements ShowDayStatisticHandler, ShowWeekSta
 			loadMonthCommonStatistic();
 		} else if (statisticPeriodType == Calendar.YEAR) {
 			loadYearCommonStatistic();
+		} else {
+			statisticLoadInProgress = false;
 		}
 	}
 
@@ -204,6 +234,8 @@ public class StatisticManagement implements ShowDayStatisticHandler, ShowWeekSta
 			loadPromos();
 		} else if (currentDetailType.equals(TopStatisticDTO.class)) {
 			loadTop();
+		} else if (currentDetailType.equals(SoldArticleDTO.class)) {
+			loadSoldArticles();
 		}
 	}
 
@@ -319,6 +351,40 @@ public class StatisticManagement implements ShowDayStatisticHandler, ShowWeekSta
 		statisticPanel.showTopStatistic(topProvider);
 	}
 
+	private void loadSoldArticles() {
+		statisticPanel.showSoldArticles(soldArticleProvider);
+		allDetailsLoaded = false;
+		detailLoadInProgress = false;
+		soldArticleProvider.getList().clear();
+		addMoreSoldArticles();
+	}
+	
+	private void addMoreSoldArticles() {
+		detailLoadInProgress = true;
+		int from = soldArticleProvider.getList().size();
+		int to = from + ALL_DETAIL_PAGE_SIZE;
+		AsyncCallback<List<SoldArticleDTO>> callback = new AsyncCallback<List<SoldArticleDTO>>() {
+			@Override
+			public void onSuccess(List<SoldArticleDTO> result) {
+				addSoldArticles(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
+			}
+		};
+		statisticService.readSoldArticles(currentSellStatistic, from, to, callback);
+	}
+	
+	private <T extends SellStatisticDTO> void addSoldArticles(List<SoldArticleDTO> result) {
+		if (result.size() == 0) {
+			allDetailsLoaded = true;
+		} else {
+			soldArticleProvider.getList().addAll(result);
+		}
+		detailLoadInProgress = false;
+	}
+
 	private void loadDayCommonStatistic() {
 		AsyncCallback<List<DaySellStatisticDTO>> callback = new AsyncCallback<List<DaySellStatisticDTO>>() {
 			@Override
@@ -385,9 +451,10 @@ public class StatisticManagement implements ShowDayStatisticHandler, ShowWeekSta
 
 	protected <T extends SellStatisticDTO> void addSellStatistic(List<T> result) {
 		if (result.size() == 0) {
-			statisticPanel.setAllStatisticLoaded(true);
+			allStatisticLoaded = true;
 		}
 		periodProvider.getList().addAll(result);
+		statisticLoadInProgress = false;
 	}
 
 	private void registerForEvents() {
@@ -402,5 +469,6 @@ public class StatisticManagement implements ShowDayStatisticHandler, ShowWeekSta
 		Xfashion.eventBus.addHandler(ShowAllDetailsStatisticEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(SelectSellStatisticEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(AddMoreSellStatisticEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(AddMoreSellStatisticDetailsEvent.TYPE, this);
 	}
 }

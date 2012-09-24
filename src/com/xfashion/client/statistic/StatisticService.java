@@ -40,10 +40,12 @@ public interface StatisticService extends RemoteService {
 
 	SoldArticleDTO readSoldArticle(String soldArticleKey);
 
-	List<SoldArticleDTO> readSoldArticles(int from, int to) throws IllegalArgumentException;
-	
-	List<SoldArticleDTO> readSoldArticlesOfShop(String shopKey, int from, int to) throws IllegalArgumentException;
+	List<SoldArticleDTO> readSoldArticles(int from, int to);
 
-	List<SoldArticleDTO> readOwnSoldArticles(int from, int to) throws IllegalArgumentException;
+	List<SoldArticleDTO> readSoldArticles(SellStatisticDTO sellStatistic, int fromIndex, int toIndex);
+	
+	List<SoldArticleDTO> readSoldArticlesOfShop(String shopKey, int from, int to);
+
+	List<SoldArticleDTO> readOwnSoldArticles(int from, int to);
 	
 }

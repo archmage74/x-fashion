@@ -145,9 +145,9 @@ DONE - statistic: % = % of turnover of this period?
 DONE - statistic: show promos
 DONE - statistic: sorting
 DONE - statistic: paging
+DONE - statistic: detail-statistic (like protocols)
 
 statistic: per shop
-statistic: detail-statistic (like protocols)
 statistic: determined end of rewrite statistic
 statistic: categoy and percent of profit: profit can be negative, what shall be displayed for profit then?
 statistic: flop: to be defined by roman

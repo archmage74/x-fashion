@@ -4,7 +4,7 @@ import java.util.Date;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class SellStatisticDTO implements IsSerializable {
+public abstract class SellStatisticDTO implements IsSerializable {
 
 	protected String keyString;
 	
@@ -16,6 +16,8 @@ public class SellStatisticDTO implements IsSerializable {
 	
 	protected Integer profit;
 
+	public abstract int getPeriodType();
+	
 	public String getKeyString() {
 		return keyString;
 	}
