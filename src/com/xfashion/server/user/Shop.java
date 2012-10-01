@@ -20,6 +20,7 @@ import com.xfashion.server.RemovedArticle;
 import com.xfashion.server.SoldArticle;
 import com.xfashion.server.StockArticle;
 import com.xfashion.server.notepad.Notepad;
+import com.xfashion.server.statistic.SellStatistics;
 import com.xfashion.shared.AddedArticleDTO;
 import com.xfashion.shared.ArticleAmountDTO;
 import com.xfashion.shared.DeliveryNoticeDTO;
@@ -79,13 +80,17 @@ public class Shop {
 	@Persistent
 	Set<PriceChange> priceChanges;
 	
+	@Persistent
+	SellStatistics sellStatistics;
+	
 	public Shop() {
-		notepads = new HashSet<Notepad>();
-		deliveryNotices = new HashSet<DeliveryNotice>();
-		articles = new ArrayList<StockArticle>();
-		soldArticles = new ArrayList<SoldArticle>();
-		addedArticles = new ArrayList<AddedArticle>();
-		removedArticles = new ArrayList<RemovedArticle>();
+		this.notepads = new HashSet<Notepad>();
+		this.deliveryNotices = new HashSet<DeliveryNotice>();
+		this.articles = new ArrayList<StockArticle>();
+		this.soldArticles = new ArrayList<SoldArticle>();
+		this.addedArticles = new ArrayList<AddedArticle>();
+		this.removedArticles = new ArrayList<RemovedArticle>();
+		this.sellStatistics = new SellStatistics();
 	}
 	
 	public Shop(ShopDTO dto) {
@@ -211,6 +216,17 @@ public class Shop {
 		this.priceChanges = priceChanges;
 	}
 
+	public SellStatistics getSellStatistics() {
+		if (sellStatistics == null) {
+			sellStatistics = new SellStatistics();
+		}
+		return sellStatistics;
+	}
+
+	public void setSellStatistics(SellStatistics sellStatistics) {
+		this.sellStatistics = sellStatistics;
+	}
+	
 	public ShopDTO createDTO() {
 		ShopDTO dto = new ShopDTO();
 		dto.setKeyString(getKeyAsString());

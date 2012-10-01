@@ -33,10 +33,10 @@ import com.xfashion.client.event.ContentPanelResizeEvent;
 import com.xfashion.client.event.ContentPanelResizeHandler;
 import com.xfashion.client.protocols.SoldArticleDataProvider;
 import com.xfashion.client.protocols.SoldArticleTable;
-import com.xfashion.client.protocols.event.ShowSellStatisticEvent;
 import com.xfashion.client.resources.TextMessages;
 import com.xfashion.client.statistic.event.AddMoreSellStatisticDetailsEvent;
 import com.xfashion.client.statistic.event.AddMoreSellStatisticEvent;
+import com.xfashion.client.statistic.event.SelectShopSellStatisticEvent;
 import com.xfashion.client.statistic.event.ShowAllDetailsStatisticEvent;
 import com.xfashion.client.statistic.event.ShowCategoriesDetailStatisticEvent;
 import com.xfashion.client.statistic.event.ShowDayStatisticEvent;
@@ -222,7 +222,7 @@ public class StatisticPanel implements ContentPanelResizeHandler, RowCountChange
 	private void checkLoadMore() {
 		// check if half there is at least 25% of the paging-size more data within the tables, if not load more data
 		if (periodTable != null && periodTable.getRowCount() > 0 && 
-				soldArticlePanel.getVerticalScrollPosition() > soldArticlePanel.getMaximumVerticalScrollPosition() - SELL_STATISTIC_ELEMENT_HEIGHT * StatisticManagement.PERIOD_PAGE_SIZE / 4) {
+				periodPanel.getVerticalScrollPosition() > periodPanel.getMaximumVerticalScrollPosition() - SELL_STATISTIC_ELEMENT_HEIGHT * StatisticManagement.PERIOD_PAGE_SIZE / 4) {
 			fireLoadMoreSellStatisticEvent();
 		}
 		if (soldArticleTable != null && 
@@ -425,9 +425,9 @@ public class StatisticPanel implements ContentPanelResizeHandler, RowCountChange
 
 	private void selectShop(int shopIndex) {
 		if (shopIndex == 0) {
-			Xfashion.eventBus.fireEvent(new ShowSellStatisticEvent(null));
+			Xfashion.eventBus.fireEvent(new SelectShopSellStatisticEvent(null));
 		} else {
-			Xfashion.eventBus.fireEvent(new ShowSellStatisticEvent(knownShops.get(shopIndex)));
+			Xfashion.eventBus.fireEvent(new SelectShopSellStatisticEvent(knownShops.get(shopIndex)));
 		}
 	}
 

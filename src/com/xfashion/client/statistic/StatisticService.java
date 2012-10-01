@@ -20,11 +20,19 @@ public interface StatisticService extends RemoteService {
 
 	List<DaySellStatisticDTO> readCommonDaySellStatistic(int from, int to);
 
-	List<WeekSellStatisticDTO> readCommonWeekSellStatistic(int i, int j);
+	List<WeekSellStatisticDTO> readCommonWeekSellStatistic(int from, int to);
 	
-	List<MonthSellStatisticDTO> readCommonMonthSellStatistic(int i, int j);
+	List<MonthSellStatisticDTO> readCommonMonthSellStatistic(int from, int to);
 	
-	List<YearSellStatisticDTO> readCommonYearSellStatistic(int i, int j);
+	List<YearSellStatisticDTO> readCommonYearSellStatistic(int from, int to);
+
+	List<DaySellStatisticDTO> readShopDaySellStatistic(String shopKey, int from, int to);
+
+	List<WeekSellStatisticDTO> readShopWeekSellStatistic(String shopKey, int from, int to);
+	
+	List<MonthSellStatisticDTO> readShopMonthSellStatistic(String shopKey, int from, int to);
+	
+	List<YearSellStatisticDTO> readShopYearSellStatistic(String shopKey, int from, int to);
 
 	List<SizeStatisticDTO> readSizeStatistic(SellStatisticDTO sellStatistic);
 	

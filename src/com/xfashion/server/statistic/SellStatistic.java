@@ -65,6 +65,8 @@ public abstract class SellStatistic <S extends ASizeStatistic, C extends ACatego
 	
 	public abstract List<T> getTopStatistics();
 	
+	public abstract SellStatisticDTO createDTO();
+	
 	/** 
 	 * Initializes the SellStatistic so that its period start is set to the period that contains the given date. 
 	 * @param date

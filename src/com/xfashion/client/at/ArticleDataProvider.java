@@ -19,7 +19,7 @@ public abstract class ArticleDataProvider<T> extends ListDataProvider<T> {
 	public abstract ArticleTypeDTO retrieveArticleType(Long productNumber);
 
 	public void setIsLoading(boolean isLoading) {
-		System.out.println("setIsLoading() started, isLoading=" + isLoading);
+//		System.out.println("setIsLoading() started, isLoading=" + isLoading);
 		if (this.isLoading == isLoading) {
 			return;
 		}

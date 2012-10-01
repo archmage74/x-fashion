@@ -17,6 +17,8 @@ import com.xfashion.client.statistic.event.AddMoreSellStatisticEvent;
 import com.xfashion.client.statistic.event.AddMoreSellStatisticHandler;
 import com.xfashion.client.statistic.event.SelectSellStatisticEvent;
 import com.xfashion.client.statistic.event.SelectSellStatisticHandler;
+import com.xfashion.client.statistic.event.SelectShopSellStatisticEvent;
+import com.xfashion.client.statistic.event.SelectShopSellStatisticHandler;
 import com.xfashion.client.statistic.event.ShowAllDetailsStatisticEvent;
 import com.xfashion.client.statistic.event.ShowAllDetailsStatisticHandler;
 import com.xfashion.client.statistic.event.ShowCategoriesDetailStatisticEvent;
@@ -39,7 +41,13 @@ import com.xfashion.client.statistic.sort.CategoryStatisticComparator;
 import com.xfashion.client.statistic.sort.PromoStatisticComparator;
 import com.xfashion.client.statistic.sort.SizeStatisticComparator;
 import com.xfashion.client.statistic.sort.TopStatisticComparator;
+import com.xfashion.client.user.UserManagement;
+import com.xfashion.client.user.UserService;
+import com.xfashion.client.user.UserServiceAsync;
+import com.xfashion.shared.ShopDTO;
 import com.xfashion.shared.SoldArticleDTO;
+import com.xfashion.shared.UserDTO;
+import com.xfashion.shared.UserRole;
 import com.xfashion.shared.statistic.CategoryStatisticDTO;
 import com.xfashion.shared.statistic.DaySellStatisticDTO;
 import com.xfashion.shared.statistic.MonthSellStatisticDTO;
@@ -52,7 +60,8 @@ import com.xfashion.shared.statistic.YearSellStatisticDTO;
 
 public class StatisticManagement implements ShowDayStatisticHandler, ShowWeekStatisticHandler, ShowMonthStatisticHandler, ShowYearStatisticHandler,
 		ShowSizesDetailStatisticHandler, ShowCategoriesDetailStatisticHandler, ShowPromosDetailStatisticHandler, ShowTopDetailStatisticHandler,
-		ShowAllDetailsStatisticHandler, SelectSellStatisticHandler, AddMoreSellStatisticHandler, AddMoreSellStatisticDetailsHandler {
+		ShowAllDetailsStatisticHandler, SelectSellStatisticHandler, AddMoreSellStatisticHandler, AddMoreSellStatisticDetailsHandler,
+		SelectShopSellStatisticHandler {
 
 	public static final int PERIOD_PAGE_SIZE = 30;
 	public static final int ALL_DETAIL_PAGE_SIZE = 30;
@@ -76,6 +85,7 @@ public class StatisticManagement implements ShowDayStatisticHandler, ShowWeekSta
 	protected int statisticPeriodType = Calendar.DATE;
 	protected Class<?> currentDetailType = null;
 	protected SellStatisticDTO currentSellStatistic = null;
+	protected ShopDTO currentShop = null;
 
 	protected SizeStatisticComparator sizeComparator;
 	protected TopStatisticComparator topComparator;
@@ -83,6 +93,7 @@ public class StatisticManagement implements ShowDayStatisticHandler, ShowWeekSta
 	protected PromoStatisticComparator promoComparator;
 
 	protected StatisticServiceAsync statisticService = (StatisticServiceAsync) GWT.create(StatisticService.class);
+	protected UserServiceAsync userService = (UserServiceAsync) GWT.create(UserService.class);
 
 	public StatisticManagement(ArticleFilterProvider articleProvider) {
 		this.statisticPanel = new StatisticPanel(articleProvider);
@@ -92,12 +103,12 @@ public class StatisticManagement implements ShowDayStatisticHandler, ShowWeekSta
 		this.promoProvider = new ListDataProvider<PromoStatisticDTO>();
 		this.topProvider = new ListDataProvider<TopStatisticDTO>();
 		this.soldArticleProvider = new SoldArticleDataProvider(articleProvider.getArticleTypeProvider());
-		
+
 		this.sizeComparator = new SizeStatisticComparator(articleProvider.getSizeProvider());
 		this.topComparator = new TopStatisticComparator();
 		this.categoryComparator = new CategoryStatisticComparator(articleProvider.getCategoryProvider());
 		this.promoComparator = new PromoStatisticComparator();
-		
+
 		registerForEvents();
 	}
 
@@ -110,6 +121,12 @@ public class StatisticManagement implements ShowDayStatisticHandler, ShowWeekSta
 	}
 
 	public void refresh() {
+		if (UserManagement.hasRole(UserRole.SHOP)) {
+			currentShop = UserManagement.user.getShop();
+		}
+		if (UserManagement.hasRole(UserRole.ADMIN, UserRole.DEVELOPER)) {
+			readShops();
+		}
 		loadStatistic();
 	}
 
@@ -179,26 +196,32 @@ public class StatisticManagement implements ShowDayStatisticHandler, ShowWeekSta
 
 	@Override
 	public void onAddMoreSellStatistic(AddMoreSellStatisticEvent event) {
-		if (statisticLoadInProgress || allStatisticLoaded) { 
+		if (statisticLoadInProgress || allStatisticLoaded) {
 			return;
 		}
 		addStatistic();
 	}
-	
+
 	@Override
 	public void onAddMoreSellStatisticDetails(AddMoreSellStatisticDetailsEvent event) {
-		if (detailLoadInProgress || allDetailsLoaded) { 
+		if (detailLoadInProgress || allDetailsLoaded) {
 			return;
 		}
 		addMoreSoldArticles();
 	}
 
+	@Override
+	public void onSelectShopSellStatistic(SelectShopSellStatisticEvent event) {
+		currentShop = event.getShop();
+		loadStatistic();
+	}
+	
 	private void clearDetailSelection() {
 		currentSellStatistic = null;
 		currentDetailType = null;
 		statisticPanel.clearDetailStatistic();
 	}
-	
+
 	private void loadStatistic() {
 		periodProvider.getList().clear();
 		soldArticleProvider.getList().clear();
@@ -211,13 +234,13 @@ public class StatisticManagement implements ShowDayStatisticHandler, ShowWeekSta
 	private void addStatistic() {
 		statisticLoadInProgress = true;
 		if (statisticPeriodType == Calendar.DATE) {
-			loadDayCommonStatistic();
+			loadDayStatistic();
 		} else if (statisticPeriodType == Calendar.WEEK_OF_YEAR) {
-			loadWeekCommonStatistic();
+			loadWeekStatistic();
 		} else if (statisticPeriodType == Calendar.MONTH) {
-			loadMonthCommonStatistic();
+			loadMonthStatistic();
 		} else if (statisticPeriodType == Calendar.YEAR) {
-			loadYearCommonStatistic();
+			loadYearStatistic();
 		} else {
 			statisticLoadInProgress = false;
 		}
@@ -225,8 +248,8 @@ public class StatisticManagement implements ShowDayStatisticHandler, ShowWeekSta
 
 	private void loadDetailStatistic() {
 		if (currentDetailType == null) {
-			return ;
-		}else if (currentDetailType.equals(SizeStatisticDTO.class)) {
+			return;
+		} else if (currentDetailType.equals(SizeStatisticDTO.class)) {
 			loadSizes();
 		} else if (currentDetailType.equals(CategoryStatisticDTO.class)) {
 			loadCategories();
@@ -291,14 +314,11 @@ public class StatisticManagement implements ShowDayStatisticHandler, ShowWeekSta
 	}
 
 	private void addPercentToCategories(List<CategoryStatisticDTO> categories) {
-		int profitSum = 0; 
+		int profitSum = currentSellStatistic.getProfit();
 		for (CategoryStatisticDTO item : categories) {
-			profitSum += item.getPieces() * item.getProfit();
+			item.setPercent(item.getProfit() * 100 / profitSum);
 		}
-		for (CategoryStatisticDTO item : categories) {
-			item.setPercent(item.getPieces() * item.getProfit() * 100 / profitSum);
-		}
-		
+
 	}
 
 	private void loadPromos() {
@@ -358,7 +378,7 @@ public class StatisticManagement implements ShowDayStatisticHandler, ShowWeekSta
 		soldArticleProvider.getList().clear();
 		addMoreSoldArticles();
 	}
-	
+
 	private void addMoreSoldArticles() {
 		detailLoadInProgress = true;
 		int from = soldArticleProvider.getList().size();
@@ -368,6 +388,7 @@ public class StatisticManagement implements ShowDayStatisticHandler, ShowWeekSta
 			public void onSuccess(List<SoldArticleDTO> result) {
 				addSoldArticles(result);
 			}
+
 			@Override
 			public void onFailure(Throwable caught) {
 				Xfashion.fireError(caught.getMessage());
@@ -375,7 +396,7 @@ public class StatisticManagement implements ShowDayStatisticHandler, ShowWeekSta
 		};
 		statisticService.readSoldArticles(currentSellStatistic, from, to, callback);
 	}
-	
+
 	private <T extends SellStatisticDTO> void addSoldArticles(List<SoldArticleDTO> result) {
 		if (result.size() == 0) {
 			allDetailsLoaded = true;
@@ -385,7 +406,7 @@ public class StatisticManagement implements ShowDayStatisticHandler, ShowWeekSta
 		detailLoadInProgress = false;
 	}
 
-	private void loadDayCommonStatistic() {
+	private void loadDayStatistic() {
 		AsyncCallback<List<DaySellStatisticDTO>> callback = new AsyncCallback<List<DaySellStatisticDTO>>() {
 			@Override
 			public void onSuccess(List<DaySellStatisticDTO> result) {
@@ -398,10 +419,14 @@ public class StatisticManagement implements ShowDayStatisticHandler, ShowWeekSta
 			}
 		};
 		int currentAmount = periodProvider.getList().size();
-		statisticService.readCommonDaySellStatistic(currentAmount, currentAmount + PERIOD_PAGE_SIZE, callback);
+		if (currentShop == null) {
+			statisticService.readCommonDaySellStatistic(currentAmount, currentAmount + PERIOD_PAGE_SIZE, callback);
+		} else {
+			statisticService.readShopDaySellStatistic(currentShop.getKeyString(), currentAmount, currentAmount + PERIOD_PAGE_SIZE, callback);
+		}
 	}
 
-	private void loadWeekCommonStatistic() {
+	private void loadWeekStatistic() {
 		AsyncCallback<List<WeekSellStatisticDTO>> callback = new AsyncCallback<List<WeekSellStatisticDTO>>() {
 			@Override
 			public void onSuccess(List<WeekSellStatisticDTO> result) {
@@ -414,10 +439,15 @@ public class StatisticManagement implements ShowDayStatisticHandler, ShowWeekSta
 			}
 		};
 		int currentAmount = periodProvider.getList().size();
-		statisticService.readCommonWeekSellStatistic(currentAmount, currentAmount + PERIOD_PAGE_SIZE, callback);
+		if (currentShop == null) {
+			statisticService.readCommonWeekSellStatistic(currentAmount, currentAmount + PERIOD_PAGE_SIZE, callback);
+		} else {
+			statisticService.readShopWeekSellStatistic(currentShop.getKeyString(), currentAmount, currentAmount + PERIOD_PAGE_SIZE, callback);
+		}
+		
 	}
 
-	private void loadMonthCommonStatistic() {
+	private void loadMonthStatistic() {
 		AsyncCallback<List<MonthSellStatisticDTO>> callback = new AsyncCallback<List<MonthSellStatisticDTO>>() {
 			@Override
 			public void onSuccess(List<MonthSellStatisticDTO> result) {
@@ -430,10 +460,14 @@ public class StatisticManagement implements ShowDayStatisticHandler, ShowWeekSta
 			}
 		};
 		int currentAmount = periodProvider.getList().size();
-		statisticService.readCommonMonthSellStatistic(currentAmount, currentAmount + PERIOD_PAGE_SIZE, callback);
+		if (currentShop == null) {
+			statisticService.readCommonMonthSellStatistic(currentAmount, currentAmount + PERIOD_PAGE_SIZE, callback);
+		} else {
+			statisticService.readShopMonthSellStatistic(currentShop.getKeyString(), currentAmount, currentAmount + PERIOD_PAGE_SIZE, callback);
+		}
 	}
 
-	private void loadYearCommonStatistic() {
+	private void loadYearStatistic() {
 		AsyncCallback<List<YearSellStatisticDTO>> callback = new AsyncCallback<List<YearSellStatisticDTO>>() {
 			@Override
 			public void onSuccess(List<YearSellStatisticDTO> result) {
@@ -446,7 +480,11 @@ public class StatisticManagement implements ShowDayStatisticHandler, ShowWeekSta
 			}
 		};
 		int currentAmount = periodProvider.getList().size();
-		statisticService.readCommonYearSellStatistic(currentAmount, currentAmount + PERIOD_PAGE_SIZE, callback);
+		if (currentShop == null) {
+			statisticService.readCommonYearSellStatistic(currentAmount, currentAmount + PERIOD_PAGE_SIZE, callback);
+		} else {
+			statisticService.readShopYearSellStatistic(currentShop.getKeyString(), currentAmount, currentAmount + PERIOD_PAGE_SIZE, callback);
+		}
 	}
 
 	protected <T extends SellStatisticDTO> void addSellStatistic(List<T> result) {
@@ -455,6 +493,21 @@ public class StatisticManagement implements ShowDayStatisticHandler, ShowWeekSta
 		}
 		periodProvider.getList().addAll(result);
 		statisticLoadInProgress = false;
+	}
+
+	protected void readShops() {
+		AsyncCallback<List<UserDTO>> callback = new AsyncCallback<List<UserDTO>>() {
+			@Override
+			public void onSuccess(List<UserDTO> result) {
+				statisticPanel.setUsers(result);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
+			}
+		};
+		userService.readUsers(callback);
 	}
 
 	private void registerForEvents() {
@@ -470,5 +523,6 @@ public class StatisticManagement implements ShowDayStatisticHandler, ShowWeekSta
 		Xfashion.eventBus.addHandler(SelectSellStatisticEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(AddMoreSellStatisticEvent.TYPE, this);
 		Xfashion.eventBus.addHandler(AddMoreSellStatisticDetailsEvent.TYPE, this);
+		Xfashion.eventBus.addHandler(SelectShopSellStatisticEvent.TYPE, this);
 	}
 }

@@ -46,13 +46,10 @@ public class StatisticServiceImpl extends RemoteServiceServlet implements Statis
 	@Override
 	public List<DaySellStatisticDTO> readCommonDaySellStatistic(int from, int to) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
-		List<DaySellStatisticDTO> dtos = new ArrayList<DaySellStatisticDTO>();
+		List<DaySellStatisticDTO> dtos = null;
 		try {
 			SellStatistics sellStatistics = readCommonSellStatistics(pm);
-			List<DaySellStatistic> stats = sellStatistics.getDaySellStatistics(); 
-			for (int index = from; index < to && index < stats.size(); index++) {
-				dtos.add(stats.get(index).createDTO());
-			}
+			dtos = sellStatistics.createDaySellStatisticDTO(from, to);
 		} finally {
 			pm.close();
 		}
@@ -62,13 +59,10 @@ public class StatisticServiceImpl extends RemoteServiceServlet implements Statis
 	@Override
 	public List<WeekSellStatisticDTO> readCommonWeekSellStatistic(int from, int to) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
-		List<WeekSellStatisticDTO> dtos = new ArrayList<WeekSellStatisticDTO>();
+		List<WeekSellStatisticDTO> dtos = null;
 		try {
 			SellStatistics sellStatistics = readCommonSellStatistics(pm);
-			List<WeekSellStatistic> stats = sellStatistics.getWeekSellStatistics(); 
-			for (int index = from; index < to && index < stats.size(); index++) {
-				dtos.add(stats.get(index).createDTO());
-			}
+			dtos = sellStatistics.createWeekSellStatisticDTO(from, to);
 		} finally {
 			pm.close();
 		}
@@ -78,13 +72,10 @@ public class StatisticServiceImpl extends RemoteServiceServlet implements Statis
 	@Override
 	public List<MonthSellStatisticDTO> readCommonMonthSellStatistic(int from, int to) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
-		List<MonthSellStatisticDTO> dtos = new ArrayList<MonthSellStatisticDTO>();
+		List<MonthSellStatisticDTO> dtos = null;
 		try {
 			SellStatistics sellStatistics = readCommonSellStatistics(pm);
-			List<MonthSellStatistic> stats = sellStatistics.getMonthSellStatistics(); 
-			for (int index = from; index < to && index < stats.size(); index++) {
-				dtos.add(stats.get(index).createDTO());
-			}
+			dtos = sellStatistics.createMonthSellStatisticDTO(from, to);
 		} finally {
 			pm.close();
 		}
@@ -94,12 +85,27 @@ public class StatisticServiceImpl extends RemoteServiceServlet implements Statis
 	@Override
 	public List<YearSellStatisticDTO> readCommonYearSellStatistic(int from, int to) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
-		List<YearSellStatisticDTO> dtos = new ArrayList<YearSellStatisticDTO>();
+		List<YearSellStatisticDTO> dtos = null;
 		try {
 			SellStatistics sellStatistics = readCommonSellStatistics(pm);
-			List<YearSellStatistic> stats = sellStatistics.getYearSellStatistics(); 
-			for (int index = from; index < to && index < stats.size(); index++) {
-				dtos.add(stats.get(index).createDTO());
+			dtos = sellStatistics.createYearSellStatisticDTO(from, to);
+		} finally {
+			pm.close();
+		}
+		return dtos;
+	}
+
+	@Override
+	public List<DaySellStatisticDTO> readShopDaySellStatistic(String shopKey, int from, int to) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		List<DaySellStatisticDTO> dtos = null;
+		try {
+			Shop shop = userService.readShop(pm, shopKey);
+			SellStatistics sellStatistics = shop.getSellStatistics();
+			if (sellStatistics != null) {
+				dtos = sellStatistics.createDaySellStatisticDTO(from, to);
+			} else {
+				dtos = new ArrayList<DaySellStatisticDTO>();
 			}
 		} finally {
 			pm.close();
@@ -108,9 +114,78 @@ public class StatisticServiceImpl extends RemoteServiceServlet implements Statis
 	}
 	
 	@Override
+	public List<WeekSellStatisticDTO> readShopWeekSellStatistic(String shopKey, int from, int to) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		List<WeekSellStatisticDTO> dtos = null;
+		try {
+			Shop shop = userService.readShop(pm, shopKey);
+			dtos = shop.getSellStatistics().createWeekSellStatisticDTO(from, to);
+		} finally {
+			pm.close();
+		}
+		return dtos;
+	}
+	
+	@Override
+	public List<MonthSellStatisticDTO> readShopMonthSellStatistic(String shopKey, int from, int to) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		List<MonthSellStatisticDTO> dtos = null;
+		try {
+			Shop shop = userService.readShop(pm, shopKey);
+			dtos = shop.getSellStatistics().createMonthSellStatisticDTO(from, to);
+		} finally {
+			pm.close();
+		}
+		return dtos;
+	}
+	
+	@Override
+	public List<YearSellStatisticDTO> readShopYearSellStatistic(String shopKey, int from, int to) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		List<YearSellStatisticDTO> dtos = null;
+		try {
+			Shop shop = userService.readShop(pm, shopKey);
+			dtos = shop.getSellStatistics().createYearSellStatisticDTO(from, to);
+		} finally {
+			pm.close();
+		}
+		return dtos;
+	}
+	
+	@Override
 	public void writeStatistic(SoldArticleDTO soldArticle) {
-		writeCommonStatistic(soldArticle);
-		writeUserStatistic(soldArticle);
+		writeCommonStatisticUntilSuccess(soldArticle);
+		writeShopStatisticUntilSuccess(soldArticle);
+	}
+
+	private void writeCommonStatisticUntilSuccess(SoldArticleDTO soldArticle) {
+		boolean success = false;
+		while (!success) {
+			try {
+				writeCommonStatistic(soldArticle);
+				success = true;
+			} catch (Exception e) {
+				try {
+					Thread.sleep(50);
+				} catch (InterruptedException e1) {
+				}
+			}
+		}
+	}
+
+	private void writeShopStatisticUntilSuccess(SoldArticleDTO soldArticle) {
+		boolean success = false;
+		while (!success) {
+			try {
+				writeShopStatistic(soldArticle);
+				success = true;
+			} catch (Exception e) {
+				try {
+					Thread.sleep(50);
+				} catch (InterruptedException e1) {
+				}
+			}
+		}
 	}
 
 	private void writeCommonStatistic(SoldArticleDTO soldArticle) {
@@ -136,8 +211,28 @@ public class StatisticServiceImpl extends RemoteServiceServlet implements Statis
 		}
 	}
 
-	private void writeUserStatistic(SoldArticleDTO soldArticle) {
-
+	private void writeShopStatistic(SoldArticleDTO soldArticle) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		Transaction tx = pm.currentTransaction();
+		try {
+			tx.setOptimistic(false);
+			tx.begin();
+			
+			Shop shop = userService.readShop(pm, soldArticle.getShopKey());
+			SellStatistics statistics = shop.getSellStatistics();
+			
+			adder.addToStatistic(DaySellStatistic.class, statistics.getDaySellStatistics(), soldArticle);
+			adder.addToStatistic(WeekSellStatistic.class, statistics.getWeekSellStatistics(), soldArticle);
+			adder.addToStatistic(MonthSellStatistic.class, statistics.getMonthSellStatistics(), soldArticle);
+			adder.addToStatistic(YearSellStatistic.class, statistics.getYearSellStatistics(), soldArticle);
+			
+			tx.commit();
+		} finally {
+			if (tx.isActive()) {
+				tx.rollback();
+			}
+			pm.close();
+		}
 	}
 
 	@SuppressWarnings("unchecked")

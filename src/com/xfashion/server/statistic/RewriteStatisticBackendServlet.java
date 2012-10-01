@@ -43,26 +43,10 @@ public class RewriteStatisticBackendServlet extends HttpServlet {
 				break;
 			}
 			for (SoldArticleDTO soldArticle : soldArticles) {
-				writeStatistic(soldArticle);
+				statisticService.writeStatistic(soldArticle);
 			}
 			batch ++;
 		}
 	}
 
-	private void writeStatistic(SoldArticleDTO soldArticle) {
-		boolean success = false;
-		while (!success) {
-			try {
-				statisticService.writeStatistic(soldArticle);
-				success = true;
-			} catch (Exception e) {
-				try {
-					Thread.sleep(20);
-				} catch (InterruptedException e1) {
-					
-				}
-			}
-		}
-	}
-	
 }

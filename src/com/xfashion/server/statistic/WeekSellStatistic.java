@@ -140,6 +140,7 @@ public class WeekSellStatistic extends SellStatistic<WeekSizeStatistic, WeekCate
 		addToDetailList(topStatistics, soldArticleDTO, WeekTopStatistic.class);
 	}
 
+	@Override
 	public WeekSellStatisticDTO createDTO() {
 		WeekSellStatisticDTO dto = new WeekSellStatisticDTO();
 		fillDTO(dto);

@@ -18,11 +18,19 @@ public interface StatisticServiceAsync {
 
 	void readCommonDaySellStatistic(int from, int to, AsyncCallback<List<DaySellStatisticDTO>> callback);
 
-	void readCommonWeekSellStatistic(int i, int j, AsyncCallback<List<WeekSellStatisticDTO>> callback);
+	void readCommonWeekSellStatistic(int from, int to, AsyncCallback<List<WeekSellStatisticDTO>> callback);
 
-	void readCommonMonthSellStatistic(int i, int j, AsyncCallback<List<MonthSellStatisticDTO>> callback);
+	void readCommonMonthSellStatistic(int from, int to, AsyncCallback<List<MonthSellStatisticDTO>> callback);
 
-	void readCommonYearSellStatistic(int i, int j, AsyncCallback<List<YearSellStatisticDTO>> callback);
+	void readCommonYearSellStatistic(int from, int to, AsyncCallback<List<YearSellStatisticDTO>> callback);
+
+	void readShopDaySellStatistic(String shopKey, int from, int to, AsyncCallback<List<DaySellStatisticDTO>> callback);
+
+	void readShopWeekSellStatistic(String shopKey, int from, int to, AsyncCallback<List<WeekSellStatisticDTO>> callback);
+
+	void readShopMonthSellStatistic(String shopKey, int from, int to, AsyncCallback<List<MonthSellStatisticDTO>> callback);
+
+	void readShopYearSellStatistic(String shopKey, int from, int to, AsyncCallback<List<YearSellStatisticDTO>> callback);
 
 	void readSizeStatistic(SellStatisticDTO sellStatistic, AsyncCallback<List<SizeStatisticDTO>> callback);
 
@@ -45,6 +53,5 @@ public interface StatisticServiceAsync {
 	void readSoldArticlesOfShop(String shopKey, int from, int to, AsyncCallback<List<SoldArticleDTO>> callback);
 
 	void readOwnSoldArticles(int from, int to, AsyncCallback<List<SoldArticleDTO>> callback);
-
 	
 }
