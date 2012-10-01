@@ -148,7 +148,7 @@ DONE - statistic: paging
 DONE - statistic: detail-statistic (like protocols)
 DONE - statistic: per shop
 
-statistic: determined end of rewrite statistic (!!! currently wrong read direction of sold article "order by sellDate desc") 
+statistic: determined end of rewrite statistic (!!! currently read direction of sold article "order by sellDate desc" - from newest to oldest) 
 statistic: category and percent of profit: profit can be negative, what shall be displayed for profit then?
 statistic: flop: to be defined by roman
 statistic: question to roman: rounding error at categories-% - problem?
