@@ -138,6 +138,21 @@ public class StatisticPanel implements ContentPanelResizeHandler, RowCountChange
 			}
 		}
 	}
+	
+	public void selectShop(ShopDTO selectedShop) {
+		if (selectedShop == null) {
+			shopListBox.setSelectedIndex(0);
+		} else {
+			int index = 0;
+			for (ShopDTO shop : knownShops) {
+				if (selectedShop.getKeyString().equals(shop.getKeyString())) {
+					shopListBox.setSelectedIndex(index);
+					break;
+				}
+				index ++;
+			}
+		}
+	}
 
 	public void setPeriodType(int statisticPeriodType) {
 		tableProvider.changePeriodType(periodTable, statisticPeriodType);

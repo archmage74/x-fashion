@@ -132,7 +132,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 	}
 
 	@SuppressWarnings("unchecked")
-	private User readUserByUsername(PersistenceManager pm, String username) throws UserNotFoundException {
+	public User readUserByUsername(PersistenceManager pm, String username) throws UserNotFoundException {
 		User user;
 		Query userQuery = pm.newQuery(User.class);
 		userQuery.setFilter("username == usernameParam");
@@ -171,7 +171,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<User> readUsers(PersistenceManager pm) {
+	public List<User> readUsers(PersistenceManager pm) {
 		Query query = pm.newQuery(User.class);
 		List<User> users = (List<User>) query.execute();
 		return users;

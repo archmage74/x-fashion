@@ -103,6 +103,13 @@ public class SellStatistics {
 		return dtos;
 	}
 
+	public void clear() {
+		daySellStatistics.clear();
+		weekSellStatistics.clear();
+		monthSellStatistics.clear();
+		yearSellStatistics.clear();
+	}
+
 	@SuppressWarnings("unchecked")
 	private <S extends SellStatisticDTO, T extends SellStatistic<?, ?, ?, ?>> List<S> createSellStatisticDTOs(List<T> stats,
 			Class<S> dtoClass, int from, int to) {

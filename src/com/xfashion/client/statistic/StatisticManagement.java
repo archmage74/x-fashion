@@ -499,7 +499,7 @@ public class StatisticManagement implements ShowDayStatisticHandler, ShowWeekSta
 		AsyncCallback<List<UserDTO>> callback = new AsyncCallback<List<UserDTO>>() {
 			@Override
 			public void onSuccess(List<UserDTO> result) {
-				statisticPanel.setUsers(result);
+				showUsers(result);
 			}
 
 			@Override
@@ -508,6 +508,11 @@ public class StatisticManagement implements ShowDayStatisticHandler, ShowWeekSta
 			}
 		};
 		userService.readUsers(callback);
+	}
+	
+	private void showUsers(List<UserDTO> users) {
+		statisticPanel.setUsers(users);
+		statisticPanel.selectShop(currentShop);
 	}
 
 	private void registerForEvents() {

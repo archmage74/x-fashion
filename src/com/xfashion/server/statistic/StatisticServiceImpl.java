@@ -21,6 +21,7 @@ import com.xfashion.client.statistic.StatisticService;
 import com.xfashion.server.PMF;
 import com.xfashion.server.SoldArticle;
 import com.xfashion.server.user.Shop;
+import com.xfashion.server.user.User;
 import com.xfashion.server.user.UserServiceImpl;
 import com.xfashion.shared.SoldArticleDTO;
 import com.xfashion.shared.UserDTO;
@@ -203,6 +204,8 @@ public class StatisticServiceImpl extends RemoteServiceServlet implements Statis
 			adder.addToStatistic(YearSellStatistic.class, statistics.getYearSellStatistics(), soldArticle);
 
 			tx.commit();
+		} catch (Exception e) {
+			throw new RuntimeException("Write Statistic failed", e);
 		} finally {
 			if (tx.isActive()) {
 				tx.rollback();
@@ -227,6 +230,8 @@ public class StatisticServiceImpl extends RemoteServiceServlet implements Statis
 			adder.addToStatistic(YearSellStatistic.class, statistics.getYearSellStatistics(), soldArticle);
 			
 			tx.commit();
+		} catch (Exception e) {
+			throw new RuntimeException("Write Statistic failed", e);
 		} finally {
 			if (tx.isActive()) {
 				tx.rollback();
@@ -258,8 +263,40 @@ public class StatisticServiceImpl extends RemoteServiceServlet implements Statis
 			SellStatistics sellStatistics = readCommonSellStatistics(pm);
 			pm.deletePersistent(sellStatistics);
 			tx.commit();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		} finally {
 			if (tx.isActive()) {
+				tx.rollback();
+			}
+			pm.close();
+		}
+	}
+
+	public void deleteAllShopStatistics() {
+		List<UserDTO> users = userService.readUsers();
+		PersistenceManager pm = null;
+		Transaction tx = null;
+		try {
+			pm = PMF.get().getPersistenceManager();
+			for (UserDTO userDTO : users) {
+				tx = pm.currentTransaction();
+				tx.setOptimistic(false);
+				tx.begin();
+
+				User user = userService.readUserByUsername(pm, userDTO.getUsername());
+				Shop shop = user.getShop();
+				shop.getSellStatistics().clear();
+				pm.flush();
+
+				tx.commit();
+				pm.close();
+				pm = PMF.get().getPersistenceManager();
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (tx != null && tx.isActive()) {
 				tx.rollback();
 			}
 			pm.close();
@@ -281,6 +318,7 @@ public class StatisticServiceImpl extends RemoteServiceServlet implements Statis
 	
 	private void deleteAllStatistics() {
 		deleteAllCommonStatistics();
+		deleteAllShopStatistics();
 	}
 
 	@Override
