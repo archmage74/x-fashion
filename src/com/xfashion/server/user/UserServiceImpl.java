@@ -3,6 +3,7 @@ package com.xfashion.server.user;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -97,6 +98,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		try {
 			User user = readUserByUsername(pm, username);
 			if (user != null && user.validatePassword(password)) {
+				user.setLastKeepAlive(new Date());
 				dto = user.createDTO();
 			}
 			this.getThreadLocalRequest().getSession().setAttribute(SESSION_USER, dto);
@@ -107,7 +109,27 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 		}
 		return dto;
 	}
+	
+	@Override
+	public void keepAlive(String username) {
+		UserDTO dto = getOwnUser();
+		if (dto == null || username == null || !dto.getUsername().equals(username)) {
+			return;
+		}
+		
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			User user = readUserByUsername(pm, dto.getUsername());
+			user.setLastKeepAlive(new Date());
+			dto.setLastKeepAlive(user.getLastKeepAlive());
+		} catch (UserNotFoundException e) {
+			dto = null;
+		} finally {
+			pm.close();
+		}
+	}
 
+	@Override
 	public UserDTO getOwnUser() {
 		return (UserDTO) this.getThreadLocalRequest().getSession().getAttribute(SESSION_USER);
 	}

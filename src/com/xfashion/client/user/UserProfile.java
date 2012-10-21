@@ -49,21 +49,47 @@ public class UserProfile {
 	private void updatePanel() {
 		panel.clear();
 		if (UserManagement.user == null) {
-			if (loginPanel == null) {
-				loginPanel = createLoginPanel();
-			}
-			panel.add(loginPanel);
-			Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
-		        public void execute () {
-		        	usernameTextBox.setFocus(true);
-		        }
-		    });
+			checkServerLogin();
 		} else {
-			if (profilePanel == null) {
-				profilePanel = createProfilePanel();
-			}
-			panel.add(profilePanel);
+			showProfilePanel();
 		}
+	}
+
+	private void checkServerLogin() {
+		AsyncCallback<UserDTO> callback = new AsyncCallback<UserDTO>() {
+			@Override
+			public void onSuccess(UserDTO result) {
+				if (result == null) {
+					showLoginPanel();
+				} else {
+					loginSuccess(result);
+				}
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				Xfashion.fireError(caught.getMessage());
+			}
+		}; 
+		userService.getOwnUser(callback);
+	}
+	
+	private void showLoginPanel() {
+		if (loginPanel == null) {
+			loginPanel = createLoginPanel();
+		}
+		panel.add(loginPanel);
+		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
+	        public void execute () {
+	        	usernameTextBox.setFocus(true);
+	        }
+	    });
+	}
+	
+	private void showProfilePanel() {
+		if (profilePanel == null) {
+			profilePanel = createProfilePanel();
+		}
+		panel.add(profilePanel);
 	}
 	
 	private Panel createLoginPanel() {
@@ -112,16 +138,15 @@ public class UserProfile {
 	}
 	
 	private void sendLogin() {
+		loginButton.setEnabled(false);
 		AsyncCallback<UserDTO> callback = new AsyncCallback<UserDTO>() {
 			@Override
 			public void onSuccess(UserDTO result) {
 				if (result == null) {
 					Xfashion.fireError(userMessages.loginFailed());
-				} else {
 					loginButton.setEnabled(true);
-					UserManagement.user = result;
-					Xfashion.eventBus.fireEvent(new LoginEvent(result));
-					updatePanel();
+				} else {
+					loginSuccess(result);
 				}
 			}
 			@Override
@@ -134,6 +159,36 @@ public class UserProfile {
 		userService.login(usernameTextBox.getValue(), passwordTextBox.getValue(), callback);
 	}
 	
+	private void loginSuccess(UserDTO result) {
+		UserManagement.user = result;
+		Xfashion.eventBus.fireEvent(new LoginEvent(result));
+		scheduleSessionKeepAlive();
+		updatePanel();
+	}
+
+	private void scheduleSessionKeepAlive() {
+		Scheduler.get().scheduleFixedPeriod(new Scheduler.RepeatingCommand () {
+	        public boolean execute () {
+	        	sendKeepAlive();
+	        	return true;
+	        }
+	    }, UserService.KEEP_ALIVE_TIMEOUT);
+	}
+	
+	private void sendKeepAlive() {
+		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+			@Override
+			public void onSuccess(Void result) {
+				// nothing more to do, keep alive was successful
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO: should we report an error? maybe just if 2 or 3 fail?
+			}
+		}; 
+		userService.keepAlive(UserManagement.user.getUsername(), callback);
+	}
+
 	private Panel createProfilePanel() {
 		VerticalPanel vp = new VerticalPanel();
 		

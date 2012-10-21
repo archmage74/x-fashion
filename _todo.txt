@@ -147,13 +147,14 @@ DONE - statistic: sorting
 DONE - statistic: paging
 DONE - statistic: detail-statistic (like protocols)
 DONE - statistic: per shop
+DONE - session keepalive
+DONE - refresh for everything (like re-login)
 
 statistic: determined end of rewrite statistic (!!! currently read direction of sold article "order by sellDate desc" - from newest to oldest) 
 statistic: category and percent of profit: profit can be negative, what shall be displayed for profit then?
-statistic: flop: to be defined by roman
 statistic: question to roman: rounding error at categories-% - problem?
-
-refresh for everything (like re-login)
+statistic: flop: to be defined by roman
+statistic: visible for shops? 
 
 staging system
 

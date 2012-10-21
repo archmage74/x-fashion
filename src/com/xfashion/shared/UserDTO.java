@@ -1,6 +1,7 @@
 package com.xfashion.shared;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
@@ -23,6 +24,8 @@ public class UserDTO implements IsSerializable, Serializable {
 	private UserCountry country;
 	
 	private UserRole role;
+	
+	private Date lastKeepAlive;
 
 	public UserDTO() {
 		shop = new ShopDTO();
@@ -103,6 +106,14 @@ public class UserDTO implements IsSerializable, Serializable {
 
 	public void setRole(UserRole role) {
 		this.role = role;
+	}
+
+	public Date getLastKeepAlive() {
+		return lastKeepAlive;
+	}
+
+	public void setLastKeepAlive(Date lastKeepAlive) {
+		this.lastKeepAlive = lastKeepAlive;
 	}
 
 }

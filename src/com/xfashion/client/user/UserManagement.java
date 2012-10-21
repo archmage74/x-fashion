@@ -1,6 +1,7 @@
 package com.xfashion.client.user;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
@@ -59,6 +60,7 @@ public class UserManagement {
 		if (panel == null) {
 			panel = createPanel();
 		}
+		readUsers();
 		return panel;
 	}
 	
@@ -90,8 +92,6 @@ public class UserManagement {
 		userDetails.setUserManagement(this);
 		Panel details = userDetails.createUserDetails();
 		p.add(details);
-		
-		readUsers();
 		
 		return p;
 	}
@@ -155,7 +155,13 @@ public class UserManagement {
 	private void updateUserList(List<UserDTO> users) {
 		userListBox.clear();
 		for (UserDTO u : users) {
-			userListBox.addItem(u.getUsername());
+			if (u.getLastKeepAlive() == null) {
+				userListBox.addItem(userMessages.userListBoxLineNeverOnline(u.getUsername()));
+			} else if (u.getLastKeepAlive().getTime() + UserService.KEEP_ALIVE_TIMEOUT > new Date().getTime()) {
+				userListBox.addItem(userMessages.userListBoxLineOnline(u.getUsername()));
+			} else {
+				userListBox.addItem(userMessages.userListBoxLineNotOnline(u.getUsername(), u.getLastKeepAlive()));
+			}
 		}
 	}
 

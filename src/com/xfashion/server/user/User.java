@@ -1,5 +1,7 @@
 package com.xfashion.server.user;
 
+import java.util.Date;
+
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
@@ -38,6 +40,9 @@ public class User {
 	
 	@Persistent
 	private String role;
+	
+	@Persistent
+	private Date lastKeepAlive;
 	
 	public User(UserDTO dto) {
 		shop = new Shop();
@@ -134,6 +139,14 @@ public class User {
 		this.role = role;
 	}
 	
+	public Date getLastKeepAlive() {
+		return lastKeepAlive;
+	}
+
+	public void setLastKeepAlive(Date lastKeepAlive) {
+		this.lastKeepAlive = lastKeepAlive;
+	}
+
 	public void updateFromDTO(UserDTO dto) {
 		setUsername(dto.getUsername());
 		setEmail(dto.getEmail());
@@ -156,6 +169,7 @@ public class User {
 		dto.setEmail(getEmail());
 		dto.setEnabled(getEnabled());
 		dto.setShop(getShop().createDTO());
+		dto.setLastKeepAlive(getLastKeepAlive());
 		if (getCountry() == null) {
 			dto.setCountry(UserCountry.AT);
 		} else {

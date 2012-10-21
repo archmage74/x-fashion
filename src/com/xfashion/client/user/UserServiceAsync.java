@@ -21,6 +21,10 @@ public interface UserServiceAsync {
 	
 	void login(String username, String password, AsyncCallback<UserDTO> callback);
 	
+	void keepAlive(String username, AsyncCallback<Void> callback);
+
+	void getOwnUser(AsyncCallback<UserDTO> callback);
+
 	void readUserByUsername(String username, AsyncCallback<UserDTO> callback);
 
 	void readUsers(AsyncCallback<List<UserDTO>> callback);

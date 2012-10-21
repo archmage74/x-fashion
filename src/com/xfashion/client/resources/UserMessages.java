@@ -1,5 +1,7 @@
 package com.xfashion.client.resources;
 
+import java.util.Date;
+
 import com.google.gwt.i18n.client.Messages;
 import com.google.gwt.safehtml.shared.SafeHtml;
 
@@ -75,5 +77,14 @@ public interface UserMessages extends Messages {
 
 	@DefaultMessage("Rolle:")
 	String role();
+
+	@DefaultMessage("{0} - online")
+	String userListBoxLineOnline(String username);
+
+	@DefaultMessage("{0} - {1,date,yyyy-MM-dd HH:mm}")
+	String userListBoxLineNotOnline(String username, Date lastKeepAlive);
+
+	@DefaultMessage("{0} - nie eingeloggt")
+	String userListBoxLineNeverOnline(String username);
 
 }

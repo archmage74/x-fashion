@@ -26,9 +26,15 @@ public interface UserService extends RemoteService {
 	
 	public static final String ROOT_USERNAME = "root";
 	
+	public static final int KEEP_ALIVE_TIMEOUT = 5 * 60 * 1000; // 5 minutes
+	
 	UserDTO createUser(UserDTO user);
 	
 	UserDTO login(String username, String password);
+	
+	void keepAlive(String username);
+	
+	UserDTO getOwnUser();
 	
 	UserDTO readUserByUsername(String username);
 	
